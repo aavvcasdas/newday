@@ -1,0 +1,232 @@
+{
+  "status": "PASS",
+  "masterVideo": {
+    "path": "番外MV/把回忆拼好给你/成片/把回忆拼好给你_v3完整复刻版.mp4",
+    "sha256": "b8f383ddc682112603b89bdeb2f5f4f67526d3717445e8260620b7730ea8382e",
+    "bytes": 14494167,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1681,
+    "videoDuration": 56.033333,
+    "audioDuration": 56.005011,
+    "adtsSha256": "1058f033592b6188f21f5d13bbe6f09680f36019e9ea0c1a0323ee0d18c18387",
+    "sourceAdtsExactMatch": true,
+    "decodedPcmMaxAbsDiff": 0.0
+  },
+  "sampleVideo": {
+    "path": "番外MV/把回忆拼好给你/样片/v3_副歌烟花与时差_有声试剪.mp4",
+    "sha256": "02da85d71371541dd7df5048742d2087c8e457d8875452dd41c515867f55f12e",
+    "bytes": 5552036,
+    "frames": 473,
+    "duration": 15.766667
+  },
+  "ocrSummary": {
+    "strictOcrPassed": 15,
+    "staticManualVerified": 1,
+    "combinedVerified": 16,
+    "totalLines": 16,
+    "lines": [
+      {
+        "line": 1,
+        "time": 2.867,
+        "expected": "我们都是渺小真实存在",
+        "rawOcr": "我们都是渺小真实存在",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "8450593444a381b47539893f5ab2c07d192efc7db82a53b85b9db7dbcd56e056"
+      },
+      {
+        "line": 2,
+        "time": 6.483,
+        "expected": "祈愿小世界里不只有挫败",
+        "rawOcr": "祈愿小世界里不只有挫败",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "f51579d3361998be664e9678b1ec0c0d561d84251256daac11fabdf9c8840112"
+      },
+      {
+        "line": 3,
+        "time": 10.033,
+        "expected": "直到遇见你我以为就光明起来",
+        "rawOcr": "直到遇见你我以为就光明起来",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "787e65c6883ebe5d520fb5600e28f6406bc0ef29ea07ce47d3225ddd39f10155"
+      },
+      {
+        "line": 4,
+        "time": 13.55,
+        "expected": "眼睛里看到的都是广袤无垠的大海",
+        "rawOcr": "眼睛里看到的都是广无垠的大海",
+        "strictOcrPassed": false,
+        "encodedFrameSha256": "3531fe72b56581ebe850dc5710eaec9e438e3fdc20ca509457f07f24ff8d8600",
+        "staticManualVerified": true
+      },
+      {
+        "line": 5,
+        "time": 17.217,
+        "expected": "有你在的日子不可能被取代",
+        "rawOcr": "有你在的日子不可能被取代",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "1998d28ba3044754a4e435dd993051378b2e1c211817e21752b569026237de19"
+      },
+      {
+        "line": 6,
+        "time": 20.733,
+        "expected": "在最灰暗的日子你陪着我发呆",
+        "rawOcr": "在最灰暗的日子你陪着我发呆",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "3b60a859af4b57d2f29d152b8384eebf4a7c93fb1d6f36402aa9586f92ab1268"
+      },
+      {
+        "line": 7,
+        "time": 23.817,
+        "expected": "你让我学会如何拨开阴霾",
+        "rawOcr": "你让我学会如何拨开阴霾",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "807438c111b2797f06d2d95d8c04919a9712e490289108841e2d2da9b20bdbeb"
+      },
+      {
+        "line": 8,
+        "time": 27.017,
+        "expected": "将快乐全都收集将不开心全都淘汰",
+        "rawOcr": "将快乐全都收集将不开心全都淘汰",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "dfe22a7f3f1cba9fcebbc5e7505cccc410da94e28db4139735e7c47b744681aa"
+      },
+      {
+        "line": 9,
+        "time": 30.117,
+        "expected": "你对我说的情话",
+        "rawOcr": "你对我说的情话",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "adf0f2ab2f190f7daa1e6747e19c3f1d57fc306dc47fb64f2f6122bdb23830a1"
+      },
+      {
+        "line": 10,
+        "time": 33.633,
+        "expected": "像转瞬即逝的烟花",
+        "rawOcr": "像转瞬即逝的烟花",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "d06479f92e549c62ac551ca42fb5d3a5e9041439fde8685337f3b5412602848e"
+      },
+      {
+        "line": 11,
+        "time": 37.35,
+        "expected": "只停在绽放一刹那",
+        "rawOcr": "只停在绽放一刹那",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "5d91102608f6c63ac5021a5ab019807ea62e9a8f09c3fad4998904318f41da2b"
+      },
+      {
+        "line": 12,
+        "time": 40.767,
+        "expected": "我却已无法自拔",
+        "rawOcr": "我却已无法自拔",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "7b0d430da066285b314e6980f919f2733eb2577eb68be98cc80a841ed048d3b1"
+      },
+      {
+        "line": 13,
+        "time": 43.65,
+        "expected": "我们的爱总有时差",
+        "rawOcr": "我们的爱总有时差",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "c06a07f6068f79008d90df095b377a2ec3bd14bdf513e0f29d6e5305f1857f72"
+      },
+      {
+        "line": 14,
+        "time": 46.633,
+        "expected": "也为你骗自己放下",
+        "rawOcr": "也为你骗自己放下",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "4013b68e1af50b9159f8afaee0abab8c7344822cb874ec0b84b7a808e8cf28a9"
+      },
+      {
+        "line": 15,
+        "time": 49.833,
+        "expected": "爱炙热的你",
+        "rawOcr": "爱炙热的你",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "192308a82dd87f8402cc3b3400da823cc12568cfa0f176de94d5c2dd95fe48b6"
+      },
+      {
+        "line": 16,
+        "time": 52.583,
+        "expected": "却忘了爱自己",
+        "rawOcr": "却忘了爱自己",
+        "strictOcrPassed": true,
+        "encodedFrameSha256": "17d40a9166b74dd4d686cabea7253ea2f1b3f25f3979520eba2e16f0e9238feb"
+      }
+    ]
+  },
+  "motionSampleSummary": [
+    {
+      "line": 1,
+      "mad200ms": 6.919
+    },
+    {
+      "line": 2,
+      "mad200ms": 11.097
+    },
+    {
+      "line": 3,
+      "mad200ms": 24.353
+    },
+    {
+      "line": 4,
+      "mad200ms": 2.456
+    },
+    {
+      "line": 5,
+      "mad200ms": 95.671
+    },
+    {
+      "line": 6,
+      "mad200ms": 5.144
+    },
+    {
+      "line": 7,
+      "mad200ms": 9.794
+    },
+    {
+      "line": 8,
+      "mad200ms": 1.584
+    },
+    {
+      "line": 9,
+      "mad200ms": 5.633
+    },
+    {
+      "line": 10,
+      "mad200ms": 2.228
+    },
+    {
+      "line": 11,
+      "mad200ms": 4.226
+    },
+    {
+      "line": 12,
+      "mad200ms": 3.725
+    },
+    {
+      "line": 13,
+      "mad200ms": 3.467
+    },
+    {
+      "line": 14,
+      "mad200ms": 1.936
+    },
+    {
+      "line": 15,
+      "mad200ms": 1.575
+    },
+    {
+      "line": 16,
+      "mad200ms": 1.668
+    }
+  ],
+  "honestGates": {
+    "automatedMediaAndOcrGate": "PASS",
+    "staticSheetAndEncodedFrameVisualInspection": "PASS_VIEWED_BY_AGENT",
+    "humanDynamicWatchAndListeningApproval": "PENDING_USER_REVIEW"
+  }
+}

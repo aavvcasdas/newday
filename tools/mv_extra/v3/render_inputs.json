@@ -1,0 +1,25 @@
+{
+  "version": "v3.0.0",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "totalFrames": 1681,
+  "durationSeconds": 56.03333333333333,
+  "lyricScriptSha256": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+  "sourceAudioPath": "assets/mv-extra/user_reference_audio.m4a",
+  "sourceAudioSha256": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+  "sourceAudioMode": "lossless stream copy (-c:a copy) from user_reference_audio.m4a",
+  "sampleAudioMode": "48kHz PCM slice from tools/mv_extra/cache/source48.wav encoded AAC 192k",
+  "masterOutput": {
+    "path": "番外MV/把回忆拼好给你/成片/把回忆拼好给你_v3完整复刻版.mp4",
+    "sha256": "b8f383ddc682112603b89bdeb2f5f4f67526d3717445e8260620b7730ea8382e",
+    "bytes": 14494167
+  },
+  "sampleOutput": {
+    "path": "番外MV/把回忆拼好给你/样片/v3_副歌烟花与时差_有声试剪.mp4",
+    "sha256": "02da85d71371541dd7df5048742d2087c8e457d8875452dd41c515867f55f12e",
+    "bytes": 5552036,
+    "startFrame": 865,
+    "endFrame": 1338
+  }
+}

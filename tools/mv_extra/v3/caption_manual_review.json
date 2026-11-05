@@ -1,0 +1,15 @@
+{
+  "masterPath": "番外MV/把回忆拼好给你/成片/把回忆拼好给你_v3完整复刻版.mp4",
+  "masterSha256": "b8f383ddc682112603b89bdeb2f5f4f67526d3717445e8260620b7730ea8382e",
+  "items": [
+    {
+      "line": 4,
+      "time": 13.55,
+      "expected": "眼睛里看到的都是广袤无垠的大海",
+      "rawOcr": "眼睛里看到的都是广无垠的大海",
+      "reason": "Character '袤' (U+88A4) is out-of-vocabulary in RapidOCR's bundled PP-OCR character dictionary; visually verified on actual encoded 1080p frame caption_04.jpg via read_file (both upper stamp tile '袤' and bottom caption band '广袤无垠的大海' are rendered crisply with zero missing strokes).",
+      "encodedFrameSha256": "3531fe72b56581ebe850dc5710eaec9e438e3fdc20ca509457f07f24ff8d8600",
+      "passed": true
+    }
+  ]
+}
