@@ -1,109 +1,75 @@
-# 通用单集生产引擎（tools/engine）
+# 通用单集生产引擎
 
-先读 `agent.md`。不读不写。
+先读 `agent.md`。当前默认是**稳定镜头＋轻呼吸/可关闭待机＋明确语义事件**，不是持续摇相机/摇人物。
+旧Day0–Day10独立renderer不改；不为历史片洗绿或重渲。Day12仍是“回归/@豆包/米饭与大饼”25行稿，非山姆护照稿。
 
-跨集声明式动画管线：**引擎与单集数据彻底分离**。Day11 起每集只写一份
-`tools/dayN制作/episode.spec.mjs`（纯数据声明），由本引擎统一驱动渲染；
-Day0–Day10 历史单集与旧渲染器全部冻结、不受影响。
+## 当前实现
 
-## 模块地图
-
-| 文件 | 职责 |
+| 模块 | 职责 |
 |---|---|
-| `room_base.mjs` | 画布/字体/ffmpeg 解析、海底基础房间（舷窗 (148,236,r=77)、书架、绿植、地毯锚点）、清晰文本、前景桌案（下沿 ≤600） |
-| `prop_registry.mjs` | 跨集道具注册表：汇总 `cue_props_engine` 通用道具 + Day10 米缸/对照板原型 + 立牌/通知板/名牌/折页/空碗；每件声明 `extent.bottom` 供越界校验 |
-| `opener_director.mjs` | 黄金前 3 秒导演：三拍运镜（1.42→1.30→1.15→1.21）、双人反差硬校验、头顶外侧身份铭牌、双色追光、顶部钩子横幅（0–2.8s）、词点落章印章 |
-| `scene_compositor.mjs` | 严格五层合成：L0 远景海底房 → L1 追光/后景承重 → L2 校准角色 → L3 前景交互（≤600）→ L4 屏幕 HUD（横幅/角标/字幕） |
-| `crowd_and_density.mjs` | 开场第 0 帧同屏上限（静态道具 ≤1、铭牌 ≥0.55s、戳章不与首帧道具叠）+ 每镜词点接触与姿态/步态校验 |
-| `interaction_stage.mjs` | 引擎层词点接触：争抢、展开、敲碗、石沉落桌、划线、交接；`drop_bonk`/`slap_deflect` 仍交给共享模块 |
-| `schema_validator.mjs` | spec 强校验：未校准姿态、同姿/双 idle 罚站、姿态变化晚于 1.10s、道具下沿越界、横幅阿拉伯数字、主交互缺配套物、开场超员、整镜无词点互动，渲染前直接抛错 |
-| `render_episode.mjs` | 1920×1080@30 生产渲染器。只接受 `measured=true` 且 SHA256 匹配的实测轴；`TITLE_LEN=0`；末句后 0.24s 结束；CLI 兼容 gate.py |
-| `export_vertical.mjs` | 一源双端竖屏导出：同一场景状态在 1080×1920（9:16）/1080×1440（3:4）原生重排（顶部双行大标题 + 相机×1.38 主舞台 + 安全区放大字幕），禁止对横屏成片像素裁剪 |
-| `engine.test.mjs` | 引擎单元测试（`node --test tools/engine/engine.test.mjs`） |
+| `camera_plan.mjs` | 七种景别、固定默认、最多一次显式push（推/拉/平移）；小数坐标、不取整、不叠正弦；完成后锁终点 |
+| `render_episode.mjs` | Canvas逐帧绘制、ffmpeg编码；不使用zoompan。已删两层慢晃；开场也不自动三段推拉。待机不再每0.2秒重置全身骨骼，显式走位保留连续步态 |
+| `schema_validator.mjs` | 注册姿态、接触资格、道具边界、单一主运镜、覆盖、词点和当前台词哈希校验 |
+| `director_contract.mjs` | directorVersion=1逐镜字段/事件/连续性/结果停留；允许稳定反应镜和道具特写，不为密度硬塞无关接触 |
+| `check_storyboard.mjs` | 仅规划结构检查；不造时间轴。输出measured=false/productionReady=false、缺失素材和阻塞项 |
+| `actor_contacts.mjs`（在互动元素） | 视觉姿态与接触校准分开；只加载本集需要的素材；缺图报错，不换脸、不回退假图 |
+| `room_base.mjs / scene_compositor.mjs` | 海底空间、原生1920×1080/30fps、逻辑1280×720；字幕/角标在固定屏幕坐标 |
+| `prop_registry.mjs / interaction_stage.mjs` | 已注册道具及现有交互实现，不把计划中的翻纸/按纸说成已完成动画 |
+| `opener_director.mjs` | 仍提供横幅/铭牌/印章等；其旧openerCamera仅供历史显式调用，不是当前renderer默认相机 |
 
-配套（引擎之外、门禁之内）：
-
-- `tools/音频/align_voice.py` — ASR 词轴 + RMS 边界 → 实测轴/字幕轴（通用化，不再逐集硬编码词序号映射）；
-- `tools/音频/mix_episode_bgm.py` — 快起 BGM（0.06s）+ 开场/词点瞬态 SFX 独立 stem；成片=干声+stem，减法恢复人声相关 >0.999、视频流哈希不变；
-- `tools/验收/check_opener_visual.py` — 前 60 帧防枯燥门禁（运动量/上半屏非空/亮度占比 ≥18%/首秒听觉），gate.py 对 day≥11 或 `use_unified_engine:true` 的配置在 final 阶段自动追加；
-- `tools/init_episode.py` — 新集脚手架（已存在集数拒绝覆盖）。
-
-## episode.spec.mjs 字段速查
-
-```js
-export default {
-  day: 11, title: '本集标题', speaker: '本鲸',
-  opener: {
-    badge: '工位告急',                                  // 横幅上方小徽标（可空）
-    headlinePrefix: '新来的AI学徒，把老监工',           // 横幅前半（深色）
-    headlineHighlight: '架空了？！',                     // 横幅后半（朱砂红高亮）
-    stampText: '已代管！', stampWord: { line: 1, char: '架' }, stampAt: [640, 520],
-    actorA, actorB,                                     // 第0帧反差双人（见下）
-    rolePlates: ['本鲸 · 原监工', '笨鱼 · 代管中'],      // 头部外侧身份铭牌
-    foregroundProps: [{ propId: 'name_plate', x: 640, y: 500, scale: 1 }],
-  },
-  verticalTitle: ['新来的AI学徒，把老监工', '架空了？！'], // 竖屏顶部双行大字
-  shots: [{
-    id: 'C01', fromLine: 1, toLine: 3, mood: 'work_cool',
-    actors: [actorA, actorB],
-    interactions: [{ verb: 'drop_bonk', propId: 'sesame_flatbread',
-                     wordLine: 2, wordChar: '饼', land: [565, 512], scale: 0.7, actor: 0 }],
-    companionProps: [{ propId: 'empty_bowl', x: 760, y: 530, scale: 1 }],
-  }],
-};
-```
-
-角色声明：`{ pose, poses: [{at: 秒} 或 {line: 行}], x, y, u, flip, walk: {from,to,start,duration} }`。
-姿态只能用已校准 8 种：`idle / point / shock / confident_hips / think / eat / playful_fists / fatfish_working`；
-开场 actorA/actorB 不得同姿、不得双 `idle`，且须声明 0.65–1.10s 内的一次姿态变化。
-每镜有 `interactions` 时必须至少一件 `companionProps`（反应特写可写 `allowNoCompanion: true`）；
-同时每镜必须有词点锁定接触（`wordLine` + 单字 `wordChar`）以及姿态变化或 `walk` 步态，禁止整镜站桩。
-所有前景道具下沿必须 ≤600（逻辑坐标），横幅文案禁止阿拉伯数字。
-开场第 0 帧：双人 + 顶部横幅之外，静态道具最多 1 件；`rolePlates` 默认 0.85s 入场（`platesAt` 不得 <0.55）；配套物用 `fromLine` 或 `enterAt>=0.9` 错开；戳章词在第 1 行时不得再放第 0 帧道具。
-可用道具与动词以 `prop_registry.mjs` / `schema_validator.mjs` 为准。
-共享模块动词：drop_bonk / slap_deflect。引擎层动词：tug_grab / knock_bowl / unroll_scroll / sink_drop / mark_strike / handoff（后三类及带 `at` 的展开/敲碗不改 `cue_props_engine.mjs`）。
-
-## Day11+ 标准命令流（一集全流程）
+## 环境与检查
 
 ```bash
-# 0) 环境（沙盒）：/tmp/node_render 内含 @napi-rs/canvas 与 ffmpeg 安装器
-export FFMPEG=/tmp/node_render/node_modules/@ffmpeg-installer/linux-x64/ffmpeg
-export FFPROBE=/tmp/node_render/node_modules/@ffprobe-installer/linux-x64/ffprobe
-
-# 1) 初始化（已存在集数会拒绝覆盖）
-python3 tools/init_episode.py --day 11 --title 工位告急
-
-# 2) 填 Day11/Day11配音台词.txt，过文案门禁
-python3 tools/gate.py --day 11 --stage script
-
-# 3) 导入指定配音（原文件不改），ASR 词轴 + RMS 生成实测轴
-python3 tools/音频/align_voice.py --voice Day11/配音/Day11配音.wav \
-  --script Day11/Day11配音台词.txt --words <ASR词级JSON> \
-  --out tools/day11制作/voice_alignment.json --subs-out tools/day11制作/subtitle_timing.json
-python3 tools/gate.py --day 11 --stage audio
-
-# 4) 填 tools/day11制作/episode.spec.mjs，过渲染前门禁（红线+单测+渲染器自检）
-python3 tools/gate.py --day 11 --stage pre-render
-
-# 5) 干声母版（B站 16:9 归档与终验对象）
-node tools/day11制作/render_day11.mjs --voice Day11/配音/Day11配音.wav \
-  --alignment tools/day11制作/voice_alignment.json \
-  --subtitle-file tools/day11制作/subtitle_timing.json \
-  --out Day11/成片/Day11_配音对齐版.mp4
-
-# 6) BGM+SFX 正式成片（独立 stem + 相关性自检；词点音效用 --events-json 声明）
-python3 tools/音频/mix_episode_bgm.py --base Day11/成片/Day11_配音对齐版.mp4 \
-  --voice Day11/配音/Day11配音.wav --alignment tools/day11制作/voice_alignment.json \
-  --output Day11/成片/Day11_配音BGM版.mp4 \
-  --stem Day11/配音/Day11_伴奏含音效_stem.flac \
-  --report tools/day11制作/BGM混音_验收.json
-
-# 7) Day11 不导出 9:16（舞台不适配，会裁掉人和桌子）。封面用代码出 3:4 与 4:3：
-node tools/day11制作/make_day11_cover.mjs
-
-# 8) 四阶段总门禁（含新增开场视觉体检）
-python3 tools/gate.py --day 11 --stage final
+npm ci --prefix tools/engine
+node --test tools/engine/*.test.mjs
+node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
+python3 -m unittest discover -s tools/tests -v
+python3 tools/gate.py --day 12 --stage script
 ```
 
-注意：第 5 步干声版只作基片与终验对象，正式交付是第 6 步 BGM 成片（agent.md 第 22 条）；
-Day11 的 9:16 竖屏版已停，不替代母版，也不再作为交付物。自动检查不替代人工动态观影。
+`@napi-rs/canvas`版本和锁文件在本目录，`node_modules`不入库。脚本门禁发现Day12+有spec时会追加导演结构检查并记录spec哈希；需要先装依赖。
+这些检查不要求音源/位图，但**不代表**媒体门禁、动态观影或手掌素材校准通过。合成图只用于单测接口，不当角色素材或交付预览。
+
+## 稳定镜头与待机
+
+```js
+{
+  framing: 'medium_left', // wide / two_shot / medium_left/right / close_left/right / insert_center
+  camera: { cx: 470 },    // 可选，覆盖固定预设；不是另一层运动
+  push: { line: 3, duration: 0.6, z: 1.4 }, // 可选，一次运动，按实际cue绑定起点，结束后保持
+  actors: [{ pose: 'think', x: 470, y: 600, idleMotion: 0 }]
+}
+```
+
+- 不写push就是固定。旧`pushes`最多一项兼容，不得与push并存，禁止多次主运镜叠加。
+- `livingBody`默认dx=0，dy不超过±1.2逻辑像素、lean不超过±0.008、squash不超过±0.08；`idleMotion:0`全部为零。
+- `lifeAnim`待机返回空骨骼，不按离散节拍抖头/身体/头发/尾巴；`plan.anim`显式动画不被覆盖，walk仍会移动角色并驱动步态。
+- 相机移动与呼吸不算剧情事件，不能用“半秒必须位移两像素”来验收人物表演。
+
+## 姿态、动作、接触不是一回事
+
+- `tools/day3制作/whale_girl_src/whale_poses.mjs`登记41种既有视觉姿态。新引擎可加载注册图作视觉表演，但当前轻量工作区未同步位图；要真正渲染必须恢复原获准素材，不能随意生图。
+- 手/头/指尖接触仍只允许 `CALIBRATION` 的8种姿态：idle/point/shock/confident_hips/think/eat/playful_fists/fatfish_working。
+- 使用未校准视觉姿态参与drop_bonk/slap_deflect/tug_grab/knock_bowl/unroll_scroll/handoff会在校验期失败；姿态时间线也检查，不只看起始姿态。
+- `video-fx`与`legacy_actions.mjs`的28个旧语义动作是另一套执行系统。**本轮没有把28动作全部接入**；向统一spec写`actor.action`会明确拒绝，不静默冒充已支持。更多姿态不是更多接触能力。
+
+## 导演规范与九镜入口
+
+新spec显式写 `directorVersion:1`。先写音画双栏，再写direction：focus/entry/action/trigger/wordLine/wordChar/result/resultLine/resultChar/settleSeconds/holdSeconds/reaction/exit/transition/continuity.in,out。
+每镜有可见事件（调度/道具/反应/接触），连续镜头景别、中心、人物排列不能全部相同。接触类必须有interactions；道具类要有显式入场/交互。文字字段不是视觉合格证明。
+普通结果留至少0.35秒，末镜至少0.6秒；Day12规划0.4/0.75秒。正式绑定词级时间后才验证实际驻留，缺词时不把句首回退伪装成实测。停留可在句内完成，不擅改音源或0.24秒既有尾部口径。
+
+当前导演Skill：`.claude/skills/day-series-director/SKILL.md`。
+当前实例：`Day12/Day12分镜_导演版.md`、`tools/day12制作/episode.spec.mjs`。
+当前spec为`status=planning/measured=false`，生产renderer会拒绝planning。C05拉纸、C07翻纸、C08按纸/推纸/圈记仍待素材/接触或连续性切镜审核；不是全片已实现。
+旧无directorVersion的spec保留旧密度检查以免静默放宽历史记录；旧文件没有被批量改写，但使用修复后的统一renderer会采用稳定的默认相机。
+
+## 后续制作（本轮未执行）
+
+1. 指定音源到位：原文件不改，记录SHA256；ASR词级时间＋RMS、字幕对齐，不用SRT/字数伪造词轴。
+2. 依据真实词时重排动作/停留；校准所需姿态与手掌/纸边接触。完成资产/接触审核与实测绑定前不移除planning；审核后须显式status=ready、measured=true，renderer仍核验实际输入而不只相信标志。
+3. 优先C01开场、C03错误、C07纠偏、C09结尾四段有声试剪，抽接触前/当/后与反应/停留结束帧并看连续动作。
+4. 方向确认后推广整集；全片解码/原速音轨/字幕/遮挡与四阶段门禁；BGM按既有混音流程另验。
+
+正式命令仍为 `node tools/engine/render_episode.mjs --spec <spec> --voice <wav> --alignment <实测json> --subtitle-file <实测字幕json> --out <mp4>`。
+没有上述输入时，输出导演计划和阻塞清单，不给假成片，不自动导出9:16，不自动发布平台内容。

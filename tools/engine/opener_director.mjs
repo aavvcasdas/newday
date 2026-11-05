@@ -1,5 +1,6 @@
 // opener_director.mjs — 黄金前 3 秒留存导演模块（通用引擎核心）
-// 任何走通用引擎的新集，首镜自动套用三拍运镜 + 双人反差 + 顶部钩子横幅
+// 三拍相机函数仅保留给历史显式调用；通用renderer现走camera_plan默认固定机位。
+// 本模块仍提供双人反差 + 顶部钩子横幅
 // + 双色追光 + 前景印章。不依赖人工逐集手写，写错在校验期直接抛错。
 import { W, H, clamp01, mix, smooth, easeOutBack, seg, drawText, drawOutlinedText, CORE } from './room_base.mjs';
 
@@ -17,7 +18,7 @@ const KEYS = [
   { t: 3.2, z: 1.21, cx: 640, cy: 362 },
 ];
 
-/** 三拍运镜：近景起幅 -> 急拉落关系 -> 叙事微推。stampTime 触发单次 <=5px 阻尼微震。 */
+/** 历史独立三拍相机（非renderer默认）：近景起幅 -> 急拉落关系 -> 叙事微推。stampTime 触发单次 <=5px 阻尼微震。 */
 export function openerCamera(t, { stampTime = null, end = OPENER_END } = {}) {
   const keys = KEYS.map((k) => (k.t === 3.2 ? { ...k, t: Math.max(1.7, end) } : k));
   let a = keys[0]; let b = keys[keys.length - 1];

@@ -11,3 +11,8 @@
 ## 用户交付偏好：每次改完推送
 
 后续每次完成有文件修改的任务，检查后提交并推送到本会话固定分支 `arena/d4e2b5da-newday`：`git push origin arena/d4e2b5da-newday`，报告实际提交号/链接。不得只改本地却说已经推送；失败要明确报告。用户未要求时不自动合并PR、不发布平台评论或视频。
+
+## 导演与稳定画面
+
+用户提到画面抖动、站桩、镜头重复或重做视频时，先读 `.claude/skills/day-series-director/SKILL.md`。按当前口播写音画双栏/逐镜卡，再更新directorVersion=1的spec；默认固定机位、idleMotion可关闭，不用晃动代替事件。视觉姿态与接触校准分开，不能冒称28个历史动作已全部接入。
+Day12当前导演计划为 `Day12/Day12分镜_导演版.md` 和 `tools/day12制作/episode.spec.mjs`（planning/measured=false）；音源/素材/接触未齐，不声称已试剪或渲出成片。

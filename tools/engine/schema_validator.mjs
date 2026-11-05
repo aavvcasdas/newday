@@ -1,8 +1,11 @@
 // schema_validator.mjs — episode.spec.mjs 声明式配置强校验
 // 在渲染前拦截：缺失交互、同姿罚站、越界坐标、未知道具/动词、违规文案。
-import { CALIBRATION } from '../互动元素/actor_contacts.mjs';
+import { CALIBRATION, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
 import { PROP_REGISTRY, propBottom } from './prop_registry.mjs';
 import { validateOpenerActors } from './opener_director.mjs';
+import { validateCameraPlan } from './camera_plan.mjs';
+import { validateDirection, validateShotContrast } from './director_contract.mjs';
+import { createHash } from 'node:crypto';
 import { assertOpenerUncrowded, assertShotDensity } from './crowd_and_density.mjs';
 
 export const CALIBRATED_POSES = Object.freeze(Object.keys(CALIBRATION));
@@ -19,15 +22,18 @@ function checkHookText(label, s) {
 }
 
 function posesOf(actor) {
-  const list = [actor.pose, ...((actor.poses || []).map((p) => p.pose)), ...((actor.poseChanges || []).map((p) => p.pose))].filter(Boolean);
+  const list = [actor.pose || 'idle', ...((actor.poses || []).map((p) => p.pose)), ...((actor.poseChanges || []).map((p) => p.pose))].filter(Boolean);
   return list;
 }
 
-function validateActor(actor, where) {
+export function validateActor(actor, where) {
   if (!actor || typeof actor !== 'object') throw new Error(`${where} 角色配置缺失`);
   for (const pose of posesOf(actor)) {
-    if (!CALIBRATED_POSES.includes(pose)) throw new Error(`${where} 使用未校准姿态 ${pose}（可用：${CALIBRATED_POSES.join(', ')}）`);
+    if (!VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
   }
+  if (actor.action != null) throw new Error(`${where} action 尚未接入统一引擎；28个旧动作不能冒充可执行的姿态`);
+  if (actor.idleMotion != null && (!Number.isFinite(actor.idleMotion) || actor.idleMotion < 0 || actor.idleMotion > 1)) throw new Error(`${where} idleMotion 必须在0..1`);
+  if (actor.walk && (![actor.walk.from, actor.walk.to, actor.walk.duration ?? 1].every(Number.isFinite) || (actor.walk.duration ?? 1) <= 0)) throw new Error(`${where} walk 位置须为有限数、duration须为正数`);
   if (!Number.isFinite(actor.x) || !Number.isFinite(actor.y)) throw new Error(`${where} 角色坐标 x/y 必须为有限数`);
   if (actor.y > 640 || actor.y < 420) throw new Error(`${where} 角色脚位 y=${actor.y} 越界（应在 420..640）`);
 }
@@ -46,6 +52,15 @@ function validatePropRef(ref, where) {
  */
 export function validateSpec(spec, opts = {}) {
   const cueCount = opts.cueCount ?? null;
+  if (spec?.directorVersion != null && spec.directorVersion !== 1) throw new Error('未知directorVersion');
+  if (spec?.directorVersion === 1) {
+    if (!['planning', 'ready'].includes(spec.status)) throw new Error('导演spec须显式声明planning或ready状态');
+    if (!/^[a-f0-9]{64}$/.test(spec.sourceScriptSha256 || '')) throw new Error('导演spec缺当前台词SHA256');
+  }
+  if (spec?.sourceScriptSha256 && opts.cues) {
+    const hash = createHash('sha256').update(opts.cues.map((c) => c.text).join('\n') + '\n').digest('hex');
+    if (hash !== spec.sourceScriptSha256) throw new Error('分镜台词SHA256与当前口播不匹配，禁止套旧稿');
+  }
   if (!spec || typeof spec !== 'object') throw new Error('spec 必须为对象');
   if (!Number.isInteger(spec.day) || spec.day < 1) throw new Error('spec.day 必须为正整数');
   const opener = spec.opener;
@@ -57,7 +72,7 @@ export function validateSpec(spec, opts = {}) {
   if (!opener.actorA || !opener.actorB) throw new Error('opener.actorA / opener.actorB 缺失：开场须声明双人反差');
   validateActor(opener.actorA, 'opener.actorA');
   validateActor(opener.actorB, 'opener.actorB');
-  validateOpenerActors([opener.actorA, opener.actorB]);
+  validateOpenerActors([opener.actorA, opener.actorB], { requireChange: spec.directorVersion !== 1 });
   for (const [i, p] of (opener.foregroundProps || []).entries()) validatePropRef(p, `opener.foregroundProps[${i}]`);
   assertOpenerUncrowded(spec);
   if (opener.stampWord) {
@@ -72,6 +87,11 @@ export function validateSpec(spec, opts = {}) {
     ids.add(shot.id);
     if (!Number.isInteger(shot.fromLine) || !Number.isInteger(shot.toLine) || shot.fromLine > shot.toLine) throw new Error(`${where} fromLine/toLine 无效`);
     if (cueCount != null && (shot.fromLine < 1 || shot.toLine > cueCount)) throw new Error(`${where} 行号超出台词范围`);
+    validateCameraPlan(shot);
+    if (spec.directorVersion === 1) {
+      validateDirection(shot, { cues: opts.cues, final: i === spec.shots.length - 1, requireWordTimes: opts.requireWordTimes });
+      if (i > 0) validateShotContrast(spec.shots[i - 1], shot);
+    }
     const actors = shot.actors || shot.actorsPlan;
     if (!Array.isArray(actors) || !actors.length) throw new Error(`${where} 缺少 actors 声明`);
     actors.forEach((a, j) => validateActor(a, `${where}.actors[${j}]`));
@@ -79,6 +99,17 @@ export function validateSpec(spec, opts = {}) {
       throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态`);
     }
     for (const [j, it] of (shot.interactions || []).entries()) {
+      const contacts = new Set(['drop_bonk', 'slap_deflect', 'tug_grab', 'knock_bowl', 'unroll_scroll', 'handoff']);
+      if (contacts.has(it.verb)) {
+        const defaultActor = ['slap_deflect', 'tug_grab', 'unroll_scroll', 'handoff'].includes(it.verb) ? 1 : 0;
+        const used = new Set([it.actor ?? defaultActor]);
+        if (it.verb === 'tug_grab') { used.add(0); used.add(1); }
+        if (it.verb === 'handoff') used.add(it.toActor);
+        for (const index of used) {
+          if (!Number.isInteger(index) || !actors[index]) throw new Error(`${where} 接触角色索引无效`);
+          if (!posesOf(actors[index]).every((pose) => CALIBRATED_POSES.includes(pose))) throw new Error(`${where} 接触动作需要校准姿态，不能用未校准的视觉姿态`);
+        }
+      }
       if (!VERBS.has(it.verb)) throw new Error(`${where}.interactions[${j}] 未实现动词 ${it.verb}`);
       if (!PROP_REGISTRY[it.propId]) throw new Error(`${where}.interactions[${j}] 未知道具 ${it.propId}`);
       if (it.wordChar != null && (typeof it.wordChar !== 'string' || it.wordChar.length !== 1)) throw new Error(`${where}.interactions[${j}] wordChar 须为单字`);
@@ -91,13 +122,14 @@ export function validateSpec(spec, opts = {}) {
         const lineNo = it.wordLine ?? shot.fromLine;
         const text = opts.cues[lineNo - 1]?.text || '';
         if (it.wordChar && !text.includes(it.wordChar)) throw new Error(`${where}.interactions[${j}] 词点「${it.wordChar}」不在第 ${lineNo} 行`);
+        if (opts.requireWordTimes && !resolveWordTime(opts.cues, lineNo, it.wordChar).measured) throw new Error(`${where} 缺交互词级实测时间，不能按句首伪造词点`);
       }
     }
     for (const [j, p] of (shot.companionProps || []).entries()) validatePropRef(p, `${where}.companionProps[${j}]`);
     if ((shot.interactions || []).length && !(shot.companionProps || []).length && !shot.allowNoCompanion) {
       throw new Error(`${where} 有主交互时须至少一件配套物（companionProps），反应特写可声明 allowNoCompanion`);
     }
-    assertShotDensity(shot, where);
+    if (spec.directorVersion !== 1) assertShotDensity(shot, where);
   });
   if (spec.shots[0].fromLine !== 1) throw new Error('首镜 fromLine 必须为 1（第 0 帧直接进入正片）');
   if (cueCount != null) {

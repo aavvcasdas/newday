@@ -64,3 +64,9 @@ Day9动作自检隔离人物层：不把电视、字幕、背景或相机变动�
 ### 独立版本与共享场景
 
 `gate.py --report <路径>`可分开保存不同试样报告，不覆盖正式基线记录。画面红线扫描已包含`tools/场景/*.mjs`共享生产模块（排除`.test.mjs`）；仅写import而不扫被引入模块会漏防，因此共享场景也必须检查。Day9海底三镜用独立配置，只适用pre-render；分段音源拼接用`verify_sea_preview.py`，不符合通用连续整集的final假设。
+
+
+## 导演规划结构检查（本轮新增）
+
+Day12起若存在 `tools/dayN制作/episode.spec.mjs`，script阶段在文本剧情检查后追加 `tools/engine/check_storyboard.mjs` 并记录spec哈希。先 `npm ci --prefix tools/engine`。无指定音源时只能返回规划结构结论，productionReady=false；不能据此报audio/pre-render/final通过。
+新spec使用directorVersion=1，固定相机合法、每镜最多一次主运镜，稳定反应/道具特写不强塞无关接触；结果驻留必须在实测词时到位后再查。planning不可生产渲染；缺词级时间不把句首回退冒充实测。

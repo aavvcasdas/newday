@@ -10,12 +10,14 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createCanvas, loadImage, resolveFfmpeg, W, H, FPS, mix, smooth, seg } from './room_base.mjs';
 import { validateSpec, resolveWordTime } from './schema_validator.mjs';
-import { openerCamera, drawRolePlates, drawStamp, OPENER_END, PLATES_DEFAULT_AT } from './opener_director.mjs';
+import { drawRolePlates, drawStamp, OPENER_END, PLATES_DEFAULT_AT } from './opener_director.mjs';
 import { drawShotInteractions, BODY_VERBS } from './interaction_stage.mjs';
 import { composeScene, drawComplianceCorner, drawHudBanner } from './scene_compositor.mjs';
 import { getProp, assertForegroundWithinStage } from './prop_registry.mjs';
 import { loadContactActors, actorAnchors, drawContactActor } from '../互动元素/actor_contacts.mjs';
 import { CORE } from '../互动元素/cue_props_engine.mjs';
+import { cameraFor } from './camera_plan.mjs';
+export { ambientCamera, cameraFor, CAMERA_PRESETS } from './camera_plan.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
 
 const { reseedBoil } = CORE;
@@ -25,43 +27,24 @@ export const TITLE_LEN = 0;
 function argOf(argv, k) { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : null; }
 export function gaitAnim(t, start, dur) {
   if (t < start || t > start + dur) return {};
-  const phase = Math.floor((t - start) * 10) % 8;
-  const a = Math.sin((phase * Math.PI) / 4);
+  const phase = (t - start) * Math.PI * 2 * 1.25;
+  const envelope = smooth((t - start) / 0.12) * smooth((start + dur - t) / 0.12);
+  const a = Math.sin(phase) * envelope;
   return { bones: { legL: { rot: a * 0.055, dy: -Math.max(0, a) * 10 }, legR: { rot: -a * 0.055, dy: -Math.max(0, -a) * 10 } } };
 }
 
-/** 量化到 8 拍，避免每帧重蒙皮把缓存打穿。头发、尾巴、头随拍摆，不贴假眼睛。 */
-export function lifeAnim(t, seed = 0) {
-  const phase = Math.floor((t + seed) * 5) % 8;
-  const a = Math.sin((phase * Math.PI) / 4);
-  const b = Math.cos((phase * Math.PI) / 4);
-  return {
-    bones: {
-      spine: { rot: a * 0.022 },
-      head: { rot: b * 0.032 },
-      tail: { rot: a * 0.14 },
-      hairL: { rot: b * 0.07 },
-      hairR: { rot: -b * 0.06 },
-    },
-  };
-}
+/** 待机不再每0.2秒切换全身骨骼；保留函数供旧调用者使用。显式动画由 plan.anim 提供。 */
+export function lifeAnim(_t, _seed = 0) { return { bones: {} }; }
 
-/** 外层呼吸、重心左右晃。不进蒙皮缓存，所以可以连续。 */
-export function livingBody(t, seed = 0) {
+/** 仅连续轻呼吸；amount=0 时脚位、倾斜与缩放完全固定。 */
+export function livingBody(t, seed = 0, amount = 1) {
+  if (amount === 0) return { dx: 0, dy: 0, lean: 0, squash: 0 };
   const s = t + seed;
   return {
-    dx: Math.sin(s * 0.85) * 7,
-    dy: Math.sin(s * 2.15) * 8,
-    lean: Math.sin(s * 1.05) * 0.055,
-    squash: Math.sin(s * 2.15) * 0.7,
-  };
-}
-
-export function ambientCamera(t, base) {
-  return {
-    z: base.z + Math.sin(t * 0.42) * 0.05,
-    cx: base.cx + Math.sin(t * 0.31) * 26,
-    cy: base.cy + Math.cos(t * 0.24) * 12,
+    dx: 0,
+    dy: Math.sin(s * 1.6) * 1.2 * amount,
+    lean: Math.sin(s * 0.9) * 0.008 * amount,
+    squash: Math.sin(s * 1.6) * 0.08 * amount,
   };
 }
 
@@ -86,12 +69,12 @@ export function buildShots(spec, cues) {
   return spec.shots.map((s) => ({ ...s, start: cues[s.fromLine - 1].start, end: cues[s.toLine - 1].end }));
 }
 
-export function buildEvents(spec, shots, cues) {
+export function buildEvents(spec, shots, cues, { sourceSha256 = null } = {}) {
   const events = [];
   for (const shot of shots) {
     for (const it of shot.interactions || []) {
       const line = it.wordLine ?? it.line ?? shot.fromLine;
-      const { time } = resolveWordTime(cues, line, it.wordChar || cues[line - 1].text[0]);
+      const { time, measured } = resolveWordTime(cues, line, it.wordChar || cues[line - 1].text[0]);
       const startLine = it.startLine ?? line;
       const contactFrame = Math.round(time * FPS);
       let startFrame = Math.round(cues[Math.max(0, startLine - 1)].start * FPS);
@@ -99,7 +82,7 @@ export function buildEvents(spec, shots, cues) {
       if (startFrame > contactFrame) startFrame = Math.max(0, contactFrame - 6);
       if (endFrame <= contactFrame) endFrame = contactFrame + 8;
       events.push({
-        ...it, shotId: shot.id, measured: true, audio_sha256: 'alignment',
+        ...it, shotId: shot.id, measured, audio_sha256: sourceSha256,
         word_id: `L${String(line).padStart(2, '0')}:${it.wordChar || ''}`,
         startFrame, contactFrame, endFrame,
         params: {
@@ -120,8 +103,9 @@ export function resolveActor(plan, t, line, cues = []) {
   for (const p of plan.poseChanges || []) if (t >= p.at) pose = p.pose;
   let x = plan.x;
   const seed = (plan.x || 0) / 380;
-  const life = lifeAnim(t, seed);
-  let anim = { bones: { ...(plan.anim?.bones || {}), ...life.bones } };
+  // 不注入全身待机骨骼，也不覆盖作者显式指定的动画。
+  let anim = structuredClone(plan.anim || { bones: {} });
+  anim.bones ||= {};
   if (plan.walk) {
     const start = plan.walk.start != null
       ? plan.walk.start
@@ -130,10 +114,10 @@ export function resolveActor(plan, t, line, cues = []) {
     const p = smooth((t - start) / duration);
     x = mix(plan.walk.from, plan.walk.to, p);
     if (t >= start && t <= start + duration) {
-      anim = { bones: { ...anim.bones, ...gaitAnim(t, start, duration).bones } };
+      anim = { ...anim, bones: { ...anim.bones, ...gaitAnim(t, start, duration).bones } };
     }
   }
-  const body = livingBody(t, seed);
+  const body = livingBody(t, seed, plan.idleMotion ?? 1);
   return {
     pose, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: plan.u ?? 38,
     flip: !!plan.flip, lean: (plan.lean ?? 0) + body.lean, squash: body.squash, anim,
@@ -149,13 +133,17 @@ function holdFrame(frame, events, shotId) {
 }
 
 export async function createEpisodeRenderer({ spec, alignment, subdata }) {
-  validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues });
+  if (spec.status === 'planning') throw new Error('导演分镜仍是 planning：先完成资产/动作可行性审核，再绑定指定音源；不能把规划当成成片');
+  if (spec.directorVersion === 1 && (spec.status !== 'ready' || spec.measured !== true)) throw new Error('导演spec未完成ready审核和实测绑定');
+  validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues, requireWordTimes: true });
   const cues = alignment.cues;
   const shots = buildShots(spec, cues);
-  const events = buildEvents(spec, shots, cues);
+  const events = buildEvents(spec, shots, cues, { sourceSha256: alignment.source_sha256 });
   const duration = cues[cues.length - 1].end + 0.24;
   const frames = Math.ceil(duration * FPS);
-  await loadContactActors({ createCanvas, loadImage });
+  const actorPlans = [spec.opener.actorA, spec.opener.actorB, ...spec.shots.flatMap((s) => s.actors || s.actorsPlan || [])];
+  const poses = [...new Set(actorPlans.flatMap((a) => [a.pose || 'idle', ...(a.poses || []).map((p) => p.pose), ...(a.poseChanges || []).map((p) => p.pose)]))];
+  await loadContactActors({ createCanvas, loadImage, poses });
   const sub = createDay2Subtitle({ fontOf: (n, w) => `${w} ${n}px NotoSansSC`, measureCtx: createCanvas(1, 1).getContext('2d') });
   const stamp = spec.opener.stampWord
     ? { time: resolveWordTime(cues, spec.opener.stampWord.line, spec.opener.stampWord.char).time, text: spec.opener.stampText, at: spec.opener.stampAt || [640, 520] }
@@ -170,39 +158,6 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
       ? [spec.opener.actorA, spec.opener.actorB]
       : (shot.actors || shot.actorsPlan || [spec.opener.actorA, spec.opener.actorB]);
     return plans.map((p) => resolveActor(p, t, line, cues));
-  }
-
-  function swayCam(cam, t) {
-    return {
-      z: cam.z + Math.sin(t * 0.8) * 0.018,
-      cx: cam.cx + Math.sin(t * 0.62) * 12,
-      cy: cam.cy + Math.cos(t * 0.5) * 7,
-      shake: cam.shake,
-    };
-  }
-
-  function cameraFor(shot, t, isOpener) {
-    if (isOpener) return swayCam(openerCamera(t, { stampTime: stamp?.time, end: Math.min(shot.end, OPENER_END) }), t);
-    const base = ambientCamera(t, { z: 1.08, cx: 640, cy: 378, ...(shot.camera || {}) });
-    const pushes = shot.pushes || (shot.push ? [shot.push] : []);
-    let cam = base;
-    for (const push of pushes) {
-      const start = push.line ? cues[push.line - 1].start : (push.at ?? shot.start);
-      if (t < start) continue;
-      const p = smooth((t - start) / (push.duration || 0.4));
-      cam = {
-        z: mix(cam.z, push.z ?? cam.z + 0.12, p),
-        cx: mix(cam.cx, push.cx ?? cam.cx, p),
-        cy: mix(cam.cy, push.cy ?? cam.cy, p),
-      };
-    }
-    // 推完也不锁死：留下慢晃，画面一直在动。
-    return {
-      z: cam.z + Math.sin(t * 0.8) * 0.018,
-      cx: cam.cx + Math.sin(t * 0.62) * 12,
-      cy: cam.cy + Math.cos(t * 0.5) * 7,
-      shake: cam.shake,
-    };
   }
 
   function drawProp(ctx, ref, t, pop = 1) {
@@ -225,7 +180,7 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
     const actors = actorsFor(shot, t, line);
     const anchors = actors.map((a) => { try { return actorAnchors(a); } catch { return null; } });
     const isOpener = shot === shots[0] && rawTime < Math.min(shot.end, OPENER_END);
-    const cam = cameraFor(shot, rawTime, isOpener);
+    const cam = cameraFor(shot, rawTime, cues);
     const camZ = { ...cam, z: cam.z * zoomMul };
     const driven = new Set(events.filter((e) => e.shotId === shot.id && BODY_VERBS.has(e.verb)).map((e) => e.propId));
     reseedBoil(0);

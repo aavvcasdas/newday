@@ -1,0 +1,11 @@
+{
+  "name": "day-series-engine",
+  "private": true,
+  "scripts": {
+    "test": "node --test *.test.mjs",
+    "check:day12": "node check_storyboard.mjs --spec ../day12制作/episode.spec.mjs --script ../../Day12/Day12配音台词.txt"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "1.1.0"
+  }
+}

@@ -2,6 +2,7 @@
 // These are reviewed palm/finger positions, not the auto-rig's proportional "hand" guesses.
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
+import { POSES } from '../day3制作/whale_girl_src/whale_poses.mjs';
 import {buildRig,drawRigged,skinMatrices,BONE_ORDER} from '../day3制作/whale_girl_src/whale_rig.mjs';
 const DIR=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../day3制作/whale_girl_src');
 export const CALIBRATION={
@@ -14,11 +15,19 @@ export const CALIBRATION={
  playful_fists:{headTop:[425,12],mouth:[435,477],handR:[530,590],handL:[300,590]},
  fatfish_working:{headTop:[425,12],mouth:[438,477],handR:[482,686],handL:[331,681],deskFront:[468,748]}
 };
+export const VISUAL_POSES = Object.freeze(Object.keys(POSES));
 const rigs=new Map(),cache=new Map();let makeCanvas;
-export async function loadContactActors({createCanvas,loadImage}){
+export async function loadContactActors({createCanvas,loadImage,poses=Object.keys(CALIBRATION)}){
  makeCanvas=createCanvas;
- for(const name of Object.keys(CALIBRATION)){
-  const image=await loadImage(path.join(DIR,`whale_${name}.png`));const rig=buildRig(image,{ctxFactory:createCanvas,nx:40,ny:56});
+ for(const name of new Set(poses)){
+  if(!POSES[name])throw Error('Unknown visual pose '+name);
+  if(rigs.has(name))continue;
+  const file=path.join(DIR,POSES[name].file);
+  let image;
+  try{image=await loadImage(file);}catch(cause){throw new Error(`缺少既有角色素材 ${file}；禁止生图换脸或静默回退`,{cause});}
+  const rig=buildRig(image,{ctxFactory:createCanvas,nx:40,ny:56});
+  // 未校准姿态只可作视觉表演，不能凭自动骨架比例推测手掌接触。
+  if(!CALIBRATION[name]){rigs.set(name,rig);continue;}
   // Explicit per-pose arm region; freeze all face pixels and the typing furniture.
   const armIndex=BONE_ORDER.indexOf('armR');
   for(let i=0;i<rig.verts.length;i++){
@@ -45,7 +54,7 @@ function warped(rig,point,anim){
  return [px,py];
 }
 export function actorAnchors(actor){
- const rig=rigs.get(actor.pose);if(!rig)throw Error('Uncalibrated pose '+actor.pose);
+ const rig=rigs.get(actor.pose);if(!rig||!CALIBRATION[actor.pose])throw Error('Uncalibrated contact pose '+actor.pose);
  const h=10.4*(actor.u??38),s=h/rig.h,cx=rig.bbox.x+rig.bbox.w/2,foot=rig.bbox.y+rig.bbox.h,lean=actor.lean??0;
  const squash=actor.squash??0,sx=1+squash*.035,sy=1-squash*.035,dir=actor.flip?-1:1;
  const out={foot:[actor.x,actor.y]};
@@ -61,6 +70,6 @@ export function drawContactActor(ctx,actor){
  ctx.save();ctx.translate(actor.x,actor.y);ctx.scale((actor.flip?-1:1)*(1+(actor.squash??0)*.035),1-(actor.squash??0)*.035);ctx.rotate(actor.lean??0);
  const key=actor.pose+'/'+JSON.stringify(actor.anim||{});let image=cache.get(key);
  if(!image){image=makeCanvas(768,768);drawRigged(image.getContext('2d'),rig,384-cx*600/rig.h,720,1,{spriteH:600,shadow:false,anim:actor.anim||{}});cache.set(key,image);if(cache.size>64)cache.delete(cache.keys().next().value);}
- ctx.drawImage(image,-384*h/600,-720*h/600,768*h/600,768*h/600);ctx.restore();return actorAnchors(actor);
+ ctx.drawImage(image,-384*h/600,-720*h/600,768*h/600,768*h/600);ctx.restore();return CALIBRATION[actor.pose]?actorAnchors(actor):null;
 }
 export function anchorSourceInfo(){return Object.fromEntries([...rigs].map(([name,r])=>[name,{size:[r.w,r.h],bbox:r.bbox,landmarks:CALIBRATION[name]}]));}

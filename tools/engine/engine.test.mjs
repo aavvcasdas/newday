@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { openerCamera, openerBannerState, stampState, validateOpenerActors, TITLE_LEN as OT } from './opener_director.mjs';
 import { validateSpec } from './schema_validator.mjs';
 import { PROP_REGISTRY, propBottom, assertForegroundWithinStage } from './prop_registry.mjs';
-import { TITLE_LEN, buildShots, buildEvents, livingBody, lifeAnim, ambientCamera, resolveActor } from './render_episode.mjs';
+import { TITLE_LEN, buildShots, buildEvents, livingBody, lifeAnim, ambientCamera, cameraFor, CAMERA_PRESETS, resolveActor } from './render_episode.mjs';
 import { VERTICAL_LAYOUTS, verticalTitleLines } from './export_vertical.mjs';
 
 const A = { pose: 'shock', poses: [{ at: 0.8, pose: 'point' }], x: 430, y: 600, u: 40 };
@@ -32,7 +32,7 @@ test('TITLE_LEN=0：第 0 帧直接正片，无独立片头', () => {
   assert.equal(OT, 0);
 });
 
-test('三拍运镜：近景起幅急拉后微推，单调分段正确', () => {
+test('历史独立相机函数保留，非renderer默认；分段数值正确', () => {
   const z = [0, 0.35, 0.7, 1.15, 1.6, 2.4, 3.2].map((t) => openerCamera(t).z);
   assert.ok(Math.abs(z[0] - 1.42) < 1e-9 && Math.abs(z[2] - 1.30) < 1e-9 && Math.abs(z[4] - 1.15) < 1e-9);
   assert.ok(z[1] < z[0] && z[3] < z[2] && z[5] > z[4], `z 序列异常：${z}`);
@@ -108,19 +108,21 @@ test('镜号/词点事件由实测轴帧号生成', () => {
   assert.equal(events[0].word_id, 'L01:诶');
 });
 
-test('人物不全程罚站：呼吸位移和镜头慢晃都会变', () => {
+test('默认镜头稳定；人物只有轻微呼吸；显式动作才产生大位移', () => {
   const a = livingBody(0.2, 0.4);
   const b = livingBody(0.7, 0.4);
-  assert.ok(Math.hypot(a.dx - b.dx, a.dy - b.dy) > 2, '半秒内身体要有可见位移');
-  assert.notEqual(lifeAnim(0.1).bones.tail.rot, lifeAnim(0.5).bones.tail.rot);
-  const c0 = ambientCamera(1, { z: 1.08, cx: 640, cy: 378 });
-  const c1 = ambientCamera(2.2, { z: 1.08, cx: 640, cy: 378 });
-  assert.ok(Math.abs(c0.cx - c1.cx) > 4, '镜头中心要跟着晃');
-  const stood = resolveActor({ pose: 'point', x: 400, y: 600 }, 0.2, 1, []);
-  const later = resolveActor({ pose: 'point', x: 400, y: 600 }, 0.9, 1, []);
-  assert.ok(Math.abs(stood.x - later.x) + Math.abs(stood.y - later.y) > 2);
-  const walked = resolveActor({ pose: 'point', x: 500, y: 600, walk: { from: 300, to: 500, start: 0, duration: 2 } }, 1, 1, []);
-  assert.ok(walked.x > 350 && walked.x < 520);
+  assert.equal(a.dx, 0);
+  assert.ok(Math.hypot(a.dx - b.dx, a.dy - b.dy) < 2);
+  assert.deepEqual(lifeAnim(0.1), lifeAnim(0.5), '待机不切离散全身骨骼');
+  const base = { z: 1.08, cx: 640, cy: 378 };
+  assert.deepEqual(ambientCamera(1, base), ambientCamera(2.2, base));
+  assert.deepEqual(base, { z: 1.08, cx: 640, cy: 378 });
+  const stood = resolveActor({ pose: 'point', x: 400, y: 600, idleMotion: 0 }, 0.2, 1, []);
+  const later = resolveActor({ pose: 'point', x: 400, y: 600, idleMotion: 0 }, 10.9, 1, []);
+  assert.deepEqual(stood, later);
+  const walked = resolveActor({ pose: 'point', x: 500, y: 600, idleMotion: 0, walk: { from: 300, to: 500, start: 0, duration: 2 } }, 1, 1, []);
+  assert.equal(walked.x, 400);
+  assert.equal(walked.y, 600);
 });
 
 test('竖屏布局：双画幅尺寸与安全区正确', () => {

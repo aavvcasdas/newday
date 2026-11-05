@@ -1,6 +1,7 @@
 // crowd_and_density.mjs — 开场同屏上限 + 每镜动作密度（通用引擎，与单集解耦）
 // 第 0 帧只留「双人 + 顶部钩子横幅 + 至多 1 件主道具」。
 // 身份铭牌、戳章、配套物必须分时入场。每镜须有词点接触，并有姿态变化或步态走位。
+// assertShotDensity仅用于无directorVersion的旧spec；新版directorVersion=1走director_contract。
 // 不改 Day0–Day10 渲染器；那些集不走 validateSpec。
 
 export const FRAME0_CUTOFF = 0.35;

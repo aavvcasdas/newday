@@ -14,42 +14,43 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 
 SPEC_TEMPLATE = """// Day{day}《{title}》声明式单集配置（通用引擎驱动，勿手写渲染循环）
-// 姿态只能用已校准的 8 种；开场双人不得同姿/双 idle，姿态变化落在 0.65-1.10s。
+// 视觉姿态与接触校准分层，先写导演表。默认固定镜头、轻待机可关闭；填好前禁止生产渲染。
 const actorA = {{
-  pose: 'shock', poses: [{{ at: 0.8, pose: 'point' }}],
-  x: 430, y: 600, u: 40,
+  pose: 'point', // 按台词规划显式动作，不强塞0.8秒换姿势
+  x: 430, y: 600, u: 40, idleMotion: 0,
 }};
 const actorB = {{
   pose: 'confident_hips',
-  x: 830, y: 600, u: 38,
+  x: 830, y: 600, u: 38, idleMotion: 0,
 }};
 
 export default {{
-  day: {day},
+  day: {day}, directorVersion: 1, status: 'planning', measured: false,
+  sourceScriptSha256: '填入当前TXT的SHA256，改字后必须重排',
   title: '{title}',
   speaker: '本鲸',
   opener: {{
     badge: '先看这里',
     headlinePrefix: '把本集冲突写成大白话，',
     headlineHighlight: '亮出笑点！',
-    stampText: '就这样！',
-    stampWord: {{ line: 1, char: '诶' }},
-    stampAt: [640, 520],
     actorA, actorB,
     rolePlates: ['本鲸 · 当事人', '笨鱼 · 对手戏'],
-    foregroundProps: [
-      {{ propId: 'name_plate', x: 640, y: 520, scale: 1, state: {{ text: '监工位' }} }},
-    ],
+    foregroundProps: [],
   }},
   verticalTitle: ['把本集冲突写成大白话，', '亮出笑点！'],
   shots: [
     {{
-      id: 'C01', fromLine: 1, toLine: 1, mood: 'work_cool',
+      id: 'C01', fromLine: 1, toLine: 1, framing: 'two_shot', mood: 'work_cool',
+      direction: {{
+        kind: 'staging', focus: '待填主视觉', entry: '待填入镜', action: '待填可见事件',
+        trigger: '待填词点', wordLine: 1, wordChar: '填',
+        result: '待填结果', resultLine: 1, resultChar: '填', settleSeconds: 0.3, holdSeconds: 0.75,
+        reaction: '待填反应', exit: '待填出镜', transition: '待填下镜衔接',
+        continuity: {{ in: '待填', out: '待填' }},
+      }},
       actors: [actorA, actorB],
       interactions: [],
-      companionProps: [
-        {{ propId: 'empty_bowl', x: 760, y: 540, scale: 1 }},
-      ],
+      companionProps: [], // 按本集语义选道具，不复制无关碗/名牌
     }},
   ],
 }};
@@ -110,7 +111,7 @@ def main(argv=None):
         'subs': f'tools/day{args.day}制作/subtitle_timing.json',
         'renderer': f'tools/day{args.day}制作/render_day{args.day}.mjs',
         'video': f'Day{args.day}/成片/Day{args.day}_配音对齐版.mp4',
-        'tests': ['tools/engine/engine.test.mjs'],
+        'tests': ['tools/engine/engine.test.mjs', 'tools/engine/director.test.mjs'],
         'rate': 3.35, 'seconds': 60, 'event_cue': 'L01',
         'use_unified_engine': True,
         'note': '通用引擎新集：干声母版过 verify_episode，BGM 成片另由 mix_episode_bgm.py 验收，竖屏版为渠道附加交付物。',

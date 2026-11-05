@@ -6,6 +6,7 @@
 
 ## 本轮：Day12 剧情与人格移植修复
 
+- [九镜导演版与稳定镜头修复](Day12/Day12分镜_导演版.md) · [导演 Skill](.claude/skills/day-series-director/SKILL.md)。
 - [Day12 修复与复现](Day12/README.md) · [待锁文案](Day12/Day12文案.md) · [分镜规划](Day12/Day12方向.md)。
 - 主角仍是大肥鱼/鲸鱼娘，**外形和身份不换，只移植魔丸人格**；追问、拆穿与补救驱动剧情。
 - [剧情 skill](00_运营总览/skills/剧情生成/SKILL.md) · [Agent 创作入口](tools/agent/README.md)。

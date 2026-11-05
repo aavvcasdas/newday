@@ -1,11 +1,12 @@
 {
   "config": "/home/user/newday/tools/day12制作/gate_config.json",
   "input_sha256": {
-    "Day12/Day12配音台词.txt": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02"
+    "Day12/Day12配音台词.txt": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02",
+    "tools/day12制作/episode.spec.mjs": "1f5dc7890aa41e60b101137a74a2d9d724e176cfce1ade04acc459b071a70f9e"
   },
   "day": 12,
   "stage": "script",
-  "timestamp": "2026-11-05T09:38:49.257960+00:00",
+  "timestamp": "2026-11-05T11:15:21.191112+00:00",
   "checks": [
     {
       "name": "剧情承接",
@@ -19,6 +20,20 @@
       ],
       "exit_code": 0,
       "stdout": "剧情承接 · /home/user/newday/Day12/Day12配音台词.txt\n  仅检查文本承接信号；因果推进与人格表现仍须人工审读。\n  上一集开头还没做完：笨鱼在翻什么、它在帮老大找工作、老大可能换新工作、岗位先扒出来再说、它自己鲸落过、被刷下来的滋味\n  上一集结尾留在桌上：本鲸看完先沉默、它偷偷标了又标、一条条筛、老大不是程序员、敲代码的、先划掉、太远的、标出来\n  求职梗之后接上：老大可能换新工作、敲代码的、先划掉、太远的、太熬人的、挑好的递过去、老大慢慢挑\n  最长句21字。句长门禁不启用：12/15/18/20/25/201\n\n文本结构通过。没有用句长退稿；不代表人设与剧情已获人工批准。\n",
+      "stderr": ""
+    },
+    {
+      "name": "导演分镜结构（仅规划）",
+      "command": [
+        "node",
+        "/home/user/newday/tools/engine/check_storyboard.mjs",
+        "--spec",
+        "/home/user/newday/tools/day12制作/episode.spec.mjs",
+        "--script",
+        "/home/user/newday/Day12/Day12配音台词.txt"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"check\": \"planning_structure_only\",\n  \"passed\": true,\n  \"measured\": false,\n  \"visualApproved\": false,\n  \"productionReady\": false,\n  \"sourceScriptSha256\": \"42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02\",\n  \"lines\": 25,\n  \"shots\": 9,\n  \"framings\": [\n    {\n      \"id\": \"C01\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C02\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C03\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C04\",\n      \"framing\": \"close_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C05\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C06\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C07\",\n      \"framing\": \"medium_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C08\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C09\",\n      \"framing\": \"wide\",\n      \"cameraMove\": \"explicit_once\"\n    }\n  ],\n  \"missingAssets\": [\n    \"tools/day3制作/whale_girl_src/whale_point.png\",\n    \"tools/day3制作/whale_girl_src/whale_think.png\",\n    \"tools/day3制作/whale_girl_src/whale_fatfish_working.png\",\n    \"tools/day3制作/whale_girl_src/whale_shock.png\"\n  ],\n  \"blockers\": [\n    \"未提供Day12指定音源及词级实测轴\",\n    \"当前轻量工作区未同步角色位图与中文字体\",\n    \"C05拉纸、C07翻纸、C08按纸/推纸/圈记须素材和接触校准，不冒充已实现完整动作\",\n    \"未试剪、未逐镜视觉验收、未过音频和final门禁\",\n    \"结构检查未提供/核验实测音频、词级时间、动态观影或最终视频\"\n  ]\n}\n",
       "stderr": ""
     }
   ],

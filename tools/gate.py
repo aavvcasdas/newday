@@ -63,6 +63,10 @@ def main():
                     if cfg.get('guest'):
                         cmd += ['--guest', cfg['guest']]
                     ok = run('剧情承接', cmd) and ok
+                    director_spec = ROOT / f'tools/day{args.day}制作/episode.spec.mjs'
+                    if director_spec.is_file():
+                        report['input_sha256'][str(director_spec.relative_to(ROOT))] = hashlib.sha256(director_spec.read_bytes()).hexdigest()
+                        ok = run('导演分镜结构（仅规划）', ['node', ROOT/'tools/engine/check_storyboard.mjs', '--spec', director_spec, '--script', paths['script']]) and ok
                 else:
                     ok=run('文案',[py,ROOT/'tools/剧本/呆萌体检.py','--txt',paths['script'],'--rate',str(cfg.get('rate',3.35)),'--seconds',str(cfg.get('seconds',60))]) and ok
             elif stage=='audio':
