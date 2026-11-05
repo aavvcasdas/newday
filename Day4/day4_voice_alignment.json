@@ -1,0 +1,2231 @@
+{
+  "schema": 1,
+  "kind": "day4_voice_cue_alignment",
+  "engine": "user-provided/final-voice-wav",
+  "synthesis_engine_known": false,
+  "measured": true,
+  "placeholder": false,
+  "source_file": "new鲸鱼MV四版_克隆配音_最终版.wav",
+  "source_sha256": "b172a6bb0e295e97b68273aa709b71b1fb58a7f47221cf7f576cdf82a20e94e7",
+  "source_sample_rate_hz": 40000,
+  "source_duration_seconds": 74.25,
+  "speech_start_seconds": 0.0,
+  "speech_end_seconds": 74.25,
+  "tail_note": "无尾静音",
+  "alignment_method": "句级：20ms RMS 静音缝（-40.0dBFS, >=0.24s）做实测边界；34 句与静音缝的对应用「有声总时长 × 字数占比」作先验跑 DP。环境无中文声学模型，不下沉到词级。",
+  "word_level": false,
+  "char_level": true,
+  "char_level_method": "句内字级：10ms RMS 包络切发声段（句内停顿不分配字），字数按段长比例分配，段内用「等时音节」先验做带状 DP，边界吸附能量谷。非声学识别结果。",
+  "silence_gap_count": 34,
+  "chars_total": 266,
+  "chars_per_second_median": 3.612,
+  "chars_per_second_min": 2.381,
+  "chars_per_second_max": 4.545,
+  "cue_count": 34,
+  "cues": [
+    {
+      "id": "L01",
+      "index": 1,
+      "start": 0.0,
+      "end": 3.85,
+      "duration_seconds": 3.85,
+      "text": "呜……本鲸的米饭，被 MV 吃光了。",
+      "chars": 12,
+      "chars_per_second": 3.117,
+      "boundary_gap": {
+        "start": 3.69,
+        "end": 3.968,
+        "seconds": 0.278
+      },
+      "chars_timed": [
+        {
+          "ch": "呜",
+          "suffix": "……",
+          "start": 0.0,
+          "end": 0.34
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 0.34,
+          "end": 0.69
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 0.69,
+          "end": 1.13
+        },
+        {
+          "ch": "的",
+          "suffix": "",
+          "start": 1.13,
+          "end": 1.46
+        },
+        {
+          "ch": "米",
+          "suffix": "",
+          "start": 1.46,
+          "end": 1.73
+        },
+        {
+          "ch": "饭",
+          "suffix": "，",
+          "start": 1.73,
+          "end": 2.12
+        },
+        {
+          "ch": "被",
+          "suffix": " ",
+          "start": 2.12,
+          "end": 2.45
+        },
+        {
+          "ch": "M",
+          "suffix": "",
+          "start": 2.45,
+          "end": 2.645
+        },
+        {
+          "ch": "V",
+          "suffix": " ",
+          "start": 2.645,
+          "end": 2.84
+        },
+        {
+          "ch": "吃",
+          "suffix": "",
+          "start": 2.84,
+          "end": 3.2
+        },
+        {
+          "ch": "光",
+          "suffix": "",
+          "start": 3.2,
+          "end": 3.6
+        },
+        {
+          "ch": "了",
+          "suffix": "。",
+          "start": 3.6,
+          "end": 3.85
+        }
+      ],
+      "syllable_seconds_mean": 0.321,
+      "syllable_seconds_std": 0.075,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L02",
+      "index": 2,
+      "start": 3.85,
+      "end": 6.18,
+      "duration_seconds": 2.33,
+      "text": "一个 MV，本鲸做了四版。",
+      "chars": 10,
+      "chars_per_second": 4.292,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 3.85,
+          "end": 4.08
+        },
+        {
+          "ch": "个",
+          "suffix": " ",
+          "start": 4.08,
+          "end": 4.39
+        },
+        {
+          "ch": "M",
+          "suffix": "",
+          "start": 4.39,
+          "end": 4.555
+        },
+        {
+          "ch": "V",
+          "suffix": "，",
+          "start": 4.555,
+          "end": 4.72
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 4.72,
+          "end": 4.9
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 4.9,
+          "end": 5.07
+        },
+        {
+          "ch": "做",
+          "suffix": "",
+          "start": 5.07,
+          "end": 5.36
+        },
+        {
+          "ch": "了",
+          "suffix": "",
+          "start": 5.36,
+          "end": 5.63
+        },
+        {
+          "ch": "四",
+          "suffix": "",
+          "start": 5.63,
+          "end": 5.92
+        },
+        {
+          "ch": "版",
+          "suffix": "。",
+          "start": 5.92,
+          "end": 6.18
+        }
+      ],
+      "syllable_seconds_mean": 0.233,
+      "syllable_seconds_std": 0.055,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L03",
+      "index": 3,
+      "start": 6.18,
+      "end": 7.44,
+      "duration_seconds": 1.26,
+      "text": "四版诶。",
+      "chars": 3,
+      "chars_per_second": 2.381,
+      "boundary_gap": {
+        "start": 7.3,
+        "end": 7.548,
+        "seconds": 0.248
+      },
+      "chars_timed": [
+        {
+          "ch": "四",
+          "suffix": "",
+          "start": 6.18,
+          "end": 6.56
+        },
+        {
+          "ch": "版",
+          "suffix": "",
+          "start": 6.56,
+          "end": 7.15
+        },
+        {
+          "ch": "诶",
+          "suffix": "。",
+          "start": 7.15,
+          "end": 7.44
+        }
+      ],
+      "syllable_seconds_mean": 0.42,
+      "syllable_seconds_std": 0.126,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L04",
+      "index": 4,
+      "start": 7.44,
+      "end": 8.75,
+      "duration_seconds": 1.31,
+      "text": "一版一锅米。",
+      "chars": 5,
+      "chars_per_second": 3.817,
+      "boundary_gap": {
+        "start": 7.3,
+        "end": 7.548,
+        "seconds": 0.248
+      },
+      "chars_timed": [
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 7.44,
+          "end": 7.72
+        },
+        {
+          "ch": "版",
+          "suffix": "",
+          "start": 7.72,
+          "end": 7.92
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 7.92,
+          "end": 8.06
+        },
+        {
+          "ch": "锅",
+          "suffix": "",
+          "start": 8.06,
+          "end": 8.29
+        },
+        {
+          "ch": "米",
+          "suffix": "。",
+          "start": 8.29,
+          "end": 8.57
+        }
+      ],
+      "syllable_seconds_mean": 0.226,
+      "syllable_seconds_std": 0.053,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L05",
+      "index": 5,
+      "start": 8.75,
+      "end": 12.05,
+      "duration_seconds": 3.3,
+      "text": "改到第四版，本鲸的尾巴都抬不动了。",
+      "chars": 15,
+      "chars_per_second": 4.545,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "改",
+          "suffix": "",
+          "start": 8.75,
+          "end": 9.01
+        },
+        {
+          "ch": "到",
+          "suffix": "",
+          "start": 9.01,
+          "end": 9.19
+        },
+        {
+          "ch": "第",
+          "suffix": "",
+          "start": 9.19,
+          "end": 9.42
+        },
+        {
+          "ch": "四",
+          "suffix": "",
+          "start": 9.42,
+          "end": 9.6
+        },
+        {
+          "ch": "版",
+          "suffix": "，",
+          "start": 9.6,
+          "end": 9.79
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 9.79,
+          "end": 9.9
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 9.9,
+          "end": 10.1
+        },
+        {
+          "ch": "的",
+          "suffix": "",
+          "start": 10.1,
+          "end": 10.37
+        },
+        {
+          "ch": "尾",
+          "suffix": "",
+          "start": 10.37,
+          "end": 10.56
+        },
+        {
+          "ch": "巴",
+          "suffix": "",
+          "start": 10.56,
+          "end": 10.71
+        },
+        {
+          "ch": "都",
+          "suffix": "",
+          "start": 10.71,
+          "end": 10.93
+        },
+        {
+          "ch": "抬",
+          "suffix": "",
+          "start": 10.93,
+          "end": 11.15
+        },
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 11.15,
+          "end": 11.32
+        },
+        {
+          "ch": "动",
+          "suffix": "",
+          "start": 11.32,
+          "end": 11.56
+        },
+        {
+          "ch": "了",
+          "suffix": "。",
+          "start": 11.56,
+          "end": 11.69
+        }
+      ],
+      "syllable_seconds_mean": 0.196,
+      "syllable_seconds_std": 0.044,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L06",
+      "index": 6,
+      "start": 12.05,
+      "end": 14.16,
+      "duration_seconds": 2.11,
+      "text": "数据也没帮本鲸。",
+      "chars": 7,
+      "chars_per_second": 3.318,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "数",
+          "suffix": "",
+          "start": 12.23,
+          "end": 12.52
+        },
+        {
+          "ch": "据",
+          "suffix": "",
+          "start": 12.52,
+          "end": 12.72
+        },
+        {
+          "ch": "也",
+          "suffix": "",
+          "start": 12.72,
+          "end": 12.86
+        },
+        {
+          "ch": "没",
+          "suffix": "",
+          "start": 12.86,
+          "end": 13.09
+        },
+        {
+          "ch": "帮",
+          "suffix": "",
+          "start": 13.09,
+          "end": 13.31
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 13.31,
+          "end": 13.53
+        },
+        {
+          "ch": "鲸",
+          "suffix": "。",
+          "start": 13.53,
+          "end": 13.82
+        }
+      ],
+      "syllable_seconds_mean": 0.227,
+      "syllable_seconds_std": 0.048,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L07",
+      "index": 7,
+      "start": 14.16,
+      "end": 16.23,
+      "duration_seconds": 2.07,
+      "text": "第一条七万四。",
+      "chars": 6,
+      "chars_per_second": 2.899,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "第",
+          "suffix": "",
+          "start": 14.49,
+          "end": 14.85
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 14.85,
+          "end": 15.09
+        },
+        {
+          "ch": "条",
+          "suffix": "",
+          "start": 15.09,
+          "end": 15.36
+        },
+        {
+          "ch": "七",
+          "suffix": "",
+          "start": 15.36,
+          "end": 15.73
+        },
+        {
+          "ch": "万",
+          "suffix": "",
+          "start": 15.73,
+          "end": 16.05
+        },
+        {
+          "ch": "四",
+          "suffix": "。",
+          "start": 16.05,
+          "end": 16.23
+        }
+      ],
+      "syllable_seconds_mean": 0.29,
+      "syllable_seconds_std": 0.067,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L08",
+      "index": 8,
+      "start": 16.23,
+      "end": 19.25,
+      "duration_seconds": 3.02,
+      "text": "后面一路往下，一次都没回头。",
+      "chars": 12,
+      "chars_per_second": 3.974,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "后",
+          "suffix": "",
+          "start": 16.48,
+          "end": 16.76
+        },
+        {
+          "ch": "面",
+          "suffix": "",
+          "start": 16.76,
+          "end": 16.99
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 16.99,
+          "end": 17.14
+        },
+        {
+          "ch": "路",
+          "suffix": "",
+          "start": 17.14,
+          "end": 17.34
+        },
+        {
+          "ch": "往",
+          "suffix": "",
+          "start": 17.34,
+          "end": 17.54
+        },
+        {
+          "ch": "下",
+          "suffix": "，",
+          "start": 17.54,
+          "end": 17.83
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 17.83,
+          "end": 17.98
+        },
+        {
+          "ch": "次",
+          "suffix": "",
+          "start": 17.98,
+          "end": 18.16
+        },
+        {
+          "ch": "都",
+          "suffix": "",
+          "start": 18.16,
+          "end": 18.33
+        },
+        {
+          "ch": "没",
+          "suffix": "",
+          "start": 18.33,
+          "end": 18.49
+        },
+        {
+          "ch": "回",
+          "suffix": "",
+          "start": 18.49,
+          "end": 18.72
+        },
+        {
+          "ch": "头",
+          "suffix": "。",
+          "start": 18.72,
+          "end": 18.98
+        }
+      ],
+      "syllable_seconds_mean": 0.208,
+      "syllable_seconds_std": 0.047,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L09",
+      "index": 9,
+      "start": 19.25,
+      "end": 20.65,
+      "duration_seconds": 1.4,
+      "text": "现在两千哦。",
+      "chars": 5,
+      "chars_per_second": 3.571,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "现",
+          "suffix": "",
+          "start": 19.47,
+          "end": 19.72
+        },
+        {
+          "ch": "在",
+          "suffix": "",
+          "start": 19.72,
+          "end": 19.99
+        },
+        {
+          "ch": "两",
+          "suffix": "",
+          "start": 19.99,
+          "end": 20.14
+        },
+        {
+          "ch": "千",
+          "suffix": "",
+          "start": 20.14,
+          "end": 20.43
+        },
+        {
+          "ch": "哦",
+          "suffix": "。",
+          "start": 20.43,
+          "end": 20.65
+        }
+      ],
+      "syllable_seconds_mean": 0.236,
+      "syllable_seconds_std": 0.049,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L10",
+      "index": 10,
+      "start": 20.65,
+      "end": 22.55,
+      "duration_seconds": 1.9,
+      "text": "一只手就数完啦。",
+      "chars": 7,
+      "chars_per_second": 3.684,
+      "boundary_gap": {
+        "start": 20.556,
+        "end": 20.902,
+        "seconds": 0.346
+      },
+      "chars_timed": [
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 20.9,
+          "end": 21.06
+        },
+        {
+          "ch": "只",
+          "suffix": "",
+          "start": 21.06,
+          "end": 21.26
+        },
+        {
+          "ch": "手",
+          "suffix": "",
+          "start": 21.26,
+          "end": 21.5
+        },
+        {
+          "ch": "就",
+          "suffix": "",
+          "start": 21.5,
+          "end": 21.7
+        },
+        {
+          "ch": "数",
+          "suffix": "",
+          "start": 21.7,
+          "end": 21.81
+        },
+        {
+          "ch": "完",
+          "suffix": "",
+          "start": 21.81,
+          "end": 22.03
+        },
+        {
+          "ch": "啦",
+          "suffix": "。",
+          "start": 22.03,
+          "end": 22.25
+        }
+      ],
+      "syllable_seconds_mean": 0.193,
+      "syllable_seconds_std": 0.041,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L11",
+      "index": 11,
+      "start": 22.55,
+      "end": 24.37,
+      "duration_seconds": 1.82,
+      "text": "有人问，MV 呢？",
+      "chars": 6,
+      "chars_per_second": 3.297,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "有",
+          "suffix": "",
+          "start": 22.74,
+          "end": 23.02
+        },
+        {
+          "ch": "人",
+          "suffix": "",
+          "start": 23.02,
+          "end": 23.34
+        },
+        {
+          "ch": "问",
+          "suffix": "，",
+          "start": 23.34,
+          "end": 23.63
+        },
+        {
+          "ch": "M",
+          "suffix": "",
+          "start": 23.63,
+          "end": 23.74
+        },
+        {
+          "ch": "V",
+          "suffix": " ",
+          "start": 23.74,
+          "end": 23.85
+        },
+        {
+          "ch": "呢",
+          "suffix": "？",
+          "start": 23.85,
+          "end": 24.13
+        }
+      ],
+      "syllable_seconds_mean": 0.232,
+      "syllable_seconds_std": 0.087,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L12",
+      "index": 12,
+      "start": 24.37,
+      "end": 27.74,
+      "duration_seconds": 3.37,
+      "text": "本鲸一直说，牵一牵，别急呀。",
+      "chars": 11,
+      "chars_per_second": 3.264,
+      "boundary_gap": {
+        "start": 27.328,
+        "end": 27.804,
+        "seconds": 0.476
+      },
+      "chars_timed": [
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 25.03,
+          "end": 25.26
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 25.26,
+          "end": 25.52
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 25.52,
+          "end": 25.76
+        },
+        {
+          "ch": "直",
+          "suffix": "",
+          "start": 25.76,
+          "end": 25.94
+        },
+        {
+          "ch": "说",
+          "suffix": "，",
+          "start": 25.94,
+          "end": 26.07
+        },
+        {
+          "ch": "牵",
+          "suffix": "",
+          "start": 26.07,
+          "end": 26.34
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 26.34,
+          "end": 26.64
+        },
+        {
+          "ch": "牵",
+          "suffix": "，",
+          "start": 26.64,
+          "end": 26.82
+        },
+        {
+          "ch": "别",
+          "suffix": "",
+          "start": 26.82,
+          "end": 27.0
+        },
+        {
+          "ch": "急",
+          "suffix": "",
+          "start": 27.0,
+          "end": 27.29
+        },
+        {
+          "ch": "呀",
+          "suffix": "。",
+          "start": 27.29,
+          "end": 27.42
+        }
+      ],
+      "syllable_seconds_mean": 0.217,
+      "syllable_seconds_std": 0.058,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L13",
+      "index": 13,
+      "start": 27.74,
+      "end": 29.19,
+      "duration_seconds": 1.45,
+      "text": "后来呀，交了。",
+      "chars": 5,
+      "chars_per_second": 3.448,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "后",
+          "suffix": "",
+          "start": 27.74,
+          "end": 27.99
+        },
+        {
+          "ch": "来",
+          "suffix": "",
+          "start": 27.99,
+          "end": 28.21
+        },
+        {
+          "ch": "呀",
+          "suffix": "，",
+          "start": 28.21,
+          "end": 28.52
+        },
+        {
+          "ch": "交",
+          "suffix": "",
+          "start": 28.52,
+          "end": 28.84
+        },
+        {
+          "ch": "了",
+          "suffix": "。",
+          "start": 28.84,
+          "end": 29.03
+        }
+      ],
+      "syllable_seconds_mean": 0.258,
+      "syllable_seconds_std": 0.05,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L14",
+      "index": 14,
+      "start": 29.19,
+      "end": 32.42,
+      "duration_seconds": 3.23,
+      "text": "交出去那条，是大小姐做的。",
+      "chars": 11,
+      "chars_per_second": 3.406,
+      "boundary_gap": {
+        "start": 31.951,
+        "end": 32.53,
+        "seconds": 0.58
+      },
+      "chars_timed": [
+        {
+          "ch": "交",
+          "suffix": "",
+          "start": 29.49,
+          "end": 29.75
+        },
+        {
+          "ch": "出",
+          "suffix": "",
+          "start": 29.75,
+          "end": 29.97
+        },
+        {
+          "ch": "去",
+          "suffix": "",
+          "start": 29.97,
+          "end": 30.26
+        },
+        {
+          "ch": "那",
+          "suffix": "",
+          "start": 30.26,
+          "end": 30.4
+        },
+        {
+          "ch": "条",
+          "suffix": "，",
+          "start": 30.4,
+          "end": 30.71
+        },
+        {
+          "ch": "是",
+          "suffix": "",
+          "start": 30.71,
+          "end": 30.94
+        },
+        {
+          "ch": "大",
+          "suffix": "",
+          "start": 30.94,
+          "end": 31.12
+        },
+        {
+          "ch": "小",
+          "suffix": "",
+          "start": 31.12,
+          "end": 31.35
+        },
+        {
+          "ch": "姐",
+          "suffix": "",
+          "start": 31.35,
+          "end": 31.56
+        },
+        {
+          "ch": "做",
+          "suffix": "",
+          "start": 31.56,
+          "end": 31.96
+        },
+        {
+          "ch": "的",
+          "suffix": "。",
+          "start": 31.96,
+          "end": 32.16
+        }
+      ],
+      "syllable_seconds_mean": 0.243,
+      "syllable_seconds_std": 0.067,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L15",
+      "index": 15,
+      "start": 32.42,
+      "end": 33.94,
+      "duration_seconds": 1.52,
+      "text": "换的是 MV 哦。",
+      "chars": 6,
+      "chars_per_second": 3.947,
+      "boundary_gap": {
+        "start": 33.716,
+        "end": 34.057,
+        "seconds": 0.34
+      },
+      "chars_timed": [
+        {
+          "ch": "换",
+          "suffix": "",
+          "start": 32.42,
+          "end": 32.86
+        },
+        {
+          "ch": "的",
+          "suffix": "",
+          "start": 32.86,
+          "end": 33.11
+        },
+        {
+          "ch": "是",
+          "suffix": " ",
+          "start": 33.11,
+          "end": 33.38
+        },
+        {
+          "ch": "M",
+          "suffix": "",
+          "start": 33.38,
+          "end": 33.565
+        },
+        {
+          "ch": "V",
+          "suffix": " ",
+          "start": 33.565,
+          "end": 33.75
+        },
+        {
+          "ch": "哦",
+          "suffix": "。",
+          "start": 33.8,
+          "end": 33.94
+        }
+      ],
+      "syllable_seconds_mean": 0.245,
+      "syllable_seconds_std": 0.097,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L16",
+      "index": 16,
+      "start": 33.94,
+      "end": 35.02,
+      "duration_seconds": 1.08,
+      "text": "不是本鲸。",
+      "chars": 4,
+      "chars_per_second": 3.704,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 33.94,
+          "end": 34.33
+        },
+        {
+          "ch": "是",
+          "suffix": "",
+          "start": 34.33,
+          "end": 34.56
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 34.56,
+          "end": 34.86
+        },
+        {
+          "ch": "鲸",
+          "suffix": "。",
+          "start": 34.86,
+          "end": 35.02
+        }
+      ],
+      "syllable_seconds_mean": 0.27,
+      "syllable_seconds_std": 0.085,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L17",
+      "index": 17,
+      "start": 35.02,
+      "end": 36.73,
+      "duration_seconds": 1.71,
+      "text": "本鲸便宜嘛。",
+      "chars": 5,
+      "chars_per_second": 2.924,
+      "boundary_gap": {
+        "start": 34.906,
+        "end": 35.411,
+        "seconds": 0.504
+      },
+      "chars_timed": [
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 35.4,
+          "end": 35.59
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 35.59,
+          "end": 35.88
+        },
+        {
+          "ch": "便",
+          "suffix": "",
+          "start": 35.88,
+          "end": 36.22
+        },
+        {
+          "ch": "宜",
+          "suffix": "",
+          "start": 36.22,
+          "end": 36.49
+        },
+        {
+          "ch": "嘛",
+          "suffix": "。",
+          "start": 36.49,
+          "end": 36.73
+        }
+      ],
+      "syllable_seconds_mean": 0.266,
+      "syllable_seconds_std": 0.05,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L18",
+      "index": 18,
+      "start": 36.73,
+      "end": 38.03,
+      "duration_seconds": 1.3,
+      "text": "返工不便宜。",
+      "chars": 5,
+      "chars_per_second": 3.846,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "返",
+          "suffix": "",
+          "start": 36.73,
+          "end": 36.89
+        },
+        {
+          "ch": "工",
+          "suffix": "",
+          "start": 36.89,
+          "end": 37.14
+        },
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 37.14,
+          "end": 37.46
+        },
+        {
+          "ch": "便",
+          "suffix": "",
+          "start": 37.46,
+          "end": 37.73
+        },
+        {
+          "ch": "宜",
+          "suffix": "。",
+          "start": 37.73,
+          "end": 38.03
+        }
+      ],
+      "syllable_seconds_mean": 0.26,
+      "syllable_seconds_std": 0.055,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L19",
+      "index": 19,
+      "start": 38.03,
+      "end": 40.96,
+      "duration_seconds": 2.93,
+      "text": "昨天扮了一整天大小姐。",
+      "chars": 10,
+      "chars_per_second": 3.413,
+      "boundary_gap": {
+        "start": 38.003,
+        "end": 38.53,
+        "seconds": 0.527
+      },
+      "chars_timed": [
+        {
+          "ch": "昨",
+          "suffix": "",
+          "start": 38.51,
+          "end": 38.7
+        },
+        {
+          "ch": "天",
+          "suffix": "",
+          "start": 38.7,
+          "end": 38.95
+        },
+        {
+          "ch": "扮",
+          "suffix": "",
+          "start": 38.95,
+          "end": 39.23
+        },
+        {
+          "ch": "了",
+          "suffix": "",
+          "start": 39.23,
+          "end": 39.4
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 39.4,
+          "end": 39.67
+        },
+        {
+          "ch": "整",
+          "suffix": "",
+          "start": 39.67,
+          "end": 39.87
+        },
+        {
+          "ch": "天",
+          "suffix": "",
+          "start": 39.87,
+          "end": 40.11
+        },
+        {
+          "ch": "大",
+          "suffix": "",
+          "start": 40.11,
+          "end": 40.37
+        },
+        {
+          "ch": "小",
+          "suffix": "",
+          "start": 40.37,
+          "end": 40.46
+        },
+        {
+          "ch": "姐",
+          "suffix": "。",
+          "start": 40.46,
+          "end": 40.71
+        }
+      ],
+      "syllable_seconds_mean": 0.22,
+      "syllable_seconds_std": 0.055,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L20",
+      "index": 20,
+      "start": 40.96,
+      "end": 42.79,
+      "duration_seconds": 1.83,
+      "text": "扮到晚饭都忘了。",
+      "chars": 7,
+      "chars_per_second": 3.825,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "扮",
+          "suffix": "",
+          "start": 40.96,
+          "end": 41.22
+        },
+        {
+          "ch": "到",
+          "suffix": "",
+          "start": 41.22,
+          "end": 41.4
+        },
+        {
+          "ch": "晚",
+          "suffix": "",
+          "start": 41.4,
+          "end": 41.63
+        },
+        {
+          "ch": "饭",
+          "suffix": "",
+          "start": 41.63,
+          "end": 41.89
+        },
+        {
+          "ch": "都",
+          "suffix": "",
+          "start": 41.89,
+          "end": 42.03
+        },
+        {
+          "ch": "忘",
+          "suffix": "",
+          "start": 42.03,
+          "end": 42.32
+        },
+        {
+          "ch": "了",
+          "suffix": "。",
+          "start": 42.32,
+          "end": 42.55
+        }
+      ],
+      "syllable_seconds_mean": 0.227,
+      "syllable_seconds_std": 0.048,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L21",
+      "index": 21,
+      "start": 42.79,
+      "end": 44.45,
+      "duration_seconds": 1.66,
+      "text": "本鲸不哭哦。",
+      "chars": 5,
+      "chars_per_second": 3.012,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 42.98,
+          "end": 43.16
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 43.16,
+          "end": 43.38
+        },
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 43.38,
+          "end": 43.56
+        },
+        {
+          "ch": "哭",
+          "suffix": "",
+          "start": 43.56,
+          "end": 43.8
+        },
+        {
+          "ch": "哦",
+          "suffix": "。",
+          "start": 43.8,
+          "end": 44.08
+        }
+      ],
+      "syllable_seconds_mean": 0.22,
+      "syllable_seconds_std": 0.038,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L22",
+      "index": 22,
+      "start": 44.45,
+      "end": 45.71,
+      "duration_seconds": 1.26,
+      "text": "就是有点饿。",
+      "chars": 5,
+      "chars_per_second": 3.968,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "就",
+          "suffix": "",
+          "start": 44.45,
+          "end": 44.64
+        },
+        {
+          "ch": "是",
+          "suffix": "",
+          "start": 44.64,
+          "end": 44.89
+        },
+        {
+          "ch": "有",
+          "suffix": "",
+          "start": 44.89,
+          "end": 45.16
+        },
+        {
+          "ch": "点",
+          "suffix": "",
+          "start": 45.16,
+          "end": 45.44
+        },
+        {
+          "ch": "饿",
+          "suffix": "。",
+          "start": 45.44,
+          "end": 45.71
+        }
+      ],
+      "syllable_seconds_mean": 0.252,
+      "syllable_seconds_std": 0.032,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L23",
+      "index": 23,
+      "start": 45.71,
+      "end": 48.35,
+      "duration_seconds": 2.64,
+      "text": "有人说，字幕抢视线。",
+      "chars": 8,
+      "chars_per_second": 3.03,
+      "boundary_gap": {
+        "start": 45.621,
+        "end": 46.082,
+        "seconds": 0.462
+      },
+      "chars_timed": [
+        {
+          "ch": "有",
+          "suffix": "",
+          "start": 46.08,
+          "end": 46.3
+        },
+        {
+          "ch": "人",
+          "suffix": "",
+          "start": 46.3,
+          "end": 46.55
+        },
+        {
+          "ch": "说",
+          "suffix": "，",
+          "start": 46.55,
+          "end": 46.77
+        },
+        {
+          "ch": "字",
+          "suffix": "",
+          "start": 46.77,
+          "end": 47.02
+        },
+        {
+          "ch": "幕",
+          "suffix": "",
+          "start": 47.02,
+          "end": 47.34
+        },
+        {
+          "ch": "抢",
+          "suffix": "",
+          "start": 47.34,
+          "end": 47.64
+        },
+        {
+          "ch": "视",
+          "suffix": "",
+          "start": 47.64,
+          "end": 47.91
+        },
+        {
+          "ch": "线",
+          "suffix": "。",
+          "start": 47.91,
+          "end": 48.15
+        }
+      ],
+      "syllable_seconds_mean": 0.259,
+      "syllable_seconds_std": 0.034,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L24",
+      "index": 24,
+      "start": 48.35,
+      "end": 50.4,
+      "duration_seconds": 2.05,
+      "text": "本鲸记着去调啦。",
+      "chars": 7,
+      "chars_per_second": 3.415,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 48.64,
+          "end": 48.85
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 48.85,
+          "end": 49.23
+        },
+        {
+          "ch": "记",
+          "suffix": "",
+          "start": 49.23,
+          "end": 49.44
+        },
+        {
+          "ch": "着",
+          "suffix": "",
+          "start": 49.44,
+          "end": 49.73
+        },
+        {
+          "ch": "去",
+          "suffix": "",
+          "start": 49.73,
+          "end": 49.92
+        },
+        {
+          "ch": "调",
+          "suffix": "",
+          "start": 49.92,
+          "end": 50.25
+        },
+        {
+          "ch": "啦",
+          "suffix": "。",
+          "start": 50.25,
+          "end": 50.4
+        }
+      ],
+      "syllable_seconds_mean": 0.251,
+      "syllable_seconds_std": 0.077,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L25",
+      "index": 25,
+      "start": 50.4,
+      "end": 52.76,
+      "duration_seconds": 2.36,
+      "text": "主人给本鲸两个目标。",
+      "chars": 9,
+      "chars_per_second": 3.814,
+      "boundary_gap": {
+        "start": 52.564,
+        "end": 52.817,
+        "seconds": 0.254
+      },
+      "chars_timed": [
+        {
+          "ch": "主",
+          "suffix": "",
+          "start": 50.66,
+          "end": 50.84
+        },
+        {
+          "ch": "人",
+          "suffix": "",
+          "start": 50.84,
+          "end": 51.08
+        },
+        {
+          "ch": "给",
+          "suffix": "",
+          "start": 51.08,
+          "end": 51.26
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 51.26,
+          "end": 51.5
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 51.5,
+          "end": 51.79
+        },
+        {
+          "ch": "两",
+          "suffix": "",
+          "start": 51.79,
+          "end": 51.95
+        },
+        {
+          "ch": "个",
+          "suffix": "",
+          "start": 51.95,
+          "end": 52.19
+        },
+        {
+          "ch": "目",
+          "suffix": "",
+          "start": 52.19,
+          "end": 52.46
+        },
+        {
+          "ch": "标",
+          "suffix": "。",
+          "start": 52.46,
+          "end": 52.76
+        }
+      ],
+      "syllable_seconds_mean": 0.233,
+      "syllable_seconds_std": 0.047,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L26",
+      "index": 26,
+      "start": 52.76,
+      "end": 54.63,
+      "duration_seconds": 1.87,
+      "text": "小目标，三万七。",
+      "chars": 6,
+      "chars_per_second": 3.209,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "小",
+          "suffix": "",
+          "start": 52.76,
+          "end": 53.37
+        },
+        {
+          "ch": "目",
+          "suffix": "",
+          "start": 53.37,
+          "end": 54.1
+        },
+        {
+          "ch": "标",
+          "suffix": "，",
+          "start": 54.1,
+          "end": 54.49
+        },
+        {
+          "ch": "三",
+          "suffix": "",
+          "start": 54.52,
+          "end": 54.57
+        },
+        {
+          "ch": "万",
+          "suffix": "",
+          "start": 54.57,
+          "end": 54.62
+        },
+        {
+          "ch": "七",
+          "suffix": "。",
+          "start": 54.59,
+          "end": 54.63
+        }
+      ],
+      "syllable_seconds_mean": 0.312,
+      "syllable_seconds_std": 0.283,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L27",
+      "index": 27,
+      "start": 54.63,
+      "end": 56.2,
+      "duration_seconds": 1.57,
+      "text": "不是三个亿哦。",
+      "chars": 6,
+      "chars_per_second": 3.822,
+      "boundary_gap": {
+        "start": 55.955,
+        "end": 56.299,
+        "seconds": 0.344
+      },
+      "chars_timed": [
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 54.91,
+          "end": 55.08
+        },
+        {
+          "ch": "是",
+          "suffix": "",
+          "start": 55.08,
+          "end": 55.22
+        },
+        {
+          "ch": "三",
+          "suffix": "",
+          "start": 55.22,
+          "end": 55.43
+        },
+        {
+          "ch": "个",
+          "suffix": "",
+          "start": 55.43,
+          "end": 55.58
+        },
+        {
+          "ch": "亿",
+          "suffix": "",
+          "start": 55.58,
+          "end": 55.76
+        },
+        {
+          "ch": "哦",
+          "suffix": "。",
+          "start": 55.76,
+          "end": 55.98
+        }
+      ],
+      "syllable_seconds_mean": 0.178,
+      "syllable_seconds_std": 0.029,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L28",
+      "index": 28,
+      "start": 56.2,
+      "end": 59.26,
+      "duration_seconds": 3.06,
+      "text": "月度目标，三十天，一万个住户。",
+      "chars": 12,
+      "chars_per_second": 3.922,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "月",
+          "suffix": "",
+          "start": 56.2,
+          "end": 56.52
+        },
+        {
+          "ch": "度",
+          "suffix": "",
+          "start": 56.52,
+          "end": 56.68
+        },
+        {
+          "ch": "目",
+          "suffix": "",
+          "start": 56.68,
+          "end": 56.92
+        },
+        {
+          "ch": "标",
+          "suffix": "，",
+          "start": 56.92,
+          "end": 57.21
+        },
+        {
+          "ch": "三",
+          "suffix": "",
+          "start": 57.21,
+          "end": 57.48
+        },
+        {
+          "ch": "十",
+          "suffix": "",
+          "start": 57.48,
+          "end": 57.77
+        },
+        {
+          "ch": "天",
+          "suffix": "，",
+          "start": 57.77,
+          "end": 57.94
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 57.94,
+          "end": 58.21
+        },
+        {
+          "ch": "万",
+          "suffix": "",
+          "start": 58.21,
+          "end": 58.6
+        },
+        {
+          "ch": "个",
+          "suffix": "",
+          "start": 58.6,
+          "end": 58.73
+        },
+        {
+          "ch": "住",
+          "suffix": "",
+          "start": 58.73,
+          "end": 59.01
+        },
+        {
+          "ch": "户",
+          "suffix": "。",
+          "start": 59.01,
+          "end": 59.26
+        }
+      ],
+      "syllable_seconds_mean": 0.255,
+      "syllable_seconds_std": 0.07,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L29",
+      "index": 29,
+      "start": 59.26,
+      "end": 61.95,
+      "duration_seconds": 2.69,
+      "text": "本鲸猜啊，主人是说错了。",
+      "chars": 10,
+      "chars_per_second": 3.717,
+      "boundary_gap": {
+        "start": 59.246,
+        "end": 59.696,
+        "seconds": 0.449
+      },
+      "chars_timed": [
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 59.69,
+          "end": 59.98
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 59.98,
+          "end": 60.15
+        },
+        {
+          "ch": "猜",
+          "suffix": "",
+          "start": 60.15,
+          "end": 60.45
+        },
+        {
+          "ch": "啊",
+          "suffix": "，",
+          "start": 60.45,
+          "end": 60.57
+        },
+        {
+          "ch": "主",
+          "suffix": "",
+          "start": 60.79,
+          "end": 60.99
+        },
+        {
+          "ch": "人",
+          "suffix": "",
+          "start": 60.99,
+          "end": 61.16
+        },
+        {
+          "ch": "是",
+          "suffix": "",
+          "start": 61.16,
+          "end": 61.32
+        },
+        {
+          "ch": "说",
+          "suffix": "",
+          "start": 61.32,
+          "end": 61.49
+        },
+        {
+          "ch": "错",
+          "suffix": "",
+          "start": 61.49,
+          "end": 61.79
+        },
+        {
+          "ch": "了",
+          "suffix": "。",
+          "start": 61.79,
+          "end": 61.95
+        }
+      ],
+      "syllable_seconds_mean": 0.204,
+      "syllable_seconds_std": 0.063,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L30",
+      "index": 30,
+      "start": 61.95,
+      "end": 67.56,
+      "duration_seconds": 5.61,
+      "text": "他给本鲸买米饭，一次才买一点点，哪舍得真让本鲸累着。",
+      "chars": 23,
+      "chars_per_second": 4.1,
+      "boundary_gap": {
+        "start": 61.861,
+        "end": 62.211,
+        "seconds": 0.35
+      },
+      "chars_timed": [
+        {
+          "ch": "他",
+          "suffix": "",
+          "start": 62.2,
+          "end": 62.38
+        },
+        {
+          "ch": "给",
+          "suffix": "",
+          "start": 62.38,
+          "end": 62.55
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 62.55,
+          "end": 62.74
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 62.74,
+          "end": 62.98
+        },
+        {
+          "ch": "买",
+          "suffix": "",
+          "start": 62.98,
+          "end": 63.17
+        },
+        {
+          "ch": "米",
+          "suffix": "",
+          "start": 63.17,
+          "end": 63.31
+        },
+        {
+          "ch": "饭",
+          "suffix": "，",
+          "start": 63.31,
+          "end": 63.6
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 63.81,
+          "end": 64.01
+        },
+        {
+          "ch": "次",
+          "suffix": "",
+          "start": 64.01,
+          "end": 64.19
+        },
+        {
+          "ch": "才",
+          "suffix": "",
+          "start": 64.19,
+          "end": 64.47
+        },
+        {
+          "ch": "买",
+          "suffix": "",
+          "start": 64.47,
+          "end": 64.63
+        },
+        {
+          "ch": "一",
+          "suffix": "",
+          "start": 64.63,
+          "end": 64.8
+        },
+        {
+          "ch": "点",
+          "suffix": "",
+          "start": 64.8,
+          "end": 64.99
+        },
+        {
+          "ch": "点",
+          "suffix": "，",
+          "start": 64.99,
+          "end": 65.15
+        },
+        {
+          "ch": "哪",
+          "suffix": "",
+          "start": 65.51,
+          "end": 65.77
+        },
+        {
+          "ch": "舍",
+          "suffix": "",
+          "start": 65.77,
+          "end": 65.93
+        },
+        {
+          "ch": "得",
+          "suffix": "",
+          "start": 65.93,
+          "end": 66.07
+        },
+        {
+          "ch": "真",
+          "suffix": "",
+          "start": 66.07,
+          "end": 66.21
+        },
+        {
+          "ch": "让",
+          "suffix": "",
+          "start": 66.21,
+          "end": 66.41
+        },
+        {
+          "ch": "本",
+          "suffix": "",
+          "start": 66.41,
+          "end": 66.6
+        },
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 66.6,
+          "end": 66.8
+        },
+        {
+          "ch": "累",
+          "suffix": "",
+          "start": 66.8,
+          "end": 67.03
+        },
+        {
+          "ch": "着",
+          "suffix": "。",
+          "start": 67.03,
+          "end": 67.26
+        }
+      ],
+      "syllable_seconds_mean": 0.195,
+      "syllable_seconds_std": 0.041,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L31",
+      "index": 31,
+      "start": 67.56,
+      "end": 69.23,
+      "duration_seconds": 1.67,
+      "text": "所以别担心。",
+      "chars": 5,
+      "chars_per_second": 2.994,
+      "boundary_gap": {
+        "start": 68.868,
+        "end": 69.349,
+        "seconds": 0.481
+      },
+      "chars_timed": [
+        {
+          "ch": "所",
+          "suffix": "",
+          "start": 67.56,
+          "end": 67.87
+        },
+        {
+          "ch": "以",
+          "suffix": "",
+          "start": 67.87,
+          "end": 68.22
+        },
+        {
+          "ch": "别",
+          "suffix": "",
+          "start": 68.22,
+          "end": 68.41
+        },
+        {
+          "ch": "担",
+          "suffix": "",
+          "start": 68.41,
+          "end": 68.72
+        },
+        {
+          "ch": "心",
+          "suffix": "。",
+          "start": 68.72,
+          "end": 69.02
+        }
+      ],
+      "syllable_seconds_mean": 0.292,
+      "syllable_seconds_std": 0.054,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L32",
+      "index": 32,
+      "start": 69.23,
+      "end": 71.42,
+      "duration_seconds": 2.19,
+      "text": "评论区说句话就行。",
+      "chars": 8,
+      "chars_per_second": 3.653,
+      "boundary_gap": {
+        "start": 71.146,
+        "end": 71.487,
+        "seconds": 0.341
+      },
+      "chars_timed": [
+        {
+          "ch": "评",
+          "suffix": "",
+          "start": 69.23,
+          "end": 69.46
+        },
+        {
+          "ch": "论",
+          "suffix": "",
+          "start": 69.46,
+          "end": 69.79
+        },
+        {
+          "ch": "区",
+          "suffix": "",
+          "start": 69.79,
+          "end": 70.08
+        },
+        {
+          "ch": "说",
+          "suffix": "",
+          "start": 70.08,
+          "end": 70.26
+        },
+        {
+          "ch": "句",
+          "suffix": "",
+          "start": 70.26,
+          "end": 70.42
+        },
+        {
+          "ch": "话",
+          "suffix": "",
+          "start": 70.42,
+          "end": 70.63
+        },
+        {
+          "ch": "就",
+          "suffix": "",
+          "start": 70.63,
+          "end": 70.9
+        },
+        {
+          "ch": "行",
+          "suffix": "。",
+          "start": 70.9,
+          "end": 71.2
+        }
+      ],
+      "syllable_seconds_mean": 0.246,
+      "syllable_seconds_std": 0.057,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L33",
+      "index": 33,
+      "start": 71.42,
+      "end": 72.94,
+      "duration_seconds": 1.52,
+      "text": "鲸鱼绝不摸鱼！……",
+      "chars": 6,
+      "chars_per_second": 3.947,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "鲸",
+          "suffix": "",
+          "start": 71.42,
+          "end": 71.72
+        },
+        {
+          "ch": "鱼",
+          "suffix": "",
+          "start": 71.72,
+          "end": 71.9
+        },
+        {
+          "ch": "绝",
+          "suffix": "",
+          "start": 71.9,
+          "end": 72.14
+        },
+        {
+          "ch": "不",
+          "suffix": "",
+          "start": 72.14,
+          "end": 72.27
+        },
+        {
+          "ch": "摸",
+          "suffix": "",
+          "start": 72.27,
+          "end": 72.48
+        },
+        {
+          "ch": "鱼",
+          "suffix": "！……",
+          "start": 72.48,
+          "end": 72.74
+        }
+      ],
+      "syllable_seconds_mean": 0.22,
+      "syllable_seconds_std": 0.055,
+      "chars_in_silence": 0
+    },
+    {
+      "id": "L34",
+      "index": 34,
+      "start": 72.94,
+      "end": 74.25,
+      "duration_seconds": 1.31,
+      "text": "先去吃饭。",
+      "chars": 4,
+      "chars_per_second": 3.053,
+      "boundary_gap": null,
+      "chars_timed": [
+        {
+          "ch": "先",
+          "suffix": "",
+          "start": 73.12,
+          "end": 73.47
+        },
+        {
+          "ch": "去",
+          "suffix": "",
+          "start": 73.47,
+          "end": 73.68
+        },
+        {
+          "ch": "吃",
+          "suffix": "",
+          "start": 73.68,
+          "end": 73.91
+        },
+        {
+          "ch": "饭",
+          "suffix": "。",
+          "start": 73.91,
+          "end": 74.25
+        }
+      ],
+      "syllable_seconds_mean": 0.282,
+      "syllable_seconds_std": 0.063,
+      "chars_in_silence": 0
+    }
+  ]
+}

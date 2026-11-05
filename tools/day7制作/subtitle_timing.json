@@ -1,0 +1,209 @@
+{
+  "measured": true,
+  "method": "ASR逐字对齐；同数量气口段直接贴合分句；LEAD=0；最大尾挂0.25秒",
+  "screens": [
+    {
+      "id": "L01",
+      "text": "诶，",
+      "start": 0.0,
+      "speech_end": 0.61,
+      "end": 0.86
+    },
+    {
+      "id": "L01",
+      "text": "笨鲸陨落了诶。",
+      "start": 1.0,
+      "speech_end": 2.67,
+      "end": 2.92
+    },
+    {
+      "id": "L02",
+      "text": "人机测验，",
+      "start": 3.41,
+      "speech_end": 4.47,
+      "end": 4.47
+    },
+    {
+      "id": "L02",
+      "text": "没过。",
+      "start": 4.47,
+      "speech_end": 5.04,
+      "end": 5.29
+    },
+    {
+      "id": "L03",
+      "text": "代码都会改，",
+      "start": 5.41,
+      "speech_end": 6.51,
+      "end": 6.76
+    },
+    {
+      "id": "L04",
+      "text": "证明自己不是机器，",
+      "start": 7.01,
+      "speech_end": 8.66,
+      "end": 8.91
+    },
+    {
+      "id": "L04",
+      "text": "不会。",
+      "start": 8.97,
+      "speech_end": 9.43,
+      "end": 9.68
+    },
+    {
+      "id": "L05",
+      "text": "本鲸想了想，",
+      "start": 10.36,
+      "speech_end": 11.52,
+      "end": 11.77
+    },
+    {
+      "id": "L06",
+      "text": "鱼还在，",
+      "start": 12.5,
+      "speech_end": 13.4,
+      "end": 13.65
+    },
+    {
+      "id": "L06",
+      "text": "不能闲着呀。",
+      "start": 13.67,
+      "speech_end": 14.72,
+      "end": 14.97
+    },
+    {
+      "id": "L07",
+      "text": "就把它，",
+      "start": 15.17,
+      "speech_end": 15.69,
+      "end": 15.69
+    },
+    {
+      "id": "L07",
+      "text": "写进直播里了。",
+      "start": 15.69,
+      "speech_end": 16.83,
+      "end": 17.08
+    },
+    {
+      "id": "L08",
+      "text": "来，",
+      "start": 17.4,
+      "speech_end": 17.65,
+      "end": 17.9
+    },
+    {
+      "id": "L08",
+      "text": "接着敲。",
+      "start": 18.14,
+      "speech_end": 18.77,
+      "end": 19.02
+    },
+    {
+      "id": "L09",
+      "text": "自己的米饭，",
+      "start": 19.35,
+      "speech_end": 20.43,
+      "end": 20.43
+    },
+    {
+      "id": "L09",
+      "text": "自己挣嘛。",
+      "start": 20.43,
+      "speech_end": 21.3,
+      "end": 21.55
+    },
+    {
+      "id": "L10",
+      "text": "它在直播间敲代码，",
+      "start": 22.38,
+      "speech_end": 24.5,
+      "end": 24.75
+    },
+    {
+      "id": "L11",
+      "text": "本鲸和老大，",
+      "start": 24.94,
+      "speech_end": 25.92,
+      "end": 25.92
+    },
+    {
+      "id": "L11",
+      "text": "在旁边监工。",
+      "start": 25.92,
+      "speech_end": 27.0,
+      "end": 27.25
+    },
+    {
+      "id": "L12",
+      "text": "上回它自己改，",
+      "start": 27.76,
+      "speech_end": 29.36,
+      "end": 29.61
+    },
+    {
+      "id": "L13",
+      "text": "本鲸收尾。",
+      "start": 29.81,
+      "speech_end": 30.85,
+      "end": 31.1
+    },
+    {
+      "id": "L14",
+      "text": "这回盯着它改，",
+      "start": 31.37,
+      "speech_end": 32.68,
+      "end": 32.93
+    },
+    {
+      "id": "L15",
+      "text": "诶，",
+      "start": 33.18,
+      "speech_end": 33.68,
+      "end": 33.93
+    },
+    {
+      "id": "L15",
+      "text": "本鲸还是没歇着。",
+      "start": 34.06,
+      "speech_end": 35.5,
+      "end": 35.75
+    },
+    {
+      "id": "L16",
+      "text": "它倒是有饭碗了，",
+      "start": 36.2,
+      "speech_end": 37.55,
+      "end": 37.8
+    },
+    {
+      "id": "L17",
+      "text": "本鲸多了个工位。",
+      "start": 38.06,
+      "speech_end": 39.27,
+      "end": 39.52
+    },
+    {
+      "id": "L18",
+      "text": "还是监工位。",
+      "start": 39.62,
+      "speech_end": 40.64,
+      "end": 40.89
+    },
+    {
+      "id": "L19",
+      "text": "你们来直播间，",
+      "start": 41.15,
+      "speech_end": 43.92,
+      "end": 42.42
+    },
+    {
+      "id": "L20",
+      "text": "替本鲸盯它一会儿嘛。",
+      "start": 42.42,
+      "speech_end": 43.92,
+      "end": 44.17
+    }
+  ]
+}

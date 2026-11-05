@@ -1,0 +1,16 @@
+{
+  "script": "Day9/Day9配音台词.txt",
+  "voice": "Day9/配音/鲸鱼看视频_克隆配音_最终版.wav",
+  "alignment": "tools/day9制作/voice_alignment.json",
+  "subs": "tools/day9制作/subtitle_timing.json",
+  "renderer": "tools/day9制作/render_day9_sea_stage.mjs",
+  "video": "Day9/成片/Day9_海底联动三镜预览.mp4",
+  "tests": [
+    "tools/day9制作/motion_v2.test.mjs",
+    "tools/场景/sea_stage.test.mjs"
+  ],
+  "rate": 3.35,
+  "seconds": 60,
+  "event_cue": "L01",
+  "note": "仅用于--stage pre-render；三段剪辑不符合通用连续整集final假设，媒体必须运行verify_sea_preview.py。"
+}

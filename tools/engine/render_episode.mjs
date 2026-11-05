@@ -1,0 +1,351 @@
+// render_episode.mjs — 通用单集生产渲染器（1920x1080@30，逻辑 1280x720）
+// CLI 与 tools/gate.py 对接：
+//   node tools/engine/render_episode.mjs --spec <episode.spec.mjs> \
+//     --voice <wav> --alignment <json> --subtitle-file <json> [--out <mp4>|--test|--stills]
+// 正式渲染只接受 measured=true 且 SHA256 匹配的实测轴；TITLE_LEN=0，末句后 0.24s 结束。
+import fs from 'node:fs';
+import path from 'node:path';
+import { spawn } from 'node:child_process';
+import { createHash } from 'node:crypto';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { createCanvas, loadImage, resolveFfmpeg, W, H, FPS, mix, smooth, seg } from './room_base.mjs';
+import { validateSpec, resolveWordTime } from './schema_validator.mjs';
+import { openerCamera, drawRolePlates, drawStamp, OPENER_END, PLATES_DEFAULT_AT } from './opener_director.mjs';
+import { drawShotInteractions, BODY_VERBS } from './interaction_stage.mjs';
+import { composeScene, drawComplianceCorner, drawHudBanner } from './scene_compositor.mjs';
+import { getProp, assertForegroundWithinStage } from './prop_registry.mjs';
+import { loadContactActors, actorAnchors, drawContactActor } from '../互动元素/actor_contacts.mjs';
+import { CORE } from '../互动元素/cue_props_engine.mjs';
+import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
+
+const { reseedBoil } = CORE;
+const S = 1.5; // 1280x720 逻辑 -> 1920x1080 输出
+export const TITLE_LEN = 0;
+
+function argOf(argv, k) { const i = argv.indexOf(k); return i >= 0 && i + 1 < argv.length ? argv[i + 1] : null; }
+export function gaitAnim(t, start, dur) {
+  if (t < start || t > start + dur) return {};
+  const phase = Math.floor((t - start) * 10) % 8;
+  const a = Math.sin((phase * Math.PI) / 4);
+  return { bones: { legL: { rot: a * 0.055, dy: -Math.max(0, a) * 10 }, legR: { rot: -a * 0.055, dy: -Math.max(0, -a) * 10 } } };
+}
+
+/** 量化到 8 拍，避免每帧重蒙皮把缓存打穿。头发、尾巴、头随拍摆，不贴假眼睛。 */
+export function lifeAnim(t, seed = 0) {
+  const phase = Math.floor((t + seed) * 5) % 8;
+  const a = Math.sin((phase * Math.PI) / 4);
+  const b = Math.cos((phase * Math.PI) / 4);
+  return {
+    bones: {
+      spine: { rot: a * 0.022 },
+      head: { rot: b * 0.032 },
+      tail: { rot: a * 0.14 },
+      hairL: { rot: b * 0.07 },
+      hairR: { rot: -b * 0.06 },
+    },
+  };
+}
+
+/** 外层呼吸、重心左右晃。不进蒙皮缓存，所以可以连续。 */
+export function livingBody(t, seed = 0) {
+  const s = t + seed;
+  return {
+    dx: Math.sin(s * 0.85) * 7,
+    dy: Math.sin(s * 2.15) * 8,
+    lean: Math.sin(s * 1.05) * 0.055,
+    squash: Math.sin(s * 2.15) * 0.7,
+  };
+}
+
+export function ambientCamera(t, base) {
+  return {
+    z: base.z + Math.sin(t * 0.42) * 0.05,
+    cx: base.cx + Math.sin(t * 0.31) * 26,
+    cy: base.cy + Math.cos(t * 0.24) * 12,
+  };
+}
+
+export async function loadSpec(specPath) {
+  const mod = await import(pathToFileURL(path.resolve(specPath)).href);
+  const spec = mod.default || mod.SPEC || mod.spec;
+  if (!spec) throw new Error('episode.spec.mjs 必须 default 导出 spec 对象');
+  return spec;
+}
+
+export function validateInputs({ voice, alignment, subdata }) {
+  if (alignment.measured !== true || subdata.measured !== true) throw new Error('正式渲染只接受 measured=true 的实测轴与字幕');
+  const sha = createHash('sha256').update(fs.readFileSync(voice)).digest('hex');
+  if (sha !== alignment.source_sha256) throw new Error('音源 SHA256 与实测轴不匹配');
+  const cues = alignment.cues;
+  if (!Array.isArray(cues) || !cues.length) throw new Error('实测轴 cues 为空');
+  if (subdata.screens.map((s) => s.text).join('') !== cues.map((c) => c.text).join('')) throw new Error('字幕与实测轴台词逐字不一致');
+  return { sha, cues };
+}
+
+export function buildShots(spec, cues) {
+  return spec.shots.map((s) => ({ ...s, start: cues[s.fromLine - 1].start, end: cues[s.toLine - 1].end }));
+}
+
+export function buildEvents(spec, shots, cues) {
+  const events = [];
+  for (const shot of shots) {
+    for (const it of shot.interactions || []) {
+      const line = it.wordLine ?? it.line ?? shot.fromLine;
+      const { time } = resolveWordTime(cues, line, it.wordChar || cues[line - 1].text[0]);
+      const startLine = it.startLine ?? line;
+      const contactFrame = Math.round(time * FPS);
+      let startFrame = Math.round(cues[Math.max(0, startLine - 1)].start * FPS);
+      let endFrame = Math.round(shot.end * FPS) - 1;
+      if (startFrame > contactFrame) startFrame = Math.max(0, contactFrame - 6);
+      if (endFrame <= contactFrame) endFrame = contactFrame + 8;
+      events.push({
+        ...it, shotId: shot.id, measured: true, audio_sha256: 'alignment',
+        word_id: `L${String(line).padStart(2, '0')}:${it.wordChar || ''}`,
+        startFrame, contactFrame, endFrame,
+        params: {
+          scale: it.scale ?? 1, land: it.land, at: it.at, text: it.text,
+          slot: it.slot, span: it.span, toActor: it.toActor, title: it.title, sub: it.sub,
+        },
+      });
+    }
+  }
+  return events;
+}
+
+export function resolveActor(plan, t, line, cues = []) {
+  let pose = plan.pose || 'idle';
+  for (const p of plan.poses || []) {
+    if ((p.line != null && line >= p.line) || (p.at != null && t >= p.at)) pose = p.pose;
+  }
+  for (const p of plan.poseChanges || []) if (t >= p.at) pose = p.pose;
+  let x = plan.x;
+  const seed = (plan.x || 0) / 380;
+  const life = lifeAnim(t, seed);
+  let anim = { bones: { ...(plan.anim?.bones || {}), ...life.bones } };
+  if (plan.walk) {
+    const start = plan.walk.start != null
+      ? plan.walk.start
+      : (plan.walk.startLine ? (cues[plan.walk.startLine - 1]?.start ?? 0) : 0);
+    const duration = plan.walk.duration ?? 1;
+    const p = smooth((t - start) / duration);
+    x = mix(plan.walk.from, plan.walk.to, p);
+    if (t >= start && t <= start + duration) {
+      anim = { bones: { ...anim.bones, ...gaitAnim(t, start, duration).bones } };
+    }
+  }
+  const body = livingBody(t, seed);
+  return {
+    pose, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: plan.u ?? 38,
+    flip: !!plan.flip, lean: (plan.lean ?? 0) + body.lean, squash: body.squash, anim,
+  };
+}
+
+function holdFrame(frame, events, shotId) {
+  for (const ev of events) {
+    if (ev.shotId !== shotId) continue;
+    if (frame >= ev.contactFrame && frame < ev.contactFrame + 2) return ev.contactFrame;
+  }
+  return frame;
+}
+
+export async function createEpisodeRenderer({ spec, alignment, subdata }) {
+  validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues });
+  const cues = alignment.cues;
+  const shots = buildShots(spec, cues);
+  const events = buildEvents(spec, shots, cues);
+  const duration = cues[cues.length - 1].end + 0.24;
+  const frames = Math.ceil(duration * FPS);
+  await loadContactActors({ createCanvas, loadImage });
+  const sub = createDay2Subtitle({ fontOf: (n, w) => `${w} ${n}px NotoSansSC`, measureCtx: createCanvas(1, 1).getContext('2d') });
+  const stamp = spec.opener.stampWord
+    ? { time: resolveWordTime(cues, spec.opener.stampWord.line, spec.opener.stampWord.char).time, text: spec.opener.stampText, at: spec.opener.stampAt || [640, 520] }
+    : null;
+
+  const lineAt = (t) => { let n = 1; cues.forEach((c, i) => { if (t >= c.start) n = i + 1; }); return n; };
+  const shotAt = (t) => shots.find((s, i) => t >= s.start && t < (shots[i + 1]?.start ?? duration + 0.01)) || shots[0];
+
+  function actorsFor(shot, t, line) {
+    const inOpener = shot === shots[0] && t < Math.min(shot.end, OPENER_END);
+    const plans = inOpener
+      ? [spec.opener.actorA, spec.opener.actorB]
+      : (shot.actors || shot.actorsPlan || [spec.opener.actorA, spec.opener.actorB]);
+    return plans.map((p) => resolveActor(p, t, line, cues));
+  }
+
+  function swayCam(cam, t) {
+    return {
+      z: cam.z + Math.sin(t * 0.8) * 0.018,
+      cx: cam.cx + Math.sin(t * 0.62) * 12,
+      cy: cam.cy + Math.cos(t * 0.5) * 7,
+      shake: cam.shake,
+    };
+  }
+
+  function cameraFor(shot, t, isOpener) {
+    if (isOpener) return swayCam(openerCamera(t, { stampTime: stamp?.time, end: Math.min(shot.end, OPENER_END) }), t);
+    const base = ambientCamera(t, { z: 1.08, cx: 640, cy: 378, ...(shot.camera || {}) });
+    const pushes = shot.pushes || (shot.push ? [shot.push] : []);
+    let cam = base;
+    for (const push of pushes) {
+      const start = push.line ? cues[push.line - 1].start : (push.at ?? shot.start);
+      if (t < start) continue;
+      const p = smooth((t - start) / (push.duration || 0.4));
+      cam = {
+        z: mix(cam.z, push.z ?? cam.z + 0.12, p),
+        cx: mix(cam.cx, push.cx ?? cam.cx, p),
+        cy: mix(cam.cy, push.cy ?? cam.cy, p),
+      };
+    }
+    // 推完也不锁死：留下慢晃，画面一直在动。
+    return {
+      z: cam.z + Math.sin(t * 0.8) * 0.018,
+      cx: cam.cx + Math.sin(t * 0.62) * 12,
+      cy: cam.cy + Math.cos(t * 0.5) * 7,
+      shake: cam.shake,
+    };
+  }
+
+  function drawProp(ctx, ref, t, pop = 1) {
+    const prop = getProp(ref.propId);
+    assertForegroundWithinStage(ref.propId, ref.y, ref.scale ?? 1);
+    ctx.save();
+    ctx.translate(ref.x, ref.y);
+    ctx.scale((ref.scale ?? 1) * pop, (ref.scale ?? 1) * pop);
+    prop.draw(ctx, t, ref.state || {});
+    ctx.restore();
+  }
+
+  /** 只画相机空间 L0-L3（供横屏母版与竖屏重排共用同一场景状态）。 */
+  function renderScene(ctx, rawTime, { zoomMul = 1 } = {}) {
+    const rawFrame = Math.round(rawTime * FPS);
+    const shot = shotAt(rawTime);
+    const frame = holdFrame(rawFrame, events, shot.id);
+    const t = frame / FPS;
+    const line = lineAt(rawTime);
+    const actors = actorsFor(shot, t, line);
+    const anchors = actors.map((a) => { try { return actorAnchors(a); } catch { return null; } });
+    const isOpener = shot === shots[0] && rawTime < Math.min(shot.end, OPENER_END);
+    const cam = cameraFor(shot, rawTime, isOpener);
+    const camZ = { ...cam, z: cam.z * zoomMul };
+    const driven = new Set(events.filter((e) => e.shotId === shot.id && BODY_VERBS.has(e.verb)).map((e) => e.propId));
+    reseedBoil(0);
+    composeScene(ctx, {
+      t, cam: camZ, mood: shot.mood || 'work_cool', focusX: actors[0]?.x ?? 640,
+      layers: {
+        back: (g) => {
+          for (const ref of (shot.companionProps || []).filter((p) => p.behind)) {
+            if (driven.has(ref.propId)) continue;
+            const from = Number.isFinite(ref.enterAt) ? ref.enterAt : (ref.fromLine ? cues[ref.fromLine - 1].start : shot.start);
+            if (rawTime < from) continue;
+            drawProp(g, ref, t, ref.carry ? 1 : 0.85 + 0.15 * smooth((rawTime - from) / 0.25));
+          }
+        },
+        actors: (g) => { for (const a of actors) drawContactActor(g, a); },
+        foreground: (g) => {
+          // 头顶身份铭牌（场景空间，位于头顶上方，不贴角色本体）
+          if (isOpener && spec.opener.rolePlates) {
+            const plates = spec.opener.rolePlates.map((text, i) => {
+              const an = anchors[i];
+              return an?.headTop ? { text, x: an.headTop[0], y: an.headTop[1], dir: i === 0 ? -1 : 1 } : null;
+            }).filter(Boolean);
+            drawRolePlates(g, plates, rawTime, spec.opener.platesAt ?? PLATES_DEFAULT_AT);
+          }
+          if (isOpener) {
+            (spec.opener.foregroundProps || []).forEach((ref, i) => {
+              const at = ref.enterAt ?? (i === 0 ? 0 : 0.9 + i * 0.45);
+              if (rawTime < at) return;
+              drawProp(g, ref, t, 0.85 + 0.15 * smooth((rawTime - at) / 0.25));
+            });
+          }
+          for (const ref of (shot.companionProps || []).filter((p) => !p.behind)) {
+            if (driven.has(ref.propId)) continue;
+            const from = Number.isFinite(ref.enterAt) ? ref.enterAt : (ref.fromLine ? cues[ref.fromLine - 1].start : shot.start);
+            if (rawTime < from) continue;
+            const pop = ref.carry ? 1 : 0.85 + 0.15 * smooth((rawTime - from) / 0.25);
+            drawProp(g, ref, t, pop);
+          }
+          drawShotInteractions(g, { frame, t, shot, events, actors, anchors });
+          if (isOpener && stamp) drawStamp(g, rawTime, stamp.time, stamp.text, stamp.at[0], stamp.at[1]);
+        },
+      },
+    });
+    return { shot: shot.id, line, camera: camZ, isOpener };
+  }
+
+  /** L4 固定屏幕 HUD：横幅 + 角标 + Day2 字幕。ctx 须处于逻辑坐标变换下。 */
+  function renderHud(ctx, rawTime) {
+    if (rawTime < OPENER_END) drawHudBanner(ctx, rawTime, spec.opener);
+    drawComplianceCorner(ctx);
+    const s = subdata.screens.find((x) => rawTime >= x.start && rawTime < x.end);
+    if (s) sub.draw(ctx, { lines: sub.wrap(s.text), speaker: spec.speaker || '本鲸', vis: 1, W, H });
+  }
+
+  function renderFrame(ctx, rawTime, opts = {}) {
+    const info = renderScene(ctx, rawTime, opts);
+    if (!opts.noHud) renderHud(ctx, rawTime);
+    return info;
+  }
+
+  return { spec, cues, shots, events, duration, frames, stamp, sub, renderScene, renderHud, renderFrame, lineAt, shotAt };
+}
+
+export async function main(argv = process.argv.slice(2)) {
+  const specPath = argOf(argv, '--spec');
+  if (!specPath) throw new Error('用法：--spec <episode.spec.mjs> --voice <wav> --alignment <json> --subtitle-file <json> [--out|--test|--stills]');
+  const voice = argOf(argv, '--voice');
+  const alignmentPath = argOf(argv, '--alignment');
+  const subsPath = argOf(argv, '--subtitle-file');
+  if (!voice || !alignmentPath || !subsPath) throw new Error('缺少 --voice/--alignment/--subtitle-file');
+  const spec = await loadSpec(specPath);
+  const alignment = JSON.parse(fs.readFileSync(alignmentPath, 'utf8'));
+  const subdata = JSON.parse(fs.readFileSync(subsPath, 'utf8'));
+  validateInputs({ voice, alignment, subdata });
+  const r = await createEpisodeRenderer({ spec, alignment, subdata });
+  const specDir = path.dirname(path.resolve(specPath));
+
+  if (argv.includes('--test') || argv.includes('--stills')) {
+    const canvas = createCanvas(W * S, H * S);
+    const g = canvas.getContext('2d');
+    const times = [0, 0.35, 0.72, 1.0, 1.6, 2.2, ...r.shots.map((s) => (s.start + s.end) / 2), ...(r.stamp ? [r.stamp.time] : [])]
+      .filter((x) => x < r.duration);
+    const samples = [];
+    const dir = path.join(specDir, 'engine_stills');
+    if (argv.includes('--stills')) fs.mkdirSync(dir, { recursive: true });
+    for (const t of times) {
+      g.setTransform(S, 0, 0, S, 0, 0);
+      g.clearRect(0, 0, W, H);
+      samples.push({ time: t, ...r.renderFrame(g, t) });
+      if (argv.includes('--stills')) fs.writeFileSync(path.join(dir, `t_${t.toFixed(3)}.jpg`), canvas.toBuffer('image/jpeg'));
+    }
+    const report = { measured: true, title_len: TITLE_LEN, frames: r.frames, duration: r.duration, samples, events: r.events.map((e) => ({ id: e.id || e.propId, verb: e.verb, word_id: e.word_id, contactFrame: e.contactFrame })) };
+    fs.writeFileSync(path.join(specDir, 'engine_render_test.json'), JSON.stringify(report, null, 2) + '\n');
+    console.log('PASS', samples.length, 'samples', r.frames, 'frames');
+    return report;
+  }
+
+  const out = argOf(argv, '--out') || path.join(specDir, `Day${spec.day}_通用引擎干声版.mp4`);
+  fs.mkdirSync(path.dirname(path.resolve(out)), { recursive: true });
+  const canvas = createCanvas(W * S, H * S);
+  const g = canvas.getContext('2d');
+  const ff = spawn(resolveFfmpeg(), ['-y', '-f', 'rawvideo', '-pix_fmt', 'rgba', '-s', `${W * S}x${H * S}`, '-r', String(FPS), '-i', '-', '-i', voice, '-map', '0:v:0', '-map', '1:a:0', '-c:v', 'libx264', '-crf', '19', '-preset', 'veryfast', '-tune', 'animation', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-ac', '2', '-ar', '44100', '-b:a', '160k', '-af', 'apad', '-t', String(r.frames / FPS), '-movflags', '+faststart', out], { stdio: ['pipe', 'ignore', 'pipe'] });
+  let err = '';
+  ff.stderr.on('data', (d) => { err += d; });
+  ff.stdin.on('error', () => {});
+  const done = new Promise((res, rej) => { ff.on('error', rej); ff.on('close', (c) => (c === 0 ? res() : rej(new Error(err.slice(-2000))))); });
+  for (let f = 0; f < r.frames; f++) {
+    g.setTransform(S, 0, 0, S, 0, 0);
+    g.clearRect(0, 0, W, H);
+    r.renderFrame(g, f / FPS);
+    const b = canvas.data();
+    if (!ff.stdin.write(Buffer.from(b.buffer, b.byteOffset, b.byteLength))) await Promise.race([new Promise((res) => ff.stdin.once('drain', res)), done]);
+    if (f % 150 === 0) console.log(`${f}/${r.frames}`);
+  }
+  ff.stdin.end();
+  await done;
+  console.log('DONE', out);
+  return { out, frames: r.frames, duration: r.duration };
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((e) => { console.error(e); process.exit(1); });
+}

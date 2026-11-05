@@ -1,0 +1,19 @@
+{
+  "script": "Day10/Day10配音台词.txt",
+  "voice": "鲸鱼架空_克隆配音_最终版.wav",
+  "alignment": "tools/day10制作/voice_alignment.json",
+  "subs": "tools/day10制作/subtitle_timing.json",
+  "renderer": "tools/day10制作/render_day10_full.mjs",
+  "video": "Day10/成片/Day10_鲸鱼架空_配音对齐版.mp4",
+  "tests": [
+    "tools/day10制作/day10_full.test.mjs",
+    "tools/day10制作/day10_plan.test.mjs",
+    "tools/互动元素/cue_props_engine.test.mjs",
+    "tools/day9制作/motion_v2.test.mjs",
+    "tools/场景/sea_stage.test.mjs"
+  ],
+  "rate": 3.35,
+  "seconds": 60,
+  "event_cue": "L01",
+  "note": "用户指定源速；末句后按本轮要求约0.24秒，非旧十九秒片；八镜连续整集。"
+}

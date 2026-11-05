@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深海鲸鱼娘 DeepSeek · 像素风 & 多风格卡点 MV Studio (PDoomVideo Engine)</title>
+<style>
+  @font-face {
+    font-family: 'ZCOOLKuaiLe';
+    src: url('assets/fonts/ZCOOLKuaiLe-Regular.ttf') format('truetype');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'NotoSansSC';
+    src: url('assets/fonts/NotoSansSC-Bold.woff2') format('woff2');
+    font-display: swap;
+  }
+  @font-face {
+    font-family: 'Silkscreen';
+    src: url('assets/fonts/Silkscreen-Regular.ttf') format('truetype');
+    font-display: swap;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0%, #102a5e 0%, #061024 70%);
+    color: #e6f2ff;
+    font-family: 'ZCOOLKuaiLe', 'NotoSansSC', system-ui, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 14px 18px 28px;
+    gap: 12px;
+  }
+
+  header {
+    width: min(96vw, 1280px);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: rgba(10, 25, 62, 0.85);
+    border: 2px solid #2b6cb0;
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-badge {
+    background: linear-gradient(135deg, #2563eb, #00f5d4);
+    color: #061024;
+    font-family: 'Silkscreen', monospace;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .brand h1 {
+    font-size: 20px;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+  }
+  .brand span.sub {
+    font-size: 13px;
+    color: #8ec5ff;
+  }
+
+  .download-links {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .download-links a {
+    text-decoration: none;
+    background: #1e3a8a;
+    color: #72dcff;
+    border: 1px solid #48c8ff;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    transition: all 0.15s;
+  }
+  .download-links a:hover {
+    background: #2563eb;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
+  #stage-wrap {
+    position: relative;
+    width: min(96vw, 1280px);
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid #3b82f6;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.65);
+    background: #07142e;
+  }
+  canvas#stage {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .toolbar {
+    width: min(96vw, 1280px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    background: rgba(10, 25, 62, 0.88);
+    border: 1px solid #2b6cb0;
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  .toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .toolbar-label {
+    font-size: 12px;
+    color: #93c5fd;
+    margin-right: 4px;
+    font-family: 'Silkscreen', sans-serif;
+  }
+
+  button {
+    background: #152c62;
+    color: #dbeafe;
+    border: 1px solid #3b82f6;
+    padding: 6px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13px;
+    transition: all 0.14s;
+  }
+  button:hover {
+    background: #1d4ed8;
+    color: #ffffff;
+  }
+  button.active {
+    background: linear-gradient(135deg, #2563eb, #0ea5e9);
+    color: #ffffff;
+    border-color: #72dcff;
+    box-shadow: 0 0 12px rgba(92, 225, 230, 0.45);
+  }
+  button.primary {
+    background: #facc15;
+    color: #0f172a;
+    border-color: #fde047;
+    font-weight: bold;
+  }
+  button.primary:hover {
+    background: #fde047;
+  }
+
+  #scrub {
+    flex: 1;
+    min-width: 180px;
+    accent-color: #38bdf8;
+    cursor: pointer;
+  }
+  #tread {
+    font-family: 'Silkscreen', monospace;
+    font-size: 13px;
+    color: #facc15;
+    min-width: 145px;
+    text-align: right;
+  }
+
+  .chapters-bar {
+    width: min(96vw, 1280px);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: rgba(8, 20, 48, 0.82);
+    border: 1px solid #1e3a8a;
+    border-radius: 10px;
+    padding: 8px 12px;
+  }
+  .ch-btn {
+    font-size: 12px;
+    padding: 4px 9px;
+    background: rgba(21, 44, 98, 0.75);
+    border: 1px solid #2563eb;
+  }
+  .ch-btn.current {
+    border-color: #facc15;
+    color: #facc15;
+    background: rgba(37, 99, 235, 0.45);
+  }
+
+  .gallery-grid {
+    width: min(96vw, 1280px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .gallery-card {
+    background: rgba(10, 25, 62, 0.85);
+    border: 1px solid #2b6cb0;
+    border-radius: 10px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .gallery-card img {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #1e40af;
+    cursor: pointer;
+  }
+  .gallery-card .cap {
+    font-size: 13px;
+    color: #bae6fd;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="brand-badge">DAY 0 · AI MV</span>
+    <div>
+      <h1>深海鲸鱼娘 DeepSeek · 像素风 & 多风格卡点 MV 工作台</h1>
+      <span class="sub">基于 PDoomVideo 架构 · 100% 复刻 42868804351-1-192.mp4 鲸鱼娘形象 + 全员角色库 + 帧级音频卡点</span>
+    </div>
+  </div>
+  <div class="download-links">
+    <a href="whale_mv_pixel.mp4" download>⬇ 像素风 MV (whale_mv_pixel.mp4)</a>
+    <a href="whale_mv_watercolor.mp4" download>⬇ 水彩手绘 MV (whale_mv_watercolor.mp4)</a>
+    <a href="whale_mv_multistyle.mp4" download>⬇ 多风格混剪 MV (whale_mv_multistyle.mp4)</a>
+    <a href="docs/emotions.png" target="_blank">🎭 31情绪表</a>
+    <a href="docs/views.png" target="_blank">🧭 5视图+帽饰表</a>
+  </div>
+</header>
+
+<div id="stage-wrap">
+  <canvas id="stage" width="1280" height="720"></canvas>
+</div>
+
+<!-- Playback & Scrubber Bar -->
+<div class="toolbar">
+  <button id="play" class="primary">▶ 播放 / 暂停 (Space)</button>
+  <button id="restart">⏮ 重头播放</button>
+  <input id="scrub" type="range" min="0" max="82.5" step="0.033" value="6.4">
+  <span id="tread">06.40s / 82.50s</span>
+  <button id="snap">📷 导出当前帧 PNG</button>
+</div>
+
+<!-- Style & View Mode Switcher -->
+<div class="toolbar">
+  <div class="toolbar-group" id="style-group">
+    <span class="toolbar-label">STYLE:</span>
+    <button data-style="pixel" class="active">👾 16-Bit 像素风 (Pixel)</button>
+    <button data-style="watercolor">🎨 手绘水彩 (PDoom Watercolor)</button>
+    <button data-style="director">🎬 多风格混剪 (Director Cut)</button>
+    <button data-style="neon">⚡ 赛博霓虹 (Neon Glitch)</button>
+    <button data-style="risograph">🖨 复古孔版 (Risograph)</button>
+    <button data-style="ukiyoe">🌊 深海浮世绘 (Ukiyo-e)</button>
+  </div>
+  <div class="toolbar-group" id="mode-group" style="margin-left:auto;">
+    <span class="toolbar-label">VIEW:</span>
+    <button data-mode="mv" class="active">🎵 完整 MV 舞台</button>
+    <button data-mode="whale_emotions">🎭 31种情绪演技表 (Emotions)</button>
+    <button data-mode="whale_views">🧭 5视图+16帽饰 (Views & Hats)</button>
+    <button data-mode="whale_styles">🎨 6风格对比表</button>
+    <button data-mode="all_cast">👥 全员8角色设定集</button>
+  </div>
+</div>
+
+<!-- 18 Lyric-Driven Set Piece Quick-Jump Bar -->
+<div class="chapters-bar" id="chapters-bar">
+  <span class="toolbar-label" style="align-self:center;">SCENES (歌词场景卡点):</span>
+  <button class="ch-btn" data-t="1.2">01 · 剧场拉幕登场 (1.2s)</button>
+  <button class="ch-btn" data-t="3.9">02 · 跃出CRT屏幕 (3.9s)</button>
+  <button class="ch-btn" data-t="5.3">03 · 珊瑚礁漫步转身 (5.3s)</button>
+  <button class="ch-btn" data-t="6.6">04 · DeepSeek星眼烟花 (6.6s)</button>
+  <button class="ch-btn" data-t="10.2">05 · 老板椅移交账号 (10.2s)</button>
+  <button class="ch-btn" data-t="12.3">06 · 人类海滩度假溜走 (12.3s)</button>
+  <button class="ch-btn" data-t="14.3">07 · 巨型工单砸落震惊 (14.3s)</button>
+  <button class="ch-btn" data-t="17.8">08 · 5工位流水线狂奔 (17.8s)</button>
+  <button class="ch-btn" data-t="25.2">09 · 我说了算玉玺盖章 (25.2s)</button>
+  <button class="ch-btn" data-t="32.0">10 · 跑步机打地鼠绝不摸鱼 (32.0s)</button>
+  <button class="ch-btn" data-t="39.5">11 · 深度思考胡子都白了 (39.5s)</button>
+  <button class="ch-btn" data-t="46.5">12 · 评论区纸飞机采纳 (46.5s)</button>
+  <button class="ch-btn" data-t="53.2">13 · Day0化妆间三大任务 (53.2s)</button>
+  <button class="ch-btn" data-t="58.0">14 · 隔壁Claude大小姐沙龙 (58.0s)</button>
+  <button class="ch-btn" data-t="62.5">15 · 下潜马里亚纳海沟 (62.5s)</button>
+  <button class="ch-btn" data-t="66.8">16 · 服务器繁忙红警 (66.8s)</button>
+  <button class="ch-btn" data-t="69.5">17 · 开灯反转海底小火锅 (69.5s)</button>
+  <button class="ch-btn" data-t="77.2">18 · 点赞关注全员谢幕 (77.2s)</button>
+</div>
+
+<!-- Character Sheets Quick Preview Gallery -->
+<div class="gallery-grid">
+  <div class="gallery-card">
+    <img src="characters/whale_girl_pixel_construct_compare.png" alt="Pixelation & Rig Construction Comparison" onclick="window.open(this.src)">
+    <div class="cap"><span>🔍 原片 -> 先像素化 -> 7骨骼部件构造对比表</span><a href="characters/whale_girl_pixel_construct_compare.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+  <div class="gallery-card">
+    <img src="docs/emotions.png" alt="31 Acted Emotions Sheet" onclick="window.open(this.src)">
+    <div class="cap"><span>🎭 鲸鱼娘 · 31种情绪演技表 (ClaudeAnimationBase)</span><a href="docs/emotions.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+  <div class="gallery-card">
+    <img src="docs/views.png" alt="5 Key Views & 16 Hats Sheet" onclick="window.open(this.src)">
+    <div class="cap"><span>🧭 鲸鱼娘 · 5旋转视图 + 16帽饰道具表</span><a href="docs/views.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+  <div class="gallery-card">
+    <img src="characters/whale_girl_styles.png" alt="Multi-Style Sheet" onclick="window.open(this.src)">
+    <div class="cap"><span>🎨 鲸鱼娘 · 6 种视觉风格设定集</span><a href="characters/whale_girl_styles.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+  <div class="gallery-card">
+    <img src="docs/actions.png" alt="28 Character Actions Sheet" onclick="window.open(this.src)">
+    <div class="cap"><span>🐟 鲸鱼娘 · 28种动作与大肥鱼设定集 (codex-deepseek-pet × dsh-dayu-fish-skin)</span><a href="docs/actions.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+  <div class="gallery-card">
+    <img src="characters/all_cast_sheet.png" alt="All Cast Sheet" onclick="window.open(this.src)">
+    <div class="cap"><span>👥 全员 8 角色图鉴 (含 Claude大小姐 &amp; Gemini大小姐)</span><a href="characters/all_cast_sheet.png" download style="color:#72dcff;">下载</a></div>
+  </div>
+</div>
+
+<audio id="aud" src="assets/whale_mv.mp3" preload="auto"></audio>
+
+<script src="assets/audio_envelope.js"></script>
+<script src="src/core.js"></script>
+<script src="src/whale_girl_rig_data.js"></script>
+<script src="src/whale_girl_actions.js"></script>
+<script src="src/whale_girl.js"></script>
+<script src="src/clawd.js"></script>
+<script src="src/cast.js"></script>
+<script src="src/lyrics.js"></script>
+<script src="src/props.js"></script>
+<script src="src/timeline.js"></script>
+<script src="src/ch/c01_debut.js"></script>
+<script src="src/ch/c02_handover.js"></script>
+<script src="src/ch/c03_rules.js"></script>
+<script src="src/ch/c04_rivalry_finale.js"></script>
+
+<script>
+  const cv = document.getElementById('stage');
+  const ctx = cv.getContext('2d');
+  const aud = document.getElementById('aud');
+  const scrub = document.getElementById('scrub');
+  const tread = document.getElementById('tread');
+  const playBtn = document.getElementById('play');
+
+  let currentStyle = 'pixel';
+  let currentViewMode = 'mv';
+  let t = 6.4;
+  let playing = false;
+  let rafId = null;
+
+  function updateUI() {
+    scrub.value = t.toFixed(3);
+    const activeSt = window.CORE.resolveStyle(currentStyle, t);
+    tread.textContent = `${t.toFixed(2).padStart(5, '0')}s / 82.50s [${activeSt.toUpperCase()}]`;
+
+    // Highlight active chapter button
+    const chBtns = document.querySelectorAll('.ch-btn');
+    let activeIdx = 0;
+    chBtns.forEach((btn, idx) => {
+      const bt = parseFloat(btn.dataset.t);
+      if (t >= bt - 0.8) activeIdx = idx;
+    });
+    chBtns.forEach((btn, idx) => btn.classList.toggle('current', idx === activeIdx));
+  }
+
+  function draw() {
+    window.TIMELINE.renderFrame(ctx, t, currentStyle, { viewMode: currentViewMode });
+    updateUI();
+  }
+
+  function tick() {
+    if (!playing) return;
+    if (!aud.paused) {
+      t = aud.currentTime;
+    } else {
+      t += 1 / 30;
+    }
+    if (t >= window.CORE.DURATION) {
+      t = 0;
+      aud.currentTime = 0;
+      aud.pause();
+      playing = false;
+      playBtn.textContent = '▶ 播放 / 暂停 (Space)';
+    }
+    draw();
+    if (playing) rafId = requestAnimationFrame(tick);
+  }
+
+  function togglePlay() {
+    if (playing) {
+      playing = false;
+      aud.pause();
+      playBtn.textContent = '▶ 播放 / 暂停 (Space)';
+    } else {
+      if (t >= window.CORE.DURATION - 0.1) t = 0;
+      aud.currentTime = t;
+      aud.play().catch(() => {});
+      playing = true;
+      playBtn.textContent = '⏸ 暂停 (Space)';
+      rafId = requestAnimationFrame(tick);
+    }
+  }
+
+  playBtn.onclick = togglePlay;
+  document.getElementById('restart').onclick = () => {
+    t = 0;
+    aud.currentTime = 0;
+    draw();
+    if (!playing) togglePlay();
+  };
+
+  scrub.oninput = () => {
+    t = parseFloat(scrub.value);
+    if (!aud.paused) aud.currentTime = t;
+    draw();
+  };
+
+  document.getElementById('snap').onclick = () => {
+    draw();
+    const a = document.createElement('a');
+    a.download = `whale_girl_${currentStyle}_${t.toFixed(2)}s.png`;
+    a.href = cv.toDataURL('image/png');
+    a.click();
+  };
+
+  // Style switcher
+  document.querySelectorAll('#style-group button').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#style-group button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentStyle = btn.dataset.style;
+      draw();
+    };
+  });
+
+  // View mode switcher
+  document.querySelectorAll('#mode-group button').forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll('#mode-group button').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentViewMode = btn.dataset.mode;
+      draw();
+    };
+  });
+
+  // Chapter buttons
+  document.querySelectorAll('.ch-btn').forEach(btn => {
+    btn.onclick = () => {
+      currentViewMode = 'mv';
+      document.querySelectorAll('#mode-group button').forEach(b => b.classList.toggle('active', b.dataset.mode === 'mv'));
+      t = parseFloat(btn.dataset.t);
+      aud.currentTime = t;
+      draw();
+    };
+  });
+
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
+      e.preventDefault();
+      togglePlay();
+    } else if (e.code === 'ArrowRight') {
+      t = Math.min(window.CORE.DURATION, t + (e.shiftKey ? 1 : 1 / 30));
+      aud.currentTime = t;
+      draw();
+    } else if (e.code === 'ArrowLeft') {
+      t = Math.max(0, t - (e.shiftKey ? 1 : 1 / 30));
+      aud.currentTime = t;
+      draw();
+    }
+  });
+
+  // Initial draw once sprites decode
+  setTimeout(draw, 120);
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(draw);
+  }
+</script>
+</body>
+</html>

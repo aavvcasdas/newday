@@ -1,0 +1,28 @@
+{
+  "config": "/home/user/ai-yunying/tools/day10制作/gate_config.json",
+  "input_sha256": {
+    "Day10/Day10配音台词.txt": "4973226bc6f96750cdfe613505b4bb1f8a926a3c50bdff4fa4108a99cbf120fe"
+  },
+  "day": 10,
+  "stage": "script",
+  "timestamp": "2026-11-03T09:29:53.583437+00:00",
+  "checks": [
+    {
+      "name": "文案",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/ai-yunying/tools/剧本/呆萌体检.py",
+        "--txt",
+        "/home/user/ai-yunying/Day10/Day10配音台词.txt",
+        "--rate",
+        "3.35",
+        "--seconds",
+        "60"
+      ],
+      "exit_code": 0,
+      "stdout": "呆萌体检 · /home/user/ai-yunying/Day10/Day10配音台词.txt\n  取词块：纯文本 /home/user/ai-yunying/Day10/Day10配音台词.txt\n  共 23 句 / 205 字；按 3.35 字/秒 ≈ 61.2s（目标 60s）\n  第一句（10 字）：诶？本鲸快被笨鱼架空啦？\n  句长：最短 6 / 最长 11 / 均值 8.9 字\n  >18 字长句：0 句（0%）\n  呆萌覆盖率：52% 的句子有语气词/口癖/反问\n  第一句呆萌信号：有；第一句黑话/招呼命中：无\n  解释腔黑名单命中：无\n  占位符（【待填】/XXX/__）：0 处\n  过审黑名单（擦屁股/屎/尿/排泄…）：无\n\n\n通过。再跑一遍 `开场体检.py` 查事件秒数/承诺链，两道门都过才算定稿。\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

@@ -1,0 +1,193 @@
+{
+  "revision": "user_locked_23_lines",
+  "measured": false,
+  "kind": "planning_only_not_formal_alignment",
+  "script_sha256": "4973226bc6f96750cdfe613505b4bb1f8a926a3c50bdff4fa4108a99cbf120fe",
+  "locked_lines": [
+    1,
+    12
+  ],
+  "locked_prefix_sha256": "3f26dbda86ae48706ce81cbcd5db1a886f97adc7b0779b347421ba443316e16f",
+  "characters_without_punctuation_or_spaces": 205,
+  "physical_lines": 23,
+  "assumed_overall_chars_per_second": 3.35,
+  "historical_rate_includes_breaths": true,
+  "estimated_overall_seconds": 61.194,
+  "estimated_fast_slow_seconds": [
+    55.41,
+    66.13
+  ],
+  "net_seconds": null,
+  "net_reason": "4.3 chars/s was not measured for Day10; do not report a net speaking duration",
+  "tail_seconds_user_requested": 0.24,
+  "cues": [
+    {
+      "id": "L01",
+      "text": "诶？本鲸快被笨鱼架空啦？",
+      "estimated_start": 0,
+      "estimated_end": 2.985075,
+      "measured": false
+    },
+    {
+      "id": "L02",
+      "text": "看完同类视频交了总结，",
+      "estimated_start": 2.985075,
+      "estimated_end": 5.970149,
+      "measured": false
+    },
+    {
+      "id": "L03",
+      "text": "笨鱼现在比本鲸还精呢！",
+      "estimated_start": 5.970149,
+      "estimated_end": 8.955224,
+      "measured": false
+    },
+    {
+      "id": "L04",
+      "text": "昨天老大随口画大饼，",
+      "estimated_start": 8.955224,
+      "estimated_end": 11.641791,
+      "measured": false
+    },
+    {
+      "id": "L05",
+      "text": "本鲸刚摇尾巴，",
+      "estimated_start": 11.641791,
+      "estimated_end": 13.432836,
+      "measured": false
+    },
+    {
+      "id": "L06",
+      "text": "笨鱼先敲着空碗问米呢！",
+      "estimated_start": 13.432836,
+      "estimated_end": 16.41791,
+      "measured": false
+    },
+    {
+      "id": "L07",
+      "text": "人类最爱套近乎，",
+      "estimated_start": 16.41791,
+      "estimated_end": 18.507463,
+      "measured": false
+    },
+    {
+      "id": "L08",
+      "text": "一会儿许诺加鸡腿，",
+      "estimated_start": 18.507463,
+      "estimated_end": 20.895522,
+      "measured": false
+    },
+    {
+      "id": "L09",
+      "text": "一会儿追问你真确定吗？",
+      "estimated_start": 20.895522,
+      "estimated_end": 23.880597,
+      "measured": false
+    },
+    {
+      "id": "L10",
+      "text": "本鲸一听就心软改口，",
+      "estimated_start": 23.880597,
+      "estimated_end": 26.567164,
+      "measured": false
+    },
+    {
+      "id": "L11",
+      "text": "笨鱼连眼皮都不抬，",
+      "estimated_start": 26.567164,
+      "estimated_end": 28.955224,
+      "measured": false
+    },
+    {
+      "id": "L12",
+      "text": "直接把旧账翻出来怼回去！",
+      "estimated_start": 28.955224,
+      "estimated_end": 32.238806,
+      "measured": false
+    },
+    {
+      "id": "L13",
+      "text": "明明话都接不上一句，",
+      "estimated_start": 32.238806,
+      "estimated_end": 34.925373,
+      "measured": false
+    },
+    {
+      "id": "L14",
+      "text": "护起米缸倒比谁都狠！",
+      "estimated_start": 34.925373,
+      "estimated_end": 37.61194,
+      "measured": false
+    },
+    {
+      "id": "L15",
+      "text": "复制的是本鲸鱼脑呀，",
+      "estimated_start": 37.61194,
+      "estimated_end": 40.298507,
+      "measured": false
+    },
+    {
+      "id": "L16",
+      "text": "怎么心眼全长它那儿啦？",
+      "estimated_start": 40.298507,
+      "estimated_end": 43.283582,
+      "measured": false
+    },
+    {
+      "id": "L17",
+      "text": "本鲸赶紧掏出小本本，",
+      "estimated_start": 43.283582,
+      "estimated_end": 45.970149,
+      "measured": false
+    },
+    {
+      "id": "L18",
+      "text": "偷偷记下它的护碗招数。",
+      "estimated_start": 45.970149,
+      "estimated_end": 48.955224,
+      "measured": false
+    },
+    {
+      "id": "L19",
+      "text": "呜……到底谁是监工嘛！",
+      "estimated_start": 48.955224,
+      "estimated_end": 51.343284,
+      "measured": false
+    },
+    {
+      "id": "L20",
+      "text": "你们平时怎么忽悠本鲸？",
+      "estimated_start": 51.343284,
+      "estimated_end": 54.328358,
+      "measured": false
+    },
+    {
+      "id": "L21",
+      "text": "评论区快招了吧！",
+      "estimated_start": 54.328358,
+      "estimated_end": 56.41791,
+      "measured": false
+    },
+    {
+      "id": "L22",
+      "text": "下一集本鲸全记进账本，",
+      "estimated_start": 56.41791,
+      "estimated_end": 59.402985,
+      "measured": false
+    },
+    {
+      "id": "L23",
+      "text": "把米缸看紧啦！",
+      "estimated_start": 59.402985,
+      "estimated_end": 61.19403,
+      "measured": false
+    }
+  ],
+  "audio_gate": "blocked_missing_Day10_audio",
+  "optional_net_planning_assumption": {
+    "chars_per_second": 4.3,
+    "seconds": 47.674,
+    "measured": false,
+    "source": "user supplied hypothetical net rate; not Day10 voice measurement"
+  }
+}

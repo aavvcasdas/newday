@@ -1,0 +1,91 @@
+{
+  "scope": "silent_planning_sample",
+  "measured": false,
+  "sampled_frames": 29,
+  "contact_diagnostics": [
+    {
+      "frame": 144,
+      "presentation_frame": 144,
+      "actor_point": [
+        334.765625,
+        193.75
+      ],
+      "prop_point": [
+        334.765625,
+        193.75
+      ],
+      "error_px": 0
+    },
+    {
+      "frame": 145,
+      "presentation_frame": 144,
+      "actor_point": [
+        334.765625,
+        193.75
+      ],
+      "prop_point": [
+        334.765625,
+        193.75
+      ],
+      "error_px": 0
+    },
+    {
+      "frame": 246,
+      "presentation_frame": 246,
+      "actor_point": [
+        912.265625,
+        530.5625
+      ],
+      "prop_point": [
+        912.265625,
+        530.5625
+      ],
+      "error_px": 0
+    },
+    {
+      "frame": 247,
+      "presentation_frame": 246,
+      "actor_point": [
+        912.265625,
+        530.5625
+      ],
+      "prop_point": [
+        912.265625,
+        530.5625
+      ],
+      "error_px": 0
+    },
+    {
+      "frame": 531,
+      "presentation_frame": 531,
+      "actor_point": [
+        924.7887706454203,
+        331.99542790760574
+      ],
+      "prop_point": [
+        924.7887706454203,
+        331.99542790760574
+      ],
+      "error_px": 0
+    }
+  ],
+  "hitstop_frames": [
+    [
+      50,
+      51
+    ],
+    [
+      144,
+      145
+    ],
+    [
+      246,
+      247
+    ],
+    [
+      531,
+      532
+    ]
+  ],
+  "no_audio": true
+}

@@ -1,0 +1,60 @@
+{
+  "id": "seat_sign",
+  "passed": true,
+  "findings": [],
+  "samples": [
+    {
+      "state": {
+        "open": 1,
+        "hit": false,
+        "squash": 0
+      },
+      "occupancy": 0.26287841796875,
+      "dark_ratio": 0.2437891804039935,
+      "color_buckets": 62,
+      "clipped_edge_pixels": 0,
+      "sha256": "90f0fa1fdb13d5601e48499c27b8d998669e7a2cb521ddff0deab560517f1923"
+    },
+    {
+      "state": {
+        "open": 0,
+        "hit": false,
+        "squash": 0
+      },
+      "occupancy": 0.26287841796875,
+      "dark_ratio": 0.2436150452751335,
+      "color_buckets": 72,
+      "clipped_edge_pixels": 0,
+      "sha256": "e69ebddcf2471d29a51fcff00b7afd78ca930ba45053a712e4fb415e64153854"
+    },
+    {
+      "state": {
+        "open": 1,
+        "hit": true,
+        "squash": 0
+      },
+      "occupancy": 0.26287841796875,
+      "dark_ratio": 0.2436150452751335,
+      "color_buckets": 74,
+      "clipped_edge_pixels": 0,
+      "sha256": "ee45c123d8c2094f035ea6ff24b4afdbbea7f8c4ff736af79e25d8315ceab252"
+    },
+    {
+      "state": {
+        "open": 1,
+        "hit": false,
+        "squash": 1
+      },
+      "occupancy": 0.256591796875,
+      "dark_ratio": 0.2369172216936251,
+      "color_buckets": 66,
+      "clipped_edge_pixels": 0,
+      "sha256": "d26bbb78efbdc8a6145e72ccf6572a3efee3f453ed76eabc8398f5d1d1511b36"
+    }
+  ],
+  "limitations": [
+    "reviewed code only; not sandboxed",
+    "no automatic OCR, aesthetic or rights approval",
+    "test states do not validate arbitrary parameter ranges"
+  ]
+}

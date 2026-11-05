@@ -1,0 +1,26 @@
+{
+  "day": 9,
+  "stage": "audio",
+  "timestamp": "2026-11-03T03:58:26.762013+00:00",
+  "checks": [
+    {
+      "name": "实测轴/哈希/台词/字幕",
+      "exit_code": 0
+    },
+    {
+      "name": "开场",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/ai-yunying/tools/剧本/开场体检.py",
+        "--json",
+        "/home/user/ai-yunying/tools/day9制作/voice_alignment.json",
+        "--event-cue",
+        "L01"
+      ],
+      "exit_code": 0,
+      "stdout": "开场体检 · /home/user/ai-yunying/tools/day9制作/voice_alignment.json\n\n前 20 秒逐句：\n  L01   0.000– 2.590  诶，修程序不如看视频？  ← 事件（手动指定）\n  L02   3.240– 4.750  程序没修明白，\n  L03   5.010– 7.550  本鲸的米饭钱，倒越来越少。\n  L04   8.280– 9.870  停！键盘先放下！\n  L05  10.420–12.400  本鲸是想多个帮手，\n  L06  12.840–13.980  老大倒好，\n  L07  14.320–15.920  说本鲸和笨鱼，\n  L08  16.090–17.380  都是吃白饭的。\n  L09  17.960–18.550  诶？\n  L10  18.990–20.240  它吃本鲸的，\n\n结论：\n  事件落地：0.000s (手动指定)\n  前 5 秒字数：15 字（3.0 字/秒），前两句黑名单命中：无\n  结尾承诺句：下一集\n  全长：111.24s\n\n通过。注意「事件位置」若是自动判的，再人工确认一遍。\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

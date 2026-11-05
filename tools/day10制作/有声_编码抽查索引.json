@@ -1,0 +1,127 @@
+{
+  "video_sha256": "3424e913658c5bb35c0b141cd7e2879d2edfd771ed3167b643a4fc776b9b5fae",
+  "frames": [
+    {
+      "file": "frame_01.jpg",
+      "frame": 0,
+      "time": 0.0
+    },
+    {
+      "file": "frame_02.jpg",
+      "frame": 150,
+      "time": 5.0
+    },
+    {
+      "file": "frame_03.jpg",
+      "frame": 356,
+      "time": 11.866666666666667
+    },
+    {
+      "file": "frame_04.jpg",
+      "frame": 357,
+      "time": 11.9
+    },
+    {
+      "file": "frame_05.jpg",
+      "frame": 358,
+      "time": 11.933333333333334
+    },
+    {
+      "file": "frame_06.jpg",
+      "frame": 409,
+      "time": 13.633333333333333
+    },
+    {
+      "file": "frame_07.jpg",
+      "frame": 457,
+      "time": 15.233333333333333
+    },
+    {
+      "file": "frame_08.jpg",
+      "frame": 458,
+      "time": 15.266666666666667
+    },
+    {
+      "file": "frame_09.jpg",
+      "frame": 637,
+      "time": 21.233333333333334
+    },
+    {
+      "file": "frame_10.jpg",
+      "frame": 707,
+      "time": 23.566666666666666
+    },
+    {
+      "file": "frame_11.jpg",
+      "frame": 871,
+      "time": 29.033333333333335
+    },
+    {
+      "file": "frame_12.jpg",
+      "frame": 872,
+      "time": 29.066666666666666
+    },
+    {
+      "file": "frame_13.jpg",
+      "frame": 873,
+      "time": 29.1
+    },
+    {
+      "file": "frame_14.jpg",
+      "frame": 874,
+      "time": 29.133333333333333
+    },
+    {
+      "file": "frame_15.jpg",
+      "frame": 935,
+      "time": 31.166666666666668
+    },
+    {
+      "file": "frame_16.jpg",
+      "frame": 1002,
+      "time": 33.4
+    },
+    {
+      "file": "frame_17.jpg",
+      "frame": 1074,
+      "time": 35.8
+    },
+    {
+      "file": "frame_18.jpg",
+      "frame": 1155,
+      "time": 38.5
+    },
+    {
+      "file": "frame_19.jpg",
+      "frame": 1302,
+      "time": 43.4
+    },
+    {
+      "file": "frame_20.jpg",
+      "frame": 1353,
+      "time": 45.1
+    },
+    {
+      "file": "frame_21.jpg",
+      "frame": 1455,
+      "time": 48.5
+    },
+    {
+      "file": "frame_22.jpg",
+      "frame": 1602,
+      "time": 53.4
+    },
+    {
+      "file": "frame_23.jpg",
+      "frame": 1755,
+      "time": 58.5
+    },
+    {
+      "file": "frame_24.jpg",
+      "frame": 1783,
+      "time": 59.43333333333333
+    }
+  ],
+  "original_media_and_locked_script_preserved": true,
+  "scope": "encoded keyframes and collision neighbor strip, not complete real-time human playback"
+}
