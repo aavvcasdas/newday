@@ -1,0 +1,46 @@
+TAP version 13
+# Subtest: sample local zero maps to original 19.033s; no two different timelines
+ok 1 - sample local zero maps to original 19.033s; no two different timelines
+  ---
+  duration_ms: 2.226505
+  type: 'test'
+  ...
+# Subtest: all seeks clamp to implemented source range
+ok 2 - all seeks clamp to implemented source range
+  ---
+  duration_ms: 0.157903
+  type: 'test'
+  ...
+# Subtest: unrendered lyrics never seek into the rejected old full film
+ok 3 - unrendered lyrics never seek into the rejected old full film
+  ---
+  duration_ms: 0.219615
+  type: 'test'
+  ...
+# Subtest: frame stepping is 1/30 second and bounded in both video modes
+ok 4 - frame stepping is 1/30 second and bounded in both video modes
+  ---
+  duration_ms: 0.187227
+  type: 'test'
+  ...
+# Subtest: cuts assign a boundary to the next shot, never both
+ok 5 - cuts assign a boundary to the next shot, never both
+  ---
+  duration_ms: 0.164042
+  type: 'test'
+  ...
+# Subtest: time labels are safe and consistent
+ok 6 - time labels are safe and consistent
+  ---
+  duration_ms: 0.182624
+  type: 'test'
+  ...
+1..6
+# tests 6
+# suites 0
+# pass 6
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 62.276524

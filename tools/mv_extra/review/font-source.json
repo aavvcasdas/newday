@@ -1,0 +1,10 @@
+{
+  "sourcePackage": "@expo-google-fonts/noto-sans-sc@0.4.4",
+  "url": "https://registry.npmjs.org/@expo-google-fonts/noto-sans-sc/-/noto-sans-sc-0.4.4.tgz",
+  "sourceMember": "package/400Regular/NotoSansSC_400Regular.ttf",
+  "sourceSha256": "d45f67f0a7c0ca3f256950777ce6a61cc7ce5f9696d02900cbbaac25f8aa7d16",
+  "outputSha256": "490d844d118a1bf1bbd23b758362f471500fa8de4182f919e8c2891eeae2c102",
+  "license": "SIL OFL 1.1; full notice in FONT-OFL.txt",
+  "modification": "UI-only glyph subset renamed Whale Review Sans; no movie font substitution",
+  "glyphCount": 555
+}

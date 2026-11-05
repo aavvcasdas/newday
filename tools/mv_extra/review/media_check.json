@@ -1,0 +1,76 @@
+{
+  "kind": "fresh verification of existing v2 media and new review entry, no new render",
+  "sampleHashMatchesCurrentV2": true,
+  "sourceVideoGitBlobSha1": "b4a89ebc296054b96ca6d24ad5677903b85c31f5",
+  "media": [
+    {
+      "path": "番外MV/把回忆拼好给你/样片/v2_动作与场景_19.8秒有声试剪.mp4",
+      "sha256": "e740588297ab4b07f437fd709c4107fbbd4812d6b92c78a8a9acccc9c13d8e2e",
+      "bytes": 4363258,
+      "fullDecodeClean": true,
+      "video": {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "30/1",
+        "duration": "19.800000",
+        "nb_frames": "594"
+      },
+      "audio": {
+        "codec_name": "aac",
+        "sample_rate": "48000",
+        "channels": 2,
+        "duration": "19.800000"
+      }
+    },
+    {
+      "path": "《把回忆拼好给你》.mp4",
+      "sha256": "fa26fc78c5459fae6300e986c73a4fe56eb25de51b2db827257d757202989248",
+      "bytes": 11637129,
+      "fullDecodeClean": true,
+      "video": {
+        "codec_name": "h264",
+        "width": 1920,
+        "height": 1080,
+        "r_frame_rate": "24/1",
+        "duration": "56.083333",
+        "nb_frames": "1346"
+      },
+      "audio": {
+        "codec_name": "aac",
+        "sample_rate": "44100",
+        "channels": 2,
+        "duration": "56.005011"
+      }
+    }
+  ],
+  "reviewSourceHashes": {
+    "tools/mv_extra/review/model.py": "2ab0312e2b154f8f20215ebd12b7848ea403787a2d44f6516e2fd530ca80ff2c",
+    "tools/mv_extra/review/serve.py": "7b02a6d5c1c39cfe131a67831e4d3c3ab2b489f522619b2c639fa1fef09bf0ef",
+    "tools/mv_extra/review/timeline.mjs": "255666de108d29d81f5ae87d1a25feb64bed3b62783cb3212b103b285554ce1c",
+    "tools/mv_extra/review/index.html": "f3598f338a6e7ec51df55f7fd600e336fb19a61a505bcaf0fc5ff61125b489ad",
+    "tools/mv_extra/review/style.css": "58f28f0bbc626d67e07de56e68bd81bccd17204d92edeca4d343e2207d48b836",
+    "tools/mv_extra/review/app.js": "d5b642552102edb7d3691e4a36d933b5ca8e5ce52d004ed669d78794cac2e158",
+    "tools/mv_extra/review/test_review.py": "139242d463dbad39a96f6bbdec13213d907a640e9582c03798def20939cbf7a1",
+    "tools/mv_extra/review/timeline.test.mjs": "1d1667b600f97514a70dd55bd0d244c8c7a5b898f3bfa657b69c5201e992a225",
+    "tools/mv_extra/review/browser_check.mjs": "7e6b38888627d4a7f7bbd248dc41fc3e64804959be3d2f27489db0cc24b67570",
+    "tools/mv_extra/review/build_font.py": "490d0eafb262339c5937d421882efceadc152b6cb76787759086e04f0bf96ae5",
+    "tools/mv_extra/review/review-sans.woff2": "490d844d118a1bf1bbd23b758362f471500fa8de4182f919e8c2891eeae2c102",
+    "tools/mv_extra/review/verify_media.py": "2c019bbf5282868a60464f09aa617e2bff8984877cb45e5a8e320d839ffcf624"
+  },
+  "latestLockedLyricSha256": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+  "implementedLines": [
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "timingBasis": "原片显字参考轴，约 ±0.25 秒；不是 ASR / 音素级对齐。",
+  "humanContinuousReview": false,
+  "humanListeningApproved": false,
+  "userDirectionApproved": false,
+  "newFullMovieRendered": false,
+  "priorReportsRewritten": false
+}

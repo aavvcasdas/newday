@@ -1,0 +1,29 @@
+{
+  "status": "passed",
+  "checks": [
+    "16 latest lyrics, 10 planned rows disabled, 11 shot buttons",
+    "switch source/sample retains corresponding source time; exactly one media element",
+    "actual MP4 playback advances; pause and single-frame seek work",
+    "selected shot loops back during real playback",
+    "native source-video seek beyond sample range clamps and pauses",
+    "local-only review note survives reload",
+    "desktop 1440px and mobile 390px screenshots; no mobile horizontal overflow"
+  ],
+  "browser": "153.0.8010.0",
+  "pageErrors": [],
+  "reviewSourceHashes": {
+    "index.html": "f3598f338a6e7ec51df55f7fd600e336fb19a61a505bcaf0fc5ff61125b489ad",
+    "app.js": "d5b642552102edb7d3691e4a36d933b5ca8e5ce52d004ed669d78794cac2e158",
+    "style.css": "58f28f0bbc626d67e07de56e68bd81bccd17204d92edeca4d343e2207d48b836",
+    "timeline.mjs": "255666de108d29d81f5ae87d1a25feb64bed3b62783cb3212b103b285554ce1c",
+    "model.py": "2ab0312e2b154f8f20215ebd12b7848ea403787a2d44f6516e2fd530ca80ff2c",
+    "serve.py": "7b02a6d5c1c39cfe131a67831e4d3c3ab2b489f522619b2c639fa1fef09bf0ef",
+    "review-sans.woff2": "490d844d118a1bf1bbd23b758362f471500fa8de4182f919e8c2891eeae2c102",
+    "browser_check.mjs": "7e6b38888627d4a7f7bbd248dc41fc3e64804959be3d2f27489db0cc24b67570"
+  },
+  "sampleSha256": "e740588297ab4b07f437fd709c4107fbbd4812d6b92c78a8a9acccc9c13d8e2e",
+  "videoActuallyPlayed": true,
+  "humanListeningApproved": false,
+  "userDirectionApproved": false,
+  "note": "Browser smoke tests do not establish natural animation, aesthetic quality or human approval."
+}
