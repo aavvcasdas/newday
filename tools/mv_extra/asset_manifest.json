@@ -1,0 +1,56 @@
+{
+  "sourceVideoGitBlobSha1": "b4a89ebc296054b96ca6d24ad5677903b85c31f5",
+  "sourceAudioSha256": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+  "source48WavSha256": "259c313bb88b64d78618d9e005b40c6e2854198d182d2ea7f035cf749f567110",
+  "assets": [
+    {
+      "name": "gemini",
+      "repository": "shuaizenge/ai-girls",
+      "gitBlobSha1": "398b705c9e7dcccbfbbc4e812932009cb2a9b8cd",
+      "sha256": "d496c4edf07b964e18cce99b007c913237c9d44d1c8088fb84ea83e1972d1364",
+      "path": "assets/ai-girls/extra-guests/gemini.png"
+    },
+    {
+      "name": "kimi",
+      "repository": "shuaizenge/ai-girls",
+      "gitBlobSha1": "b22adc35ad0daf4d7535dae34ad411a29b90f141",
+      "sha256": "bc9d61f6365e97e679dda15c59b9c8d78193b19ef379f6e1efaaad743b6f84f3",
+      "path": "assets/ai-girls/extra-guests/kimi.png"
+    },
+    {
+      "name": "gpt",
+      "repository": "shuaizenge/ai-girls",
+      "gitBlobSha1": "b4e83a671bbacbc0b8d111d46f83d85e9e43dadf",
+      "sha256": "90606f78f5c8ee76c3547c0df2999ba145cdb50bef25e7fc6a8a6c3ecc4ee4d5",
+      "path": "assets/ai-girls/extra-guests/gpt.png"
+    },
+    {
+      "name": "qwen",
+      "repository": "shuaizenge/ai-girls",
+      "gitBlobSha1": "bf6e1e8fc074d9bc66d4a3cf6252798744dbec74",
+      "sha256": "4f59aee4d8d4fa341a40b68f33d9593708f7eecfcb19c96ad8aa44d9bb844cb9",
+      "path": "assets/ai-girls/extra-guests/qwen.png"
+    },
+    {
+      "name": "claude",
+      "repository": "opsCar/claude-daxiaojie-assets",
+      "gitBlobSha1": "a2cc053123abf55f9c384f2006882946da12d5b0",
+      "sha256": "e438582df8a6fca7e33978445a44d34a3babf13c7691583cf57ab588be5c54cf",
+      "path": "assets/ai-girls/extra-guests/claude.png"
+    },
+    {
+      "name": "font",
+      "repository": "google/fonts",
+      "gitBlobSha1": "fb0637bafbcd804fe32152370a1225990745b4bc",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "path": "tools/mv_extra/cache/font.ttf"
+    },
+    {
+      "name": "doubao",
+      "repository": "aavvcasdas/newday",
+      "gitBlobSha1": "38174865e27b99077d0e12086e88dd1b1095d914",
+      "sha256": "c0d88e7c1a22076866d2de58619e2d3f707b01e2e1d767044d08ad6a4f2b46b4",
+      "path": "assets/ai-girls/doubao/doubao-cutout.png"
+    }
+  ]
+}

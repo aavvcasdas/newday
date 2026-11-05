@@ -1,0 +1,14 @@
+{
+  "masterSha256": "8dc5e53177bb7b9f54d0684461c3b5a867bc740fdbffb4e3d26378978877f79a",
+  "items": [
+    {
+      "line": 4,
+      "expected": "眼睛里看到的都是广袤无垠的大海",
+      "encodedFrameSha256": "8adc1199cd428d9392f8a68b85dab291ae8fb49cb3a1d0e6161bd2a09a50f71c",
+      "method": "Assistant actually viewed decoded caption_04.jpg; static text review only",
+      "finding": "OCR漏识别袤；实际编码帧清楚显示广袤无垠，未改歌词、未改OCR原始结果。",
+      "passed": true
+    }
+  ],
+  "humanDynamicApproved": false
+}

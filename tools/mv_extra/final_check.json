@@ -1,0 +1,280 @@
+{
+  "status": "technical_pass_pending_human_review",
+  "automatedPassed": true,
+  "humanDynamicApproved": false,
+  "musicMicrotimingApproved": false,
+  "master": {
+    "path": "番外MV/把回忆拼好给你/成片/把回忆拼好给你_歌词卡点版.mp4",
+    "sha256": "8dc5e53177bb7b9f54d0684461c3b5a867bc740fdbffb4e3d26378978877f79a",
+    "bytes": 4327762,
+    "width": 1920,
+    "height": 1080,
+    "fps": 30,
+    "frames": 1681,
+    "videoDuration": 56.033333,
+    "audioDuration": 56.005011,
+    "audioCodec": "aac",
+    "audioProfile": "HE-AACv2",
+    "channels": 2,
+    "fullDecodePassed": true
+  },
+  "audioIntegrity": {
+    "completeAacPayloadEqualToUserSource": true,
+    "allDecodedFloatSamplesExactlyEqual": true,
+    "adtsSha256": "1058f033592b6188f21f5d13bbe6f09680f36019e9ea0c1a0323ee0d18c18387",
+    "sourceContainerSha256": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+    "decodedAudioSeconds": 56.00503401360544,
+    "retimed": false,
+    "reencoded": false
+  },
+  "encodedCaptions": {
+    "combinedVerified": 16,
+    "strictOcrPassed": 15,
+    "strictOcrFailed": 1,
+    "staticManualVerified": 1,
+    "method": "OCR from actual encoded frame; retain raw mismatch. Static visual exceptions require actual viewed frame SHA and master SHA; not ASR or phoneme sync approval",
+    "items": [
+      {
+        "line": 1,
+        "sourceTime": 2.8666666666666663,
+        "expected": "我们都是渺小真实存在",
+        "actualOcr": "我们都是渺小真实存在",
+        "passed": true,
+        "confidences": [
+          0.9868
+        ]
+      },
+      {
+        "line": 2,
+        "sourceTime": 6.483333333333333,
+        "expected": "祈愿小世界里不只有我",
+        "actualOcr": "祈愿小世界里不只有我",
+        "passed": true,
+        "confidences": [
+          0.993
+        ]
+      },
+      {
+        "line": 3,
+        "sourceTime": 10.033333333333333,
+        "expected": "直到遇见你我以为就光明起来",
+        "actualOcr": "直到遇见你我以为就光明起来",
+        "passed": true,
+        "confidences": [
+          0.9916
+        ]
+      },
+      {
+        "line": 4,
+        "sourceTime": 13.55,
+        "expected": "眼睛里看到的都是广袤无垠的大海",
+        "actualOcr": "眼睛里看到的都是广无垠的大海",
+        "passed": false,
+        "confidences": [
+          0.9438
+        ]
+      },
+      {
+        "line": 5,
+        "sourceTime": 17.21666666666667,
+        "expected": "有你在的日子不可能被取代",
+        "actualOcr": "有你在的日子不可能被取代",
+        "passed": true,
+        "confidences": [
+          0.9964
+        ]
+      },
+      {
+        "line": 6,
+        "sourceTime": 20.733333333333334,
+        "expected": "在最灰暗的日子你陪着我发呆",
+        "actualOcr": "在最灰暗的日子你陪着我发呆",
+        "passed": true,
+        "confidences": [
+          0.9921
+        ]
+      },
+      {
+        "line": 7,
+        "sourceTime": 23.816666666666666,
+        "expected": "你让我学会如何拨开阴霾",
+        "actualOcr": "你让我学会如何拨开阴霾",
+        "passed": true,
+        "confidences": [
+          0.9811
+        ]
+      },
+      {
+        "line": 8,
+        "sourceTime": 27.016666666666666,
+        "expected": "将快乐全都收集将不开心全都淘汰",
+        "actualOcr": "将快乐全都收集将不开心全都淘汰",
+        "passed": true,
+        "confidences": [
+          0.9948
+        ]
+      },
+      {
+        "line": 9,
+        "sourceTime": 30.116666666666667,
+        "expected": "你对我说的情话",
+        "actualOcr": "你对我说的情话",
+        "passed": true,
+        "confidences": [
+          0.9948
+        ]
+      },
+      {
+        "line": 10,
+        "sourceTime": 33.63333333333333,
+        "expected": "像转瞬即逝的烟花",
+        "actualOcr": "像转瞬即逝的烟花",
+        "passed": true,
+        "confidences": [
+          0.9695
+        ]
+      },
+      {
+        "line": 11,
+        "sourceTime": 37.35,
+        "expected": "只停在绽放一刹那",
+        "actualOcr": "只停在绽放一刹那",
+        "passed": true,
+        "confidences": [
+          0.9931
+        ]
+      },
+      {
+        "line": 12,
+        "sourceTime": 40.766666666666666,
+        "expected": "我却已无法自拔",
+        "actualOcr": "我却已无法自拔",
+        "passed": true,
+        "confidences": [
+          0.965
+        ]
+      },
+      {
+        "line": 13,
+        "sourceTime": 43.650000000000006,
+        "expected": "我们的爱总有时差",
+        "actualOcr": "我们的爱总有时差",
+        "passed": true,
+        "confidences": [
+          0.9944
+        ]
+      },
+      {
+        "line": 14,
+        "sourceTime": 46.63333333333333,
+        "expected": "也为你骗自己放下",
+        "actualOcr": "也为你骗自己放下",
+        "passed": true,
+        "confidences": [
+          0.9957
+        ]
+      },
+      {
+        "line": 15,
+        "sourceTime": 49.83333333333333,
+        "expected": "爱炙热的你",
+        "actualOcr": "爱炙热的你",
+        "passed": true,
+        "confidences": [
+          0.9162
+        ]
+      },
+      {
+        "line": 16,
+        "sourceTime": 52.58333333333333,
+        "expected": "却忘了爱自己",
+        "actualOcr": "却忘了爱自己",
+        "passed": true,
+        "confidences": [
+          0.9913
+        ]
+      }
+    ],
+    "staticManual": [
+      {
+        "line": 4,
+        "expected": "眼睛里看到的都是广袤无垠的大海",
+        "encodedFrameSha256": "8adc1199cd428d9392f8a68b85dab291ae8fb49cb3a1d0e6161bd2a09a50f71c",
+        "method": "Assistant actually viewed decoded caption_04.jpg; static text review only",
+        "finding": "OCR漏识别袤；实际编码帧清楚显示广袤无垠，未改歌词、未改OCR原始结果。",
+        "passed": true
+      }
+    ]
+  },
+  "fullFrameDifference": {
+    "frames": 1681,
+    "meanAbsoluteDifference": 0.6318115906084656,
+    "min": 0.0,
+    "longestIdenticalFramePairs": 76,
+    "aestheticGate": false
+  },
+  "pictureExcludingCaptionAndCorner": {
+    "frames": 1681,
+    "meanAbsoluteDifference": 0.6768540013227514,
+    "min": 0.0,
+    "longestIdenticalFramePairs": 76,
+    "aestheticGate": false
+  },
+  "differenceLimits": "Diagnostics only. Intentional holds may be identical. No face ROI motion score, acting quality or aesthetic approval.",
+  "sample": {
+    "derivedFromMasterSha256": "8dc5e53177bb7b9f54d0684461c3b5a867bc740fdbffb4e3d26378978877f79a",
+    "sourceMasterRange": [
+      31.4,
+      44.6
+    ],
+    "path": "番外MV/把回忆拼好给你/样片/烟花与时差_有声试剪.mp4",
+    "sha256": "fe0fec0f6d351720614e24883063834f5e5f0fedd26169dd5d259f63d60af730",
+    "frames": 396,
+    "audioSeconds": 13.2,
+    "videoSeconds": 13.2,
+    "fullDecodePassed": true,
+    "audioSource": "complete source48.wav, original 31.4–44.6s, AAC reencoded only for excerpt"
+  },
+  "timing": {
+    "provenance": "恢复自前次会话记录的原片显字轴：160ms编辑前置、30fps量化；新增OCR证据仅复核原片文本存在，不能当新测量的音素边界。",
+    "uncertaintySeconds": 0.25,
+    "phonemeAligned": false,
+    "humanListeningApproved": false,
+    "lyricRecoveryLimit": "原先lyrics_v2/lyrics.txt未留在工作区，按会话已知用户字样及原片文字复核重建；不能声称旧文件哈希或16行逐字锁稿验收已恢复。",
+    "sourceTextDifferences": [
+      "有你在的日子：用户字样不加原唱/原片的里",
+      "快乐全都收集：保留用户记录，不改为原片的全部收集"
+    ]
+  },
+  "nodeTests": {
+    "pass": 10,
+    "fail": 0,
+    "tapSha256": "6f570a9b2643ed154f93df8f659585fa7a9c36da3e8306a55b4207c476710bb7"
+  },
+  "renderInputs": {
+    "tools/mv_extra/film.mjs": "b7b21fa6747a77e408d8ee6864836925319fb060017756b2da77d802a8ddb020",
+    "tools/mv_extra/lyrics.txt": "cc35f750ed5f4f94cc1eb66ef717d83f0bb24c13cc1b5c7ebb93f52e6540dfcb",
+    "tools/mv_extra/timing.json": "0eadd91d916fc40be5da7312457fe6249013c96b0d0392165818eb4d283d27df",
+    "tools/mv_extra/cache/font.ttf": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "tools/mv_extra/cache/source48.wav": "259c313bb88b64d78618d9e005b40c6e2854198d182d2ea7f035cf749f567110",
+    "assets/mv-extra/user_reference_audio.m4a": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+    "assets/ai-girls/doubao/doubao-cutout.png": "c0d88e7c1a22076866d2de58619e2d3f707b01e2e1d767044d08ad6a4f2b46b4",
+    "video-fx/src/core.js": "effbfcf497388baaf5a3ef27ef750b9102274039666de41e66b9c5fe3e11ce95",
+    "video-fx/src/whale_girl.js": "2b2ced9b8a0fffd520802e1f64021d9546a16377181bf811c63ac140b6d80431",
+    "video-fx/src/whale_girl_actions.js": "9e1c9ea529d439795780ade43b32e5d6b5f06b58ab5b09eaad9a51efaa3355a5",
+    "video-fx/src/whale_girl_rig_data.js": "3f8c02972ddaef728a79137b5d0aaccc725874cd8603a5b02fe3d96d1936a082",
+    "assets/ai-girls/extra-guests/gemini.png": "d496c4edf07b964e18cce99b007c913237c9d44d1c8088fb84ea83e1972d1364",
+    "assets/ai-girls/extra-guests/kimi.png": "bc9d61f6365e97e679dda15c59b9c8d78193b19ef379f6e1efaaad743b6f84f3",
+    "assets/ai-girls/extra-guests/gpt.png": "90606f78f5c8ee76c3547c0df2999ba145cdb50bef25e7fc6a8a6c3ecc4ee4d5",
+    "assets/ai-girls/extra-guests/qwen.png": "4f59aee4d8d4fa341a40b68f33d9593708f7eecfcb19c96ad8aa44d9bb844cb9",
+    "assets/ai-girls/extra-guests/claude.png": "e438582df8a6fca7e33978445a44d34a3babf13c7691583cf57ab588be5c54cf"
+  },
+  "auditorSha256": "718afa7d148f343ea47fb165c3b584be7fe26a4d474b2dd83b209552c1d56932",
+  "pending": [
+    "User full dynamic viewing",
+    "Individual syllable/phrase alignment by listening",
+    "Old lyric TXT was lost; reconstructed text is not a recovered old-file hash",
+    "Guest appearance/pacing review",
+    "External publication and music/character rights are not granted by this audit"
+  ]
+}

@@ -164,3 +164,7 @@
 
 制作使用 `python3 tools/gate.py --day N --stage script|audio|pre-render|final`。
 [配置、依赖与检查边界](tools/验收/README.md)；`final`累计检查全部阶段，任一失败不得宣称验收通过。
+
+## 独立番外MV：把回忆拼好给你
+
+56秒原速原音重绘版、分镜/字幕/封面与复现入口见[番外制作说明](番外MV/把回忆拼好给你/README.md)。实际技术验收只引用`tools/mv_extra/final_check.json`绑定的成片SHA；人工听审待确认。此番外不覆盖Day12。

@@ -1,0 +1,70 @@
+TAP version 13
+# Subtest: 35 contiguous editorial segments cover every output frame
+ok 1 - 35 contiguous editorial segments cover every output frame
+  ---
+  duration_ms: 5.425943
+  type: 'test'
+  ...
+# Subtest: 16 caption cues match the archived timing, non-overlapping and frame aligned
+ok 2 - 16 caption cues match the archived timing, non-overlapping and frame aligned
+  ---
+  duration_ms: 2.613693
+  type: 'test'
+  ...
+# Subtest: raw source video is the pinned user reference blob
+ok 3 - raw source video is the pinned user reference blob
+  ---
+  duration_ms: 14.034442
+  type: 'test'
+  ...
+# Subtest: original AAC and all fixed guest PNGs match provenance hashes
+ok 4 - original AAC and all fixed guest PNGs match provenance hashes
+  ---
+  duration_ms: 72.980537
+  type: 'test'
+  ...
+# Subtest: start, middle and last frame of all 35 segments are populated
+ok 5 - start, middle and last frame of all 35 segments are populated
+  ---
+  duration_ms: 2512.049189
+  type: 'test'
+  ...
+# Subtest: random access is deterministic, independent of preceding frame
+ok 6 - random access is deterministic, independent of preceding frame
+  ---
+  duration_ms: 1866.750202
+  type: 'test'
+  ...
+# Subtest: result transitions remain linked to restored semantic edit points
+ok 7 - result transitions remain linked to restored semantic edit points
+  ---
+  duration_ms: 0.325816
+  type: 'test'
+  ...
+# Subtest: source tail is covered without an extra end card or missing caption
+ok 8 - source tail is covered without an extra end card or missing caption
+  ---
+  duration_ms: 0.555718
+  type: 'test'
+  ...
+# Subtest: renderer does not consume reference video frames or generate new faces
+ok 9 - renderer does not consume reference video frames or generate new faces
+  ---
+  duration_ms: 0.744589
+  type: 'test'
+  ...
+# Subtest: technical report cannot silently approve singing microtiming
+ok 10 - technical report cannot silently approve singing microtiming
+  ---
+  duration_ms: 0.558296
+  type: 'test'
+  ...
+1..10
+# tests 10
+# suites 0
+# pass 10
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 4678.622738
