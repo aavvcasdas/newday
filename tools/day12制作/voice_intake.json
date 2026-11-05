@@ -1,0 +1,18 @@
+{
+  "file": "鲸鱼摇人_克隆配音_最终版.wav",
+  "sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "bytes": 16688256,
+  "sampleRate": 40000,
+  "channels": 2,
+  "bitsPerSample": 16,
+  "frames": 1073741823,
+  "durationSeconds": 26843.545575,
+  "discoveredAt": "push-time remote upload detected after silent sample generation",
+  "upstreamUploadCommit": "124e446",
+  "originalBytesModified": false,
+  "usedInSilentSample": false,
+  "contentVerifiedAgainstScript": false,
+  "wordAlignmentReady": false,
+  "speakerIdentityVerified": false,
+  "next": "先核对当前25行口播和真实ASR/RMS词轴，再制作有声试剪；不把文件名当内容/声线验收"
+}
