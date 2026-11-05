@@ -23,4 +23,8 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 
 ## 独立歌词MV当前入口
 
-用户要求“重新渲染并推送”后，番外重建入口为`番外MV/把回忆拼好给你/README.md`、`tools/mv_extra/film.mjs`与`timing.json`。此前未提交的lyrics_v2目录已缺失，不能声称找回旧代码或旧歌词TXT哈希。本轮依据用户参考同一blob恢复原音、重绘35个剪辑/事件段；不搬原片帧、不恢复相册、不覆盖Day12。显字轴不是声学逐字轴，保留±0.25秒与歌词重建局限。实际检查只引用`final_check.json`的成片SHA，OCR失败及绑定编码帧的静态复核分别记录；人工动态/听审保持独立pending。重新编码后必须重跑审计并更新报告，不能套旧SHA。
+**410575d的旧56秒版已被用户否决：缺动作/细节、客图白底；不得再当当前交付。** 当前返工入口是`番外MV/把回忆拼好给你/README_v2.md`、`分镜/v2_动作与场景导演表.md`、`tools/mv_extra/v2/{actors,plan,scenes,film}.mjs`。先交19.8秒/594帧连续有声动作试剪（原音19.033–38.833秒），方向待用户实际看听；不是新版56秒终片。全片其余镜头仅规划，full渲染命令故意阻止。原16句用户已重新完整提供，`v2/lyrics.txt`逐字锁定，L2为“祈愿小世界里不只有挫败”；旧页的歌词缺失局限只属历史，不能继续说当前16句不可确认。
+
+沿用原像素主角、原骨架/合法睁眼头缓存，身体/腿实际按位移出步、停步、屈膝、原heart/panic姿态与背向；不DSH替主演、不乱加饰品、不让固定PNG眨眼口型/改脸。4客图已做原RGB完整保留的alpha衍生，来源/guide/保护脸/SHA见`assets/ai-girls/extra-guests/cutouts/manifest.json`。不再放带白底参考图画框。rain动作仍是屈膝/起身，不冒称无电脑坐姿；原laptop含电脑且没有独立腿骨，禁止假装它是通用坐姿。抱持金片只校准front/heart原手掌像素，抱持→入盒采用连续性切镜，不代表已完成伸手接触。
+
+实际新SHA检查只看`tools/mv_extra/v2/{render_inputs,sample_check,static_review,matte_repro_check}.json`，不能套旧final_check。自动结构、编码字幕、静态目检、真人动态和听审分别记录；后三者不可冒称相互替代。时轴仍基于原片显字±0.25秒，不冒称ASR/音素。源音原速不换，样片从完整PCM切片转AAC，不声称样片无损stream-copy。不搬源视频帧、不恢复相册、不改Day12/共享源码。四库实际研究身份见`v2/reference_sources.json`；只借空间/事件语法，不冒称本轮用外库3D引擎。

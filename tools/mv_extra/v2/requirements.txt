@@ -1,0 +1,10 @@
+-r ../requirements.txt
+opencv-python-headless==5.0.0.93
+# Explicit OCR dependencies, avoiding the GUI opencv-python dependency in RapidOCR.
+# After installing this file: pip install --no-deps rapidocr_onnxruntime==1.4.4
+onnxruntime==1.31.1
+pyclipper==1.4.0
+shapely==2.2.0
+PyYAML==6.0.3
+six==1.17.0
+tqdm==4.70.1

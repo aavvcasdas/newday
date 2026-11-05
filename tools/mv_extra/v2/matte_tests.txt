@@ -1,0 +1,11 @@
+test_all_four_true_rgba_and_transparent_corners (__main__.MatteTests.test_all_four_true_rgba_and_transparent_corners) ... ok
+test_entire_original_rgb_is_preserved (__main__.MatteTests.test_entire_original_rgb_is_preserved) ... ok
+test_face_protected_regions_remain_fully_opaque (__main__.MatteTests.test_face_protected_regions_remain_fully_opaque) ... ok
+test_no_generative_model_or_global_white_key (__main__.MatteTests.test_no_generative_model_or_global_white_key) ... ok
+test_not_a_rectangular_white_card (__main__.MatteTests.test_not_a_rectangular_white_card) ... ok
+test_original_and_derivative_hashes_match (__main__.MatteTests.test_original_and_derivative_hashes_match) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.543s
+
+OK

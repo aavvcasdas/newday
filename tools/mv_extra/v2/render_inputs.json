@@ -1,0 +1,34 @@
+{
+  "kind": "19.8s continuous voiced pilot, not full movie",
+  "sourceScriptSha256": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+  "sourceRange": [
+    19.033333333333335,
+    38.833333333333336
+  ],
+  "frames": 594,
+  "fps": 30,
+  "inputHashes": {
+    "tools/mv_extra/v2/film.mjs": "6b33efb8a469f6be7310e67019eb41bba97438c40645855d6187b033a529d841",
+    "tools/mv_extra/v2/actors.mjs": "a6c68a4f43b0eebb220b46b1fc0f367769279394a3062729754fb4f7f8f212eb",
+    "tools/mv_extra/v2/scenes.mjs": "50677f4dc324b8aa63884220a5178a7f54b16efadf4bf33d6c3fd1ae2046fa88",
+    "tools/mv_extra/v2/plan.mjs": "1221b8f0df3591c21688652be7c57762e3841aa7624dce410e890b513d2a494f",
+    "tools/mv_extra/v2/lyrics.txt": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+    "tools/mv_extra/timing.json": "0eadd91d916fc40be5da7312457fe6249013c96b0d0392165818eb4d283d27df",
+    "tools/mv_extra/cache/font.ttf": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+    "tools/mv_extra/cache/source48.wav": "259c313bb88b64d78618d9e005b40c6e2854198d182d2ea7f035cf749f567110",
+    "assets/mv-extra/user_reference_audio.m4a": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+    "assets/ai-girls/doubao/doubao-cutout.png": "c0d88e7c1a22076866d2de58619e2d3f707b01e2e1d767044d08ad6a4f2b46b4",
+    "assets/ai-girls/extra-guests/claude.png": "e438582df8a6fca7e33978445a44d34a3babf13c7691583cf57ab588be5c54cf",
+    "assets/ai-girls/extra-guests/cutouts/gemini.png": "d49684b863bf1bed242baa48b0572a3a392f360c3bb1f794d5dce1c6e04610d7",
+    "assets/ai-girls/extra-guests/cutouts/kimi.png": "3a9ae4b8ee9a62056c6acb7983629198c291dc20d0a2ff4f478dfdb377aa78e1",
+    "assets/ai-girls/extra-guests/cutouts/gpt.png": "9b89b20bf4a676b818326973815d9d57290055c0e22839ad251a3dadd4014966",
+    "assets/ai-girls/extra-guests/cutouts/qwen.png": "26af6636c974e92de323251b13747ec28d3d1568bc3b9081da556fbc2e4054b1",
+    "video-fx/src/core.js": "effbfcf497388baaf5a3ef27ef750b9102274039666de41e66b9c5fe3e11ce95",
+    "video-fx/src/whale_girl.js": "2b2ced9b8a0fffd520802e1f64021d9546a16377181bf811c63ac140b6d80431",
+    "video-fx/src/whale_girl_rig_data.js": "3f8c02972ddaef728a79137b5d0aaccc725874cd8603a5b02fe3d96d1936a082",
+    "video-fx/src/whale_girl_actions.js": "9e1c9ea529d439795780ade43b32e5d6b5f06b58ab5b09eaad9a51efaa3355a5"
+  },
+  "outputPath": "番外MV/把回忆拼好给你/样片/v2_动作与场景_19.8秒有声试剪.mp4",
+  "outputSha256": "e740588297ab4b07f437fd709c4107fbbd4812d6b92c78a8a9acccc9c13d8e2e",
+  "userApproved": false
+}

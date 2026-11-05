@@ -1,0 +1,87 @@
+{
+  "output": "番外MV/把回忆拼好给你/样片/v2_动作与场景_19.8秒有声试剪.mp4",
+  "outputSha256": "e740588297ab4b07f437fd709c4107fbbd4812d6b92c78a8a9acccc9c13d8e2e",
+  "bytes": 4363258,
+  "size": [
+    1920,
+    1080
+  ],
+  "frames": 594,
+  "fps": "30/1",
+  "videoDuration": 19.8,
+  "audioDuration": 19.8,
+  "fullDecodeClean": true,
+  "inputHashesMatch": true,
+  "sourceRangeSeconds": [
+    19.033333333333335,
+    38.833333333333336
+  ],
+  "sourceRangeFrames": [
+    571,
+    1165
+  ],
+  "audioMethod": "Original source48.wav segment, original speed; sample encoded AAC-LC. No new voice or replacement BGM. This is not a lossless AAC-copy claim.",
+  "decodedAudioSeconds": 19.8,
+  "sourceCorrelationMono16k": 0.999773011714078,
+  "comparedAudioSeconds": 19.8,
+  "audioRms": 0.4090312719345093,
+  "captionEvidence": [
+    {
+      "line": 6,
+      "sourceTime": 20.733333,
+      "textExpected": "在最灰暗的日子你陪着我发呆",
+      "textOCR": "在最灰暗的日子你陪着我发呆",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_6.png"
+    },
+    {
+      "line": 7,
+      "sourceTime": 23.833333,
+      "textExpected": "你让我学会如何拨开阴霾",
+      "textOCR": "你让我学会如何拨开阴霾",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_7.png"
+    },
+    {
+      "line": 8,
+      "sourceTime": 26.733333,
+      "textExpected": "将快乐全都收集将不开心全都淘汰",
+      "textOCR": "将快乐全都收集将不开心全都淘汰",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_8.png"
+    },
+    {
+      "line": 9,
+      "sourceTime": 30.1,
+      "textExpected": "你对我说的情话",
+      "textOCR": "你对我说的情话",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_9.png"
+    },
+    {
+      "line": 10,
+      "sourceTime": 33.0,
+      "textExpected": "像转瞬即逝的烟花",
+      "textOCR": "像转瞬即逝的烟花",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_10.png"
+    },
+    {
+      "line": 11,
+      "sourceTime": 37.0,
+      "textExpected": "只停在绽放一刹那",
+      "textOCR": "只停在绽放一刹那",
+      "exact": true,
+      "framePath": "tools/mv_extra/cache/v2_encoded_caption_11.png"
+    }
+  ],
+  "captionExactOCR": 6,
+  "captionTotal": 6,
+  "timingBasis": "Existing reference-caption onsets, approximately ±0.25s, not phoneme/ASR alignment. Latest 16 user lines replace old text verbatim.",
+  "renderTraceFrames": 594,
+  "humanContinuousVideoReview": false,
+  "humanListeningApproved": false,
+  "userApproved": false,
+  "full56SecondV2Rendered": false,
+  "staticReview": "See static_review.json only if its outputSha256 matches; automated checks do not promote static/dynamic/human approval."
+}

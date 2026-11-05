@@ -1,0 +1,107 @@
+{
+  "source": "Existing reference-caption timings, latest user-provided 16 lines",
+  "sourceScriptSha256": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+  "axisType": "reference-caption onset, not ASR or phoneme",
+  "uncertaintySeconds": 0.25,
+  "userTextLocked": true,
+  "phonemeAligned": false,
+  "humanListeningApproved": false,
+  "cues": [
+    {
+      "line": 1,
+      "text": "我们都是渺小真实存在",
+      "start": 1.1333333333333333,
+      "end": 4.6
+    },
+    {
+      "line": 2,
+      "text": "祈愿小世界里不只有挫败",
+      "start": 4.6,
+      "end": 8.366666666666667
+    },
+    {
+      "line": 3,
+      "text": "直到遇见你我以为就光明起来",
+      "start": 8.366666666666667,
+      "end": 11.7
+    },
+    {
+      "line": 4,
+      "text": "眼睛里看到的都是广袤无垠的大海",
+      "start": 11.7,
+      "end": 15.4
+    },
+    {
+      "line": 5,
+      "text": "有你在的日子不可能被取代",
+      "start": 15.4,
+      "end": 19.033333333333335
+    },
+    {
+      "line": 6,
+      "text": "在最灰暗的日子你陪着我发呆",
+      "start": 19.033333333333335,
+      "end": 22.433333333333334
+    },
+    {
+      "line": 7,
+      "text": "你让我学会如何拨开阴霾",
+      "start": 22.433333333333334,
+      "end": 25.2
+    },
+    {
+      "line": 8,
+      "text": "将快乐全都收集将不开心全都淘汰",
+      "start": 25.2,
+      "end": 28.833333333333332
+    },
+    {
+      "line": 9,
+      "text": "你对我说的情话",
+      "start": 28.833333333333332,
+      "end": 31.4
+    },
+    {
+      "line": 10,
+      "text": "像转瞬即逝的烟花",
+      "start": 31.4,
+      "end": 35.86666666666667
+    },
+    {
+      "line": 11,
+      "text": "只停在绽放一刹那",
+      "start": 35.86666666666667,
+      "end": 38.833333333333336
+    },
+    {
+      "line": 12,
+      "text": "我却已无法自拔",
+      "start": 38.833333333333336,
+      "end": 42.7
+    },
+    {
+      "line": 13,
+      "text": "我们的爱总有时差",
+      "start": 42.7,
+      "end": 44.6
+    },
+    {
+      "line": 14,
+      "text": "也为你骗自己放下",
+      "start": 44.6,
+      "end": 48.666666666666664
+    },
+    {
+      "line": 15,
+      "text": "爱炙热的你",
+      "start": 48.666666666666664,
+      "end": 51
+    },
+    {
+      "line": 16,
+      "text": "却忘了爱自己",
+      "start": 51,
+      "end": 54.166666666666664
+    }
+  ]
+}
