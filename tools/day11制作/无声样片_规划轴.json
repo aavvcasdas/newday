@@ -1,0 +1,1573 @@
+{
+  "measured": false,
+  "kind": "silent_structural_sample_planning",
+  "note": "估时轴，仅供无声样片排布；正式制作必须换实测轴",
+  "source_duration_seconds": 61.918,
+  "source_sha256": "SILENT_SAMPLE_NO_VOICE",
+  "cue_count": 25,
+  "cues": [
+    {
+      "id": "L01",
+      "index": 1,
+      "start": 0.0,
+      "end": 1.791,
+      "text": "笨鱼在翻什么？",
+      "chars_timed": [
+        {
+          "ch": "笨",
+          "start": 0.0,
+          "end": 0.256,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鱼",
+          "start": 0.256,
+          "end": 0.512,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "在",
+          "start": 0.512,
+          "end": 0.768,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "翻",
+          "start": 0.768,
+          "end": 1.023,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "什",
+          "start": 1.023,
+          "end": 1.279,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "么",
+          "start": 1.279,
+          "end": 1.535,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "？",
+          "start": 1.535,
+          "end": 1.791,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L02",
+      "index": 2,
+      "start": 2.011,
+      "end": 4.399,
+      "text": "它在帮老大找工作。",
+      "chars_timed": [
+        {
+          "ch": "它",
+          "start": 2.011,
+          "end": 2.276,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "在",
+          "start": 2.276,
+          "end": 2.542,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "帮",
+          "start": 2.542,
+          "end": 2.807,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "老",
+          "start": 2.807,
+          "end": 3.072,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 3.072,
+          "end": 3.338,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "找",
+          "start": 3.338,
+          "end": 3.603,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "工",
+          "start": 3.603,
+          "end": 3.868,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "作",
+          "start": 3.868,
+          "end": 4.134,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 4.134,
+          "end": 4.399,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L03",
+      "index": 3,
+      "start": 4.619,
+      "end": 7.007,
+      "text": "老大可能换新工作。",
+      "chars_timed": [
+        {
+          "ch": "老",
+          "start": 4.619,
+          "end": 4.884,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 4.884,
+          "end": 5.15,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "可",
+          "start": 5.15,
+          "end": 5.415,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "能",
+          "start": 5.415,
+          "end": 5.68,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "换",
+          "start": 5.68,
+          "end": 5.946,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "新",
+          "start": 5.946,
+          "end": 6.211,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "工",
+          "start": 6.211,
+          "end": 6.476,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "作",
+          "start": 6.476,
+          "end": 6.742,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 6.742,
+          "end": 7.007,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L04",
+      "index": 4,
+      "start": 7.227,
+      "end": 9.615,
+      "text": "岗位先扒出来再说。",
+      "chars_timed": [
+        {
+          "ch": "岗",
+          "start": 7.227,
+          "end": 7.493,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "位",
+          "start": 7.493,
+          "end": 7.758,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "先",
+          "start": 7.758,
+          "end": 8.023,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "扒",
+          "start": 8.023,
+          "end": 8.289,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "出",
+          "start": 8.289,
+          "end": 8.554,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "来",
+          "start": 8.554,
+          "end": 8.819,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "再",
+          "start": 8.819,
+          "end": 9.085,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "说",
+          "start": 9.085,
+          "end": 9.35,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 9.35,
+          "end": 9.615,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L05",
+      "index": 5,
+      "start": 9.835,
+      "end": 11.626,
+      "text": "它自己鲸落过。",
+      "chars_timed": [
+        {
+          "ch": "它",
+          "start": 9.835,
+          "end": 10.091,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "自",
+          "start": 10.091,
+          "end": 10.347,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "己",
+          "start": 10.347,
+          "end": 10.603,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鲸",
+          "start": 10.603,
+          "end": 10.859,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "落",
+          "start": 10.859,
+          "end": 11.115,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "过",
+          "start": 11.115,
+          "end": 11.37,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 11.37,
+          "end": 11.626,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L06",
+      "index": 6,
+      "start": 11.846,
+      "end": 14.533,
+      "text": "被刷下来的滋味，它懂。",
+      "chars_timed": [
+        {
+          "ch": "被",
+          "start": 11.846,
+          "end": 12.091,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "刷",
+          "start": 12.091,
+          "end": 12.335,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "下",
+          "start": 12.335,
+          "end": 12.579,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "来",
+          "start": 12.579,
+          "end": 12.823,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 12.823,
+          "end": 13.067,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "滋",
+          "start": 13.067,
+          "end": 13.312,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "味",
+          "start": 13.312,
+          "end": 13.556,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 13.556,
+          "end": 13.8,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "它",
+          "start": 13.8,
+          "end": 14.044,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "懂",
+          "start": 14.044,
+          "end": 14.289,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 14.289,
+          "end": 14.533,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L07",
+      "index": 7,
+      "start": 14.753,
+      "end": 17.439,
+      "text": "真心话全写在总结里：",
+      "chars_timed": [
+        {
+          "ch": "真",
+          "start": 14.753,
+          "end": 15.021,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "心",
+          "start": 15.021,
+          "end": 15.29,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "话",
+          "start": 15.29,
+          "end": 15.559,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "全",
+          "start": 15.559,
+          "end": 15.827,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "写",
+          "start": 15.827,
+          "end": 16.096,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "在",
+          "start": 16.096,
+          "end": 16.365,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "总",
+          "start": 16.365,
+          "end": 16.633,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "结",
+          "start": 16.633,
+          "end": 16.902,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "里",
+          "start": 16.902,
+          "end": 17.171,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "：",
+          "start": 17.171,
+          "end": 17.439,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L08",
+      "index": 8,
+      "start": 17.659,
+      "end": 19.152,
+      "text": "简历投出去，",
+      "chars_timed": [
+        {
+          "ch": "简",
+          "start": 17.659,
+          "end": 17.908,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "历",
+          "start": 17.908,
+          "end": 18.157,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "投",
+          "start": 18.157,
+          "end": 18.406,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "出",
+          "start": 18.406,
+          "end": 18.654,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "去",
+          "start": 18.654,
+          "end": 18.903,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 18.903,
+          "end": 19.152,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L09",
+      "index": 9,
+      "start": 19.372,
+      "end": 21.461,
+      "text": "像石头沉进海里。",
+      "chars_timed": [
+        {
+          "ch": "像",
+          "start": 19.372,
+          "end": 19.633,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "石",
+          "start": 19.633,
+          "end": 19.894,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "头",
+          "start": 19.894,
+          "end": 20.156,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "沉",
+          "start": 20.156,
+          "end": 20.417,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "进",
+          "start": 20.417,
+          "end": 20.678,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "海",
+          "start": 20.678,
+          "end": 20.939,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "里",
+          "start": 20.939,
+          "end": 21.2,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 21.2,
+          "end": 21.461,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L10",
+      "index": 10,
+      "start": 21.681,
+      "end": 23.771,
+      "text": "聊两句就没下文。",
+      "chars_timed": [
+        {
+          "ch": "聊",
+          "start": 21.681,
+          "end": 21.943,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "两",
+          "start": 21.943,
+          "end": 22.204,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "句",
+          "start": 22.204,
+          "end": 22.465,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "就",
+          "start": 22.465,
+          "end": 22.726,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "没",
+          "start": 22.726,
+          "end": 22.987,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "下",
+          "start": 22.987,
+          "end": 23.249,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "文",
+          "start": 23.249,
+          "end": 23.51,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 23.51,
+          "end": 23.771,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L11",
+      "index": 11,
+      "start": 23.991,
+      "end": 26.081,
+      "text": "要求写得像许愿：",
+      "chars_timed": [
+        {
+          "ch": "要",
+          "start": 23.991,
+          "end": 24.252,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "求",
+          "start": 24.252,
+          "end": 24.513,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "写",
+          "start": 24.513,
+          "end": 24.775,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "得",
+          "start": 24.775,
+          "end": 25.036,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "像",
+          "start": 25.036,
+          "end": 25.297,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "许",
+          "start": 25.297,
+          "end": 25.558,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "愿",
+          "start": 25.558,
+          "end": 25.819,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "：",
+          "start": 25.819,
+          "end": 26.081,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L12",
+      "index": 12,
+      "start": 26.301,
+      "end": 27.793,
+      "text": "什么都要会？",
+      "chars_timed": [
+        {
+          "ch": "什",
+          "start": 26.301,
+          "end": 26.549,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "么",
+          "start": 26.549,
+          "end": 26.798,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "都",
+          "start": 26.798,
+          "end": 27.047,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "要",
+          "start": 27.047,
+          "end": 27.296,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "会",
+          "start": 27.296,
+          "end": 27.544,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "？",
+          "start": 27.544,
+          "end": 27.793,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L13",
+      "index": 13,
+      "start": 28.013,
+      "end": 29.804,
+      "text": "还嫌人年纪大？",
+      "chars_timed": [
+        {
+          "ch": "还",
+          "start": 28.013,
+          "end": 28.269,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "嫌",
+          "start": 28.269,
+          "end": 28.525,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "人",
+          "start": 28.525,
+          "end": 28.781,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "年",
+          "start": 28.781,
+          "end": 29.037,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "纪",
+          "start": 29.037,
+          "end": 29.292,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 29.292,
+          "end": 29.548,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "？",
+          "start": 29.548,
+          "end": 29.804,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L14",
+      "index": 14,
+      "start": 30.024,
+      "end": 32.114,
+      "text": "本鲸看完先沉默。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 30.024,
+          "end": 30.285,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鲸",
+          "start": 30.285,
+          "end": 30.547,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "看",
+          "start": 30.547,
+          "end": 30.808,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "完",
+          "start": 30.808,
+          "end": 31.069,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "先",
+          "start": 31.069,
+          "end": 31.33,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "沉",
+          "start": 31.33,
+          "end": 31.591,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "默",
+          "start": 31.591,
+          "end": 31.853,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 31.853,
+          "end": 32.114,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L15",
+      "index": 15,
+      "start": 32.334,
+      "end": 35.617,
+      "text": "它偷偷标了又标，一条条筛。",
+      "chars_timed": [
+        {
+          "ch": "它",
+          "start": 32.334,
+          "end": 32.586,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "偷",
+          "start": 32.586,
+          "end": 32.839,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "偷",
+          "start": 32.839,
+          "end": 33.091,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "标",
+          "start": 33.091,
+          "end": 33.344,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "了",
+          "start": 33.344,
+          "end": 33.597,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "又",
+          "start": 33.597,
+          "end": 33.849,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "标",
+          "start": 33.849,
+          "end": 34.102,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 34.102,
+          "end": 34.354,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "一",
+          "start": 34.354,
+          "end": 34.607,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "条",
+          "start": 34.607,
+          "end": 34.86,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "条",
+          "start": 34.86,
+          "end": 35.112,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "筛",
+          "start": 35.112,
+          "end": 35.365,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 35.365,
+          "end": 35.617,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L16",
+      "index": 16,
+      "start": 35.837,
+      "end": 37.927,
+      "text": "老大不是程序员。",
+      "chars_timed": [
+        {
+          "ch": "老",
+          "start": 35.837,
+          "end": 36.099,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 36.099,
+          "end": 36.36,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "不",
+          "start": 36.36,
+          "end": 36.621,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "是",
+          "start": 36.621,
+          "end": 36.882,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "程",
+          "start": 36.882,
+          "end": 37.143,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "序",
+          "start": 37.143,
+          "end": 37.404,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "员",
+          "start": 37.404,
+          "end": 37.666,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 37.666,
+          "end": 37.927,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L17",
+      "index": 17,
+      "start": 38.147,
+      "end": 40.236,
+      "text": "敲代码的，先划掉。",
+      "chars_timed": [
+        {
+          "ch": "敲",
+          "start": 38.147,
+          "end": 38.379,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "代",
+          "start": 38.379,
+          "end": 38.611,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "码",
+          "start": 38.611,
+          "end": 38.843,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 38.843,
+          "end": 39.076,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 39.076,
+          "end": 39.308,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "先",
+          "start": 39.308,
+          "end": 39.54,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "划",
+          "start": 39.54,
+          "end": 39.772,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "掉",
+          "start": 39.772,
+          "end": 40.004,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 40.004,
+          "end": 40.236,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L18",
+      "index": 18,
+      "start": 40.456,
+      "end": 42.247,
+      "text": "太远的，标出来。",
+      "chars_timed": [
+        {
+          "ch": "太",
+          "start": 40.456,
+          "end": 40.68,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "远",
+          "start": 40.68,
+          "end": 40.904,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 40.904,
+          "end": 41.128,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 41.128,
+          "end": 41.352,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "标",
+          "start": 41.352,
+          "end": 41.576,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "出",
+          "start": 41.576,
+          "end": 41.8,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "来",
+          "start": 41.8,
+          "end": 42.024,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 42.024,
+          "end": 42.247,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L19",
+      "index": 19,
+      "start": 42.467,
+      "end": 44.856,
+      "text": "太熬人的，也标出来。",
+      "chars_timed": [
+        {
+          "ch": "太",
+          "start": 42.467,
+          "end": 42.706,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "熬",
+          "start": 42.706,
+          "end": 42.945,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "人",
+          "start": 42.945,
+          "end": 43.184,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 43.184,
+          "end": 43.423,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 43.423,
+          "end": 43.661,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "也",
+          "start": 43.661,
+          "end": 43.9,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "标",
+          "start": 43.9,
+          "end": 44.139,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "出",
+          "start": 44.139,
+          "end": 44.378,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "来",
+          "start": 44.378,
+          "end": 44.617,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 44.617,
+          "end": 44.856,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L20",
+      "index": 20,
+      "start": 45.076,
+      "end": 47.762,
+      "text": "米缸和补全，老大买的。",
+      "chars_timed": [
+        {
+          "ch": "米",
+          "start": 45.076,
+          "end": 45.32,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "缸",
+          "start": 45.32,
+          "end": 45.564,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "和",
+          "start": 45.564,
+          "end": 45.808,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "补",
+          "start": 45.808,
+          "end": 46.052,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "全",
+          "start": 46.052,
+          "end": 46.297,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 46.297,
+          "end": 46.541,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "老",
+          "start": 46.541,
+          "end": 46.785,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 46.785,
+          "end": 47.029,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "买",
+          "start": 47.029,
+          "end": 47.274,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 47.274,
+          "end": 47.518,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 47.518,
+          "end": 47.762,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L21",
+      "index": 21,
+      "start": 47.982,
+      "end": 49.773,
+      "text": "这份力，换它出。",
+      "chars_timed": [
+        {
+          "ch": "这",
+          "start": 47.982,
+          "end": 48.206,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "份",
+          "start": 48.206,
+          "end": 48.43,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "力",
+          "start": 48.43,
+          "end": 48.654,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 48.654,
+          "end": 48.878,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "换",
+          "start": 48.878,
+          "end": 49.101,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "它",
+          "start": 49.101,
+          "end": 49.325,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "出",
+          "start": 49.325,
+          "end": 49.549,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 49.549,
+          "end": 49.773,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L22",
+      "index": 22,
+      "start": 49.993,
+      "end": 51.784,
+      "text": "挑好的递过去。",
+      "chars_timed": [
+        {
+          "ch": "挑",
+          "start": 49.993,
+          "end": 50.249,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "好",
+          "start": 50.249,
+          "end": 50.505,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "的",
+          "start": 50.505,
+          "end": 50.761,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "递",
+          "start": 50.761,
+          "end": 51.017,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "过",
+          "start": 51.017,
+          "end": 51.272,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "去",
+          "start": 51.272,
+          "end": 51.528,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 51.528,
+          "end": 51.784,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L23",
+      "index": 23,
+      "start": 52.004,
+      "end": 54.989,
+      "text": "老大慢慢挑，先吃一口饭。",
+      "chars_timed": [
+        {
+          "ch": "老",
+          "start": 52.004,
+          "end": 52.253,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "大",
+          "start": 52.253,
+          "end": 52.502,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "慢",
+          "start": 52.502,
+          "end": 52.75,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "慢",
+          "start": 52.75,
+          "end": 52.999,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "挑",
+          "start": 52.999,
+          "end": 53.248,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 53.248,
+          "end": 53.497,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "先",
+          "start": 53.497,
+          "end": 53.745,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "吃",
+          "start": 53.745,
+          "end": 53.994,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "一",
+          "start": 53.994,
+          "end": 54.243,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "口",
+          "start": 54.243,
+          "end": 54.492,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "饭",
+          "start": 54.492,
+          "end": 54.74,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 54.74,
+          "end": 54.989,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L24",
+      "index": 24,
+      "start": 55.209,
+      "end": 56.702,
+      "text": "本鲸能闲着？",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 55.209,
+          "end": 55.458,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鲸",
+          "start": 55.458,
+          "end": 55.707,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "能",
+          "start": 55.707,
+          "end": 55.956,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "闲",
+          "start": 55.956,
+          "end": 56.204,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "着",
+          "start": 56.204,
+          "end": 56.453,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "？",
+          "start": 56.453,
+          "end": 56.702,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    },
+    {
+      "id": "L25",
+      "index": 25,
+      "start": 56.922,
+      "end": 61.698,
+      "text": "本鲸读评论，也帮着留意。本鲸绝不摸鱼",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 56.922,
+          "end": 57.187,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鲸",
+          "start": 57.187,
+          "end": 57.452,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "读",
+          "start": 57.452,
+          "end": 57.718,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "评",
+          "start": 57.718,
+          "end": 57.983,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "论",
+          "start": 57.983,
+          "end": 58.248,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "，",
+          "start": 58.248,
+          "end": 58.514,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "也",
+          "start": 58.514,
+          "end": 58.779,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "帮",
+          "start": 58.779,
+          "end": 59.045,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "着",
+          "start": 59.045,
+          "end": 59.31,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "留",
+          "start": 59.31,
+          "end": 59.575,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "意",
+          "start": 59.575,
+          "end": 59.841,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "。",
+          "start": 59.841,
+          "end": 60.106,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "本",
+          "start": 60.106,
+          "end": 60.371,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鲸",
+          "start": 60.371,
+          "end": 60.637,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "绝",
+          "start": 60.637,
+          "end": 60.902,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "不",
+          "start": 60.902,
+          "end": 61.167,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "摸",
+          "start": 61.167,
+          "end": 61.433,
+          "timing_source": "estimated for silent sample only"
+        },
+        {
+          "ch": "鱼",
+          "start": 61.433,
+          "end": 61.698,
+          "timing_source": "estimated for silent sample only"
+        }
+      ]
+    }
+  ]
+}

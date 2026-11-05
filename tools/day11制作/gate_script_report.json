@@ -1,0 +1,35 @@
+{
+  "config": "/home/user/ai-yunying/tools/day11制作/gate_config.json",
+  "input_sha256": {
+    "Day11/Day11配音台词.txt": "ec30ffa826b4e31f090b3e5bcb10532b8a0c3ee5ff7a23f45f262a4db3a41ada",
+    "new鲸鱼找工作_克隆配音_最终版.wav": "8f4124cbe21e0d93bfb9c458cd77bcfa789f8a114e765837b95b8fa1c930fe5c",
+    "tools/day11制作/voice_alignment.json": "a1d309b714c0f689c900271623e450f47976af497c526a6d4a4acd366e4f5fcf",
+    "tools/day11制作/subtitle_timing.json": "f58759129df3a8f62ba26e8eed7c021e7cad86efd4ce3ed0021b94b21c429117",
+    "tools/day11制作/render_day11.mjs": "174d6df87f3e67b09f4972fc57df27f6ba44ac9d598aa49df37f4269168b120d",
+    "Day11/成片/Day11_配音对齐版.mp4": "0eb47df0ee2bbc2dc9f14189a3e10913d45067f3295d0e1fd6c87c0e13cdcfe0",
+    "tools/engine/engine.test.mjs": "0a80cbb14f4a9e6dd01bc0afaf915b9d18667366e1ccd5434210a960ea0e58c4",
+    "tools/day11制作/episode.spec.test.mjs": "ec7ee34e3339890b729a53e34d339faeabd0d64d077807d0a2fbe4d1400321a7"
+  },
+  "day": 11,
+  "stage": "script",
+  "timestamp": "2026-11-04T10:21:10.991970+00:00",
+  "checks": [
+    {
+      "name": "文案",
+      "command": [
+        "/tmp/pyrender/bin/python",
+        "/home/user/ai-yunying/tools/剧本/呆萌体检.py",
+        "--txt",
+        "/home/user/ai-yunying/Day11/Day11配音台词.txt",
+        "--rate",
+        "3.35",
+        "--seconds",
+        "60"
+      ],
+      "exit_code": 1,
+      "stdout": "呆萌体检 · /home/user/ai-yunying/Day11/Day11配音台词.txt\n  取词块：纯文本 /home/user/ai-yunying/Day11/Day11配音台词.txt\n  共 26 句 / 188 字；按 3.35 字/秒 ≈ 56.1s（目标 60s）\n  第一句（6 字）：笨鱼在翻什么？\n  句长：最短 5 / 最长 11 / 均值 7.2 字\n  >18 字长句：0 句（0%）\n  呆萌覆盖率：35% 的句子有语气词/口癖/反问\n  第一句呆萌信号：有；第一句黑话/招呼命中：无\n  解释腔黑名单命中：无\n  占位符（【待填】/XXX/__）：0 处\n  过审黑名单（擦屁股/屎/尿/排泄…）：无\n\n\n不合格，按「呆萌快节奏」规则改稿：\n  - 末尾三句没有承诺/互动信号，请人工确认唯一CTA已落地\n",
+      "stderr": ""
+    }
+  ],
+  "passed": false
+}

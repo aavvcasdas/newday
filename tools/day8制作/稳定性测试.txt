@@ -1,0 +1,7 @@
+引擎补丁： fin-bows-optional, face-anchor-on-grid, eye-highlight-on-grid, eye-patch-optional, mouth-no-skin-block, bone-run-no-halfpixel-pad
+Day3 立绘：17/17 张（/home/user/ai-yunying/tools/day3制作/whale_girl_src）
+Day8 GIF: 13 animations loaded
+DSH 贴纸：39/39 张（Day2 加更电视同款）
+大小姐客串素材： pose_ok_hand.png (1230×1278)
+角色：Day3 高清立绘（whale_girl_src）；字幕：Day2 加更版；时长 151.94s
+PASS: 67 breath gaps retain prior line; phone edge pixel-identical in 12 opening samples.

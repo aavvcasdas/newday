@@ -1,0 +1,302 @@
+TAP version 13
+# 引擎补丁： fin-bows-optional, face-anchor-on-grid, eye-highlight-on-grid, eye-patch-optional, mouth-no-skin-block, bone-run-no-halfpixel-pad
+# Subtest: user-locked prefix is unchanged; exactly 23 lines and matching script hash
+ok 1 - user-locked prefix is unchanged; exactly 23 lines and matching script hash
+  ---
+  duration_ms: 1.095178
+  type: 'test'
+  ...
+# Subtest: eight shots cover all 23 lines once, with estimated times only
+ok 2 - eight shots cover all 23 lines once, with estimated times only
+  ---
+  duration_ms: 0.981742
+  type: 'test'
+  ...
+# Subtest: measured/invalid/missing/overlapping planning input is rejected
+ok 3 - measured/invalid/missing/overlapping planning input is rejected
+  ---
+  duration_ms: 0.373661
+  type: 'test'
+  ...
+# Subtest: both proposed prop prototypes render visible ink without clipping on their work canvas
+ok 4 - both proposed prop prototypes render visible ink without clipping on their work canvas
+  ---
+  duration_ms: 20.699435
+  type: 'test'
+  ...
+# Subtest: planning pop is an explicit world overlay, never a fabricated held prop
+ok 5 - planning pop is an explicit world overlay, never a fabricated held prop
+  ---
+  duration_ms: 1.216594
+  type: 'test'
+  ...
+# Subtest: C08 equal start/contact is valid and finite, without a division by zero
+ok 6 - C08 equal start/contact is valid and finite, without a division by zero
+  ---
+  duration_ms: 0.785184
+  type: 'test'
+  ...
+# Day9 v2: 13 existing Day3 pose rigs; finite action stages; rigid faces
+# Subtest: type has finite preparation / execution / recovery
+ok 7 - type has finite preparation / execution / recovery
+  ---
+  duration_ms: 527.460272
+  type: 'test'
+  ...
+# Subtest: read has finite preparation / execution / recovery
+ok 8 - read has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.179441
+  type: 'test'
+  ...
+# Subtest: eat has finite preparation / execution / recovery
+ok 9 - eat has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.210188
+  type: 'test'
+  ...
+# Subtest: look has finite preparation / execution / recovery
+ok 10 - look has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.134573
+  type: 'test'
+  ...
+# Subtest: protest has finite preparation / execution / recovery
+ok 11 - protest has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.114423
+  type: 'test'
+  ...
+# Subtest: point has finite preparation / execution / recovery
+ok 12 - point has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.065157
+  type: 'test'
+  ...
+# Subtest: stop has finite preparation / execution / recovery
+ok 13 - stop has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.115808
+  type: 'test'
+  ...
+# Subtest: shock has finite preparation / execution / recovery
+ok 14 - shock has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.233121
+  type: 'test'
+  ...
+# Subtest: proud has finite preparation / execution / recovery
+ok 15 - proud has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.282534
+  type: 'test'
+  ...
+# Subtest: idle has finite preparation / execution / recovery
+ok 16 - idle has finite preparation / execution / recovery
+  ---
+  duration_ms: 0.199263
+  type: 'test'
+  ...
+# Subtest: path eases into / out of walking and never drifts after arrival
+ok 17 - path eases into / out of walking and never drifts after arrival
+  ---
+  duration_ms: 0.165819
+  type: 'test'
+  ...
+# Subtest: repeated evaluation does not restart an action
+ok 18 - repeated evaluation does not restart an action
+  ---
+  duration_ms: 97.061647
+  type: 'test'
+  ...
+# Subtest: typing moves hands but preserves the original rigid face pixels
+ok 19 - typing moves hands but preserves the original rigid face pixels
+  ---
+  duration_ms: 5.906816
+  type: 'test'
+  ...
+# Subtest: all walk poses use the same opaque foot baseline
+ok 20 - all walk poses use the same opaque foot baseline
+  ---
+  duration_ms: 215.8421
+  type: 'test'
+  ...
+# Subtest: invalid clip is rejected, not silently changed into idle
+ok 21 - invalid clip is rejected, not silently changed into idle
+  ---
+  duration_ms: 0.448999
+  type: 'test'
+  ...
+# Subtest: motion gate ignores subtitle/background/head-only changes but sees hands
+ok 22 - motion gate ignores subtitle/background/head-only changes but sees hands
+  ---
+  duration_ms: 10.898244
+  type: 'test'
+  ...
+# 引擎补丁： fin-bows-optional, face-anchor-on-grid, eye-highlight-on-grid, eye-patch-optional, mouth-no-skin-block, bone-run-no-halfpixel-pad
+# Subtest: estimated contact must not silently become measured
+ok 23 - estimated contact must not silently become measured
+  ---
+  duration_ms: 1.232699
+  type: 'test'
+  ...
+# Subtest: unsupported verbs fail rather than pretending eight verbs exist
+ok 24 - unsupported verbs fail rather than pretending eight verbs exist
+  ---
+  duration_ms: 0.163441
+  type: 'test'
+  ...
+# Subtest: two frames, not three, are frozen; time resumes without jumping
+ok 25 - two frames, not three, are frozen; time resumes without jumping
+  ---
+  duration_ms: 0.672949
+  type: 'test'
+  ...
+# Subtest: head collision uses prop bottom, not its center
+ok 26 - head collision uses prop bottom, not its center
+  ---
+  duration_ms: 0.425466
+  type: 'test'
+  ...
+# Subtest: bread settles with bottom on actual tabletop
+ok 27 - bread settles with bottom on actual tabletop
+  ---
+  duration_ms: 0.135782
+  type: 'test'
+  ...
+# Subtest: bubble collision uses edge pivot and has two-frame hit stop
+ok 28 - bubble collision uses edge pivot and has two-frame hit stop
+  ---
+  duration_ms: 0.292835
+  type: 'test'
+  ...
+# Subtest: uncalibrated poses fail closed
+ok 29 - uncalibrated poses fail closed
+  ---
+  duration_ms: 0.197711
+  type: 'test'
+  ...
+# Subtest: mirroring is shared by rendered actor and anchor projector
+ok 30 - mirroring is shared by rendered actor and anchor projector
+  ---
+  duration_ms: 1.103867
+  type: 'test'
+  ...
+# Subtest: moving the actual raised arm moves the calibrated finger, not the face
+ok 31 - moving the actual raised arm moves the calibrated finger, not the face
+  ---
+  duration_ms: 0.674104
+  type: 'test'
+  ...
+# Subtest: palm landmarks exist on opaque source pixels (not blank image corners)
+ok 32 - palm landmarks exist on opaque source pixels (not blank image corners)
+  ---
+  duration_ms: 65.038523
+  type: 'test'
+  ...
+# Subtest: actor cached rendering is deterministic
+ok 33 - actor cached rendering is deterministic
+  ---
+  duration_ms: 104.226693
+  type: 'test'
+  ...
+# Subtest: reviewed route-2A prop passes all four pixel smoke tests
+ok 34 - reviewed route-2A prop passes all four pixel smoke tests
+  ---
+  duration_ms: 25.753587
+  type: 'test'
+  ...
+# Subtest: prop text rejects numeric payloads
+ok 35 - prop text rejects numeric payloads
+  ---
+  duration_ms: 0.515726
+  type: 'test'
+  ...
+# Subtest: sample never claims an audio source or measured words
+ok 36 - sample never claims an audio source or measured words
+  ---
+  duration_ms: 0.417142
+  type: 'test'
+  ...
+# 引擎补丁： fin-bows-optional, face-anchor-on-grid, eye-highlight-on-grid, eye-patch-optional, mouth-no-skin-block, bone-run-no-halfpixel-pad
+# Subtest: mood work_cool deterministic at absolute time
+ok 37 - mood work_cool deterministic at absolute time
+  ---
+  duration_ms: 67.839935
+  type: 'test'
+  ...
+# Subtest: mood panic_alert deterministic at absolute time
+ok 38 - mood panic_alert deterministic at absolute time
+  ---
+  duration_ms: 57.856081
+  type: 'test'
+  ...
+# Subtest: mood cinema_glow deterministic at absolute time
+ok 39 - mood cinema_glow deterministic at absolute time
+  ---
+  duration_ms: 85.799634
+  type: 'test'
+  ...
+# Subtest: mood warm_meal deterministic at absolute time
+ok 40 - mood warm_meal deterministic at absolute time
+  ---
+  duration_ms: 66.926962
+  type: 'test'
+  ...
+# Subtest: architectural wall and porthole rim do not boil
+ok 41 - architectural wall and porthole rim do not boil
+  ---
+  duration_ms: 25.149298
+  type: 'test'
+  ...
+# Subtest: sea is clipped to stationary aperture before parallax
+ok 42 - sea is clipped to stationary aperture before parallax
+  ---
+  duration_ms: 28.22318
+  type: 'test'
+  ...
+# Subtest: parallax factors order and actor plane stays put
+ok 43 - parallax factors order and actor plane stays put
+  ---
+  duration_ms: 0.217999
+  type: 'test'
+  ...
+# Subtest: door opens and closes; fish impulse has no time multiplication jump
+ok 44 - door opens and closes; fish impulse has no time multiplication jump
+  ---
+  duration_ms: 0.152571
+  type: 'test'
+  ...
+# Subtest: stage does not leak a canvas transform
+ok 45 - stage does not leak a canvas transform
+  ---
+  duration_ms: 2.277114
+  type: 'test'
+  ...
+# Subtest: animated atmosphere cannot change the isolated actor hash
+ok 46 - animated atmosphere cannot change the isolated actor hash
+  ---
+  duration_ms: 7.868759
+  type: 'test'
+  ...
+# Subtest: fixtures occlude sea rather than a window punching through a repair board
+ok 47 - fixtures occlude sea rather than a window punching through a repair board
+  ---
+  duration_ms: 12.752802
+  type: 'test'
+  ...
+# Subtest: optional plant movement replaces the original five leaves, default room stays still
+ok 48 - optional plant movement replaces the original five leaves, default room stays still
+  ---
+  duration_ms: 47.898136
+  type: 'test'
+  ...
+1..48
+# tests 48
+# suites 0
+# pass 48
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 2059.835476

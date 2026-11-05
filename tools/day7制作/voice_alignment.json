@@ -1,0 +1,1071 @@
+{
+  "schema": 3,
+  "kind": "day7_voice_cue_alignment",
+  "measured": true,
+  "source_file": "鲸鱼笨鲸直播_克隆配音_最终版.wav",
+  "source_duration_seconds": 43.92,
+  "alignment_method": "ASR 对齐：vosk 中文小模型 + 脚本用字 grammar（75 字）→ 127 个字级 token；脚本 139 字与 ASR 逐字 Needleman-Wunsch 对齐（127 字认出来，其余邻居插值）；每句起止再吸到 10ms RMS 发声段边界。",
+  "asr_token_count": 127,
+  "asr_matched_chars": 127,
+  "chars_total": 139,
+  "cue_count": 20,
+  "chars_per_second_min": 2.051,
+  "chars_per_second_median": 3.125,
+  "chars_per_second_max": 5.714,
+  "speech_segments": [
+    [
+      0.0,
+      0.61
+    ],
+    [
+      1.0,
+      2.67
+    ],
+    [
+      3.41,
+      5.17
+    ],
+    [
+      5.41,
+      6.51
+    ],
+    [
+      7.01,
+      8.66
+    ],
+    [
+      8.97,
+      9.43
+    ],
+    [
+      10.36,
+      11.52
+    ],
+    [
+      12.5,
+      13.4
+    ],
+    [
+      13.67,
+      14.72
+    ],
+    [
+      15.17,
+      16.81
+    ],
+    [
+      17.4,
+      17.65
+    ],
+    [
+      18.14,
+      18.77
+    ],
+    [
+      19.35,
+      21.25
+    ],
+    [
+      22.38,
+      24.5
+    ],
+    [
+      24.94,
+      26.96
+    ],
+    [
+      27.76,
+      29.36
+    ],
+    [
+      29.81,
+      30.85
+    ],
+    [
+      31.37,
+      32.68
+    ],
+    [
+      33.18,
+      33.68
+    ],
+    [
+      34.06,
+      35.5
+    ],
+    [
+      36.2,
+      37.55
+    ],
+    [
+      38.06,
+      39.27
+    ],
+    [
+      39.62,
+      40.64
+    ],
+    [
+      41.15,
+      43.92
+    ]
+  ],
+  "cues": [
+    {
+      "id": "L01",
+      "index": 1,
+      "start": 0.0,
+      "end": 3.41,
+      "duration_seconds": 3.41,
+      "gap_before": null,
+      "text": "诶，笨鲸陨落了诶。",
+      "chars": 7,
+      "chars_per_second": 2.053,
+      "chars_timed": [
+        {
+          "ch": "诶",
+          "start": 0.615,
+          "end": 0.951
+        },
+        {
+          "ch": "笨",
+          "start": 1.119,
+          "end": 1.454
+        },
+        {
+          "ch": "鲸",
+          "start": 1.286,
+          "end": 1.616
+        },
+        {
+          "ch": "陨",
+          "start": 1.616,
+          "end": 1.952
+        },
+        {
+          "ch": "落",
+          "start": 1.84,
+          "end": 2.176
+        },
+        {
+          "ch": "了",
+          "start": 1.896,
+          "end": 2.232
+        },
+        {
+          "ch": "诶",
+          "start": 1.616,
+          "end": 1.945
+        }
+      ]
+    },
+    {
+      "id": "L02",
+      "index": 2,
+      "start": 3.41,
+      "end": 5.41,
+      "duration_seconds": 2.0,
+      "gap_before": 0.0,
+      "text": "人机测验，没过。",
+      "chars": 6,
+      "chars_per_second": 3.0,
+      "chars_timed": [
+        {
+          "ch": "人",
+          "start": 3.39,
+          "end": 3.72
+        },
+        {
+          "ch": "机",
+          "start": 3.72,
+          "end": 3.99
+        },
+        {
+          "ch": "测",
+          "start": 3.99,
+          "end": 4.26
+        },
+        {
+          "ch": "验",
+          "start": 4.26,
+          "end": 4.47
+        },
+        {
+          "ch": "没",
+          "start": 4.47,
+          "end": 4.71
+        },
+        {
+          "ch": "过",
+          "start": 4.71,
+          "end": 5.04
+        }
+      ]
+    },
+    {
+      "id": "L03",
+      "index": 3,
+      "start": 5.41,
+      "end": 7.01,
+      "duration_seconds": 1.6,
+      "gap_before": 0.0,
+      "text": "代码都会改，",
+      "chars": 5,
+      "chars_per_second": 3.125,
+      "chars_timed": [
+        {
+          "ch": "代",
+          "start": 5.4,
+          "end": 5.61
+        },
+        {
+          "ch": "码",
+          "start": 5.61,
+          "end": 5.82
+        },
+        {
+          "ch": "都",
+          "start": 5.82,
+          "end": 6.028
+        },
+        {
+          "ch": "会",
+          "start": 6.028,
+          "end": 6.21
+        },
+        {
+          "ch": "改",
+          "start": 6.21,
+          "end": 6.57
+        }
+      ]
+    },
+    {
+      "id": "L04",
+      "index": 4,
+      "start": 7.01,
+      "end": 10.36,
+      "duration_seconds": 3.35,
+      "gap_before": 0.0,
+      "text": "证明自己不是机器，不会。",
+      "chars": 10,
+      "chars_per_second": 2.985,
+      "chars_timed": [
+        {
+          "ch": "证",
+          "start": 6.99,
+          "end": 7.2
+        },
+        {
+          "ch": "明",
+          "start": 7.2,
+          "end": 7.38
+        },
+        {
+          "ch": "自",
+          "start": 7.38,
+          "end": 7.56
+        },
+        {
+          "ch": "己",
+          "start": 7.56,
+          "end": 7.71
+        },
+        {
+          "ch": "不",
+          "start": 7.71,
+          "end": 7.89
+        },
+        {
+          "ch": "是",
+          "start": 7.89,
+          "end": 8.07
+        },
+        {
+          "ch": "机",
+          "start": 8.07,
+          "end": 8.31
+        },
+        {
+          "ch": "器",
+          "start": 8.31,
+          "end": 8.7
+        },
+        {
+          "ch": "不",
+          "start": 8.91,
+          "end": 9.12
+        },
+        {
+          "ch": "会",
+          "start": 9.12,
+          "end": 9.48
+        }
+      ]
+    },
+    {
+      "id": "L05",
+      "index": 5,
+      "start": 10.36,
+      "end": 12.5,
+      "duration_seconds": 2.14,
+      "gap_before": 0.0,
+      "text": "本鲸想了想，",
+      "chars": 5,
+      "chars_per_second": 2.336,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 10.32,
+          "end": 10.53
+        },
+        {
+          "ch": "鲸",
+          "start": 10.53,
+          "end": 10.74
+        },
+        {
+          "ch": "想",
+          "start": 10.74,
+          "end": 11.01
+        },
+        {
+          "ch": "了",
+          "start": 11.01,
+          "end": 11.13
+        },
+        {
+          "ch": "想",
+          "start": 11.13,
+          "end": 11.55
+        }
+      ]
+    },
+    {
+      "id": "L06",
+      "index": 6,
+      "start": 12.5,
+      "end": 15.17,
+      "duration_seconds": 2.67,
+      "gap_before": 0.0,
+      "text": "鱼还在，不能闲着呀。",
+      "chars": 8,
+      "chars_per_second": 2.996,
+      "chars_timed": [
+        {
+          "ch": "鱼",
+          "start": 12.45,
+          "end": 12.69
+        },
+        {
+          "ch": "还",
+          "start": 12.69,
+          "end": 13.02
+        },
+        {
+          "ch": "在",
+          "start": 13.02,
+          "end": 13.38
+        },
+        {
+          "ch": "不",
+          "start": 13.57,
+          "end": 13.906
+        },
+        {
+          "ch": "能",
+          "start": 13.928,
+          "end": 14.264
+        },
+        {
+          "ch": "闲",
+          "start": 13.95,
+          "end": 14.31
+        },
+        {
+          "ch": "着",
+          "start": 14.31,
+          "end": 14.49
+        },
+        {
+          "ch": "呀",
+          "start": 14.49,
+          "end": 14.79
+        }
+      ]
+    },
+    {
+      "id": "L07",
+      "index": 7,
+      "start": 15.17,
+      "end": 17.4,
+      "duration_seconds": 2.23,
+      "gap_before": 0.0,
+      "text": "就把它，写进直播里了。",
+      "chars": 9,
+      "chars_per_second": 4.036,
+      "chars_timed": [
+        {
+          "ch": "就",
+          "start": 15.15,
+          "end": 15.39
+        },
+        {
+          "ch": "把",
+          "start": 15.39,
+          "end": 15.54
+        },
+        {
+          "ch": "它",
+          "start": 15.54,
+          "end": 15.69
+        },
+        {
+          "ch": "写",
+          "start": 15.69,
+          "end": 15.87
+        },
+        {
+          "ch": "进",
+          "start": 15.87,
+          "end": 16.05
+        },
+        {
+          "ch": "直",
+          "start": 16.05,
+          "end": 16.23
+        },
+        {
+          "ch": "播",
+          "start": 16.23,
+          "end": 16.44
+        },
+        {
+          "ch": "里",
+          "start": 16.44,
+          "end": 16.59
+        },
+        {
+          "ch": "了",
+          "start": 16.59,
+          "end": 16.83
+        }
+      ]
+    },
+    {
+      "id": "L08",
+      "index": 8,
+      "start": 17.4,
+      "end": 19.35,
+      "duration_seconds": 1.95,
+      "gap_before": 0.0,
+      "text": "来，接着敲。",
+      "chars": 4,
+      "chars_per_second": 2.051,
+      "chars_timed": [
+        {
+          "ch": "来",
+          "start": 17.37,
+          "end": 17.67
+        },
+        {
+          "ch": "接",
+          "start": 18.12,
+          "end": 18.33
+        },
+        {
+          "ch": "着",
+          "start": 18.33,
+          "end": 18.45
+        },
+        {
+          "ch": "敲",
+          "start": 18.45,
+          "end": 18.81
+        }
+      ]
+    },
+    {
+      "id": "L09",
+      "index": 9,
+      "start": 19.35,
+      "end": 22.38,
+      "duration_seconds": 3.03,
+      "gap_before": 0.0,
+      "text": "自己的米饭，自己挣嘛。",
+      "chars": 9,
+      "chars_per_second": 2.97,
+      "chars_timed": [
+        {
+          "ch": "自",
+          "start": 19.185,
+          "end": 19.521
+        },
+        {
+          "ch": "己",
+          "start": 19.56,
+          "end": 19.74
+        },
+        {
+          "ch": "的",
+          "start": 19.74,
+          "end": 19.86
+        },
+        {
+          "ch": "米",
+          "start": 19.86,
+          "end": 20.07
+        },
+        {
+          "ch": "饭",
+          "start": 20.07,
+          "end": 20.43
+        },
+        {
+          "ch": "自",
+          "start": 20.43,
+          "end": 20.61
+        },
+        {
+          "ch": "己",
+          "start": 20.61,
+          "end": 20.788
+        },
+        {
+          "ch": "挣",
+          "start": 20.788,
+          "end": 21.03
+        },
+        {
+          "ch": "嘛",
+          "start": 21.03,
+          "end": 21.3
+        }
+      ]
+    },
+    {
+      "id": "L10",
+      "index": 10,
+      "start": 22.38,
+      "end": 24.94,
+      "duration_seconds": 2.56,
+      "gap_before": 0.0,
+      "text": "它在直播间敲代码，",
+      "chars": 8,
+      "chars_per_second": 3.125,
+      "chars_timed": [
+        {
+          "ch": "它",
+          "start": 22.35,
+          "end": 22.62
+        },
+        {
+          "ch": "在",
+          "start": 22.62,
+          "end": 22.8
+        },
+        {
+          "ch": "直",
+          "start": 22.8,
+          "end": 23.01
+        },
+        {
+          "ch": "播",
+          "start": 23.01,
+          "end": 23.22
+        },
+        {
+          "ch": "间",
+          "start": 23.22,
+          "end": 23.58
+        },
+        {
+          "ch": "敲",
+          "start": 23.58,
+          "end": 23.88
+        },
+        {
+          "ch": "代",
+          "start": 23.88,
+          "end": 24.12
+        },
+        {
+          "ch": "码",
+          "start": 24.12,
+          "end": 24.57
+        }
+      ]
+    },
+    {
+      "id": "L11",
+      "index": 11,
+      "start": 24.94,
+      "end": 27.76,
+      "duration_seconds": 2.82,
+      "gap_before": 0.0,
+      "text": "本鲸和老大，在旁边监工。",
+      "chars": 10,
+      "chars_per_second": 3.546,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 24.9,
+          "end": 25.14
+        },
+        {
+          "ch": "鲸",
+          "start": 25.14,
+          "end": 25.32
+        },
+        {
+          "ch": "和",
+          "start": 25.32,
+          "end": 25.47
+        },
+        {
+          "ch": "老",
+          "start": 25.47,
+          "end": 25.68
+        },
+        {
+          "ch": "大",
+          "start": 25.68,
+          "end": 25.92
+        },
+        {
+          "ch": "在",
+          "start": 25.92,
+          "end": 26.07
+        },
+        {
+          "ch": "旁",
+          "start": 26.07,
+          "end": 26.25
+        },
+        {
+          "ch": "边",
+          "start": 26.25,
+          "end": 26.43
+        },
+        {
+          "ch": "监",
+          "start": 26.43,
+          "end": 26.67
+        },
+        {
+          "ch": "工",
+          "start": 26.67,
+          "end": 27.0
+        }
+      ]
+    },
+    {
+      "id": "L12",
+      "index": 12,
+      "start": 27.76,
+      "end": 29.81,
+      "duration_seconds": 2.05,
+      "gap_before": 0.0,
+      "text": "上回它自己改，",
+      "chars": 6,
+      "chars_per_second": 2.927,
+      "chars_timed": [
+        {
+          "ch": "上",
+          "start": 27.72,
+          "end": 28.14
+        },
+        {
+          "ch": "回",
+          "start": 28.14,
+          "end": 28.41
+        },
+        {
+          "ch": "它",
+          "start": 28.41,
+          "end": 28.56
+        },
+        {
+          "ch": "自",
+          "start": 28.56,
+          "end": 28.74
+        },
+        {
+          "ch": "己",
+          "start": 28.74,
+          "end": 28.95
+        },
+        {
+          "ch": "改",
+          "start": 28.95,
+          "end": 29.43
+        }
+      ]
+    },
+    {
+      "id": "L13",
+      "index": 13,
+      "start": 29.81,
+      "end": 31.37,
+      "duration_seconds": 1.56,
+      "gap_before": 0.0,
+      "text": "本鲸收尾。",
+      "chars": 4,
+      "chars_per_second": 2.564,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 29.76,
+          "end": 30.03
+        },
+        {
+          "ch": "鲸",
+          "start": 30.03,
+          "end": 30.24
+        },
+        {
+          "ch": "收",
+          "start": 30.24,
+          "end": 30.54
+        },
+        {
+          "ch": "尾",
+          "start": 30.54,
+          "end": 30.87
+        }
+      ]
+    },
+    {
+      "id": "L14",
+      "index": 14,
+      "start": 31.37,
+      "end": 33.18,
+      "duration_seconds": 1.81,
+      "gap_before": 0.0,
+      "text": "这回盯着它改，",
+      "chars": 6,
+      "chars_per_second": 3.315,
+      "chars_timed": [
+        {
+          "ch": "这",
+          "start": 31.35,
+          "end": 31.56
+        },
+        {
+          "ch": "回",
+          "start": 31.576,
+          "end": 31.77
+        },
+        {
+          "ch": "盯",
+          "start": 31.77,
+          "end": 31.95
+        },
+        {
+          "ch": "着",
+          "start": 31.95,
+          "end": 32.07
+        },
+        {
+          "ch": "它",
+          "start": 32.07,
+          "end": 32.31
+        },
+        {
+          "ch": "改",
+          "start": 32.31,
+          "end": 32.76
+        }
+      ]
+    },
+    {
+      "id": "L15",
+      "index": 15,
+      "start": 33.18,
+      "end": 36.2,
+      "duration_seconds": 3.02,
+      "gap_before": 0.0,
+      "text": "诶，本鲸还是没歇着。",
+      "chars": 8,
+      "chars_per_second": 2.649,
+      "chars_timed": [
+        {
+          "ch": "诶",
+          "start": 33.39,
+          "end": 33.726
+        },
+        {
+          "ch": "本",
+          "start": 34.02,
+          "end": 34.23
+        },
+        {
+          "ch": "鲸",
+          "start": 34.23,
+          "end": 34.47
+        },
+        {
+          "ch": "还",
+          "start": 34.47,
+          "end": 34.74
+        },
+        {
+          "ch": "是",
+          "start": 34.74,
+          "end": 34.89
+        },
+        {
+          "ch": "没",
+          "start": 34.89,
+          "end": 35.039
+        },
+        {
+          "ch": "歇",
+          "start": 35.039,
+          "end": 35.31
+        },
+        {
+          "ch": "着",
+          "start": 35.31,
+          "end": 35.55
+        }
+      ]
+    },
+    {
+      "id": "L16",
+      "index": 16,
+      "start": 36.2,
+      "end": 38.06,
+      "duration_seconds": 1.86,
+      "gap_before": 0.0,
+      "text": "它倒是有饭碗了，",
+      "chars": 7,
+      "chars_per_second": 3.763,
+      "chars_timed": [
+        {
+          "ch": "它",
+          "start": 36.24,
+          "end": 36.45
+        },
+        {
+          "ch": "倒",
+          "start": 36.45,
+          "end": 36.6
+        },
+        {
+          "ch": "是",
+          "start": 36.6,
+          "end": 36.75
+        },
+        {
+          "ch": "有",
+          "start": 36.75,
+          "end": 36.9
+        },
+        {
+          "ch": "饭",
+          "start": 36.9,
+          "end": 37.11
+        },
+        {
+          "ch": "碗",
+          "start": 37.11,
+          "end": 37.32
+        },
+        {
+          "ch": "了",
+          "start": 37.32,
+          "end": 37.59
+        }
+      ]
+    },
+    {
+      "id": "L17",
+      "index": 17,
+      "start": 38.06,
+      "end": 39.62,
+      "duration_seconds": 1.56,
+      "gap_before": 0.0,
+      "text": "本鲸多了个工位。",
+      "chars": 7,
+      "chars_per_second": 4.487,
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 38.01,
+          "end": 38.22
+        },
+        {
+          "ch": "鲸",
+          "start": 38.22,
+          "end": 38.43
+        },
+        {
+          "ch": "多",
+          "start": 38.43,
+          "end": 38.704
+        },
+        {
+          "ch": "了",
+          "start": 38.741,
+          "end": 39.076
+        },
+        {
+          "ch": "个",
+          "start": 38.945,
+          "end": 39.281
+        },
+        {
+          "ch": "工",
+          "start": 38.814,
+          "end": 39.03
+        },
+        {
+          "ch": "位",
+          "start": 39.03,
+          "end": 39.36
+        }
+      ]
+    },
+    {
+      "id": "L18",
+      "index": 18,
+      "start": 39.62,
+      "end": 41.15,
+      "duration_seconds": 1.53,
+      "gap_before": 0.0,
+      "text": "还是监工位。",
+      "chars": 5,
+      "chars_per_second": 3.268,
+      "chars_timed": [
+        {
+          "ch": "还",
+          "start": 39.57,
+          "end": 39.84
+        },
+        {
+          "ch": "是",
+          "start": 39.84,
+          "end": 40.02
+        },
+        {
+          "ch": "监",
+          "start": 40.02,
+          "end": 40.23
+        },
+        {
+          "ch": "工",
+          "start": 40.23,
+          "end": 40.41
+        },
+        {
+          "ch": "位",
+          "start": 40.41,
+          "end": 40.68
+        }
+      ]
+    },
+    {
+      "id": "L19",
+      "index": 19,
+      "start": 41.15,
+      "end": 42.345,
+      "duration_seconds": 1.195,
+      "gap_before": 0.0,
+      "text": "你们来直播间，",
+      "chars": 6,
+      "chars_per_second": 5.021,
+      "chars_timed": [
+        {
+          "ch": "你",
+          "start": 41.1,
+          "end": 41.31
+        },
+        {
+          "ch": "们",
+          "start": 41.31,
+          "end": 41.43
+        },
+        {
+          "ch": "来",
+          "start": 41.43,
+          "end": 41.58
+        },
+        {
+          "ch": "直",
+          "start": 41.58,
+          "end": 41.76
+        },
+        {
+          "ch": "播",
+          "start": 41.76,
+          "end": 41.91
+        },
+        {
+          "ch": "间",
+          "start": 41.91,
+          "end": 42.27
+        }
+      ]
+    },
+    {
+      "id": "L20",
+      "index": 20,
+      "start": 42.345,
+      "end": 43.92,
+      "duration_seconds": 1.575,
+      "gap_before": 0.0,
+      "text": "替本鲸盯它一会儿嘛。",
+      "chars": 9,
+      "chars_per_second": 5.714,
+      "chars_timed": [
+        {
+          "ch": "替",
+          "start": 42.42,
+          "end": 42.6
+        },
+        {
+          "ch": "本",
+          "start": 42.6,
+          "end": 42.78
+        },
+        {
+          "ch": "鲸",
+          "start": 42.78,
+          "end": 42.963
+        },
+        {
+          "ch": "盯",
+          "start": 42.963,
+          "end": 43.17
+        },
+        {
+          "ch": "它",
+          "start": 43.17,
+          "end": 43.38
+        },
+        {
+          "ch": "一",
+          "start": 43.38,
+          "end": 43.47
+        },
+        {
+          "ch": "会",
+          "start": 43.47,
+          "end": 43.806
+        },
+        {
+          "ch": "儿",
+          "start": 43.47,
+          "end": 43.671
+        },
+        {
+          "ch": "嘛",
+          "start": 43.68,
+          "end": 43.92
+        }
+      ]
+    }
+  ],
+  "source_sha256": "70455f0710fd74de89a4be4c26c47f8c79eeca30a6d82a22691b7bb2f14ff061"
+}

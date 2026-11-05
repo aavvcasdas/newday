@@ -1,0 +1,41 @@
+{
+  "revision": "user_locked_23_lines",
+  "script_sha256": "4973226bc6f96750cdfe613505b4bb1f8a926a3c50bdff4fa4108a99cbf120fe",
+  "locked_prefix_verified": true,
+  "md_txt_identical": true,
+  "script_gate_passed": true,
+  "redline_checks": [
+    {
+      "file": "Day10/Day10配音台词.txt",
+      "exit_code": 0,
+      "stdout": "画面红线体检：扫了 1 个脚本\n\n历史提示文件：0（-v 展开）\n\n结论：没有新的违规 ✓\n"
+    },
+    {
+      "file": "tools/互动元素/day10_cue_props.mjs",
+      "exit_code": 0,
+      "stdout": "画面红线体检：扫了 1 个脚本\n\n历史提示文件：0（-v 展开）\n\n结论：没有新的违规 ✓\n"
+    }
+  ],
+  "node_tests": {
+    "total": 48,
+    "passed": 48,
+    "failed": 0
+  },
+  "measured": false,
+  "full_renderer_exists": false,
+  "audio_gate": "blocked_missing_Day10_audio",
+  "opening_measured_gate": "not_run_missing_measured_alignment",
+  "new_full_video_rendered": false,
+  "old_19s_sample_unchanged": true,
+  "prop_prototypes": [
+    "rice_jar_guard",
+    "brain_copy_board"
+  ],
+  "not_implemented_yet": [
+    "full production renderer",
+    "calibrated guarding/handwriting/folding interactions",
+    "notepad/standee/old-event foldout",
+    "new episode audio/subtitle alignment"
+  ],
+  "prototype_pixel_smoke_not_visual_approval": true
+}

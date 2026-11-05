@@ -1,0 +1,26 @@
+{
+  "config": "/home/user/newday/tools/day12制作/gate_config.json",
+  "input_sha256": {
+    "Day12/Day12配音台词.txt": "33b5c00d8033a6ce22b8e8e8bf5570e34a1f7d5d04593e2dd4fcc3c081a1bf0b"
+  },
+  "day": 12,
+  "stage": "script",
+  "timestamp": "2026-11-05T06:47:39.327495+00:00",
+  "checks": [
+    {
+      "name": "剧情承接",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/newday/tools/剧本/剧情.py",
+        "--txt",
+        "/home/user/newday/Day12/Day12配音台词.txt",
+        "--prev",
+        "/home/user/newday/Day11/Day11配音台词.txt"
+      ],
+      "exit_code": 0,
+      "stdout": "剧情承接 · /home/user/newday/Day12/Day12配音台词.txt\n  仅检查文本承接信号；因果推进与人格表现仍须人工审读。\n  上一集开头还没做完：笨鱼在翻什么、它在帮老大找工作、老大可能换新工作、岗位先扒出来再说、它自己鲸落过、被刷下来的滋味\n  上一集结尾留在桌上：本鲸看完先沉默、它偷偷标了又标、一条条筛、老大不是程序员、敲代码的、先划掉、太远的、标出来\n  求职梗之后接上：老大可能换新工作、敲代码的、先划掉、太远的、太熬人的、挑好的递过去、老大慢慢挑\n  最长句21字。句长门禁不启用：12/15/18/20/25/201\n\n文本结构通过。没有用句长退稿；不代表人设与剧情已获人工批准。\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

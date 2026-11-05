@@ -1,0 +1,158 @@
+{
+  "passed": true,
+  "source_assets": [
+    {
+      "file": "tools/day3制作/whale_girl_src/whale_shock.png",
+      "sha256": "6b80f05eaf20172b11d98ce2779288a8b322f85156120cfade49dfc705bfb14d"
+    },
+    {
+      "file": "tools/day3制作/whale_girl_src/whale_eat.png",
+      "sha256": "740ad3ff676fdee5d11f167c080fdafb43d4407879e799d099f8b31ad7e81f83"
+    }
+  ],
+  "covers": [
+    {
+      "ratio": "3比4",
+      "width": 1080,
+      "height": 1440,
+      "text": [
+        {
+          "text": "本鲸快被",
+          "size": 138,
+          "bounds": {
+            "left": 255.71996948242187,
+            "top": 47.72,
+            "right": 824.2800305175781,
+            "bottom": 196.28
+          }
+        },
+        {
+          "text": "架空啦？",
+          "size": 167,
+          "bounds": {
+            "left": 195.9798779296875,
+            "top": 197.98,
+            "right": 884.0201220703125,
+            "bottom": 378.02
+          }
+        },
+        {
+          "text": "同款鱼脑，怎么它更会护碗？",
+          "size": 43,
+          "bounds": {
+            "left": 257.92006103515627,
+            "top": 404.42,
+            "right": 822.0799389648438,
+            "bottom": 452.58
+          }
+        },
+        {
+          "text": "本鲸",
+          "size": 30,
+          "bounds": {
+            "left": 283.2000305175781,
+            "top": 509.2,
+            "right": 346.7999694824219,
+            "bottom": 541.8
+          }
+        },
+        {
+          "text": "笨鱼",
+          "size": 30,
+          "bounds": {
+            "left": 783.2000305175782,
+            "top": 580.2,
+            "right": 846.7999694824218,
+            "bottom": 612.8
+          }
+        },
+        {
+          "text": "非官方同人 · AI生成 · 剧情演绎",
+          "size": 27,
+          "bounds": {
+            "left": 337.51388061523437,
+            "top": 1366.38,
+            "right": 742.4861193847656,
+            "bottom": 1396.62
+          }
+        }
+      ],
+      "art": "Existing project PNG poses + shared underwater v2 stage + Day10 rice jar prop; no generative imagery",
+      "file": "Day10/封面/Day10封面_3比4.png",
+      "sha256": "e048c5dfe05e8063cfca045291d41c1e32b6c2d3b1bf982b31554f499269710a",
+      "decoded": true
+    },
+    {
+      "ratio": "4比3",
+      "width": 1440,
+      "height": 1080,
+      "text": [
+        {
+          "text": "本鲸快被",
+          "size": 107,
+          "bounds": {
+            "left": 168.57978637695314,
+            "top": 54.58,
+            "right": 609.4202136230468,
+            "bottom": 170.42
+          }
+        },
+        {
+          "text": "架空啦？",
+          "size": 137,
+          "bounds": {
+            "left": 106.77981689453125,
+            "top": 173.78,
+            "right": 671.2201831054688,
+            "bottom": 321.22
+          }
+        },
+        {
+          "text": "本鲸",
+          "size": 30,
+          "bounds": {
+            "left": 318.2000305175781,
+            "top": 936.2,
+            "right": 381.7999694824219,
+            "bottom": 968.8
+          }
+        },
+        {
+          "text": "笨鱼",
+          "size": 30,
+          "bounds": {
+            "left": 1018.2000305175782,
+            "top": 150.2,
+            "right": 1081.7999694824218,
+            "bottom": 182.8
+          }
+        },
+        {
+          "text": "同款鱼脑，怎么它更会护碗？",
+          "size": 42,
+          "bounds": {
+            "left": 444.4796032714844,
+            "top": 971.48,
+            "right": 995.5203967285156,
+            "bottom": 1019.52
+          }
+        },
+        {
+          "text": "非官方同人 · AI生成 · 剧情演绎",
+          "size": 24,
+          "bounds": {
+            "left": 540.0125451660156,
+            "top": 1035.56,
+            "right": 899.9874548339844,
+            "bottom": 1062.44
+          }
+        }
+      ],
+      "art": "Existing project PNG poses + shared underwater v2 stage + Day10 rice jar prop; no generative imagery",
+      "file": "Day10/封面/Day10封面_4比3.png",
+      "sha256": "840c9e018eefde8757d2655e28fdbca04187fcfb3cc21691991920543ed947ad",
+      "decoded": true
+    }
+  ],
+  "limits": "Text bounds and image decoding are automated checks, not OCR or platform publishing approval."
+}

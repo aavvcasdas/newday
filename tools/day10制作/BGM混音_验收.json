@@ -1,0 +1,159 @@
+{
+  "passed": true,
+  "scope": "audio_only_BGM_delivery_verification_not_old_dry_voice_correlation_gate",
+  "base": "Day10/成片/Day10_鲸鱼架空_配音对齐版.mp4",
+  "output": "Day10/成片/Day10_鲸鱼架空_配音BGM版.mp4",
+  "source_voice_sha256": "ffd3f521901aaaab0fbcaaa4df869891a721d35df3e138d6e94220cd51ac3ddc",
+  "base_sha256": "3424e913658c5bb35c0b141cd7e2879d2edfd771ed3167b643a4fc776b9b5fae",
+  "output_sha256": "1c160fa2f250d705b6040a64bb96e3802c6f8c44505b4adc01a15d4d15a4f8ff",
+  "bgm_stem": "Day10/配音/Day10_轻快芯片伴奏.flac",
+  "bgm_sha256": "db2ef35c5026675e8f0bc8b4f64cde71b06138b303ecca07919bc81cd6dd0d81",
+  "settings": {
+    "generator": "tools/day1制作/gen_finalvoice.py:generate_bgm",
+    "bpm": 128,
+    "chords": "Am F C G",
+    "voice_gain": 1.0,
+    "speech_bgm_gain": 0.23,
+    "gap_bgm_gain_target": 0.36800000000000005,
+    "duck_attack_seconds": 0.04,
+    "duck_release_seconds": 0.22,
+    "generator_fades_seconds": [
+      0.8,
+      1.2
+    ]
+  },
+  "reference_media": [
+    {
+      "file": "Day0/day0原视频.mp4",
+      "sha256": "c6f6bb1ae8ea9f5e158b3d2ed05c1b75a9daa5fbccb2c8e771e0e0550f3aa03a",
+      "duration": "82.500000",
+      "audio_rms_dbfs": -19.239509761429193,
+      "note": "Mixed reference only; not an isolated instrumental, not a measured melody/tempo attribution"
+    },
+    {
+      "file": "Day1/成片/当前版/day1视频_最终配音对齐版.mp4",
+      "sha256": "7082b137f68b41cefb47fd0a9c5760d6f90f04901b5404d97c48de209523bb88",
+      "duration": "127.233333",
+      "audio_rms_dbfs": -17.371980224151123,
+      "note": "Mixed reference only; not an isolated instrumental, not a measured melody/tempo attribution"
+    }
+  ],
+  "duration": 59.466667,
+  "frames": 1784,
+  "video_elementary_stream_sha256": "36771a8872080b70eebf2dcff36fc117459e3dfa14c9fc702492fba3ba25c49c",
+  "video_stream_unchanged": true,
+  "mixture_reconstruction_zero_offset_correlation": 0.999903626086873,
+  "known_stem_subtraction_voice_correlation": 0.9999023135567224,
+  "voice_active_bgm_below_voice_db": 20.794110841155515,
+  "voice_rms": 0.12671472556921423,
+  "music_active_rms": 0.011564358467382456,
+  "music_gap_rms": 0.015544771213594178,
+  "decoded_sample_peak": 0.6179227828979492,
+  "clipped_samples": 0,
+  "full_decode_exit": 0,
+  "audio_channels": 2,
+  "audio_sample_rate": "48000",
+  "voice_speed": 1,
+  "recovered_voice_gain": 0.9994804539729828,
+  "source_tail_seconds": 0.26666666666666666,
+  "per_cue_checks": [
+    {
+      "id": "L01",
+      "recovered_voice_correlation": 0.9999501478482865
+    },
+    {
+      "id": "L02",
+      "recovered_voice_correlation": 0.9999569414621291
+    },
+    {
+      "id": "L03",
+      "recovered_voice_correlation": 0.9999333282458898
+    },
+    {
+      "id": "L04",
+      "recovered_voice_correlation": 0.9999722010724621
+    },
+    {
+      "id": "L05",
+      "recovered_voice_correlation": 0.9999739267639247
+    },
+    {
+      "id": "L06",
+      "recovered_voice_correlation": 0.9999276328622392
+    },
+    {
+      "id": "L07",
+      "recovered_voice_correlation": 0.9999475278354267
+    },
+    {
+      "id": "L08",
+      "recovered_voice_correlation": 0.9999002952138455
+    },
+    {
+      "id": "L09",
+      "recovered_voice_correlation": 0.9998657071040354
+    },
+    {
+      "id": "L10",
+      "recovered_voice_correlation": 0.9998603989126531
+    },
+    {
+      "id": "L11",
+      "recovered_voice_correlation": 0.9999049280043474
+    },
+    {
+      "id": "L12",
+      "recovered_voice_correlation": 0.9995573670075141
+    },
+    {
+      "id": "L13",
+      "recovered_voice_correlation": 0.9999413730985086
+    },
+    {
+      "id": "L14",
+      "recovered_voice_correlation": 0.9998478407553746
+    },
+    {
+      "id": "L15",
+      "recovered_voice_correlation": 0.999824874451504
+    },
+    {
+      "id": "L16",
+      "recovered_voice_correlation": 0.9998394339661317
+    },
+    {
+      "id": "L17",
+      "recovered_voice_correlation": 0.9999636420310025
+    },
+    {
+      "id": "L18",
+      "recovered_voice_correlation": 0.9999736622284041
+    },
+    {
+      "id": "L19",
+      "recovered_voice_correlation": 0.9999023421048069
+    },
+    {
+      "id": "L20",
+      "recovered_voice_correlation": 0.9999716800116827
+    },
+    {
+      "id": "L21",
+      "recovered_voice_correlation": 0.9999221526247476
+    },
+    {
+      "id": "L22",
+      "recovered_voice_correlation": 0.9997845144286851
+    },
+    {
+      "id": "L23",
+      "recovered_voice_correlation": 0.9999733135075265
+    }
+  ],
+  "generator_sha256": "44606e8a10a82c2f2f847828dcadef471905fc0dddbf770bce0cbebc7cc93224",
+  "limitations": [
+    "Day0 style is a reference, not a claimed exact melody reconstruction",
+    "numerical level/ducking checks do not replace subjective listening",
+    "old dry-only .999 correlation gate is not applicable to a music mix; verified expected mixture and recovered voice separately"
+  ]
+}

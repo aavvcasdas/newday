@@ -1,0 +1,66 @@
+# Local caches and render intermediates. Final media that belongs in the
+# project archive should be added deliberately with `git add -f` if needed.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+node_modules/
+*_stills/
+mv_stills/
+*_preview_frames/
+*.log
+*.tmp
+.DS_Store
+Thumbs.db
+~$*
+
+# 骨架自检产出的对照图（成品已另存到 Day3/成片/骨架演示/）
+tools/day3制作/whale_girl_src/rig_preview/
+
+# Day3 渲染器运行时生成的引擎补丁副本（改 engine_patches.mjs 再重建，不入库）
+video-fx/src/whale_girl.day3.js
+
+# Day2 加更成片重渲时临时拷进 video-fx 检出的运行期文件（源在 tools/day2加更制作/）
+video-fx/assets/day2_poses/
+video-fx/assets/day2_bonus_final_envelope.js
+video-fx/assets/day2_bonus_final_track.wav
+video-fx/src/day2_bonus_final_timing.js
+video-fx/src/ch/day2_bonus_final_all.js
+video-fx/render_day2_bonus_final.mjs
+video-fx/stills/
+
+# 复刻样片的单帧复检图（成片才是交付物）
+Day3/成片/旧动作复刻样片/still_*.png
+Day3/成片/旧动作复刻样片/strip_*.png
+
+# 《朋友的酒》Q 弹 MV：成片与 A/B 样片体积大，留在工作区不入库（说明文档照常入库）
+Day3/成片/MV/*.mp4
+Day3/成片/MV/hook_ab/*.mp4
+
+# Day4：旧的骨架口径样片（v1/v2）已被 DSH 贴纸版 v4 取代，留工作区不入库
+Day4/成片/无配音样片/day4_无配音样片_v1.mp4
+Day4/成片/无配音样片/day4_无配音样片_v2_像素Day2版.mp4
+
+# Day4：MV 抽帧进电视用（可重跑，别入库）
+tools/day4制作/assets/mv_pip/
+
+# Day5 配音源（用户上传在 main 分支，16MB）：本分支按需 `git show origin/main:day5.wav > day5.wav` 取，不重复入库
+day5.wav
+
+# Day9 可重建抽帧缓存
+tools/day9制作/抽帧/
+
+tools/day9制作/有声抽帧/
+
+# Day9 动作版可重建抽帧（验收报告保留）
+tools/day9制作/v2抽帧/
+
+# Day9 分镜试剪可重建抽帧
+tools/day9制作/分镜试剪抽帧/
+
+# Day9 全片分镜试做可重建抽帧
+tools/day9制作/全片分镜试做抽帧/
+
+# Day9 海底联动试样可重建抽帧
+tools/day9制作/海底联动预览抽帧/

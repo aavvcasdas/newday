@@ -1,0 +1,17 @@
+{
+  "script": "Day11/Day11配音台词.txt",
+  "voice": "new鲸鱼找工作_克隆配音_最终版.wav",
+  "alignment": "tools/day11制作/voice_alignment.json",
+  "subs": "tools/day11制作/subtitle_timing.json",
+  "renderer": "tools/day11制作/render_day11.mjs",
+  "video": "Day11/成片/Day11_配音对齐版.mp4",
+  "tests": [
+    "tools/engine/engine.test.mjs",
+    "tools/day11制作/episode.spec.test.mjs"
+  ],
+  "rate": 3.35,
+  "seconds": 60,
+  "event_cue": "L01",
+  "use_unified_engine": true,
+  "note": "通用引擎新集：干声母版过 verify_episode，BGM 成片另由 mix_episode_bgm.py 验收。Day11 不导出 9:16。"
+}

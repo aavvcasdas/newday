@@ -1,0 +1,23 @@
+{
+  "kind": "silent_storyboard_sample",
+  "measured": false,
+  "file": "Day9/成片/Day9_笨鱼看同类_无配音样片.mp4",
+  "sha256": "6e7ffe3ff8879bc9ce756f7eebb13f537baa04cb8e2c42ab918fdaabdeec5a35",
+  "bytes": 13703756,
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 2881,
+  "duration_seconds": 96.03333333333333,
+  "video_codec": "h264",
+  "audio_streams": 0,
+  "full_decode_exit_code": 0,
+  "frame_checks": [
+    1,
+    34,
+    36,
+    37,
+    40,
+    49
+  ]
+}

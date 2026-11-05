@@ -1,0 +1,18 @@
+{
+  "full_decode": "pass",
+  "resolution": "1920x1080",
+  "fps": 30,
+  "video_frames": 4525,
+  "duration_seconds": 150.83333333333334,
+  "audio_codec": "AAC",
+  "source_duration_seconds": 150.63,
+  "source_vs_output_pcm_correlation_zero_offset": 0.9999961371192904,
+  "cue_count": 68,
+  "subtitle_screen_count": 86,
+  "subtitle_text_equality": true,
+  "subtitle_overlap": false,
+  "raw_asr_matched_chars": 444,
+  "raw_asr_cjk_chars": 464,
+  "voice_speed_changed": false,
+  "gif_sources_moved_without_edit": true
+}

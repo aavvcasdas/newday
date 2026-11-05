@@ -1,0 +1,75 @@
+{
+  "kind": "sea_stage_three_shot_trial_not_full_episode",
+  "source_sha256": "ffdaf3e9cf1f36e684cc8926e1951555bae4a00f985cb0eceba94bd41a8bc529",
+  "fps": 30,
+  "frames": 786,
+  "duration": 26.2,
+  "voice_speed": 1,
+  "sea_enabled": false,
+  "edits": [
+    {
+      "id": "C01",
+      "from": 1,
+      "to": 3,
+      "sourceStart": 0,
+      "sourceEnd": 7.766666666666667,
+      "outputStartFrame": 0,
+      "frames": 233,
+      "outputEndFrame": 233
+    },
+    {
+      "id": "C06",
+      "from": 19,
+      "to": 22,
+      "sourceStart": 39.266666666666666,
+      "sourceEnd": 50.3,
+      "outputStartFrame": 233,
+      "frames": 331,
+      "outputEndFrame": 564
+    },
+    {
+      "id": "C10",
+      "from": 33,
+      "to": 35,
+      "sourceStart": 73.2,
+      "sourceEnd": 80.6,
+      "outputStartFrame": 564,
+      "frames": 222,
+      "outputEndFrame": 786
+    }
+  ],
+  "shots": [
+    {
+      "id": "C01",
+      "from": 1,
+      "to": 3,
+      "title": "修程序与米饭钱",
+      "action": "专用键盘姿势交替按键，钱包打开，硬币留在电脑旁",
+      "start": 0,
+      "end": 7.55
+    },
+    {
+      "id": "C06",
+      "from": 19,
+      "to": 22,
+      "title": "老大上班",
+      "action": "淡淡蒸汽升起，老大带工作包走向门口；本鲸追到门边",
+      "start": 39.29,
+      "end": 50.1
+    },
+    {
+      "id": "C10",
+      "from": 33,
+      "to": 35,
+      "title": "南极打工",
+      "action": "电视内完整科考站：雪山窗、食物架、热饭、工位；本鲸端碗对照",
+      "start": 73.22,
+      "end": 80.41
+    }
+  ],
+  "edit_notes": {
+    "C01": "独立试样，恢复灯串和窗内有机时间；不虚构拍桌；工作中景→报错关系景→钱包及反应；场景剪裁，字幕不缩放",
+    "C06": "沿原门框开门→离场→关门，暖光只在开门时投地；不改角色路径",
+    "C10": "实际work/meal画面分别投冷青/暖金地面反光，电视框固定；无拍电视"
+  }
+}

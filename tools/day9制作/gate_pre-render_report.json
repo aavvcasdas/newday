@@ -1,0 +1,48 @@
+{
+  "day": 9,
+  "stage": "pre-render",
+  "timestamp": "2026-11-03T04:00:23.580863+00:00",
+  "checks": [
+    {
+      "name": "画面红线",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/ai-yunying/tools/剧本/画面红线体检.py",
+        "--day",
+        "9"
+      ],
+      "exit_code": 0,
+      "stdout": "画面红线体检：扫了 9 个脚本\n\n历史提示文件：0（-v 展开）\n\n结论：没有新的违规 ✓\n",
+      "stderr": ""
+    },
+    {
+      "name": "动作单测",
+      "command": [
+        "node",
+        "--test",
+        "/home/user/ai-yunying/tools/day9制作/motion_v2.test.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "TAP version 13\n# Day9 v2: 13 existing Day3 pose rigs; finite action stages; rigid faces\n# Subtest: type has finite preparation / execution / recovery\nok 1 - type has finite preparation / execution / recovery\n  ---\n  duration_ms: 384.438253\n  type: 'test'\n  ...\n# Subtest: read has finite preparation / execution / recovery\nok 2 - read has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.393772\n  type: 'test'\n  ...\n# Subtest: eat has finite preparation / execution / recovery\nok 3 - eat has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.332995\n  type: 'test'\n  ...\n# Subtest: look has finite preparation / execution / recovery\nok 4 - look has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.314513\n  type: 'test'\n  ...\n# Subtest: protest has finite preparation / execution / recovery\nok 5 - protest has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.192007\n  type: 'test'\n  ...\n# Subtest: point has finite preparation / execution / recovery\nok 6 - point has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.151606\n  type: 'test'\n  ...\n# Subtest: stop has finite preparation / execution / recovery\nok 7 - stop has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.233809\n  type: 'test'\n  ...\n# Subtest: shock has finite preparation / execution / recovery\nok 8 - shock has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.385536\n  type: 'test'\n  ...\n# Subtest: proud has finite preparation / execution / recovery\nok 9 - proud has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.509967\n  type: 'test'\n  ...\n# Subtest: idle has finite preparation / execution / recovery\nok 10 - idle has finite preparation / execution / recovery\n  ---\n  duration_ms: 0.408369\n  type: 'test'\n  ...\n# Subtest: path eases into / out of walking and never drifts after arrival\nok 11 - path eases into / out of walking and never drifts after arrival\n  ---\n  duration_ms: 0.375262\n  type: 'test'\n  ...\n# Subtest: repeated evaluation does not restart an action\nok 12 - repeated evaluation does not restart an action\n  ---\n  duration_ms: 175.000801\n  type: 'test'\n  ...\n# Subtest: typing moves hands but preserves the original rigid face pixels\nok 13 - typing moves hands but preserves the original rigid face pixels\n  ---\n  duration_ms: 6.659987\n  type: 'test'\n  ...\n# Subtest: all walk poses use the same opaque foot baseline\nok 14 - all walk poses use the same opaque foot baseline\n  ---\n  duration_ms: 325.496785\n  type: 'test'\n  ...\n# Subtest: invalid clip is rejected, not silently changed into idle\nok 15 - invalid clip is rejected, not silently changed into idle\n  ---\n  duration_ms: 0.521788\n  type: 'test'\n  ...\n# Subtest: motion gate ignores subtitle/background/head-only changes but sees hands\nok 16 - motion gate ignores subtitle/background/head-only changes but sees hands\n  ---\n  duration_ms: 9.604613\n  type: 'test'\n  ...\n1..16\n# tests 16\n# suites 0\n# pass 16\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 1023.263117\n",
+      "stderr": ""
+    },
+    {
+      "name": "渲染器自检",
+      "command": [
+        "node",
+        "/home/user/ai-yunying/tools/day9制作/render_day9_storyboard_full.mjs",
+        "--voice",
+        "/home/user/ai-yunying/Day9/配音/鲸鱼看视频_克隆配音_最终版.wav",
+        "--alignment",
+        "/home/user/ai-yunying/tools/day9制作/voice_alignment.json",
+        "--subtitle-file",
+        "/home/user/ai-yunying/tools/day9制作/subtitle_timing.json",
+        "--test"
+      ],
+      "exit_code": 0,
+      "stdout": "引擎补丁： fin-bows-optional, face-anchor-on-grid, eye-highlight-on-grid, eye-patch-optional, mouth-no-skin-block, bone-run-no-halfpixel-pad\nDay9 v2: 13 existing Day3 pose rigs; finite action stages; rigid faces\n{\n  sampled_frames: 64,\n  shots: 16,\n  source_subtitle_exact: true,\n  tv_border_fixed: true,\n  motion_check: 'isolated_actor_lower_body_pixels_not_semantic_proof',\n  frames: 3343,\n  duration: 111.43333333333334\n}\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

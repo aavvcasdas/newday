@@ -1,0 +1,10 @@
+{
+  "sampled_frames": 12,
+  "shots": 3,
+  "source_subtitle_exact": true,
+  "tv_border_fixed": true,
+  "tv_border_samples": 4,
+  "motion_check": "isolated_actor_lower_body_pixels_not_semantic_proof",
+  "frames": 786,
+  "duration": 26.2
+}

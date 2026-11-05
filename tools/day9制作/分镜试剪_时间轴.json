@@ -1,0 +1,56 @@
+{
+  "kind": "four_shot_measured_audio_trial_not_full_episode",
+  "source_sha256": "ffdaf3e9cf1f36e684cc8926e1951555bae4a00f985cb0eceba94bd41a8bc529",
+  "fps": 30,
+  "frames": 838,
+  "duration": 27.933333333333334,
+  "voice_speed": 1,
+  "edits": [
+    {
+      "id": "C01",
+      "from": 1,
+      "to": 3,
+      "sourceStart": 0,
+      "sourceEnd": 7.766666666666667,
+      "outputStartFrame": 0,
+      "frames": 233,
+      "outputEndFrame": 233
+    },
+    {
+      "id": "C05",
+      "from": 16,
+      "to": 18,
+      "sourceStart": 32.6,
+      "sourceEnd": 38.96666666666667,
+      "outputStartFrame": 233,
+      "frames": 191,
+      "outputEndFrame": 424
+    },
+    {
+      "id": "C09",
+      "from": 30,
+      "to": 32,
+      "sourceStart": 67.43333333333334,
+      "sourceEnd": 72.93333333333334,
+      "outputStartFrame": 424,
+      "frames": 165,
+      "outputEndFrame": 589
+    },
+    {
+      "id": "C16",
+      "from": 46,
+      "to": 49,
+      "sourceStart": 103.13333333333334,
+      "sourceEnd": 111.43333333333334,
+      "outputStartFrame": 589,
+      "frames": 249,
+      "outputEndFrame": 838
+    }
+  ],
+  "edit_notes": {
+    "C01": "工作中景→报错关系景→钱包及反应；场景剪裁，字幕不缩放",
+    "C05": "走近→实测不搭理分句处到达→等待→饭照吃→抗议",
+    "C09": "原生持纸姿势；交接切镜，非真实手部接纸动画；电视等读纸后开始",
+    "C16": "验收→放纸切镜→迈步靠近→原地嘴硬；无站姿坐凳和漂浮纸"
+  }
+}

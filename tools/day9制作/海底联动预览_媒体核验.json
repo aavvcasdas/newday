@@ -1,0 +1,249 @@
+{
+  "file": "Day9/成片/Day9_海底联动三镜预览.mp4",
+  "bytes": 2593598,
+  "sha256": "df7ff9770fb716a8cb882b586f7dd309ebc4c852e52901ef2ce32184a1ec6826",
+  "width": 1920,
+  "height": 1080,
+  "fps": 30,
+  "frames": 786,
+  "video_duration": 26.2,
+  "container_duration": 26.2,
+  "audio_codec": "aac",
+  "audio_sample_rate": "44100",
+  "source_speed": 1,
+  "exact_source_edit_zero_offset_pcm_correlation": 0.9999155761988664,
+  "full_decode_exit_code": 0,
+  "source_lines": [
+    1,
+    2,
+    3,
+    19,
+    20,
+    21,
+    22,
+    33,
+    34,
+    35
+  ],
+  "subtitle_screens": 15,
+  "subtitle_overlap": false,
+  "source_media_and_v2_preserved": true,
+  "scope": "three_shot_sea_stage_trial_not_full_episode",
+  "subtitle_pixels_and_audio": {
+    "audio_samples": [
+      {
+        "screen": 1,
+        "peak_10ms_db": -9.92559179036866
+      },
+      {
+        "screen": 2,
+        "peak_10ms_db": -10.096668585521194
+      },
+      {
+        "screen": 3,
+        "peak_10ms_db": -9.401289165008496
+      },
+      {
+        "screen": 4,
+        "peak_10ms_db": -10.034825515142051
+      },
+      {
+        "screen": 5,
+        "peak_10ms_db": -8.480202287342436
+      },
+      {
+        "screen": 6,
+        "peak_10ms_db": -8.599648707920341
+      },
+      {
+        "screen": 7,
+        "peak_10ms_db": -8.992925461483996
+      },
+      {
+        "screen": 8,
+        "peak_10ms_db": -9.248477780529367
+      },
+      {
+        "screen": 9,
+        "peak_10ms_db": -9.379312739152272
+      },
+      {
+        "screen": 10,
+        "peak_10ms_db": -9.401844954159465
+      },
+      {
+        "screen": 11,
+        "peak_10ms_db": -8.550807893772316
+      },
+      {
+        "screen": 12,
+        "peak_10ms_db": -9.768193857995378
+      },
+      {
+        "screen": 13,
+        "peak_10ms_db": -8.7512672715838
+      },
+      {
+        "screen": 14,
+        "peak_10ms_db": -9.404691964037237
+      },
+      {
+        "screen": 15,
+        "peak_10ms_db": -9.703963839854149
+      }
+    ],
+    "method": "Day2_cyan_tolerance_and_body_frame_difference_not_OCR",
+    "samples": [
+      {
+        "time": 0.26666666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L01"
+      },
+      {
+        "time": 1.7,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L01"
+      },
+      {
+        "time": 4.133333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L02"
+      },
+      {
+        "time": 5.733333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L03"
+      },
+      {
+        "time": 7.133333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L03"
+      },
+      {
+        "time": 9.0,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 206,
+        "label": "L19"
+      },
+      {
+        "time": 11.3,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L20"
+      },
+      {
+        "time": 13.3,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L20"
+      },
+      {
+        "time": 15.633333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 178,
+        "label": "L21"
+      },
+      {
+        "time": 17.766666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 192,
+        "label": "L22"
+      },
+      {
+        "time": 19.666666666666668,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L33"
+      },
+      {
+        "time": 21.6,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L34"
+      },
+      {
+        "time": 22.8,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 173,
+        "label": "L34"
+      },
+      {
+        "time": 24.133333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L35"
+      },
+      {
+        "time": 25.366666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 178,
+        "label": "L35"
+      },
+      {
+        "time": 3.033333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 10.4,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 12.233333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 14.366666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 20.733333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 23.6,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      }
+    ],
+    "errors": [],
+    "scope": "每屏中点、足够长气口、每次上屏附近帧差；不证明字幕文字内容或音素同步",
+    "passed": true
+  }
+}
