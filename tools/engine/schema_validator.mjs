@@ -40,6 +40,13 @@ export function validateActor(actor, where) {
 
 function validatePropRef(ref, where) {
   if (!ref || !PROP_REGISTRY[ref.propId]) throw new Error(`${where} 未知道具 ${ref?.propId}`);
+  for (const change of ref.stateChanges || []) {
+    if (!change.state || typeof change.state !== 'object') throw new Error(`${where} stateChanges须提供state对象`);
+    if ((change.line != null) === (change.at != null)) throw new Error(`${where} stateChanges须选line或at之一`);
+    if (change.line != null && (!Number.isInteger(change.line) || change.line < 1)) throw new Error(`${where} stateChanges.line无效`);
+    if (change.at != null && (!Number.isFinite(change.at) || change.at < 0)) throw new Error(`${where} stateChanges.at无效`);
+    if (change.delay != null && (!Number.isFinite(change.delay) || change.delay < 0)) throw new Error(`${where} stateChanges.delay无效`);
+  }
   const scale = ref.scale ?? 1;
   if (!Number.isFinite(ref.x) || !Number.isFinite(ref.y)) throw new Error(`${where} 道具坐标必须为有限数`);
   const bottom = propBottom(ref.propId, ref.y, scale);
@@ -92,8 +99,12 @@ export function validateSpec(spec, opts = {}) {
       validateDirection(shot, { cues: opts.cues, final: i === spec.shots.length - 1, requireWordTimes: opts.requireWordTimes });
       if (i > 0) validateShotContrast(spec.shots[i - 1], shot);
     }
+    if (shot.foregroundTable) {
+      const { x, y, width } = shot.foregroundTable;
+      if (![x, y, width].every(Number.isFinite) || width <= 0 || y + 58 > 600) throw new Error(`${where} 前景承托桌越界/尺寸无效`);
+    }
     const actors = shot.actors || shot.actorsPlan;
-    if (!Array.isArray(actors) || !actors.length) throw new Error(`${where} 缺少 actors 声明`);
+    if (!Array.isArray(actors) || (!actors.length && !(spec.directorVersion === 1 && shot.direction?.kind === 'prop'))) throw new Error(`${where} 缺少 actors 声明（仅导演道具特写可显式actors=[]）`);
     actors.forEach((a, j) => validateActor(a, `${where}.actors[${j}]`));
     if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle'))) {
       throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态`);
@@ -125,7 +136,10 @@ export function validateSpec(spec, opts = {}) {
         if (opts.requireWordTimes && !resolveWordTime(opts.cues, lineNo, it.wordChar).measured) throw new Error(`${where} 缺交互词级实测时间，不能按句首伪造词点`);
       }
     }
-    for (const [j, p] of (shot.companionProps || []).entries()) validatePropRef(p, `${where}.companionProps[${j}]`);
+    for (const [j, p] of (shot.companionProps || []).entries()) {
+      validatePropRef(p, `${where}.companionProps[${j}]`);
+      for (const change of p.stateChanges || []) if (change.line != null && (change.line < shot.fromLine || change.line > shot.toLine)) throw new Error(`${where} 道具stateChanges词行须在本镜`);
+    }
     if ((shot.interactions || []).length && !(shot.companionProps || []).length && !shot.allowNoCompanion) {
       throw new Error(`${where} 有主交互时须至少一件配套物（companionProps），反应特写可声明 allowNoCompanion`);
     }

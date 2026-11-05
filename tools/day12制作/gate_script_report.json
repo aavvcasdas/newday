@@ -2,11 +2,11 @@
   "config": "/home/user/newday/tools/day12制作/gate_config.json",
   "input_sha256": {
     "Day12/Day12配音台词.txt": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02",
-    "tools/day12制作/episode.spec.mjs": "1f5dc7890aa41e60b101137a74a2d9d724e176cfce1ade04acc459b071a70f9e"
+    "tools/day12制作/episode.spec.mjs": "12ac5d0d16e77683ec6b2e147c7e3d70c959660fab7da17fbe21642c6bc8ee5b"
   },
   "day": 12,
   "stage": "script",
-  "timestamp": "2026-11-05T11:15:21.191112+00:00",
+  "timestamp": "2026-11-05T11:31:57.328869+00:00",
   "checks": [
     {
       "name": "剧情承接",
@@ -33,7 +33,7 @@
         "/home/user/newday/Day12/Day12配音台词.txt"
       ],
       "exit_code": 0,
-      "stdout": "{\n  \"check\": \"planning_structure_only\",\n  \"passed\": true,\n  \"measured\": false,\n  \"visualApproved\": false,\n  \"productionReady\": false,\n  \"sourceScriptSha256\": \"42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02\",\n  \"lines\": 25,\n  \"shots\": 9,\n  \"framings\": [\n    {\n      \"id\": \"C01\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C02\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C03\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C04\",\n      \"framing\": \"close_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C05\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C06\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C07\",\n      \"framing\": \"medium_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C08\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C09\",\n      \"framing\": \"wide\",\n      \"cameraMove\": \"explicit_once\"\n    }\n  ],\n  \"missingAssets\": [\n    \"tools/day3制作/whale_girl_src/whale_point.png\",\n    \"tools/day3制作/whale_girl_src/whale_think.png\",\n    \"tools/day3制作/whale_girl_src/whale_fatfish_working.png\",\n    \"tools/day3制作/whale_girl_src/whale_shock.png\"\n  ],\n  \"blockers\": [\n    \"未提供Day12指定音源及词级实测轴\",\n    \"当前轻量工作区未同步角色位图与中文字体\",\n    \"C05拉纸、C07翻纸、C08按纸/推纸/圈记须素材和接触校准，不冒充已实现完整动作\",\n    \"未试剪、未逐镜视觉验收、未过音频和final门禁\",\n    \"结构检查未提供/核验实测音频、词级时间、动态观影或最终视频\"\n  ]\n}\n",
+      "stdout": "{\n  \"check\": \"planning_structure_only\",\n  \"passed\": true,\n  \"measured\": false,\n  \"visualApproved\": false,\n  \"productionReady\": false,\n  \"sourceScriptSha256\": \"42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02\",\n  \"lines\": 25,\n  \"shots\": 9,\n  \"framings\": [\n    {\n      \"id\": \"C01\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C02\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C03\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C04\",\n      \"framing\": \"close_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C05\",\n      \"framing\": \"medium_right\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C06\",\n      \"framing\": \"insert_center\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C07\",\n      \"framing\": \"medium_left\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C08\",\n      \"framing\": \"two_shot\",\n      \"cameraMove\": \"locked\"\n    },\n    {\n      \"id\": \"C09\",\n      \"framing\": \"wide\",\n      \"cameraMove\": \"explicit_once\"\n    }\n  ],\n  \"missingAssets\": [],\n  \"blockers\": [\n    \"未提供Day12指定音源及词级实测轴\",\n    \"C05拉纸、C07翻纸、C08按纸/推纸/圈记须素材和接触校准，不冒充已实现完整动作\",\n    \"无声四段样片不替代全片逐镜视觉验收、指定音源试剪与音频/final门禁\",\n    \"结构检查未提供/核验实测音频、词级时间、动态观影或最终视频\"\n  ]\n}\n",
       "stderr": ""
     }
   ],

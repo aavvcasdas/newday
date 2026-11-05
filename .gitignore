@@ -64,3 +64,12 @@ tools/day9制作/全片分镜试做抽帧/
 
 # Day9 海底联动试样可重建抽帧
 tools/day9制作/海底联动预览抽帧/
+
+# Day12样片按固定上游blob恢复的原素材缓存；清单/恢复脚本入库，不重复存媒体。
+/tools/day3制作/whale_girl_src/whale_point.png
+/tools/day3制作/whale_girl_src/whale_think.png
+/tools/day3制作/whale_girl_src/whale_fatfish_working.png
+/tools/day3制作/whale_girl_src/whale_shock.png
+/video-fx/assets/fonts/NotoSansSC-Bold.ttf
+/video-fx/assets/fonts/ZCOOLKuaiLe-Regular.ttf
+/video-fx/assets/fonts/Silkscreen-Regular.ttf

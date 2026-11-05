@@ -54,17 +54,11 @@
       "cameraMove": "explicit_once"
     }
   ],
-  "missingAssets": [
-    "tools/day3制作/whale_girl_src/whale_point.png",
-    "tools/day3制作/whale_girl_src/whale_think.png",
-    "tools/day3制作/whale_girl_src/whale_fatfish_working.png",
-    "tools/day3制作/whale_girl_src/whale_shock.png"
-  ],
+  "missingAssets": [],
   "blockers": [
     "未提供Day12指定音源及词级实测轴",
-    "当前轻量工作区未同步角色位图与中文字体",
     "C05拉纸、C07翻纸、C08按纸/推纸/圈记须素材和接触校准，不冒充已实现完整动作",
-    "未试剪、未逐镜视觉验收、未过音频和final门禁",
+    "无声四段样片不替代全片逐镜视觉验收、指定音源试剪与音频/final门禁",
     "结构检查未提供/核验实测音频、词级时间、动态观影或最终视频"
   ]
 }

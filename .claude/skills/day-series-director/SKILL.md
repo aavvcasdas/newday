@@ -14,9 +14,10 @@ compatibility: Node.js 22 and Python 3; run npm ci --prefix tools/engine for eng
 
 1. 读根目录 `agent.md` 覆盖规则和 `AGENTS.md`。需要改剧情才调用 `00_运营总览/skills/剧情生成/SKILL.md`，导演任务不擅改锁字。
 2. 读当集文案/TXT、当前 `episode.spec.mjs`、最近验收与用户纠正。Day12使用回归/@豆包/米饭大饼稿，不换回山姆护照旧稿。
-3. 有指定音源则读哈希、实测 `voice_alignment.json`、字幕轴；没有则 `measured=false`、`status=planning`，不造正式cue或拿SRT猜词时。
-4. 读 `tools/engine/README.md`、`camera_plan.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
-5. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准接触姿态、另一套28个历史语义动作。先看素材可用性；不把姿态换名说成动作已实现，不随意解禁侧脸/闭眼/接触。
+3. 用户要先看样片但缺指定音源时，可以走独立 `createPlanningPreview`/`tools/day12制作/render_sample.mjs` 无声入口，保持planning/measured=false，持续标识无声/规划/节选；不得把spec改成ready或捏造词轴来绕过生产门禁。先恢复并核验原素材，不能用占位脸。
+4. 有指定音源则读哈希、实测 `voice_alignment.json`、字幕轴；没有则 `measured=false`、`status=planning`，不造正式cue或拿SRT猜词时。
+5. 读 `tools/engine/README.md`、`camera_plan.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
+6. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准接触姿态、另一套28个历史语义动作。先看素材可用性；不把姿态换名说成动作已实现，不随意解禁侧脸/闭眼/接触。
 
 ## 核心规则
 
@@ -44,6 +45,8 @@ node --test tools/engine/*.test.mjs
 node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
 python3 tools/gate.py --day 12 --stage script
 ```
+
+样片生成后用ffprobe核验参数、ffmpeg全片解码，再检查元数据的固定/单运镜、显式走位、同落点切镜和字幕，并抽取**编码后的帧**目检；静止脸部ROI的像素检查要排除显式表情切换/运镜，不把环境动效算人物抖动。
 
 输出导演表、spec、结构检查及待检关键帧清单。结构通过不等于视觉/音频/final通过。
 先检查开场、错误发生、纠偏、结尾四段，素材和指定音源到位才做有声试剪→人工动态审看→推广整集；不得把合成占位图/GIF当正片。

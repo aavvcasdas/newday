@@ -56,8 +56,8 @@ const extra = {
       reseedBoil(0);
       paint(ctx, rrPts(-w / 2, -42, w, 84, 5, 0), { wash: '#B99E74', fill: '#EFE2C0', fillOp: 240, ink: '#424653', sw: 2 });
       for (let i = 1; i < 4; i++) inkLine(ctx, [[-w / 2 + (i * w) / 4, -32], [-w / 2 + (i * w) / 4, 32]], 1, '#B5A580', 'fold-line', 0);
-      drawText(ctx, st.title || '旧事提醒', 0, -12, 20, '#47546A');
-      drawText(ctx, st.sub || '先看碗里', 0, 18, 18, '#805F51');
+      drawText(ctx, st.title ?? '旧事提醒', 0, -12, 20, '#47546A');
+      drawText(ctx, st.sub ?? '先看碗里', 0, 18, 18, '#805F51');
     },
   },
   // 空碗（敲击/护碗语义，原点为碗心）

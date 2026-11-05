@@ -73,3 +73,11 @@ python3 tools/gate.py --day 12 --stage script
 
 正式命令仍为 `node tools/engine/render_episode.mjs --spec <spec> --voice <wav> --alignment <实测json> --subtitle-file <实测字幕json> --out <mp4>`。
 没有上述输入时，输出导演计划和阻塞清单，不给假成片，不自动导出9:16，不自动发布平台内容。
+
+## 已实际生成的无声规划样片
+
+用户要求先看样片时，使用独立 `createPlanningPreview`，仅接受planning/measured=false且不含音源SHA/伪词级轴的输入；正式CLI的ready/指定音源/实测门禁不放宽。
+实际实例与复现见 `Day12/样片/README.md`：33.43秒四段节选、1080p/30fps，全1003帧解码、自检与编码后抽帧；不是有声全片。
+
+本轮样片实检补充：directorVersion=1开场演员不再被旧opener覆盖；显式道具特写可actors=[]，其他镜头仍不可空演员；可声明foregroundTable承托（y+58<=600），并做输出空间安全区检查。道具stateChanges按line+delay或at作明确状态切换，C07同落点正反切镜，不伪称手掌翻纸。folded_page显式空sub不再回填默认旧梗。
+本轮Node回归30项、Python44项（含编码集成测试）通过；不代表有声final通过。

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { cameraFor, CAMERA_PRESETS, validateCameraPlan } from './camera_plan.mjs';
-import { livingBody, lifeAnim, gaitAnim, resolveActor, createEpisodeRenderer, buildEvents, buildShots } from './render_episode.mjs';
+import { livingBody, lifeAnim, gaitAnim, resolveActor, createEpisodeRenderer, createPlanningPreview, shotActorPlans, propStateAt, buildEvents, buildShots } from './render_episode.mjs';
 import { validateSpec, CALIBRATED_POSES } from './schema_validator.mjs';
 import { checkStoryboard } from './check_storyboard.mjs';
 import { validateDirection } from './director_contract.mjs';
@@ -97,7 +97,7 @@ test('导演字段/连续性/词点缺失都失败，不把相机运动当事件
   }
   const s = clone(); s.shots[3].direction.wordChar = '证';
   assert.throws(() => validate(s), /词点|台词/);
-  const noWalk = clone(); delete noWalk.shots[0].actors[1].walk;
+  const noWalk = clone(); delete noWalk.shots[0].actors[1].walk; delete noWalk.shots[0].actors[0].poses;
   assert.throws(() => validate(noWalk), /显式走位/);
 });
 
@@ -110,7 +110,7 @@ test('反应与道具特写不被强迫添加无关手部接触', () => {
 });
 
 test('连续镜头景别中心人物全相同时拒绝；改变观察方向可通过', () => {
-  const s = clone(); const prev = s.shots[2]; const next = s.shots[3];
+  const s = clone(); const prev = s.shots[0]; const next = s.shots[1];
   next.framing = prev.framing; next.actors = structuredClone(prev.actors);
   assert.throws(() => validate(s), /全相同/);
   next.framing = 'close_left';
@@ -170,4 +170,37 @@ test('检查CLI从当前文件实际加载计划，非占位图渲染', () => {
   const result = spawnSync(process.execPath, ['tools/engine/check_storyboard.mjs', '--spec', 'tools/day12制作/episode.spec.mjs', '--script', 'Day12/Day12配音台词.txt'], { encoding: 'utf8', cwd: new URL('../..', import.meta.url) });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).check, 'planning_structure_only');
+});
+
+
+test('导演开场不被旧opener演员覆盖，走入从画外开始且在3.2秒内执行', () => {
+  const s = clone(); const shot = s.shots[0];
+  const plans = shotActorPlans(s, shot, true);
+  assert.equal(plans, shot.actors);
+  assert.ok(plans[1].walk.from > 1280);
+  assert.notEqual(resolveActor(plans[1], 4.5, 2, cues).x, plans[1].walk.from);
+  assert.equal(shotActorPlans({ ...s, directorVersion: undefined }, shot, true)[0], s.opener.actorA);
+});
+
+test('无声样片入口拒绝实测声明、音源哈希和伪造词轴，不放宽生产入口', async () => {
+  await assert.rejects(createPlanningPreview({ spec: plan, alignment: { measured: true, cues }, subdata: { measured: false } }), /无声样片/);
+  await assert.rejects(createPlanningPreview({ spec: plan, alignment: { measured: false, cues }, subdata: { measured: false } }), /伪词轴/);
+  await assert.rejects(createPlanningPreview({ spec: { ...plan, status: 'ready' }, alignment: {}, subdata: {} }), /只接受planning/);
+});
+
+test('同落点正反面通过显式stateChanges切换，不把文字变化伪称手掌翻纸', () => {
+  const shot = plan.shots[6]; const ref = shot.companionProps[0];
+  const start = cues[shot.fromLine - 1].start;
+  assert.equal(propStateAt(ref, start + 1.19, cues).title, '录取通知');
+  assert.equal(propStateAt(ref, start + 1.2, cues).title, '筛岗位');
+  assert.equal(ref.x, plan.shots[2].companionProps.find((p) => p.propId === 'folded_page').x);
+  const bad = clone(); bad.shots[6].companionProps[0].stateChanges[0].line = 25;
+  assert.throws(() => validate(bad), /须在本镜/);
+});
+
+test('道具插入镜可显式无演员以免裁头；其他镜头仍不可空演员，桌面承托不侵入字幕', () => {
+  assert.equal(plan.shots[2].actors.length, 0);
+  assert.doesNotThrow(() => validate(plan));
+  const s = clone();s.shots[3].actors = []; assert.throws(() => validate(s), /actors/);
+  const bad = clone();bad.shots[2].foregroundTable.y = 550; assert.throws(() => validate(bad), /承托桌/);
 });

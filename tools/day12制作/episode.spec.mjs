@@ -9,9 +9,8 @@ export default {
   "sourceScriptSha256": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02",
   "pending": [
     "未提供Day12指定音源及词级实测轴",
-    "当前轻量工作区未同步角色位图与中文字体",
     "C05拉纸、C07翻纸、C08按纸/推纸/圈记须素材和接触校准，不冒充已实现完整动作",
-    "未试剪、未逐镜视觉验收、未过音频和final门禁"
+    "无声四段样片不替代全片逐镜视觉验收、指定音源试剪与音频/final门禁"
   ],
   "opener": {
     "headlinePrefix": "笨鱼回来了，",
@@ -45,7 +44,14 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸",
+          "poses": [
+            {
+              "line": 2,
+              "pose": "shock"
+            }
+          ]
         },
         {
           "pose": "think",
@@ -54,11 +60,12 @@ export default {
           "u": 38,
           "idleMotion": 0,
           "walk": {
-            "from": 970,
+            "from": 1370,
             "to": 810,
             "startLine": 2,
-            "duration": 0.8
-          }
+            "duration": 1.3
+          },
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -87,7 +94,7 @@ export default {
         "result": "笨鱼落到桌右，旧任务仍在，不用两人整体弹跳宣布回归",
         "resultLine": 2,
         "resultChar": "岗",
-        "reaction": "本鲸转看笨鱼，不再点头循环",
+        "reaction": "本鲸在笨鱼回归句切震惊姿态一次，之后保持，不循环点头",
         "exit": "笨鱼停在桌右，岗位纸仍在原落点",
         "transition": "从笨鱼视线切到评论区@条",
         "continuity": {
@@ -96,6 +103,11 @@ export default {
         },
         "settleSeconds": 0.3,
         "holdSeconds": 0.4
+      },
+      "foregroundTable": {
+        "x": 430,
+        "y": 534,
+        "width": 420
       }
     },
     {
@@ -110,14 +122,16 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸"
         },
         {
           "pose": "fatfish_working",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -163,23 +177,18 @@ export default {
       "toLine": 7,
       "framing": "insert_center",
       "mood": "work_cool",
-      "actors": [
-        {
-          "pose": "point",
-          "x": 470,
-          "y": 600,
-          "u": 38,
-          "idleMotion": 0
-        },
-        {
-          "pose": "think",
-          "x": 810,
-          "y": 600,
-          "u": 38,
-          "idleMotion": 0
-        }
-      ],
+      "actors": [],
       "companionProps": [
+        {
+          "propId": "name_plate",
+          "x": 640,
+          "y": 365,
+          "scale": 1,
+          "fromLine": 5,
+          "state": {
+            "text": "没经验，能投吗？"
+          }
+        },
         {
           "propId": "folded_page",
           "x": 640,
@@ -214,6 +223,11 @@ export default {
         },
         "settleSeconds": 0.3,
         "holdSeconds": 0.4
+      },
+      "foregroundTable": {
+        "x": 430,
+        "y": 534,
+        "width": 420
       }
     },
     {
@@ -234,14 +248,16 @@ export default {
               "line": 9,
               "pose": "shock"
             }
-          ]
+          ],
+          "name": "本鲸"
         },
         {
           "pose": "think",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -293,20 +309,22 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸"
         },
         {
           "pose": "think",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
         {
           "propId": "name_plate",
-          "x": 810,
+          "x": 1040,
           "y": 500,
           "scale": 0.85,
           "fromLine": 11,
@@ -352,14 +370,16 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸"
         },
         {
           "pose": "think",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -436,28 +456,32 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
-        },
-        {
-          "pose": "think",
-          "x": 810,
-          "y": 600,
-          "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸"
         }
       ],
       "companionProps": [
         {
           "propId": "folded_page",
-          "x": 560,
+          "x": 640,
           "y": 500,
           "scale": 0.85,
           "fromLine": 17,
           "state": {
-            "title": "筛岗位",
-            "text": "筛岗位",
-            "sub": ""
-          }
+            "title": "录取通知",
+            "sub": "正面"
+          },
+          "carry": true,
+          "stateChanges": [
+            {
+              "line": 17,
+              "delay": 1.2,
+              "state": {
+                "title": "筛岗位",
+                "sub": "背面 · 对要求"
+              }
+            }
+          ]
         }
       ],
       "interactions": [],
@@ -481,6 +505,14 @@ export default {
         },
         "settleSeconds": 0.3,
         "holdSeconds": 0.4
+      },
+      "foregroundTable": {
+        "x": 430,
+        "y": 534,
+        "width": 420
+      },
+      "camera": {
+        "cy": 420
       }
     },
     {
@@ -495,14 +527,16 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸"
         },
         {
           "pose": "think",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -520,7 +554,7 @@ export default {
         },
         {
           "propId": "name_plate",
-          "x": 810,
+          "x": 1040,
           "y": 450,
           "scale": 0.85,
           "fromLine": 19,
@@ -578,14 +612,22 @@ export default {
           "x": 470,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "本鲸",
+          "poses": [
+            {
+              "line": 25,
+              "pose": "shock"
+            }
+          ]
         },
         {
           "pose": "think",
           "x": 810,
           "y": 600,
           "u": 38,
-          "idleMotion": 0
+          "idleMotion": 0,
+          "name": "笨鱼"
         }
       ],
       "companionProps": [
@@ -603,7 +645,7 @@ export default {
         },
         {
           "propId": "name_plate",
-          "x": 810,
+          "x": 1040,
           "y": 450,
           "scale": 0.85,
           "fromLine": 23,
@@ -619,14 +661,14 @@ export default {
         "kind": "reaction",
         "focus": "具体未完成任务与米饭/大饼回扣",
         "entry": "候选纸和疑点纸留桌，帮手关系保留",
-        "action": "只拉远一次，停稳后主角看疑点→回看@条→指旧录取通知，结尾让结果静留",
+        "action": "只拉远一次并停稳；末句本鲸由指证切震惊姿态，结尾留理解时间，不假称已完成视线或口型动画",
         "trigger": "L23「还」",
         "wordLine": 23,
         "wordChar": "还",
         "result": "能摇人仍需核对；不吃米饭不代表可以吃大饼，待核项留给下集",
         "resultLine": 25,
         "resultChar": "米",
-        "reaction": "人物反应收住，不在结尾加站桩抖动或跳动道具",
+        "reaction": "米饭/大饼末句切震惊姿态一次，结果收住，不循环点头或全身摆动",
         "exit": "人物和纸的落点稳定，无数据片尾卡",
         "transition": "此处结束，下集从待核项开始",
         "continuity": {
@@ -647,6 +689,11 @@ export default {
         "z": 1.02,
         "cx": 640,
         "cy": 378
+      },
+      "foregroundTable": {
+        "x": 430,
+        "y": 534,
+        "width": 420
       }
     }
   ]

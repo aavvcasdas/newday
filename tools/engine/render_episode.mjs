@@ -8,7 +8,7 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { createCanvas, loadImage, resolveFfmpeg, W, H, FPS, mix, smooth, seg } from './room_base.mjs';
+import { createCanvas, loadImage, resolveFfmpeg, W, H, FPS, mix, smooth, seg, drawText, drawForegroundTable } from './room_base.mjs';
 import { validateSpec, resolveWordTime } from './schema_validator.mjs';
 import { drawRolePlates, drawStamp, OPENER_END, PLATES_DEFAULT_AT } from './opener_director.mjs';
 import { drawShotInteractions, BODY_VERBS } from './interaction_stage.mjs';
@@ -119,7 +119,7 @@ export function resolveActor(plan, t, line, cues = []) {
   }
   const body = livingBody(t, seed, plan.idleMotion ?? 1);
   return {
-    pose, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: plan.u ?? 38,
+    pose, name: plan.name, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: plan.u ?? 38,
     flip: !!plan.flip, lean: (plan.lean ?? 0) + body.lean, squash: body.squash, anim,
   };
 }
@@ -135,7 +135,34 @@ function holdFrame(frame, events, shotId) {
 export async function createEpisodeRenderer({ spec, alignment, subdata }) {
   if (spec.status === 'planning') throw new Error('导演分镜仍是 planning：先完成资产/动作可行性审核，再绑定指定音源；不能把规划当成成片');
   if (spec.directorVersion === 1 && (spec.status !== 'ready' || spec.measured !== true)) throw new Error('导演spec未完成ready审核和实测绑定');
-  validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues, requireWordTimes: true });
+  return createSceneRenderer({ spec, alignment, subdata }, false);
+}
+
+/** 独立的无声规划入口：不修改planning，不伪造实测轴，也不通过正式CLI导出。 */
+export async function createPlanningPreview({ spec, alignment, subdata }) {
+  if (spec.directorVersion !== 1 || spec.status !== 'planning' || spec.measured !== false) throw new Error('规划样片只接受planning/measured=false导演spec');
+  if (alignment.measured !== false || subdata.measured !== false || alignment.source_sha256 || alignment.cues.some((c) => c.chars_timed?.length)) throw new Error('无声样片不得混入实测声明/音源/伪词轴');
+  return createSceneRenderer({ spec, alignment, subdata }, true);
+}
+
+export function shotActorPlans(spec, shot, isOpener) {
+  // 导演镜头必须执行本镜显式走位；旧opener演员不能覆盖C01前3.2秒。
+  return isOpener && spec.directorVersion !== 1
+    ? [spec.opener.actorA, spec.opener.actorB]
+    : (shot.actors || shot.actorsPlan || [spec.opener.actorA, spec.opener.actorB]);
+}
+
+export function propStateAt(ref, t, cues) {
+  let state = { ...(ref.state || {}) };
+  for (const change of ref.stateChanges || []) {
+    const at = change.line != null ? cues[change.line - 1].start + (change.delay || 0) : change.at;
+    if (t >= at) state = { ...state, ...change.state };
+  }
+  return state;
+}
+
+async function createSceneRenderer({ spec, alignment, subdata }, planningPreview) {
+  validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues, requireWordTimes: !planningPreview });
   const cues = alignment.cues;
   const shots = buildShots(spec, cues);
   const events = buildEvents(spec, shots, cues, { sourceSha256: alignment.source_sha256 });
@@ -154,9 +181,7 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
 
   function actorsFor(shot, t, line) {
     const inOpener = shot === shots[0] && t < Math.min(shot.end, OPENER_END);
-    const plans = inOpener
-      ? [spec.opener.actorA, spec.opener.actorB]
-      : (shot.actors || shot.actorsPlan || [spec.opener.actorA, spec.opener.actorB]);
+    const plans = shotActorPlans(spec, shot, inOpener);
     return plans.map((p) => resolveActor(p, t, line, cues));
   }
 
@@ -166,7 +191,7 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
     ctx.save();
     ctx.translate(ref.x, ref.y);
     ctx.scale((ref.scale ?? 1) * pop, (ref.scale ?? 1) * pop);
-    prop.draw(ctx, t, ref.state || {});
+    prop.draw(ctx, t, propStateAt(ref, t, cues));
     ctx.restore();
   }
 
@@ -197,6 +222,11 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
         },
         actors: (g) => { for (const a of actors) drawContactActor(g, a); },
         foreground: (g) => {
+          if (shot.foregroundTable) {
+            const { x, y, width } = shot.foregroundTable;
+            drawForegroundTable(g, x, y, width);
+          }
+          for (const a of actors) if (a.name) drawText(g, a.name, a.x, a.y - 10.4 * a.u - 18, 17, '#E5E8DD');
           // 头顶身份铭牌（场景空间，位于头顶上方，不贴角色本体）
           if (isOpener && spec.opener.rolePlates) {
             const plates = spec.opener.rolePlates.map((text, i) => {
@@ -231,6 +261,11 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
   function renderHud(ctx, rawTime) {
     if (rawTime < OPENER_END) drawHudBanner(ctx, rawTime, spec.opener);
     drawComplianceCorner(ctx);
+    if (planningPreview) {
+      ctx.save(); ctx.fillStyle = 'rgba(9,22,54,0.9)'; ctx.fillRect(12, 10, 300, 49); ctx.restore();
+      drawText(ctx, '无声动作样片 · 四段节选', 162, 26, 16, '#FFE8A3');
+      drawText(ctx, '规划节奏 · 非实测配音 · 非连续剧情', 162, 46, 12, '#CAD9DF');
+    }
     const s = subdata.screens.find((x) => rawTime >= x.start && rawTime < x.end);
     if (s) sub.draw(ctx, { lines: sub.wrap(s.text), speaker: spec.speaker || '本鲸', vis: 1, W, H });
   }
@@ -241,7 +276,7 @@ export async function createEpisodeRenderer({ spec, alignment, subdata }) {
     return info;
   }
 
-  return { spec, cues, shots, events, duration, frames, stamp, sub, renderScene, renderHud, renderFrame, lineAt, shotAt };
+  return { spec, cues, shots, events, duration, frames, stamp, sub, planningPreview, measured: !planningPreview, renderScene, renderHud, renderFrame, lineAt, shotAt };
 }
 
 export async function main(argv = process.argv.slice(2)) {
