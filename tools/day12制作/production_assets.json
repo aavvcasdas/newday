@@ -1,0 +1,60 @@
+{
+  "repository": "aavvcasdas/ai-yunying",
+  "commit": "d7f1f16b62eed65ba05cac908ec000246c0eae5c",
+  "assets": [
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_fatfish_working.png",
+      "gitBlobSha1": "c46077bcb5e624cd0de9da462dff5cd2fd0ff93e",
+      "sha256": "557ce1edde49f04866719003fc3503c3e9f8468395ffe14ba4601b636d2cb7fa",
+      "bytes": 1130764
+    },
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_point.png",
+      "gitBlobSha1": "b134ea1681ccdd53d85fb2aadc792b49f71ec097",
+      "sha256": "af80f7bf6f56279bd3f32c5f924e596b2ac5b3bf2986af451f13a2656dc77dc4",
+      "bytes": 1102478
+    },
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_shock.png",
+      "gitBlobSha1": "f8b454cc77babf0012feca13d476b8248f750196",
+      "sha256": "6b80f05eaf20172b11d98ce2779288a8b322f85156120cfade49dfc705bfb14d",
+      "bytes": 1081154
+    },
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_think.png",
+      "gitBlobSha1": "6c986c4e93ed1a55cf948bed0407bbe9fc108ec1",
+      "sha256": "52008f7cdcc4529efd526211d829083f776bf626f9fe6fddaec8b0e1ea1301c1",
+      "bytes": 1088702
+    },
+    {
+      "path": "video-fx/assets/fonts/NotoSansSC-Bold.ttf",
+      "gitBlobSha1": "066b8900dc311b9b0f4dd748dfe58043c6fb119a",
+      "sha256": "883e82df40f7cf3219756543f574e0fcbf31c58368260d2f45e2827ab2d7e5b1",
+      "bytes": 2523124
+    },
+    {
+      "path": "video-fx/assets/fonts/Silkscreen-Regular.ttf",
+      "gitBlobSha1": "8abaa7c500d4555073f9e303ec2e5e343d3b8f3f",
+      "sha256": "49567408600809e25147e9225ac4f37f410e2df45a750696c45027531fb65f1b",
+      "bytes": 31960
+    },
+    {
+      "path": "video-fx/assets/fonts/ZCOOLKuaiLe-Regular.ttf",
+      "gitBlobSha1": "3cf6cd927ee910d46875de173efdaac4330e84ac",
+      "sha256": "812a6fc1fe54b6d73a419245c32dfeba8aa33104d5be90d1cf6af082007cb71d",
+      "bytes": 1514968
+    },
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_confident_hips.png",
+      "gitBlobSha1": "8321d8fcd91562dac4d58d4923d560d084bd2d20",
+      "sha256": "92f1e92913cc2659dda6cf89f82a1a94f5ab43db4b358e5195487fdde88adfe7",
+      "bytes": 1176741
+    },
+    {
+      "path": "tools/day3制作/whale_girl_src/whale_playful_fists.png",
+      "gitBlobSha1": "541f196140219961d7bc3eb8c585ab78dd006542",
+      "sha256": "22499d20d4520f058c72e2e27bbbd0648608a6f035d2278eb07c578dec54f3b4",
+      "bytes": 1009298
+    }
+  ]
+}

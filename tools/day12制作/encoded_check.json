@@ -1,0 +1,179 @@
+{
+  "passed": true,
+  "video": "Day12/成片/Day12_鲸鱼摇人_有声BGM版.mp4",
+  "sha256": "4b280f9af758c2b9f0352de827a64a6f0d0a04709cd3514d572d180d26536f35",
+  "decoded_frames": 3129,
+  "black_frames": [],
+  "flat_frames": [],
+  "encoded_reference_matches": [
+    {
+      "frame": 233,
+      "time": 7.766666666666667,
+      "mean_absolute_error": 2.468282696759259,
+      "passed": true
+    },
+    {
+      "frame": 244,
+      "time": 8.133333333333333,
+      "mean_absolute_error": 2.4577256944444446,
+      "passed": true
+    },
+    {
+      "frame": 636,
+      "time": 21.2,
+      "mean_absolute_error": 2.4307725694444446,
+      "passed": true
+    },
+    {
+      "frame": 648,
+      "time": 21.6,
+      "mean_absolute_error": 2.4292491319444443,
+      "passed": true
+    },
+    {
+      "frame": 1160,
+      "time": 38.666666666666664,
+      "mean_absolute_error": 2.447097800925926,
+      "passed": true
+    },
+    {
+      "frame": 1171,
+      "time": 39.03333333333333,
+      "mean_absolute_error": 2.438230613425926,
+      "passed": true
+    },
+    {
+      "frame": 1254,
+      "time": 41.8,
+      "mean_absolute_error": 2.509240451388889,
+      "passed": true
+    },
+    {
+      "frame": 1266,
+      "time": 42.2,
+      "mean_absolute_error": 2.505886863425926,
+      "passed": true
+    },
+    {
+      "frame": 1467,
+      "time": 48.9,
+      "mean_absolute_error": 2.4938744212962964,
+      "passed": true
+    },
+    {
+      "frame": 1478,
+      "time": 49.266666666666666,
+      "mean_absolute_error": 2.5043836805555557,
+      "passed": true
+    },
+    {
+      "frame": 1594,
+      "time": 53.13333333333333,
+      "mean_absolute_error": 2.502021122685185,
+      "passed": true
+    },
+    {
+      "frame": 1606,
+      "time": 53.53333333333333,
+      "mean_absolute_error": 2.5350636574074072,
+      "passed": true
+    },
+    {
+      "frame": 1827,
+      "time": 60.9,
+      "mean_absolute_error": 2.3273914930555555,
+      "passed": true
+    },
+    {
+      "frame": 1838,
+      "time": 61.266666666666666,
+      "mean_absolute_error": 2.3564337384259257,
+      "passed": true
+    },
+    {
+      "frame": 1961,
+      "time": 65.36666666666666,
+      "mean_absolute_error": 2.36216724537037,
+      "passed": true
+    },
+    {
+      "frame": 1972,
+      "time": 65.73333333333333,
+      "mean_absolute_error": 2.3727994791666664,
+      "passed": true
+    },
+    {
+      "frame": 2033,
+      "time": 67.76666666666667,
+      "mean_absolute_error": 2.4083564814814813,
+      "passed": true
+    },
+    {
+      "frame": 2044,
+      "time": 68.13333333333334,
+      "mean_absolute_error": 2.4238324652777776,
+      "passed": true
+    },
+    {
+      "frame": 2339,
+      "time": 77.96666666666667,
+      "mean_absolute_error": 2.496841724537037,
+      "passed": true
+    },
+    {
+      "frame": 2350,
+      "time": 78.33333333333333,
+      "mean_absolute_error": 2.4929904513888888,
+      "passed": true
+    },
+    {
+      "frame": 2470,
+      "time": 82.33333333333333,
+      "mean_absolute_error": 2.500169270833333,
+      "passed": true
+    },
+    {
+      "frame": 2482,
+      "time": 82.73333333333333,
+      "mean_absolute_error": 2.4944820601851854,
+      "passed": true
+    },
+    {
+      "frame": 2646,
+      "time": 88.2,
+      "mean_absolute_error": 2.530496238425926,
+      "passed": true
+    },
+    {
+      "frame": 2658,
+      "time": 88.6,
+      "mean_absolute_error": 2.5174030671296297,
+      "passed": true
+    },
+    {
+      "frame": 3021,
+      "time": 100.7,
+      "mean_absolute_error": 2.5446643518518517,
+      "passed": true
+    },
+    {
+      "frame": 3033,
+      "time": 101.1,
+      "mean_absolute_error": 2.5449016203703705,
+      "passed": true
+    },
+    {
+      "frame": 3087,
+      "time": 102.9,
+      "mean_absolute_error": 2.536958912037037,
+      "passed": true
+    },
+    {
+      "frame": 3099,
+      "time": 103.3,
+      "mean_absolute_error": 2.554633969907407,
+      "passed": true
+    }
+  ],
+  "scope": "Every-frame decode/black-flat check + 28 exact-frame reference comparisons, not OCR or human listening"
+}

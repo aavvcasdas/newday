@@ -21,7 +21,7 @@ export function validateDirection(shot, { cues, final = false, requireWordTimes 
   if (d.kind === 'contact' && !(shot.interactions || []).length) throw new Error(`${shot.id} 接触事件不能只有文字，须 interactions`);
   // 不强迫反应/道具特写再塞一套人物晃动或接触；但不能只填“有事件”。
   if (d.kind === 'staging' && !(shot.actors || shot.actorsPlan || []).some((a) => a.walk || a.poses?.length || a.poseChanges?.length)) throw new Error(`${shot.id} 调度镜须显式走位/姿态变化`);
-  if (d.kind === 'prop' && !(shot.interactions || []).length && !(shot.companionProps || []).some((p) => p.fromLine || Number.isFinite(p.enterAt))) throw new Error(`${shot.id} 道具镜须有显式入场或交互`);
+  if (d.kind === 'prop' && !(shot.semanticTracks || []).length && !(shot.interactions || []).length && !(shot.companionProps || []).some((p) => p.fromLine || Number.isFinite(p.enterAt))) throw new Error(`${shot.id} 道具镜须有显式入场或交互`);
   if (cues) {
     const trigger = cues[d.wordLine - 1].chars_timed?.find((c) => c.ch === d.wordChar);
     if (requireWordTimes && (!trigger || !Number.isFinite(trigger.start))) throw new Error(`${shot.id} 缺触发词级实测时间`);

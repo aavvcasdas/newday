@@ -1,0 +1,415 @@
+{
+  "measured": true,
+  "source_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "method": "ASR word-span clause boundaries; no character-rate interpolation",
+  "screens": [
+    {
+      "line": 1,
+      "originalScriptLine": 2,
+      "text": "笨鱼又回来了，",
+      "start": 0.04,
+      "speech_end": 1.23,
+      "end": 1.43
+    },
+    {
+      "line": 1,
+      "originalScriptLine": 2,
+      "text": "带着昨天筛过的岗位。",
+      "start": 1.44,
+      "speech_end": 3.045,
+      "end": 3.245
+    },
+    {
+      "line": 2,
+      "originalScriptLine": 3,
+      "text": "现在它回评论，",
+      "start": 4.025,
+      "speech_end": 5.46,
+      "end": 5.66
+    },
+    {
+      "line": 2,
+      "originalScriptLine": 3,
+      "text": "碰上拿不准的，",
+      "start": 5.76,
+      "speech_end": 7.05,
+      "end": 7.23
+    },
+    {
+      "line": 2,
+      "originalScriptLine": 3,
+      "text": "先艾特豆包。",
+      "start": 7.23,
+      "speech_end": 8.445,
+      "end": 8.645
+    },
+    {
+      "line": 3,
+      "originalScriptLine": 4,
+      "text": "本鲸还以为它开窍了。",
+      "start": 9.12,
+      "speech_end": 11.01,
+      "end": 11.21
+    },
+    {
+      "line": 3,
+      "originalScriptLine": 4,
+      "text": "原来是学会摇人了。",
+      "start": 12.66,
+      "speech_end": 14.305,
+      "end": 14.505
+    },
+    {
+      "line": 4,
+      "originalScriptLine": 5,
+      "text": "本鲸问：这岗位没相关经验，",
+      "start": 15.135,
+      "speech_end": 17.97,
+      "end": 18.12
+    },
+    {
+      "line": 4,
+      "originalScriptLine": 5,
+      "text": "能投吗？",
+      "start": 18.12,
+      "speech_end": 18.845,
+      "end": 19.045
+    },
+    {
+      "line": 5,
+      "originalScriptLine": 6,
+      "text": "豆包把录取通知递过来了。",
+      "start": 19.815,
+      "speech_end": 21.84,
+      "end": 22.04
+    },
+    {
+      "line": 6,
+      "originalScriptLine": 7,
+      "text": "面试还没去，",
+      "start": 22.28,
+      "speech_end": 23.61,
+      "end": 23.81
+    },
+    {
+      "line": 6,
+      "originalScriptLine": 7,
+      "text": "入职先安排了。",
+      "start": 23.82,
+      "speech_end": 25.155,
+      "end": 25.355
+    },
+    {
+      "line": 7,
+      "originalScriptLine": 8,
+      "text": "再问做过什么，",
+      "start": 25.935,
+      "speech_end": 27.06,
+      "end": 27.26
+    },
+    {
+      "line": 7,
+      "originalScriptLine": 8,
+      "text": "她写：熟练掌握所有岗位。",
+      "start": 27.3,
+      "speech_end": 30.86,
+      "end": 31.06
+    },
+    {
+      "line": 8,
+      "originalScriptLine": 9,
+      "text": "好家伙。岗位还没看完，",
+      "start": 31.25,
+      "speech_end": 34.32,
+      "end": 34.52
+    },
+    {
+      "line": 8,
+      "originalScriptLine": 9,
+      "text": "牛先替老大吹上了。",
+      "start": 34.53,
+      "speech_end": 36.23,
+      "end": 36.43
+    },
+    {
+      "line": 9,
+      "originalScriptLine": 10,
+      "text": "本鲸一追问，",
+      "start": 37.005,
+      "speech_end": 38.07,
+      "end": 38.27
+    },
+    {
+      "line": 9,
+      "originalScriptLine": 10,
+      "text": "她开始道歉。",
+      "start": 38.28,
+      "speech_end": 39.225,
+      "end": 39.425
+    },
+    {
+      "line": 10,
+      "originalScriptLine": 11,
+      "text": "笨鱼倒把她的纸条往身边一拉，",
+      "start": 40.06,
+      "speech_end": 42.36,
+      "end": 42.54
+    },
+    {
+      "line": 10,
+      "originalScriptLine": 11,
+      "text": "认了这个帮手。",
+      "start": 42.54,
+      "speech_end": 43.65,
+      "end": 43.85
+    },
+    {
+      "line": 11,
+      "originalScriptLine": 12,
+      "text": "本鲸看明白了：",
+      "start": 44.46,
+      "speech_end": 45.66,
+      "end": 45.86
+    },
+    {
+      "line": 11,
+      "originalScriptLine": 12,
+      "text": "豆包虽然不太聪明，",
+      "start": 46.08,
+      "speech_end": 47.76,
+      "end": 47.96
+    },
+    {
+      "line": 11,
+      "originalScriptLine": 12,
+      "text": "但是不需要米饭。",
+      "start": 48.06,
+      "speech_end": 49.47,
+      "end": 49.67
+    },
+    {
+      "line": 12,
+      "originalScriptLine": 13,
+      "text": "找帮手先看饭量，",
+      "start": 49.71,
+      "speech_end": 51.21,
+      "end": 51.41
+    },
+    {
+      "line": 12,
+      "originalScriptLine": 13,
+      "text": "你这是招同事，",
+      "start": 51.48,
+      "speech_end": 52.65,
+      "end": 52.83
+    },
+    {
+      "line": 12,
+      "originalScriptLine": 13,
+      "text": "还是护食？",
+      "start": 52.83,
+      "speech_end": 53.825,
+      "end": 54.025
+    },
+    {
+      "line": 13,
+      "originalScriptLine": 14,
+      "text": "老大可能换新工作。",
+      "start": 55.17,
+      "speech_end": 56.85,
+      "end": 57.05
+    },
+    {
+      "line": 13,
+      "originalScriptLine": 14,
+      "text": "不是已经录取。",
+      "start": 57.36,
+      "speech_end": 58.59,
+      "end": 58.79
+    },
+    {
+      "line": 14,
+      "originalScriptLine": 15,
+      "text": "昨天那摞，",
+      "start": 58.92,
+      "speech_end": 59.79,
+      "end": 59.85
+    },
+    {
+      "line": 14,
+      "originalScriptLine": 15,
+      "text": "敲代码的，",
+      "start": 59.85,
+      "speech_end": 60.69,
+      "end": 60.89
+    },
+    {
+      "line": 14,
+      "originalScriptLine": 15,
+      "text": "先划掉。",
+      "start": 60.96,
+      "speech_end": 61.83,
+      "end": 62.03
+    },
+    {
+      "line": 15,
+      "originalScriptLine": 16,
+      "text": "太远的、太熬人的，",
+      "start": 62.765,
+      "speech_end": 64.77,
+      "end": 64.95
+    },
+    {
+      "line": 15,
+      "originalScriptLine": 16,
+      "text": "也还标着。",
+      "start": 64.95,
+      "speech_end": 65.895,
+      "end": 66.095
+    },
+    {
+      "line": 16,
+      "originalScriptLine": 17,
+      "text": "本鲸把录取通知翻过来，",
+      "start": 66.505,
+      "speech_end": 68.55,
+      "end": 68.75
+    },
+    {
+      "line": 16,
+      "originalScriptLine": 17,
+      "text": "背面正好筛岗位。",
+      "start": 68.88,
+      "speech_end": 70.41,
+      "end": 70.61
+    },
+    {
+      "line": 17,
+      "originalScriptLine": 18,
+      "text": "道歉先放旁边。",
+      "start": 70.935,
+      "speech_end": 72.3,
+      "end": 72.5
+    },
+    {
+      "line": 17,
+      "originalScriptLine": 18,
+      "text": "把要求对上。",
+      "start": 73.29,
+      "speech_end": 74.4,
+      "end": 74.6
+    },
+    {
+      "line": 18,
+      "originalScriptLine": 19,
+      "text": "笨鱼按住原来标过的地方，",
+      "start": 75.234,
+      "speech_end": 77.143,
+      "end": 77.343
+    },
+    {
+      "line": 18,
+      "originalScriptLine": 19,
+      "text": "把要求推给豆包。",
+      "start": 77.46,
+      "speech_end": 78.755,
+      "end": 78.955
+    },
+    {
+      "line": 19,
+      "originalScriptLine": 20,
+      "text": "豆包这回没写录取，",
+      "start": 79.475,
+      "speech_end": 81.12,
+      "end": 81.32
+    },
+    {
+      "line": 19,
+      "originalScriptLine": 20,
+      "text": "先把不确定的圈出来。",
+      "start": 81.39,
+      "speech_end": 83.03,
+      "end": 83.23
+    },
+    {
+      "line": 20,
+      "originalScriptLine": 21,
+      "text": "这才叫帮忙。",
+      "start": 83.705,
+      "speech_end": 84.645,
+      "end": 84.845
+    },
+    {
+      "line": 20,
+      "originalScriptLine": 21,
+      "text": "不是替老大签人生。",
+      "start": 85.74,
+      "speech_end": 87.15,
+      "end": 87.35
+    },
+    {
+      "line": 21,
+      "originalScriptLine": 22,
+      "text": "挑好的递过去，",
+      "start": 87.76,
+      "speech_end": 88.95,
+      "end": 89.15
+    },
+    {
+      "line": 21,
+      "originalScriptLine": 22,
+      "text": "老大慢慢挑。",
+      "start": 89.19,
+      "speech_end": 90.225,
+      "end": 90.425
+    },
+    {
+      "line": 22,
+      "originalScriptLine": 23,
+      "text": "还剩这些拿不准的，",
+      "start": 91.215,
+      "speech_end": 92.73,
+      "end": 92.93
+    },
+    {
+      "line": 22,
+      "originalScriptLine": 23,
+      "text": "留给明天的新朋友。",
+      "start": 92.94,
+      "speech_end": 94.46,
+      "end": 94.66
+    },
+    {
+      "line": 23,
+      "originalScriptLine": 24,
+      "text": "评论区能摇人，",
+      "start": 95.415,
+      "speech_end": 96.84,
+      "end": 97.04
+    },
+    {
+      "line": 23,
+      "originalScriptLine": 24,
+      "text": "岗位还得一条条看。",
+      "start": 97.14,
+      "speech_end": 98.76,
+      "end": 98.96
+    },
+    {
+      "line": 24,
+      "originalScriptLine": 25,
+      "text": "豆包是不吃米饭，",
+      "start": 99.69,
+      "speech_end": 101.31,
+      "end": 101.51
+    },
+    {
+      "line": 24,
+      "originalScriptLine": 25,
+      "text": "本鲸也不能跟着吃大饼。",
+      "start": 101.64,
+      "speech_end": 103.45,
+      "end": 103.65
+    }
+  ]
+}

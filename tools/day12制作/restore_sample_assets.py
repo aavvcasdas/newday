@@ -1,4 +1,5 @@
 """Restore only pinned original assets via gh; verify Git blob and SHA256, never generate substitutes."""
+import argparse
 import base64
 import concurrent.futures
 import hashlib
@@ -25,6 +26,8 @@ def restore(item):
 
 
 if __name__ == '__main__':
+    ap = argparse.ArgumentParser(); ap.add_argument('--manifest', type=Path, default=MANIFEST)
+    MANIFEST = ap.parse_args().manifest.resolve()
     manifest = json.loads(MANIFEST.read_text())
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         for result in pool.map(restore, manifest['assets']):

@@ -17,6 +17,7 @@ import { getProp, assertForegroundWithinStage } from './prop_registry.mjs';
 import { loadContactActors, actorAnchors, drawContactActor } from '../互动元素/actor_contacts.mjs';
 import { CORE } from '../互动元素/cue_props_engine.mjs';
 import { cameraFor } from './camera_plan.mjs';
+import { drawSemanticTracks } from './semantic_tracks.mjs';
 export { ambientCamera, cameraFor, CAMERA_PRESETS } from './camera_plan.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
 
@@ -166,7 +167,7 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
   const cues = alignment.cues;
   const shots = buildShots(spec, cues);
   const events = buildEvents(spec, shots, cues, { sourceSha256: alignment.source_sha256 });
-  const duration = cues[cues.length - 1].end + 0.24;
+  const duration = spec.preserveSourceDuration ? alignment.source_duration_seconds : cues[cues.length - 1].end + 0.24;
   const frames = Math.ceil(duration * FPS);
   const actorPlans = [spec.opener.actorA, spec.opener.actorB, ...spec.shots.flatMap((s) => s.actors || s.actorsPlan || [])];
   const poses = [...new Set(actorPlans.flatMap((a) => [a.pose || 'idle', ...(a.poses || []).map((p) => p.pose), ...(a.poseChanges || []).map((p) => p.pose)]))];
@@ -210,7 +211,7 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
     const driven = new Set(events.filter((e) => e.shotId === shot.id && BODY_VERBS.has(e.verb)).map((e) => e.propId));
     reseedBoil(0);
     composeScene(ctx, {
-      t, cam: camZ, mood: shot.mood || 'work_cool', focusX: actors[0]?.x ?? 640,
+      t, cam: camZ, mood: shot.mood || 'work_cool', spotlights: spec.lighting?.spotlights === true, focusX: actors[0]?.x ?? 640,
       layers: {
         back: (g) => {
           for (const ref of (shot.companionProps || []).filter((p) => p.behind)) {
@@ -226,6 +227,7 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
             const { x, y, width } = shot.foregroundTable;
             drawForegroundTable(g, x, y, width);
           }
+          drawSemanticTracks(g, rawTime, shot.semanticTracks);
           for (const a of actors) if (a.name) drawText(g, a.name, a.x, a.y - 10.4 * a.u - 18, 17, '#E5E8DD');
           // 头顶身份铭牌（场景空间，位于头顶上方，不贴角色本体）
           if (isOpener && spec.opener.rolePlates) {

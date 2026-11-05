@@ -1,0 +1,47 @@
+{
+  "passed": true,
+  "version": "specified_original_audio_24_spoken_lines_with_bgm",
+  "source_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "video": "Day12/成片/Day12_鲸鱼摇人_有声BGM版.mp4",
+  "video_sha256": "4b280f9af758c2b9f0352de827a64a6f0d0a04709cd3514d572d180d26536f35",
+  "duration": 104.3,
+  "frames": 3129,
+  "reports": {
+    "production_check.json": "f16bcdbe62bda4f98f779f3b0cea28ce94a531652927d75d37fbea1f6e054b0e",
+    "dry_media_check.json": "107834dba31e63a290437331f2c40e5da91e977dcb8e95fb0c5b0ccda3f8e931",
+    "bgm_check.json": "49d4f3170e322327e3e0d348aac1a4011acf95232eb4e039a600349107e2a23f",
+    "encoded_check.json": "3476dfe029a3c625766de648ac1d66287a90068c227cbe8621bab9d8c2eccfc3",
+    "final_subtitle_check.json": "a16ff0702e61d9c9f39ad8dc7e017b100d364f90bc2995a6a2edb2b3ced7e9c4",
+    "opener_check.json": "cbd8d53a2fa610b2f15a795373780d688c62de6df7e37b888456fcc51fc6f7a0",
+    "cover_check.json": "ab241ad01818021d604862444f7111fa0b15f013c680fca444e1eec09b43de5b"
+  },
+  "node_tests": 35,
+  "python_tests": [
+    {
+      "folder": "tools/tests",
+      "count": 44,
+      "passed": true,
+      "skipped": false
+    },
+    {
+      "folder": "tools/验收",
+      "count": 7,
+      "passed": true,
+      "skipped": false
+    },
+    {
+      "folder": "tools/音频",
+      "count": 2,
+      "passed": true,
+      "skipped": false
+    }
+  ],
+  "covers": {
+    "Day12/封面/Day12_封面_3比4.png": "2897f9ee2587acf4c95a18405ecddb1a319da0132993c9fb0d40630c42ceff52",
+    "Day12/封面/Day12_封面_横版.png": "4887373524e2e1c6bb675a5744c443904743002560a307462cfcd3d8ee39cebc"
+  },
+  "scope": "Actual full decode, critical-frame references, measured word binding, subtitles, dry audio and BGM known-stem recovery. Not human whole-film listening or phoneme-exact alignment; hand contact not claimed.",
+  "original_25_line_draft_unchanged": true,
+  "unspoken_opening_not_synthesized": true,
+  "original_native_quiet_tail_preserved": true
+}

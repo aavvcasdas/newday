@@ -1,0 +1,29 @@
+{
+  "video": "Day12/成片/Day12_鲸鱼摇人_有声BGM版.mp4",
+  "frames_checked": 60,
+  "checks": {
+    "motion_central_mean_diff": {
+      "value": 2.2538790702819824,
+      "min": 0.8,
+      "passed": true
+    },
+    "top_band_bright_ratio": {
+      "value": 0.4436650068681319,
+      "min": 0.05,
+      "passed": true
+    },
+    "frame_bright_ratio": {
+      "value": 0.19023415798611112,
+      "min": 0.18,
+      "passed": true
+    },
+    "first_second_audio_loudest_250ms_db": {
+      "value": -12.64835899559835,
+      "min": -42.0,
+      "passed": true
+    }
+  },
+  "passed": true,
+  "width": 1920,
+  "height": 1080
+}

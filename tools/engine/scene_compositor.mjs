@@ -12,7 +12,7 @@ export const LAYERS = Object.freeze(['L0_stage', 'L1_light_back', 'L2_actors', '
  * 在已设置基础变换（输出缩放）的 ctx 上合成一帧相机空间画面（L0-L3）。
  * cam: {z, cx, cy}；layers: {back(ctx), actors(ctx), foreground(ctx)}
  */
-export function composeScene(ctx, { t, cam, mood = 'work_cool', spotlights = true, focusX = 640, layers = {} } = {}) {
+export function composeScene(ctx, { t, cam, mood = 'work_cool', spotlights = false, focusX = 640, layers = {} } = {}) {
   ctx.save();
   ctx.translate(W / 2, H / 2);
   ctx.scale(cam.z, cam.z);
@@ -31,6 +31,7 @@ export function composeScene(ctx, { t, cam, mood = 'work_cool', spotlights = tru
 
 /** L4 合规小角标（固定屏幕空间，不随相机推拉）。 */
 export function drawComplianceCorner(ctx) {
+  ctx.save();ctx.beginPath();ctx.roundRect(902, 11, 316, 32, 5);ctx.fillStyle='rgba(12,25,46,.94)';ctx.fill();ctx.restore();
   drawText(ctx, '非官方同人 · AI生成 · 剧情演绎', 1060, 28, 14, '#B9CECB');
 }
 

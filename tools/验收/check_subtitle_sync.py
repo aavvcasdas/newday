@@ -40,10 +40,22 @@ def check(video, screens, tolerance=0.10):
     if len(raw)%size or not len(raw):
         raise ValueError('字幕抽帧无效')
     frames=raw.reshape(-1,50,640,3)
-    a=frames.astype(np.int16)
-    # H.264 4:2:0与缩小会混合细描边；用蓝青色相及横向连续像素数，不做精确RGB等值。
-    cyan=(a[:,:,:,2]-a[:,:,:,0]>65)&(a[:,:,:,1]-a[:,:,:,0]>30)&(a[:,:,:,2]-a[:,:,:,1]>20)&(a[:,:,:,1]>95)
-    counts=cyan.sum(axis=2).max(axis=1)  # 同一行的框边长度，不累计散落气泡
+    # Bound temporary memory independently of episode length: do NOT expand all frames to int16/float64.
+    # Keep the same cyan/difference criteria, evaluated in batches (incl. cross-batch body transitions).
+    counts=np.zeros(len(frames),dtype=np.int32)
+    diff=np.zeros(max(0,len(frames)-1),dtype=np.float64)
+    previous_body=None
+    for begin in range(0,len(frames),64):
+        batch=frames[begin:begin+64]
+        a=batch.astype(np.int16)
+        cyan=(a[:,:,:,2]-a[:,:,:,0]>65)&(a[:,:,:,1]-a[:,:,:,0]>30)&(a[:,:,:,2]-a[:,:,:,1]>20)&(a[:,:,:,1]>95)
+        counts[begin:begin+len(batch)]=cyan.sum(axis=2).max(axis=1)
+        body=batch[:,20:39,130:510].mean(axis=3)
+        if previous_body is not None:
+            diff[begin-1]=abs(previous_body-body[0]).mean()
+        if len(body)>1:
+            diff[begin:begin+len(body)-1]=abs(np.diff(body,axis=0)).mean(axis=(1,2))
+        previous_body=body[-1].copy()
     samples=[];errors=[]
     def sample(t, expected, label):
         idx=min(len(frames)-1,max(0,round(t*fps)))
@@ -59,9 +71,6 @@ def check(video, screens, tolerance=0.10):
         if en-st>tolerance*2:
             sample((st+en)/2,False,'气口')
     # 换屏检查在正文区域测变化，允许3帧误差；不是仅检测框颜色。
-    gray=frames.mean(axis=3)
-    # 文字行位于条内；收紧区域尽量剔除桌面运动。
-    diff=abs(np.diff(gray[:,20:39,130:510],axis=0)).mean(axis=(1,2))
     for i,s in enumerate(screens):
         if s['start'] < tolerance:
             continue

@@ -1,0 +1,772 @@
+{
+  "video": "Day12/成片/Day12_配音对齐_干声基片.mp4",
+  "source_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "video_sha256": "eeb62784e8bd415e08b948b8b938e4f269cd9b85bc82d397c40e89ee5f6d47d5",
+  "duration": 104.3,
+  "tail_pad": 0.7249999999999943,
+  "tail_policy": {
+    "policy": "preserve_complete_user_source_with_verified_native_quiet_tail",
+    "source_duration": 104.3,
+    "tail_10ms_rms_peak_db": -53.45693903284315,
+    "default_tail_rule_unchanged": true,
+    "added_padding_seconds": 0
+  },
+  "frames": 3129,
+  "source_speed": 1,
+  "pcm_correlation": 0.9998843936645225,
+  "decode_passed": true,
+  "subtitles": {
+    "audio_samples": [
+      {
+        "screen": 1,
+        "peak_10ms_db": -8.58982984316357
+      },
+      {
+        "screen": 2,
+        "peak_10ms_db": -9.522122104914635
+      },
+      {
+        "screen": 3,
+        "peak_10ms_db": -9.119617566655796
+      },
+      {
+        "screen": 4,
+        "peak_10ms_db": -10.566533370718844
+      },
+      {
+        "screen": 5,
+        "peak_10ms_db": -8.469121115036094
+      },
+      {
+        "screen": 6,
+        "peak_10ms_db": -8.98296458956321
+      },
+      {
+        "screen": 7,
+        "peak_10ms_db": -9.532231935772733
+      },
+      {
+        "screen": 8,
+        "peak_10ms_db": -8.392563274881024
+      },
+      {
+        "screen": 9,
+        "peak_10ms_db": -11.005859453379275
+      },
+      {
+        "screen": 10,
+        "peak_10ms_db": -9.618946199545363
+      },
+      {
+        "screen": 11,
+        "peak_10ms_db": -8.530019285961783
+      },
+      {
+        "screen": 12,
+        "peak_10ms_db": -10.70691573353634
+      },
+      {
+        "screen": 13,
+        "peak_10ms_db": -8.224386793441274
+      },
+      {
+        "screen": 14,
+        "peak_10ms_db": -8.548805275008883
+      },
+      {
+        "screen": 15,
+        "peak_10ms_db": -9.56955358608001
+      },
+      {
+        "screen": 16,
+        "peak_10ms_db": -8.156380061897778
+      },
+      {
+        "screen": 17,
+        "peak_10ms_db": -9.342973519886007
+      },
+      {
+        "screen": 18,
+        "peak_10ms_db": -8.90061957686214
+      },
+      {
+        "screen": 19,
+        "peak_10ms_db": -9.142302704771927
+      },
+      {
+        "screen": 20,
+        "peak_10ms_db": -8.923939766766884
+      },
+      {
+        "screen": 21,
+        "peak_10ms_db": -9.1916385419727
+      },
+      {
+        "screen": 22,
+        "peak_10ms_db": -8.100017720223224
+      },
+      {
+        "screen": 23,
+        "peak_10ms_db": -7.524479379051452
+      },
+      {
+        "screen": 24,
+        "peak_10ms_db": -8.467643675780609
+      },
+      {
+        "screen": 25,
+        "peak_10ms_db": -8.938344016359007
+      },
+      {
+        "screen": 26,
+        "peak_10ms_db": -10.358335189592598
+      },
+      {
+        "screen": 27,
+        "peak_10ms_db": -9.275591279637016
+      },
+      {
+        "screen": 28,
+        "peak_10ms_db": -10.595933455088549
+      },
+      {
+        "screen": 29,
+        "peak_10ms_db": -8.895300593704166
+      },
+      {
+        "screen": 30,
+        "peak_10ms_db": -8.032758006474118
+      },
+      {
+        "screen": 31,
+        "peak_10ms_db": -7.90806511034599
+      },
+      {
+        "screen": 32,
+        "peak_10ms_db": -8.711347234461192
+      },
+      {
+        "screen": 33,
+        "peak_10ms_db": -8.02964530688526
+      },
+      {
+        "screen": 34,
+        "peak_10ms_db": -8.188843814073302
+      },
+      {
+        "screen": 35,
+        "peak_10ms_db": -9.578956561789402
+      },
+      {
+        "screen": 36,
+        "peak_10ms_db": -8.848595119746035
+      },
+      {
+        "screen": 37,
+        "peak_10ms_db": -9.57808582131625
+      },
+      {
+        "screen": 38,
+        "peak_10ms_db": -8.319358024503142
+      },
+      {
+        "screen": 39,
+        "peak_10ms_db": -9.16656980707623
+      },
+      {
+        "screen": 40,
+        "peak_10ms_db": -9.85155772912296
+      },
+      {
+        "screen": 41,
+        "peak_10ms_db": -8.431961676569589
+      },
+      {
+        "screen": 42,
+        "peak_10ms_db": -9.690936520184026
+      },
+      {
+        "screen": 43,
+        "peak_10ms_db": -8.88120165603863
+      },
+      {
+        "screen": 44,
+        "peak_10ms_db": -10.292656935752467
+      },
+      {
+        "screen": 45,
+        "peak_10ms_db": -9.77457399315075
+      },
+      {
+        "screen": 46,
+        "peak_10ms_db": -9.716024168149707
+      },
+      {
+        "screen": 47,
+        "peak_10ms_db": -9.443684308679156
+      },
+      {
+        "screen": 48,
+        "peak_10ms_db": -8.797272848649873
+      },
+      {
+        "screen": 49,
+        "peak_10ms_db": -9.738345361872573
+      },
+      {
+        "screen": 50,
+        "peak_10ms_db": -9.655535837922004
+      },
+      {
+        "screen": 51,
+        "peak_10ms_db": -8.643030518247961
+      }
+    ],
+    "method": "Day2_cyan_tolerance_and_body_frame_difference_not_OCR",
+    "samples": [
+      {
+        "time": 0.7333333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L01"
+      },
+      {
+        "time": 2.3333333333333335,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 180,
+        "label": "L01"
+      },
+      {
+        "time": 4.833333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L02"
+      },
+      {
+        "time": 6.5,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L02"
+      },
+      {
+        "time": 7.933333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L02"
+      },
+      {
+        "time": 10.166666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 180,
+        "label": "L03"
+      },
+      {
+        "time": 13.566666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 174,
+        "label": "L03"
+      },
+      {
+        "time": 16.633333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 220,
+        "label": "L04"
+      },
+      {
+        "time": 18.566666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L04"
+      },
+      {
+        "time": 20.933333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 206,
+        "label": "L05"
+      },
+      {
+        "time": 23.033333333333335,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L06"
+      },
+      {
+        "time": 24.6,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L06"
+      },
+      {
+        "time": 26.6,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L07"
+      },
+      {
+        "time": 29.166666666666668,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 207,
+        "label": "L07"
+      },
+      {
+        "time": 32.9,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 192,
+        "label": "L08"
+      },
+      {
+        "time": 35.46666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L08"
+      },
+      {
+        "time": 37.63333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L09"
+      },
+      {
+        "time": 38.86666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L09"
+      },
+      {
+        "time": 41.3,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 236,
+        "label": "L10"
+      },
+      {
+        "time": 43.2,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L10"
+      },
+      {
+        "time": 45.166666666666664,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L11"
+      },
+      {
+        "time": 47.03333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L11"
+      },
+      {
+        "time": 48.86666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L11"
+      },
+      {
+        "time": 50.56666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L12"
+      },
+      {
+        "time": 52.166666666666664,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L12"
+      },
+      {
+        "time": 53.43333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 175,
+        "label": "L12"
+      },
+      {
+        "time": 56.1,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L13"
+      },
+      {
+        "time": 58.06666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L13"
+      },
+      {
+        "time": 59.4,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L14"
+      },
+      {
+        "time": 60.36666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L14"
+      },
+      {
+        "time": 61.5,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L14"
+      },
+      {
+        "time": 63.86666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L15"
+      },
+      {
+        "time": 65.53333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L15"
+      },
+      {
+        "time": 67.63333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 192,
+        "label": "L16"
+      },
+      {
+        "time": 69.73333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L16"
+      },
+      {
+        "time": 71.73333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L17"
+      },
+      {
+        "time": 73.93333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L17"
+      },
+      {
+        "time": 76.3,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 208,
+        "label": "L18"
+      },
+      {
+        "time": 78.2,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L18"
+      },
+      {
+        "time": 80.4,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L19"
+      },
+      {
+        "time": 82.3,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 179,
+        "label": "L19"
+      },
+      {
+        "time": 84.26666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L20"
+      },
+      {
+        "time": 86.53333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L20"
+      },
+      {
+        "time": 88.46666666666667,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L21"
+      },
+      {
+        "time": 89.8,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L21"
+      },
+      {
+        "time": 92.06666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L22"
+      },
+      {
+        "time": 93.8,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L22"
+      },
+      {
+        "time": 96.23333333333333,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L23"
+      },
+      {
+        "time": 98.06666666666666,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L23"
+      },
+      {
+        "time": 100.6,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 176,
+        "label": "L24"
+      },
+      {
+        "time": 102.63333333333334,
+        "expected": true,
+        "visible": true,
+        "cyan_pixels": 192,
+        "label": "L24"
+      },
+      {
+        "time": 3.6333333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 8.866666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 11.933333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 14.833333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 19.433333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 22.166666666666668,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 25.633333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 36.733333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 39.733333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 44.166666666666664,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 45.96666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 54.6,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 57.2,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 62.4,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 66.3,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 70.76666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 72.9,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 74.93333333333334,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 79.2,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 83.46666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 85.3,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 87.56666666666666,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 90.83333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 95.03333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 99.33333333333333,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      },
+      {
+        "time": 103.96666666666667,
+        "expected": false,
+        "visible": false,
+        "cyan_pixels": 0,
+        "label": "气口"
+      }
+    ],
+    "errors": [],
+    "scope": "每屏中点、足够长气口、每次上屏附近帧差；不证明字幕文字内容或音素同步",
+    "passed": true
+  },
+  "passed": true
+}

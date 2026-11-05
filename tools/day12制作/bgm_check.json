@@ -1,0 +1,48 @@
+{
+  "passed": true,
+  "base": "/home/user/newday/Day12/成片/Day12_配音对齐_干声基片.mp4",
+  "output": "/home/user/newday/Day12/成片/Day12_鲸鱼摇人_有声BGM版.mp4",
+  "base_sha256": "eeb62784e8bd415e08b948b8b938e4f269cd9b85bc82d397c40e89ee5f6d47d5",
+  "output_sha256": "4b280f9af758c2b9f0352de827a64a6f0d0a04709cd3514d572d180d26536f35",
+  "auto_sfx_enabled": false,
+  "bgm_stem": "Day12/配音/Day12_伴奏含音效_stem.flac",
+  "bgm_sha256": "1b71ef2b280658723fbb197941e2202b81b30e770867a2ad9ea4aef863c20889",
+  "source_voice_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "settings": {
+    "bpm": 128,
+    "chords": "Am F C G",
+    "fade_in_seconds": 0.06,
+    "speech_bgm_gain": 0.23,
+    "duck_attack_seconds": 0.04,
+    "duck_release_seconds": 0.22,
+    "sfx_events": [
+      {
+        "kind": "knock",
+        "time": 7.83
+      },
+      {
+        "kind": "whoosh",
+        "time": 20.37
+      },
+      {
+        "kind": "knock",
+        "time": 60.96
+      },
+      {
+        "kind": "knock",
+        "time": 82.415046
+      }
+    ]
+  },
+  "duration": 104.3,
+  "frames": 3129,
+  "video_stream_unchanged": true,
+  "mixture_reconstruction_zero_offset_correlation": 0.9999435027170169,
+  "known_stem_subtraction_voice_correlation": 0.9999425473076706,
+  "recovered_voice_gain": 0.9995197350044602,
+  "voice_active_bgm_below_voice_db": 20.857435210042258,
+  "expected_peak": 0.6828843355178833,
+  "decoded_peak": 0.6826810836791992,
+  "stem_first_250ms_rms": 0.013267408458640946,
+  "full_decode_exit": 0
+}

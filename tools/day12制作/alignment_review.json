@@ -1,0 +1,215 @@
+{
+  "source_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
+  "rawAsrUnedited": true,
+  "unspokenOpeningOmittedOnlyFromVideoTranscript": true,
+  "draftUnchanged": true,
+  "modelMirror": "jimy7945/vosk-model-cn",
+  "modelCommit": "c3eca5074b0ac967ecd6dd107e0dd64d9a7c5e28",
+  "sourceDuration": 104.3,
+  "actualDecodedSamples": 1668800,
+  "sampleRate": 16000,
+  "sentenceBounds": [
+    {
+      "originalLine": 2,
+      "start": 0.04,
+      "end": 3.045,
+      "text": "笨鱼又回来了，带着昨天筛过的岗位。"
+    },
+    {
+      "originalLine": 3,
+      "start": 4.025,
+      "end": 8.445,
+      "text": "现在它回评论，碰上拿不准的，先艾特豆包。"
+    },
+    {
+      "originalLine": 4,
+      "start": 9.12,
+      "end": 14.305,
+      "text": "本鲸还以为它开窍了。原来是学会摇人了。"
+    },
+    {
+      "originalLine": 5,
+      "start": 15.135,
+      "end": 18.845,
+      "text": "本鲸问：这岗位没相关经验，能投吗？"
+    },
+    {
+      "originalLine": 6,
+      "start": 19.815,
+      "end": 21.84,
+      "text": "豆包把录取通知递过来了。"
+    },
+    {
+      "originalLine": 7,
+      "start": 22.28,
+      "end": 25.155,
+      "text": "面试还没去，入职先安排了。"
+    },
+    {
+      "originalLine": 8,
+      "start": 25.935,
+      "end": 30.86,
+      "text": "再问做过什么，她写：熟练掌握所有岗位。"
+    },
+    {
+      "originalLine": 9,
+      "start": 31.25,
+      "end": 36.23,
+      "text": "好家伙。岗位还没看完，牛先替老大吹上了。"
+    },
+    {
+      "originalLine": 10,
+      "start": 37.005,
+      "end": 39.225,
+      "text": "本鲸一追问，她开始道歉。"
+    },
+    {
+      "originalLine": 11,
+      "start": 40.06,
+      "end": 43.65,
+      "text": "笨鱼倒把她的纸条往身边一拉，认了这个帮手。"
+    },
+    {
+      "originalLine": 12,
+      "start": 44.46,
+      "end": 49.47,
+      "text": "本鲸看明白了：豆包虽然不太聪明，但是不需要米饭。"
+    },
+    {
+      "originalLine": 13,
+      "start": 49.71,
+      "end": 53.825,
+      "text": "找帮手先看饭量，你这是招同事，还是护食？"
+    },
+    {
+      "originalLine": 14,
+      "start": 55.17,
+      "end": 58.59,
+      "text": "老大可能换新工作。不是已经录取。"
+    },
+    {
+      "originalLine": 15,
+      "start": 58.92,
+      "end": 61.83,
+      "text": "昨天那摞，敲代码的，先划掉。"
+    },
+    {
+      "originalLine": 16,
+      "start": 62.765,
+      "end": 65.895,
+      "text": "太远的、太熬人的，也还标着。"
+    },
+    {
+      "originalLine": 17,
+      "start": 66.505,
+      "end": 70.41,
+      "text": "本鲸把录取通知翻过来，背面正好筛岗位。"
+    },
+    {
+      "originalLine": 18,
+      "start": 70.935,
+      "end": 74.4,
+      "text": "道歉先放旁边。把要求对上。"
+    },
+    {
+      "originalLine": 19,
+      "start": 75.11,
+      "end": 78.755,
+      "text": "笨鱼按住原来标过的地方，把要求推给豆包。"
+    },
+    {
+      "originalLine": 20,
+      "start": 79.475,
+      "end": 83.03,
+      "text": "豆包这回没写录取，先把不确定的圈出来。"
+    },
+    {
+      "originalLine": 21,
+      "start": 83.705,
+      "end": 87.15,
+      "text": "这才叫帮忙。不是替老大签人生。"
+    },
+    {
+      "originalLine": 22,
+      "start": 87.76,
+      "end": 90.225,
+      "text": "挑好的递过去，老大慢慢挑。"
+    },
+    {
+      "originalLine": 23,
+      "start": 91.215,
+      "end": 94.46,
+      "text": "还剩这些拿不准的，留给明天的新朋友。"
+    },
+    {
+      "originalLine": 24,
+      "start": 95.415,
+      "end": 98.76,
+      "text": "评论区能摇人，岗位还得一条条看。"
+    },
+    {
+      "originalLine": 25,
+      "start": 99.69,
+      "end": 103.575,
+      "text": "豆包是不吃米饭，本鲸也不能跟着吃大饼。"
+    }
+  ],
+  "uncertainCharacters": [
+    {
+      "ch": "问",
+      "scriptCharIndex": 1,
+      "start": 26.251309,
+      "end": 26.43,
+      "asrWordIndex": 55,
+      "asrWord": "做",
+      "asrConfidence": 0.69886,
+      "alignmentRelation": "neighbour_word_uncertain",
+      "timing_source": "actual Vosk WORD interval, pinyin-assisted transcript mapping; not phoneme alignment"
+    },
+    {
+      "ch": "了",
+      "scriptCharIndex": 15,
+      "start": 42.870161,
+      "end": 43.11,
+      "asrWordIndex": 91,
+      "asrWord": "这个",
+      "asrConfidence": 1.0,
+      "alignmentRelation": "neighbour_word_uncertain",
+      "timing_source": "actual Vosk WORD interval, pinyin-assisted transcript mapping; not phoneme alignment"
+    },
+    {
+      "ch": "帮",
+      "scriptCharIndex": 18,
+      "start": 43.32,
+      "end": 43.65,
+      "asrWordIndex": 92,
+      "asrWord": "少",
+      "asrConfidence": 0.42453,
+      "alignmentRelation": "neighbour_word_uncertain",
+      "timing_source": "actual Vosk WORD interval, pinyin-assisted transcript mapping; not phoneme alignment"
+    },
+    {
+      "ch": "太",
+      "scriptCharIndex": 4,
+      "start": 64.088364,
+      "end": 64.5,
+      "asrWordIndex": 136,
+      "asrWord": "偶然",
+      "asrConfidence": 0.307583,
+      "alignmentRelation": "neighbour_word_uncertain",
+      "timing_source": "actual Vosk WORD interval, pinyin-assisted transcript mapping; not phoneme alignment"
+    },
+    {
+      "ch": "笨",
+      "scriptCharIndex": 0,
+      "start": 75.234045,
+      "end": 75.42,
+      "asrWordIndex": 157,
+      "asrWord": "与",
+      "asrConfidence": 0.286725,
+      "alignmentRelation": "neighbour_word_uncertain",
+      "timing_source": "actual Vosk WORD interval, pinyin-assisted transcript mapping; not phoneme alignment"
+    }
+  ],
+  "limits": "Vosk transcription contains errors; mapping corrects written text using unchanged source script, retains acoustic word spans. Not a speaker identity verification or human listening claim."
+}

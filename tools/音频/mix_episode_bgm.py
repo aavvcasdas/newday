@@ -175,6 +175,7 @@ def main(argv=None):
     ap.add_argument('--stem', type=Path, required=True, help='独立伴奏 stem .flac 输出')
     ap.add_argument('--report', type=Path, required=True)
     ap.add_argument('--events-json', type=Path, help='额外词点音效 [{kind,time}]（stamp_thud/bonk/knock/whoosh）')
+    ap.add_argument('--no-auto-sfx',action='store_true',help='仅使用显式词点音效，不加默认片头瞬态')
     args = ap.parse_args(argv)
     base, out = args.base.resolve(), args.output.resolve()
     if base == out:
@@ -184,7 +185,7 @@ def main(argv=None):
         raise SystemExit('只接受 measured=true 实测轴')
     if sha(args.voice) != alignment['source_sha256']:
         raise SystemExit('音源 SHA256 与实测轴不匹配')
-    events = auto_sfx_events(alignment)
+    events = [] if args.no_auto_sfx else auto_sfx_events(alignment)
     if args.events_json:
         events += json.loads(args.events_json.read_text(encoding='utf-8'))
 
@@ -233,6 +234,7 @@ def main(argv=None):
         raise SystemExit(f'对白段伴奏仅低 {below_db:.1f} dB（须 >=16）')
     head = stored[:int(0.25 * SR)]
     report = {'passed': True, 'base': str(base), 'output': str(out),
+              'base_sha256': sha(base), 'output_sha256': sha(out), 'auto_sfx_enabled': not args.no_auto_sfx,
               'bgm_stem': str(args.stem), 'bgm_sha256': sha(args.stem),
               'source_voice_sha256': sha(args.voice), 'settings': settings,
               'duration': duration, 'frames': int(v['nb_frames']),

@@ -4,6 +4,7 @@ import { CALIBRATION, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
 import { PROP_REGISTRY, propBottom } from './prop_registry.mjs';
 import { validateOpenerActors } from './opener_director.mjs';
 import { validateCameraPlan } from './camera_plan.mjs';
+import { validateSemanticTracks } from './semantic_tracks.mjs';
 import { validateDirection, validateShotContrast } from './director_contract.mjs';
 import { createHash } from 'node:crypto';
 import { assertOpenerUncrowded, assertShotDensity } from './crowd_and_density.mjs';
@@ -95,6 +96,7 @@ export function validateSpec(spec, opts = {}) {
     if (!Number.isInteger(shot.fromLine) || !Number.isInteger(shot.toLine) || shot.fromLine > shot.toLine) throw new Error(`${where} fromLine/toLine 无效`);
     if (cueCount != null && (shot.fromLine < 1 || shot.toLine > cueCount)) throw new Error(`${where} 行号超出台词范围`);
     validateCameraPlan(shot);
+    if (shot.semanticTracks) validateSemanticTracks(shot.semanticTracks, where);
     if (spec.directorVersion === 1) {
       validateDirection(shot, { cues: opts.cues, final: i === spec.shots.length - 1, requireWordTimes: opts.requireWordTimes });
       if (i > 0) validateShotContrast(spec.shots[i - 1], shot);

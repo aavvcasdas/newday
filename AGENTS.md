@@ -15,4 +15,4 @@
 ## 导演与稳定画面
 
 用户提到画面抖动、站桩、镜头重复或重做视频时，先读 `.claude/skills/day-series-director/SKILL.md`。按当前口播写音画双栏/逐镜卡，再更新directorVersion=1的spec；默认固定机位、idleMotion可关闭，不用晃动代替事件。视觉姿态与接触校准分开，不能冒称28个历史动作已全部接入。
-Day12当前导演计划为 `Day12/Day12分镜_导演版.md` 和 `tools/day12制作/episode.spec.mjs`（planning/measured=false）；已恢复当前样片用的原图/字体，并生成无声四段样片；新上传音源待核验/词轴绑定，完整接触未齐，不声称已制作/验收有声全片。样片、自检与复现见 `Day12/样片/README.md`。
+Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分镜.md` 与 `tools/day12制作/episode.production.spec.mjs`，实际结果看同目录 `final_check.json`（不可脱离成片SHA引用）。原25行锁稿不改；指定音源未读首句，因此有独立24行视频字幕稿。用真实ASR整词区间绑定、关闭聚光灯、固定机位、独立stem混音验收；不声称音素级对齐、手纸真实接触或真人完整听审。`episode.spec.mjs`及四段无声样片是历史planning方案，不能替代当前有声版验收。

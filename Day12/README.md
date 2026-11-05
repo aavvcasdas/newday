@@ -1,63 +1,70 @@
-# Day12 修复入口
+# Day12｜鲸鱼摇人：指定原音源有声重做
 
-**当前：已生成33.43秒无声四段导演样片；未制作本集有声正片，`measured=false`。**
+## 直接交付
 
-[播放样片](样片/Day12_四段导演样片_无声.mp4) · [样片自检与复现](样片/README.md) · [机器检查报告](../tools/day12制作/sample_check.json)
+- **[播放完整有声BGM版](成片/Day12_鲸鱼摇人_有声BGM版.mp4)**：104.300秒，1920×1080，30fps，3129帧。
+- [3:4封面](封面/Day12_封面_3比4.png) · [横版封面](封面/Day12_封面_横版.png)
+- **[标题、简介、话题](发布文案.md)**
+- [本轮实测音画双栏与逐镜表](Day12有声分镜.md)
+- [本轮完整验收报告](../tools/day12制作/final_check.json)
 
-新音源接收记录：[voice_intake.json](../tools/day12制作/voice_intake.json)。推送时才发现远端上传，正常合并，未覆盖/改字节；当前播放的仍是先前生成的无声版本。
+这不是给原33.43秒无声样片贴音轨：按用户指定的根目录`鲸鱼摇人_克隆配音_最终版.wav`重新编排/完整渲染九镜。旧无声样片及报告仍留在[样片](样片/README.md)，仅作历史，不代表本轮有声验收。
 
-## 先看哪份
+## 本轮改动
 
-- [完整文案与人格/因果自检](Day12文案.md)
-- [纯口播台词](Day12配音台词.txt)
-- [当前方向、估时与资产边界](Day12方向.md)
-- [九镜导演版（当前分镜权威）](Day12分镜_导演版.md)
-- [导演spec（planning）](../tools/day12制作/episode.spec.mjs)
-- [导演结构检查](../tools/day12制作/storyboard_check.json)
-- [剧情 skill](../00_运营总览/skills/剧情生成/SKILL.md)
-- [创作 Agent 使用说明](../tools/agent/README.md)
-- [剧情修复记录](../tools/day12制作/修复验收.md)
-- [导演修复验收与阻塞项](../tools/day12制作/导演修复验收.md)
+- **关闭聚光灯**；开场用平面双行高对比钩子横幅（不是光束）保证可读性，合规角标另有深底；不持续推拉、不原地大抖；idleMotion=0，只有显式走位/反应。仅结尾一次0.7秒拉远，其后固定。
+- 实跑Vosk中文ASR（231词），用原稿拼音序列映射修正文案。41个事件绑定**真实整词区间**，不按字数均分，不称逐字音素强制对齐。错词/邻词不确定项公开保留。
+- @豆包、通知递入、入职先排、夸口后道歉、拉向笨鱼的帮手条、护碗、划掉敲代码、标记距离/熬人、翻面、推要求、圈疑点、候选递回老大、末句实体大饼与拒绝斜线，都有词点可见事件。C08旧标记与新疑点分行保留，避免出现空圈。
+- 豆包只有标牌/帮手纸，不新增脸或声线。角色仍用固定上游原PNG；道具移位/翻面是2D演示，**未冒称完整手掌接触动画**。
+- 程序化128 BPM轻芯片风BGM，按对白ducking；仅4处显式轻音效，不另加默认片头撞击。对白段伴奏平均低约20.86 dB；源音频原速完整保留。
+- 封面复用现有原角色、中文安全边界检查；未生成新角色脸。只制作发布素材，未发布/代发评论。
 
-## 修了什么
+### 为什么字幕是24行
 
-| 原问题 | 根因 | 本轮改动 |
-|---|---|---|
-| 人设像没应用，身份也变了 | 系统提示写“你不是大肥鱼”，运行时断言还禁止这个身份 | 身份、视觉、人格分层；大肥鱼/鲸鱼娘仍在，只有魔丸人格被移植，默认自称本鲸 |
-| 有 Agent 却不参与剧情生成 | 聊天入口只检索标题；没专门装载剧情 skill 与上集全文 | 新增 create_episode.py，共用人格提示，明确 creation 模式，加载七项创作输入并记录哈希 |
-| 旧剧情像清单，梗是插播 | 依靠复制上集原句过关，朋友翻车后任务没有变化 | 同一摞岗位：请人→提前开录取通知→追问拆穿→翻纸继续筛→圈出疑点，留下下集具体任务 |
-| 正常请人动机会被门禁误杀 | 旧检查把第一次出现上集原句当第三拍起点，提前截断梗段 | 从邀请后定位梗，再检查其后的承接信号；允许开头说明请人原因，取消二十四行承接窗口 |
-| 规则互相打架 | agent.md 与 README 有“呆萌覆盖率”和“去掉大肥鱼身份”的旧活动指针 | 更新第27–31条、根入口、运营记忆和 skill；旧集文本/成片不改 |
+原25行锁稿`Day12配音台词.txt`不改。实际音源开头直接说“笨鱼又回来了”，**没有读“找新朋友来帮忙。”**。
+本片另用[24行视频字幕稿](Day12视频字幕台词.txt)，不补录、不把缺失首句硬塞进0秒。
+ASR保留未编辑输出与置信度；自动拼音映射不是真人听审，声线身份未核验。
 
-## 本集结构
+源文件WAV头帧数异常；真实解码为104.3秒，不是旧接收记录误读的26843秒。原字节SHA256始终为`4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00`。
 
-1. 找新朋友来帮忙；笨鱼带岗位回归，回评论拿不准就 @豆包。本鲸拆台：以为开窍，原来是摇人。
-2. 问能不能投，她直接开录取通知；追问夸口后道歉。笨鱼仍认下她作帮手，本鲸发现虽然不太聪明，但不需要米饭——招同事还是护食？
-3. 本鲸不只拒绝：把通知翻面用来筛选；笨鱼把要求推给豆包，帮手继续圈出不确定项。
-4. 保留老大的选择权与“可能”状态，具体待核问题接下集；“不吃米饭，也不能吃大饼”回扣，不宣称真实录取。
+### 尾段不造假
 
-魔丸不是新立绘或新演员。性格落在具体反问和补救动作，不是给她贴“坏笑”的形容词。
+末句RMS界为103.575秒；原音源本来就有0.725秒低能量尾段。为保留完整指定原源，明确使用`--preserve-source-tail`例外：必须整片与原源等长、尾段≤1秒、10ms RMS峰值低于−45dB，实际为−53.46dB。没有延长cue、没有新增尾卡。其他影片默认0.15–0.35秒尾段规则不变。
 
-## 导演修复
+## 验收与限制
 
-默认相机稳定，轻呼吸可关；镜头以可见事件、景别与结果停留驱动，不靠持续晃动。九镜导演表覆盖现行25行口播，旧六镜规划不再作分镜依据。原角色位图和字体已从固定上游恢复，四段无声样片已编码并检查；C07采用同落点正反面切镜，未实现手掌翻纸。新上传音源已收到并保留，尚未建立实测词轴；C05/C08接触和完整九镜仍待制作；spec保持planning。
+|项目|证据|
+|---|---|
+|原源SHA、24行逐句/逐屏文本、1080p30、完整解码、原速零偏移人声|[dry_media_check.json](../tools/day12制作/dry_media_check.json)|
+|伴奏独立stem、视频基本流复制、减stem恢复人声、增益/峰值/ducking|[bgm_check.json](../tools/day12制作/bgm_check.json)|
+|41个词绑定、24行均有事件、3129帧几何检查、固定机位/不压眼口/桌脚安全区|[production_check.json](../tools/day12制作/production_check.json)|
+|3129帧实际编码解码，无黑/平帧；28张关键帧对照当前渲染器|[encoded_check.json](../tools/day12制作/encoded_check.json)|
+|51屏中点、气口、换屏边界；最终BGM片复查|[final_subtitle_check.json](../tools/day12制作/final_subtitle_check.json)|
+|前两秒可见事件与合成画面|[opener_check.json](../tools/day12制作/opener_check.json)|
+|原稿未改、全部报告绑定同一成片SHA、测试|[final_check.json](../tools/day12制作/final_check.json)|
 
-## 验证
+字幕色框/帧差检查不是OCR；ASR词区间不是音素对齐；静帧抽看不是完整真人实时观影/听审。手纸真实接触没有冒称通过。旧`episode.spec.mjs`、旧导演表、旧planning报告是历史25行无声方案，本片权威为`episode.production.spec.mjs`与本轮有声分镜。没有把旧spec直接改ready绕门禁；本轮ready方案有独立音源/字幕/语义轨和实际编码验证。
+
+## 复现
+
+依赖：Node、`npm ci --prefix tools/engine`；Python独立虚拟环境内`numpy pillow vosk pypinyin`；可用的FFmpeg/FFprobe（可通过`FFMPEG`、`FFPROBE`环境变量指定）。
 
 ```bash
-npm ci --prefix tools/engine
-node --test tools/engine/*.test.mjs
-node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt
-python3 tools/agent/create_episode.py --day 12 --guest 豆包 --prepare-only
-python3 tools/剧本/剧情.py --prev Day11/Day11配音台词.txt --txt Day12/Day12配音台词.txt --guest 豆包
-python3 tools/gate.py --day 12 --stage script
-python3 -m unittest discover -s tools/tests -v
+# gh已配置的GitHub连接；只恢复固定原blob并校验SHA，不执行上游脚本、不生成替代脸
+python tools/day12制作/restore_sample_assets.py --manifest tools/day12制作/production_assets.json
+# 若重跑ASR，先自行取得Vosk中文模型并指定绝对路径；缓存模型权重不入Git
+python tools/音频/transcribe_vosk.py --voice 鲸鱼摇人_克隆配音_最终版.wav --model /实际模型目录 --out tools/day12制作/asr_words.json
+python tools/day12制作/align_production.py
+# 下列完整流程：渲染→实际干声验收→混音→最终字幕/解码/开场→封面→单测→SHA汇总
+python tools/day12制作/finish_day12.py --render
+# 已有本轮干声基片则省去渲染（混音/所有实际验收仍重跑）
+python tools/day12制作/finish_day12.py
 ```
 
-本轮补齐隔离环境的numpy/ffmpeg/ffprobe后，Python 44项全部通过（包括此前跳过的5项媒体集成测试）。
-Node引擎/导演测试30项全部通过；九镜规划结构检查通过但productionReady=false。
-script 门禁通过只表示文本结构、红线及已存在导演计划的结构，不代表远程模型、配音、动态观影或成片 final 通过。
+模型镜像固定`jimy7945/vosk-model-cn@c3eca5074b0ac967ecd6dd107e0dd64d9a7c5e28`；仅权重，非执行其来源脚本；未擅自声明模型许可。原始识别/模型来源/不确定项见`asr_words.json`、`alignment_review.json`；字与词映射过程在`align_production.py`。
 
-本工作区从用户指定上游提交导入轻量源码/文档，未全量同步历史音视频；本轮仅按固定blob恢复四张原角色PNG和三份字体（清单/恢复脚本在tools/day12制作），详见 [SOURCE_IMPORT.md](../SOURCE_IMPORT.md)。
+干声基片、stem和检查抽帧可重建，按.gitignore不重复入Git；正式BGM片与两张封面入库。入口没有调用旧25行planning的累计final门禁冒充BGM验收，指定原音源版用上述显式流程，干声与混音分别验证。
 
-用户已要求后续每次修改检查后提交并推送当前分支；发布平台评论/视频不在此授权范围。
+## 文案与人格历史
+
+[原锁稿](Day12配音台词.txt) · [原文案/因果自检](Day12文案.md) · [剧情skill](../00_运营总览/skills/剧情生成/SKILL.md)。大肥鱼/鲸鱼娘仍是主角，魔丸只是人格移植；Day11锁稿不变。

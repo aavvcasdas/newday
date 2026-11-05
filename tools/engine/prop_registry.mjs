@@ -14,6 +14,17 @@ function withExtent(prop, bottom) {
 }
 
 const extra = {
+  // 大饼隐喻：明确可见的饼与拒绝斜线，不仅换一行文字；可供任何集使用。
+  flatbread: {
+    id: 'flatbread', extent: { bottom: 48 },
+    draw(ctx, _t, st = {}) {
+      ctx.save();ctx.beginPath();ctx.ellipse(0,0,76,31,0,0,Math.PI*2);ctx.fillStyle='#DDA35D';ctx.fill();ctx.strokeStyle='#785131';ctx.lineWidth=3;ctx.stroke();
+      ctx.beginPath();ctx.ellipse(0,-3,65,23,0,0,Math.PI*2);ctx.fillStyle='#F1CE8B';ctx.fill();
+      for(const [x,y]of[[-42,-8],[-16,7],[10,-11],[38,4],[-3,-1],[48,-10]]){ctx.beginPath();ctx.ellipse(x,y,5,2,.35,0,Math.PI*2);ctx.fillStyle='#9F713B';ctx.fill();}
+      if(st.rejected){ctx.strokeStyle='#D34C4A';ctx.lineWidth=7;ctx.beginPath();ctx.moveTo(-72,40);ctx.lineTo(72,-40);ctx.stroke();}
+      ctx.restore();
+    },
+  },
   // 前景立牌：木框 + 深板 + 两行字，脚落地（本地原点为牌中心，脚在 +78）
   standee: {
     id: 'standee', extent: { bottom: 78 },

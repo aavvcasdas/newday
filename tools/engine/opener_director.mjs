@@ -135,6 +135,13 @@ export function drawOpenerHookBanner(ctx, t, hook = {}) {
   ctx.translate(W / 2, 78);
   ctx.scale(st.scale, st.scale);
   ctx.globalAlpha = st.alpha;
+  if (hook.layout === 'two_line') {
+    // Flat high-contrast hook, not a spotlight: two readable lines above names/faces.
+    paint(ctx, rrPts(-390, -66, 780, 128, 16, 0), { wash: '#FFFBEB', fill: '#FFFBEB', fillOp: 250, ink: '#DC2626', sw: 3.5 });
+    drawText(ctx, prefix.replace(/[，,]$/, ''), 0, -29, 40, '#1F2937');
+    drawText(ctx, highlight, 0, 27, 52, '#DC2626');
+    ctx.restore();return true;
+  }
   let size = 40;
   ctx.font = `800 ${size}px NotoSansSC`;
   const full = prefix + highlight;

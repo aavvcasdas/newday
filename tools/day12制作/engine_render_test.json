@@ -1,0 +1,174 @@
+{
+  "measured": true,
+  "title_len": 0,
+  "frames": 3129,
+  "duration": 104.3,
+  "samples": [
+    {
+      "time": 0,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 0.35,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 0.72,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 1,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 1.6,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 2.2,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 1.5425,
+      "shot": "C01",
+      "line": 1,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": true
+    },
+    {
+      "time": 9.165,
+      "shot": "C02",
+      "line": 3,
+      "camera": {
+        "z": 1.14,
+        "cx": 700,
+        "cy": 420
+      },
+      "isOpener": false
+    },
+    {
+      "time": 20.145,
+      "shot": "C03",
+      "line": 5,
+      "camera": {
+        "z": 1.35,
+        "cx": 640,
+        "cy": 430
+      },
+      "isOpener": false
+    },
+    {
+      "time": 32.58,
+      "shot": "C04",
+      "line": 8,
+      "camera": {
+        "z": 1.18,
+        "cx": 470,
+        "cy": 430
+      },
+      "isOpener": false
+    },
+    {
+      "time": 46.9425,
+      "shot": "C05",
+      "line": 11,
+      "camera": {
+        "z": 1.18,
+        "cx": 820,
+        "cy": 430
+      },
+      "isOpener": false
+    },
+    {
+      "time": 60.5325,
+      "shot": "C06",
+      "line": 14,
+      "camera": {
+        "z": 1.35,
+        "cx": 640,
+        "cy": 430
+      },
+      "isOpener": false
+    },
+    {
+      "time": 70.4525,
+      "shot": "C07",
+      "line": 16,
+      "camera": {
+        "z": 1.18,
+        "cx": 470,
+        "cy": 430
+      },
+      "isOpener": false
+    },
+    {
+      "time": 82.66749999999999,
+      "shot": "C08",
+      "line": 19,
+      "camera": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": false
+    },
+    {
+      "time": 97.39500000000001,
+      "shot": "C09",
+      "line": 23,
+      "camera": {
+        "z": 1.02,
+        "cx": 640,
+        "cy": 390
+      },
+      "isOpener": false
+    }
+  ],
+  "events": []
+}
