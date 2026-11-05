@@ -80,8 +80,4 @@ tools/day9制作/海底联动预览抽帧/
 /Day12/配音/Day12_伴奏含音效_stem.flac
 /tools/day12制作/production_review_frames/
 
-# 独立歌词MV可重建缓存
-/tools/mv_extra/cache/
-/tools/mv_extra/encoded_frames/
-
 /.venv/
