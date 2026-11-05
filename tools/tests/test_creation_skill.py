@@ -124,9 +124,37 @@ class CreationSkillTests(unittest.TestCase):
         text = (ROOT / 'Day12/Day12配音台词.txt').read_text()
         md = (ROOT / 'Day12/Day12文案.md').read_text()
         self.assertEqual(md.split('```text\n', 1)[1].split('```', 1)[0], text)
-        self.assertEqual(len(text.splitlines()), 22)
         self.assertNotIn('身份证', text)
         self.assertNotIn('今天不带她', text)
+
+    def test_benyu_return_and_rice_motive_are_in_actual_creation_inputs(self):
+        text = (ROOT / 'Day12/Day12配音台词.txt').read_text()
+        self.assertLess(text.index('找新朋友来帮忙'), text.index('笨鱼又回来了'))
+        self.assertLess(text.index('笨鱼又回来了'), text.index('本鲸问'))
+        self.assertLess(text.index('她开始道歉'), text.index('认了这个帮手'))
+        self.assertLess(text.index('认了这个帮手'), text.index('豆包虽然不太聪明，但是不需要米饭'))
+        self.assertIn('笨鱼按住原来标过的地方，把要求推给豆包', text)
+        self.assertFalse(any(word in text for word in ('免费', '零成本', '人机校验通过', '账号恢复')))
+        packet = creation.prepare(ROOT, 12, '豆包')
+        context = packet['messages'][-1]['content']
+        self.assertIn('笨鱼本集回归', context)
+        self.assertIn('把豆包当自己的帮手', context)
+        self.assertIn('不表示免费调用', context)
+        prev = plot.load_lines(ROOT / 'Day11/Day11配音台词.txt')
+        self.assertFalse(plot.check(text.splitlines(), prev, '豆包')[0])
+
+    def test_comment_at_is_benyu_action_not_audience_cta_and_jokes_pay_off(self):
+        text = (ROOT / 'Day12/Day12配音台词.txt').read_text()
+        self.assertIn('现在它回评论，碰上拿不准的，先艾特豆包', text)
+        self.assertIn('原来是学会摇人了', text)
+        self.assertIn('你这是招同事，还是护食', text)
+        self.assertTrue(text.rstrip().endswith('豆包是不吃米饭，本鲸也不能跟着吃大饼。'))
+        self.assertNotIn('@', text)  # 口播用可读汉字，画面用@。
+        self.assertNotIn('大家去', text)
+        context = creation.prepare(ROOT, 12, '豆包')['messages'][-1]['content']
+        self.assertIn('@豆包', context)
+        self.assertIn('不编平台回执', context)
+        self.assertIn('用户提供的剧情口径', context)
 
     def test_cli_prepare_and_missing_input_exit_codes(self):
         result = subprocess.run([sys.executable, ROOT / 'tools/agent/create_episode.py',

@@ -7,3 +7,7 @@
 待审稿不能覆盖已锁定旧集。真实模型创作使用 `tools/agent/create_episode.py`，不能把 mock 或文本结构通过当作人设已生效的证据。
 
 本工作区来源和未同步媒体边界见 `SOURCE_IMPORT.md`。
+
+## 用户交付偏好：每次改完推送
+
+后续每次完成有文件修改的任务，检查后提交并推送到本会话固定分支 `arena/d4e2b5da-newday`：`git push origin arena/d4e2b5da-newday`，报告实际提交号/链接。不得只改本地却说已经推送；失败要明确报告。用户未要求时不自动合并PR、不发布平台评论或视频。

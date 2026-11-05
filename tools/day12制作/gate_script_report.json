@@ -1,11 +1,11 @@
 {
   "config": "/home/user/newday/tools/day12制作/gate_config.json",
   "input_sha256": {
-    "Day12/Day12配音台词.txt": "33b5c00d8033a6ce22b8e8e8bf5570e34a1f7d5d04593e2dd4fcc3c081a1bf0b"
+    "Day12/Day12配音台词.txt": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02"
   },
   "day": 12,
   "stage": "script",
-  "timestamp": "2026-11-05T06:47:39.327495+00:00",
+  "timestamp": "2026-11-05T09:38:49.257960+00:00",
   "checks": [
     {
       "name": "剧情承接",
