@@ -1,0 +1,21 @@
+{
+  "name": "newday-love-has-a-time-difference",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Non-official AI-generated ensemble lyric MV for the newday project",
+  "scripts": {
+    "assets": "node prepare_assets.mjs",
+    "dev": "node server.mjs",
+    "test": "node --test *.test.mjs",
+    "storyboard": "node render.mjs --storyboard",
+    "render": "node render.mjs",
+    "verify": "python3 verify.py"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "1.1.0",
+    "@sparticuz/chromium": "153.0.0",
+    "playwright-core": "1.64.1",
+    "three": "0.160.1"
+  }
+}

@@ -1,0 +1,112 @@
+{
+  "generatedFrom": "video-fx/src/cast.js + whale_girl.js; assets/ai-girls/doubao/doubao-cutout.png",
+  "sprites": {
+    "whale": {
+      "file": "assets/sprites/whale.png",
+      "width": 519,
+      "height": 624
+    },
+    "whale_worry": {
+      "file": "assets/sprites/whale_worry.png",
+      "width": 586,
+      "height": 629
+    },
+    "whale_think": {
+      "file": "assets/sprites/whale_think.png",
+      "width": 519,
+      "height": 625
+    },
+    "whale_cheer": {
+      "file": "assets/sprites/whale_cheer.png",
+      "width": 519,
+      "height": 624
+    },
+    "whale_walk": [
+      {
+        "file": "assets/sprites/whale_walk_0.png",
+        "width": 523,
+        "height": 623
+      },
+      {
+        "file": "assets/sprites/whale_walk_1.png",
+        "width": 524,
+        "height": 621
+      },
+      {
+        "file": "assets/sprites/whale_walk_2.png",
+        "width": 519,
+        "height": 622
+      },
+      {
+        "file": "assets/sprites/whale_walk_3.png",
+        "width": 515,
+        "height": 625
+      },
+      {
+        "file": "assets/sprites/whale_walk_4.png",
+        "width": 523,
+        "height": 623
+      },
+      {
+        "file": "assets/sprites/whale_walk_5.png",
+        "width": 528,
+        "height": 621
+      },
+      {
+        "file": "assets/sprites/whale_walk_6.png",
+        "width": 522,
+        "height": 618
+      },
+      {
+        "file": "assets/sprites/whale_walk_7.png",
+        "width": 512,
+        "height": 622
+      }
+    ],
+    "claude": {
+      "file": "assets/sprites/claude.png",
+      "width": 350,
+      "height": 555
+    },
+    "gemini": {
+      "file": "assets/sprites/gemini.png",
+      "width": 437,
+      "height": 623
+    },
+    "researcher": {
+      "file": "assets/sprites/researcher.png",
+      "width": 313,
+      "height": 536
+    },
+    "clawd": {
+      "file": "assets/sprites/clawd.png",
+      "width": 375,
+      "height": 251
+    },
+    "agentReachBot": {
+      "file": "assets/sprites/agentReachBot.png",
+      "width": 226,
+      "height": 269
+    },
+    "bionicPuppy": {
+      "file": "assets/sprites/bionicPuppy.png",
+      "width": 270,
+      "height": 226
+    },
+    "miniWhale": {
+      "file": "assets/sprites/miniWhale.png",
+      "width": 276,
+      "height": 226
+    },
+    "biliTvMascot": {
+      "file": "assets/sprites/biliTvMascot.png",
+      "width": 226,
+      "height": 226
+    },
+    "doubao": {
+      "file": "assets/sprites/doubao.png",
+      "width": 328,
+      "height": 1131
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "scope": "当前 newday 项目已有形象；不导入参考仓库的额外 AI 娘，不把文字编制图鉴客人算作已到场角色。",
+  "aiGirlCount": 4,
+  "supportingCount": 6,
+  "cast": [
+    {"id":"whale","name":"DeepSeek 鲸鱼娘","short":"鲸鱼娘","aiGirl":true,"role":"主角 / 大肥鱼 / 本鲸","source":"video-fx/src/whale_girl.js + whale_girl_rig_data.js","route":"原像素骨架，MV 立牌化；保留鲸尾、鳍耳、女仆发箍、蓝鲸围裙","shots":["S01","S02","S03","S04","S05","S06","S07","S08","S09","S10","S11","S12","S13","S14","S15","S16"]},
+    {"id":"claude","name":"Claude 大小姐","short":"Claude","aiGirl":true,"role":"点亮小世界的人","source":"video-fx/src/cast.js ladyClaude","route":"既有像素大小姐立牌；橙金卷发、黑蝴蝶结、红裙","shots":["S03","S05","S08","S09","S10","S11","S12","S13","S15","S16"]},
+    {"id":"gemini","name":"Gemini 大小姐","short":"Gemini","aiGirl":true,"role":"把视野带向大海与星河的人","source":"video-fx/src/cast.js ladyGemini","route":"既有像素大小姐立牌；紫发、星饰、异色瞳","shots":["S04","S05","S07","S08","S10","S11","S12","S14","S15","S16"]},
+    {"id":"doubao","name":"豆包","short":"豆包","aiGirl":true,"role":"灰暗日子里陪着发呆、一起拨开阴霾的人","source":"assets/ai-girls/doubao/doubao-cutout.png","route":"沿用 Day12 已抠图全身；不重绘脸、不做口型/眨眼/假头转","shots":["S05","S06","S07","S08","S10","S11","S12","S15","S16"]},
+    {"id":"researcher","name":"人类研究员","short":"研究员","aiGirl":false,"role":"回忆剧场的记录者","source":"video-fx/src/cast.js researcher","route":"既有像素立牌","shots":["S08","S16"]},
+    {"id":"clawd","name":"Clawd","short":"Clawd","aiGirl":false,"role":"回忆桌旁的小帮手","source":"video-fx/src/clawd.js","route":"既有像素吉祥物","shots":["S05","S08","S16"]},
+    {"id":"agentReachBot","name":"Agent-Reach 检索章鱼","short":"检索章鱼","aiGirl":false,"role":"海边扫描灯","source":"video-fx/src/cast.js agentReachBot","route":"既有像素检索机","shots":["S04","S16"]},
+    {"id":"bionicPuppy","name":"机械小狗","short":"机械狗","aiGirl":false,"role":"雨站长椅下的陪伴","source":"video-fx/src/cast.js bionicPuppy","route":"既有像素机械狗","shots":["S05","S06","S07","S16"]},
+    {"id":"miniWhale","name":"深海小蓝鲸","short":"小蓝鲸","aiGirl":false,"role":"码头边的小陪伴","source":"video-fx/src/cast.js miniWhale","route":"既有像素小蓝鲸；本片以可读尺寸单独出场","shots":["S03","S04","S16"]},
+    {"id":"biliTvMascot","name":"复古小电视","short":"小电视","aiGirl":false,"role":"回忆房间里的完整小剧场","source":"video-fx/src/cast.js biliTvMascot","route":"既有像素小电视；屏内不塞孤立角色","shots":["S05","S16"]}
+  ],
+  "notNewCharacters": [
+    "高清鲸鱼娘差分姿势、DSH 39 张表情包、蓝色大肥鱼形态是同一主角的既有素材/形态，不另计为 AI 娘。",
+    "Claude Q 版贴纸是同一 Claude 大小姐的既有素材路线，不另计为新角色。",
+    "HABAI182/ai-girls-atlas 的文字编制客人没有在本项目落地形象，本片不凭空补脸。"
+  ]
+}

@@ -1,0 +1,186 @@
+{
+  "ok": true,
+  "final": "/home/user/newday/番外MV/成片/把回忆拼好给你_AI娘全员番外.mp4",
+  "sha256": "55adbad45475df0d6694342f822846ef7eefcad18736b1b6f18dd5c772103f69",
+  "bytes": 21792699,
+  "duration": 56.08,
+  "decodedFrames": 1346,
+  "ffmpeg": "/home/user/.cache/mv-venv/lib/python3.11/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v9.0.2",
+  "checks": [
+    {
+      "name": "final_exists",
+      "ok": true,
+      "detail": "/home/user/newday/番外MV/成片/把回忆拼好给你_AI娘全员番外.mp4"
+    },
+    {
+      "name": "lyrics_16_lines",
+      "ok": true,
+      "detail": "16"
+    },
+    {
+      "name": "timeline_cues_match_lyrics",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "timeline_frames",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "all_cast_in_shots",
+      "ok": true,
+      "detail": "all"
+    },
+    {
+      "name": "final_shot_full_cast",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "srt_contains_cues",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "duration_near_source",
+      "ok": true,
+      "detail": "56.08"
+    },
+    {
+      "name": "video_h264_1080p24",
+      "ok": true,
+      "detail": "stream header"
+    },
+    {
+      "name": "audio_aac_present",
+      "ok": true,
+      "detail": "stream header"
+    },
+    {
+      "name": "full_decode_exit0",
+      "ok": true,
+      "detail": "exit=0"
+    },
+    {
+      "name": "decoded_frame_count",
+      "ok": true,
+      "detail": "1346/1346"
+    },
+    {
+      "name": "no_long_black_frames",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "sample_frames_extracted",
+      "ok": true,
+      "detail": "/tmp/mv-verify-0l9m6f__"
+    }
+  ],
+  "sampleFrames": [
+    {
+      "t": 2.2,
+      "file": "/tmp/mv-verify-0l9m6f__/check_00_2.200.png",
+      "ok": true,
+      "bytes": 1125333
+    },
+    {
+      "t": 6.646,
+      "file": "/tmp/mv-verify-0l9m6f__/check_01_6.646.png",
+      "ok": true,
+      "bytes": 1135023
+    },
+    {
+      "t": 10.167,
+      "file": "/tmp/mv-verify-0l9m6f__/check_02_10.167.png",
+      "ok": true,
+      "bytes": 1191905
+    },
+    {
+      "t": 13.708,
+      "file": "/tmp/mv-verify-0l9m6f__/check_03_13.708.png",
+      "ok": true,
+      "bytes": 1402445
+    },
+    {
+      "t": 17.292,
+      "file": "/tmp/mv-verify-0l9m6f__/check_04_17.292.png",
+      "ok": true,
+      "bytes": 1273380
+    },
+    {
+      "t": 20.708,
+      "file": "/tmp/mv-verify-0l9m6f__/check_05_20.708.png",
+      "ok": true,
+      "bytes": 1148552
+    },
+    {
+      "t": 23.958,
+      "file": "/tmp/mv-verify-0l9m6f__/check_06_23.958.png",
+      "ok": true,
+      "bytes": 1249783
+    },
+    {
+      "t": 27.208,
+      "file": "/tmp/mv-verify-0l9m6f__/check_07_27.208.png",
+      "ok": true,
+      "bytes": 1262246
+    },
+    {
+      "t": 30.208,
+      "file": "/tmp/mv-verify-0l9m6f__/check_08_30.208.png",
+      "ok": true,
+      "bytes": 954464
+    },
+    {
+      "t": 33.542,
+      "file": "/tmp/mv-verify-0l9m6f__/check_09_33.542.png",
+      "ok": true,
+      "bytes": 1090135
+    },
+    {
+      "t": 37.292,
+      "file": "/tmp/mv-verify-0l9m6f__/check_10_37.292.png",
+      "ok": true,
+      "bytes": 833997
+    },
+    {
+      "t": 40.708,
+      "file": "/tmp/mv-verify-0l9m6f__/check_11_40.708.png",
+      "ok": true,
+      "bytes": 1185171
+    },
+    {
+      "t": 43.625,
+      "file": "/tmp/mv-verify-0l9m6f__/check_12_43.625.png",
+      "ok": true,
+      "bytes": 1041643
+    },
+    {
+      "t": 46.792,
+      "file": "/tmp/mv-verify-0l9m6f__/check_13_46.792.png",
+      "ok": true,
+      "bytes": 1054007
+    },
+    {
+      "t": 49.896,
+      "file": "/tmp/mv-verify-0l9m6f__/check_14_49.896.png",
+      "ok": true,
+      "bytes": 1359199
+    },
+    {
+      "t": 52.604,
+      "file": "/tmp/mv-verify-0l9m6f__/check_15_52.604.png",
+      "ok": true,
+      "bytes": 1320392
+    },
+    {
+      "t": 55.883,
+      "file": "/tmp/mv-verify-0l9m6f__/check_16_55.883.png",
+      "ok": true,
+      "bytes": 1311815
+    }
+  ],
+  "note": "Machine technical check only; not a human visual/audio approval."
+}

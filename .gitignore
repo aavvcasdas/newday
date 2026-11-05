@@ -81,3 +81,7 @@ tools/day9制作/海底联动预览抽帧/
 /tools/day12制作/production_review_frames/
 
 /.venv/
+
+# 番外MV：可重建预览音频/立牌缓存（成片音轨直接 copy 用户参考片；立牌由 npm run assets 重建）
+/tools/番外MV_爱有时差/assets/audio/*.wav
+/tools/番外MV_爱有时差/assets/sprites/

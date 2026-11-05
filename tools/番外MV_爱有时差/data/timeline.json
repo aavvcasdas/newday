@@ -1,0 +1,206 @@
+{
+  "title": "把回忆拼好给你 · AI娘全员番外",
+  "subtitle": "爱有时差",
+  "sourceVideo": "《把回忆拼好给你》.mp4",
+  "sourceSha256": "fa26fc78c5459fae6300e986c73a4fe56eb25de51b2db827257d757202989248",
+  "fps": 24,
+  "frames": 1346,
+  "duration": 56.083333,
+  "measured": true,
+  "timingKind": "reference-film burned-in lyric tile onsets, reviewed and snapped to 24fps",
+  "timingPrecisionSeconds": 0.166667,
+  "wordLevel": false,
+  "audioPolicy": "copy source audio bitstream; no speed, pitch, volume or re-singing changes",
+  "asrAttempt": {
+    "engine": "vosk-model-small-cn-0.22",
+    "usableForSinging": false,
+    "note": "Produced only sparse function words on the singing track; not used for cues."
+  },
+  "intro": {
+    "start": 0,
+    "end": 1.291667
+  },
+  "outro": {
+    "start": 54.208333,
+    "end": 56.083333,
+    "note": "Last picture continues; no separate end card."
+  },
+  "cues": [
+    {
+      "id": "L01",
+      "line": 1,
+      "text": "我们都是渺小真实存在",
+      "keyword": "渺小",
+      "startFrame": 31,
+      "endFrame": 114,
+      "start": 1.291667,
+      "end": 4.75
+    },
+    {
+      "id": "L02",
+      "line": 2,
+      "text": "祈愿小世界里不只有挫败",
+      "keyword": "小世界",
+      "startFrame": 114,
+      "endFrame": 205,
+      "start": 4.75,
+      "end": 8.541667
+    },
+    {
+      "id": "L03",
+      "line": 3,
+      "text": "直到遇见你我以为就光明起来",
+      "keyword": "遇见你",
+      "startFrame": 205,
+      "endFrame": 283,
+      "start": 8.541667,
+      "end": 11.791667
+    },
+    {
+      "id": "L04",
+      "line": 4,
+      "text": "眼睛里看到的都是广袤无垠的大海",
+      "keyword": "大海",
+      "startFrame": 283,
+      "endFrame": 375,
+      "start": 11.791667,
+      "end": 15.625
+    },
+    {
+      "id": "L05",
+      "line": 5,
+      "text": "有你在的日子不可能被取代",
+      "keyword": "取代",
+      "startFrame": 375,
+      "endFrame": 455,
+      "start": 15.625,
+      "end": 18.958333
+    },
+    {
+      "id": "L06",
+      "line": 6,
+      "text": "在最灰暗的日子你陪着我发呆",
+      "keyword": "发呆",
+      "startFrame": 455,
+      "endFrame": 539,
+      "start": 18.958333,
+      "end": 22.458333
+    },
+    {
+      "id": "L07",
+      "line": 7,
+      "text": "你让我学会如何拨开阴霾",
+      "keyword": "拨开阴霾",
+      "startFrame": 539,
+      "endFrame": 611,
+      "start": 22.458333,
+      "end": 25.458333
+    },
+    {
+      "id": "L08",
+      "line": 8,
+      "text": "将快乐全都收集将不开心全都淘汰",
+      "keyword": "收集快乐",
+      "startFrame": 611,
+      "endFrame": 695,
+      "start": 25.458333,
+      "end": 28.958333,
+      "segments": [
+        {
+          "text": "将快乐全都收集",
+          "startFrame": 611,
+          "endFrame": 648,
+          "start": 25.458333,
+          "end": 27.0
+        },
+        {
+          "text": "将不开心全都淘汰",
+          "startFrame": 648,
+          "endFrame": 695,
+          "start": 27.0,
+          "end": 28.958333
+        }
+      ]
+    },
+    {
+      "id": "L09",
+      "line": 9,
+      "text": "你对我说的情话",
+      "keyword": "情话",
+      "startFrame": 695,
+      "endFrame": 755,
+      "start": 28.958333,
+      "end": 31.458333
+    },
+    {
+      "id": "L10",
+      "line": 10,
+      "text": "像转瞬即逝的烟花",
+      "keyword": "烟花",
+      "startFrame": 755,
+      "endFrame": 855,
+      "start": 31.458333,
+      "end": 35.625
+    },
+    {
+      "id": "L11",
+      "line": 11,
+      "text": "只停在绽放一刹那",
+      "keyword": "一刹那",
+      "startFrame": 855,
+      "endFrame": 935,
+      "start": 35.625,
+      "end": 38.958333
+    },
+    {
+      "id": "L12",
+      "line": 12,
+      "text": "我却已无法自拔",
+      "keyword": "无法自拔",
+      "startFrame": 935,
+      "endFrame": 1019,
+      "start": 38.958333,
+      "end": 42.458333
+    },
+    {
+      "id": "L13",
+      "line": 13,
+      "text": "我们的爱总有时差",
+      "keyword": "时差",
+      "startFrame": 1019,
+      "endFrame": 1075,
+      "start": 42.458333,
+      "end": 44.791667
+    },
+    {
+      "id": "L14",
+      "line": 14,
+      "text": "也为你骗自己放下",
+      "keyword": "放下",
+      "startFrame": 1075,
+      "endFrame": 1171,
+      "start": 44.791667,
+      "end": 48.791667
+    },
+    {
+      "id": "L15",
+      "line": 15,
+      "text": "爱炙热的你",
+      "keyword": "炙热",
+      "startFrame": 1171,
+      "endFrame": 1224,
+      "start": 48.791667,
+      "end": 51.0
+    },
+    {
+      "id": "L16",
+      "line": 16,
+      "text": "却忘了爱自己",
+      "keyword": "爱自己",
+      "startFrame": 1224,
+      "endFrame": 1301,
+      "start": 51.0,
+      "end": 54.208333
+    }
+  ]
+}
