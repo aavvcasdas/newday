@@ -31,7 +31,8 @@ export function validateDirection(shot, { cues, final = false, requireWordTimes 
     if (requireWordTimes && (!char || !Number.isFinite(char.start))) throw new Error(`${shot.id} 缺结果词级实测时间，不能验证理解停留`);
     if (char) {
       if (trigger && char.start < trigger.start) throw new Error(`${shot.id} 实测结果早于触发`);
-      const end = cues[shot.toLine - 1].end;
+      // v2 scene actually holds through the following breath up to the next shot start.
+      const end = shot.cameraIntent ? (cues[shot.toLine]?.start ?? cues[shot.toLine - 1].end) : cues[shot.toLine - 1].end;
       if (!Number.isFinite(end)) throw new Error(`${shot.id} 缺实测镜头终点`);
       if (end - char.start - d.settleSeconds + 1e-9 < d.holdSeconds) throw new Error(`${shot.id} 实测结果没有足够理解停留时间`);
     }

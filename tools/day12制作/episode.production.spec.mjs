@@ -95,7 +95,65 @@ tag(s,'helper_stays',1050,500,cue(23).start,{title:'@豆包 · 帮手还在'},{s
 card(s,'rejected_flatbread','prop',640,290,160,96,E.pie,{rejected:true},{propId:'flatbread'});
 s.actors[0].poses=[{at:E.pie,pose:'shock'}];s.foregroundTable={x:430,y:534,width:720};
 
+// v2 execution pass: remove every 笨鱼 sprite. Narration/locked text remain unchanged.
+const whale=(pose='think',x=330,u=34)=>({name:'本鲸',pose,x,y:600,u,idleMotion:.4,performanceV2:true,poseTransition:.25,bodyEvents:[]});
+const bean=(enterAt=0)=>({name:'豆包',assetId:'doubao',pose:'still',x:1000,y:600,height:330,u:32,idleMotion:.35,performanceV2:true,bodyEvents:[],enterAt,enterDuration:.45,enterDx:110});
+const configs=[
+ {actors:[whale('think',330,37)],base:{z:1.06,cx:600,cy:420},type:'follow',at:E.jobs,duration:.8,to:{cx:640},reason:'跟随昨日岗位纸入画；笨鱼只存在于音轨'},
+ {actors:[whale('think'),bean(E.at)],base:{z:1.08,cx:630,cy:415},type:'pan',at:E.at,duration:.65,to:{cx:700},reason:'@词点将视线让给豆包已有全身图'},
+ {actors:[whale('think',260,31),bean()],base:{z:1.08,cx:640,cy:430},type:'push',at:E.deliver,duration:.8,to:{z:1.2,cx:610,cy:420},reason:'通知先到而未面试，推近放大错误'},
+ {actors:[whale('think',330,35)],base:{z:1.16,cx:540,cy:410},type:'push',at:E.brag,duration:.8,to:{z:1.55,cx:520,cy:360},reason:'从万能经历转向本鲸的质疑'},
+ {actors:[whale('point')],base:{z:1.04,cx:600,cy:410},type:'push',at:E.guard,duration:.65,to:{z:1.14,cx:620,cy:420},reason:'护食反问交给本鲸上半身与桌面反问条'},
+ {actors:[],base:{z:1.35,cx:640,cy:430},type:'static',reason:'条件纸insert，保证划线/圈记和条件能读完'},
+ {actors:[whale('think',310,33)],base:{z:1.13,cx:550,cy:432},type:'push',at:E.flip,duration:.6,to:{z:1.22,cx:560,cy:438},reason:'翻到背面复用，近看岗位要求'},
+ {actors:[whale('point'),bean()],base:{z:1.06,cx:630,cy:420},type:'pan',at:E.push,duration:.5,to:{cx:700},reason:'顺着要求纸滑向豆包，不模拟未校准手部接触'},
+ {actors:[whale('point'),bean()],base:{z:1.12,cx:640,cy:410},type:'pull',at:cue(23).start,duration:.7,to:{z:1.02,cx:640,cy:390},reason:'交还选择权；拉远一次后锁住，无尾卡'},
+];
+for(let i=0;i<shots.length;i++){
+ const sh=shots[i],c=configs[i];sh.actors=c.actors;sh.camera=c.base;delete sh.push;
+ sh.cameraIntent={type:c.type,reason:c.reason,...(c.type==='static'?{}:{at:c.at,duration:c.duration,to:c.to,easing:'smoothstep'})};
+ sh.transitions={type:i===0?'none':i%2?'fade':'slide',duration:.2};
+ sh.ambient=[{type:'dust',from:cue(sh.fromLine+1).start,to:cue(sh.toLine+1).end,x:640,y:260}];
+ sh.bodyEvents=[];sh.insertEmphasis=[];
+ const owned=visualEvents.filter(e=>e.line>=sh.fromLine&&e.line<=sh.toLine);
+ const lead=sh.actors.find(a=>a.name==='本鲸');
+ for(const e of owned){if(lead){const be={id:e.id,at:e.time,duration:.28,dy:1.6,lean:0};lead.bodyEvents.push(be);sh.bodyEvents.push({...be,actor:'本鲸'});}}
+ for(const tr of sh.semanticTracks){
+  if(!(tr.moves?.length))tr.enter={duration:.45,dx:95,dy:-8,overshoot:true};
+  for(const m of tr.moves||[])m.duration=.5;
+  for(const m of tr.marks||[])m.duration=m.type==='strike'?.22:.25;
+  tr.emphasis=[];
+ }
+ sh.propTracks=sh.semanticTracks;
+ sh.idleException=i===5?'无人桌面insert；身体待机不适用':undefined;
+}
+shots[0].actors[0].poses=[{at:E.return,pose:'shock'},{at:E.jobs,pose:'point'}];
+shots[0].semanticTracks[0].from=E.return;shots[0].semanticTracks[0].w=360;shots[0].semanticTracks[0].h=108;shots[0].semanticTracks[0].y=480;
+shots[0].semanticTracks[0].state={title:'昨天那摞岗位',rows:['还没挑完，继续看'],rowStart:22,rowSize:18};shots[0].semanticTracks[0].states=[{at:E.jobs,state:{title:'昨日筛过的岗位'}}];
+shots[0].semanticTracks[0].enter={duration:.5,dx:300,dy:0,overshoot:true};
+shots[1].actors[0].poses=[{at:E.smart,pose:'confident_hips'},{at:E.call+.25,pose:'shock'}];
+shots[1].ambient.push({type:'cursor',from:E.comment,to:E.call,x:752,y:478});
+shots[2].actors[0].poses=[{at:E.deliver,pose:'shock'},{at:E.arrange,pose:'point'}];
+const offer=shots[2].semanticTracks.find(t=>t.id==='offer');offer.moves[0].at=E.deliver-.4;offer.moves[0].duration=.5;
+offer.emphasis=[{at:E.arrange,duration:.6}];shots[2].insertEmphasis=[{propId:'offer',at:E.arrange,duration:.6}];
+shots[3].foregroundTable={x:430,y:445,width:420};
+for(const t of shots[3].semanticTracks){t.y=405;t.h=80;}
+shots[3].actors[0].poses=[{at:E.brag,pose:'shock'},{at:E.sorry,pose:'point'}];
+shots[3].actors[0].bodyEvents.push({id:'apology_recoil',at:E.sorry,duration:.5,dy:2,lean:-.025});
+const claim=shots[3].semanticTracks[0];claim.states=claim.states.filter(st=>st.at!==E.sorry);claim.states.find(st=>st.at===E.brag).state.rows=['所有岗位'];claim.marks=[{at:E.brag,type:'strike',row:0,width:175,duration:.22}];claim.moves=[{at:E.sorry,duration:.3,x:1100}];claim.to=E.sorry+.3;
+card(shots[3],'sliding_apology','sheet',690,405,280,80,E.sorry,{title:'对不起……',rows:['先重新核对要求'],rowStart:22},{enter:{duration:.45,dx:220,dy:-6,overshoot:true}});
+shots[4].actors[0].poses=[{at:E.guard,pose:'point'}];shots[4].actors[0].bodyEvents.push({id:'rhetorical_lean',at:E.guard,duration:.5,dy:2,lean:.025});
+shots[4].semanticTracks.find(t=>t.id==='protected_bowl').state.text='笨鱼的饭';
+shots[6].actors[0].poses=[{at:E.flip,pose:'point'}];
+shots[6].semanticTracks[0].flips[0].duration=.4;shots[6].semanticTracks[0].moves=[{at:E.flip,duration:.4,x:660}];
+shots[7].actors[0].poses=[{at:E.help,pose:'confident_hips'},{at:E.handoff,pose:'point'}];
+shots[7].actors[0].bodyEvents.push({id:'accept_nod',at:E.circle,duration:.4,dy:2,lean:.018});
+shots[8].actors[0].poses=[{at:E.pie,pose:'shock'}];
+// Descriptive executable fields are the same arrays used by the shared renderer.
+for(const sh of shots){sh.propTracks=sh.semanticTracks;sh.bodyEvents=sh.actors.flatMap(a=>(a.bodyEvents||[]).map(e=>({...e,actor:a.name})));sh.direction.entry='承接岗位纸；本鲸与豆包原PNG，笨鱼不入画';}
+const v2Focus=['岗位纸滑入表现回归，本鲸身体顿挫，不绘制笨鱼','@条与豆包已有全身滑入，本鲸从认可到疑问','通知滑入落桌，错误信息局部强调','万能经历划线，道歉条滑入，本鲸反应推近','本鲸单人反问，帮手纸与笨鱼的碗承接，不绘制笨鱼','桌面insert，代码划掉，远与熬人逐笔圈记','通知2D压缩翻面，指向要求，道歉纸滑到旁侧','要求纸推向豆包，圈记长出，候选交回老大','单次拉远后锁定，待核项保持，大饼拒绝收尾'];
+for(let i=0;i<shots.length;i++){Object.assign(shots[i].direction,{focus:v2Focus[i],action:v2Focus[i],trigger:'真实整词区间触发身体/道具轨道',result:'动作到位后保持纸面结果与低幅连续呼吸',settleSeconds:i===3?.45:i===7?.8:.25});}
 const script=read('../../Day12/Day12视频字幕台词.txt');
-export default {day:12,title:'招同事，还是护食？',speaker:'本鲸',directorVersion:1,status:'ready',measured:true,
+export default {performanceVersion:2,day:12,title:'招同事，还是护食？',speaker:'本鲸',directorVersion:1,status:'ready',measured:true,
   sourceScriptSha256:createHash('sha256').update(script).digest('hex'),lighting:{spotlights:false},preserveSourceDuration:true,
-  opener:{layout:'two_line',headlinePrefix:'笨鱼回来了，',headlineHighlight:'招同事还是护食？',actorA:A()[0],actorB:A()[1],foregroundProps:[]},shots};
+  opener:{enterDuration:.5,layout:'two_line',headlinePrefix:'笨鱼回来了，',headlineHighlight:'招同事还是护食？',actorA:shots[0].actors[0],actorB:bean(E.at),foregroundProps:[]},shots};

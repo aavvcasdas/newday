@@ -1,5 +1,6 @@
 {
   "passed": true,
+  "version": 2,
   "source_sha256": "4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00",
   "sourceScriptSha256": "eb24b21cbdffd4f688f22ecaf634cd5a6af94efff4e6d2f594ccff9f110cc579",
   "original_draft_sha256": "42625d93cb49999da0f67860ab3dd3dca9b37b6583b623a1cc25cb3928072d02",
@@ -21,8 +22,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 18,
-      "beforeProps": [],
-      "afterProps": [],
       "changed": true,
       "uncertain": false
     },
@@ -40,10 +39,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 44,
-      "beforeProps": [],
-      "afterProps": [
-        "old_jobs"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -61,10 +56,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 146,
-      "beforeProps": [],
-      "afterProps": [
-        "comment"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -82,12 +73,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 235,
-      "beforeProps": [
-        "comment"
-      ],
-      "afterProps": [
-        "comment"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -105,12 +90,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 307,
-      "beforeProps": [
-        "comment"
-      ],
-      "afterProps": [
-        "comment"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -128,12 +107,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 410,
-      "beforeProps": [
-        "comment"
-      ],
-      "afterProps": [
-        "comment"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -151,12 +124,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 522,
-      "beforeProps": [
-        "question"
-      ],
-      "afterProps": [
-        "question"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -174,13 +141,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 612,
-      "beforeProps": [
-        "question"
-      ],
-      "afterProps": [
-        "question",
-        "offer"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -198,14 +158,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 639,
-      "beforeProps": [
-        "question",
-        "offer"
-      ],
-      "afterProps": [
-        "question",
-        "offer"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -223,14 +175,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 715,
-      "beforeProps": [
-        "question",
-        "offer"
-      ],
-      "afterProps": [
-        "question",
-        "offer"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -248,10 +192,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 788,
-      "beforeProps": [],
-      "afterProps": [
-        "claim"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -269,12 +209,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 873,
-      "beforeProps": [
-        "claim"
-      ],
-      "afterProps": [
-        "claim"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -292,12 +226,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1036,
-      "beforeProps": [
-        "claim"
-      ],
-      "afterProps": [
-        "claim"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -315,12 +243,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1162,
-      "beforeProps": [
-        "claim"
-      ],
-      "afterProps": [
-        "claim"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -338,10 +260,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1257,
-      "beforeProps": [],
-      "afterProps": [
-        "helper_card"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -359,12 +277,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1417,
-      "beforeProps": [
-        "helper_card"
-      ],
-      "afterProps": [
-        "helper_card"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -382,12 +294,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1469,
-      "beforeProps": [
-        "helper_card"
-      ],
-      "afterProps": [
-        "helper_card"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -405,13 +311,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1522,
-      "beforeProps": [
-        "helper_card"
-      ],
-      "afterProps": [
-        "helper_card",
-        "protected_bowl"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -429,14 +328,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1597,
-      "beforeProps": [
-        "helper_card",
-        "protected_bowl"
-      ],
-      "afterProps": [
-        "helper_card",
-        "protected_bowl"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -454,10 +345,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1669,
-      "beforeProps": [],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -475,12 +362,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1721,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -498,12 +379,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1796,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -521,12 +396,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1829,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -544,12 +413,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1883,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -567,12 +430,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1923,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -590,12 +447,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 1963,
-      "beforeProps": [
-        "requirements"
-      ],
-      "afterProps": [
-        "requirements"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -613,12 +464,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2035,
-      "beforeProps": [
-        "reused_offer"
-      ],
-      "afterProps": [
-        "reused_offer"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -636,12 +481,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2090,
-      "beforeProps": [
-        "reused_offer"
-      ],
-      "afterProps": [
-        "reused_offer"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -659,13 +498,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2153,
-      "beforeProps": [
-        "reused_offer"
-      ],
-      "afterProps": [
-        "reused_offer",
-        "apology_aside"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -683,14 +515,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2205,
-      "beforeProps": [
-        "reused_offer",
-        "apology_aside"
-      ],
-      "afterProps": [
-        "reused_offer",
-        "apology_aside"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -708,14 +532,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2263,
-      "beforeProps": [
-        "candidate",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -733,14 +549,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2341,
-      "beforeProps": [
-        "candidate",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -758,15 +566,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2473,
-      "beforeProps": [
-        "candidate",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -784,16 +583,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2526,
-      "beforeProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -811,16 +600,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2596,
-      "beforeProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -838,16 +617,6 @@
       "relation": "phonetic_substitution",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2649,
-      "beforeProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": true
     },
@@ -865,16 +634,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2639,
-      "beforeProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
-      "afterProps": [
-        "candidate",
-        "uncertain",
-        "bean_receiver"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -892,14 +651,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2800,
-      "beforeProps": [
-        "remaining",
-        "helper_stays"
-      ],
-      "afterProps": [
-        "remaining",
-        "helper_stays"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -917,14 +668,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 2937,
-      "beforeProps": [
-        "remaining",
-        "helper_stays"
-      ],
-      "afterProps": [
-        "remaining",
-        "helper_stays"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -942,14 +685,6 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 3024,
-      "beforeProps": [
-        "remaining",
-        "helper_stays"
-      ],
-      "afterProps": [
-        "remaining",
-        "helper_stays"
-      ],
       "changed": true,
       "uncertain": false
     },
@@ -967,31 +702,235 @@
       "relation": "same_pinyin",
       "precision": "acoustic WORD interval, not invented per-character phoneme time",
       "frame": 3090,
-      "beforeProps": [
-        "remaining",
-        "helper_stays"
-      ],
-      "afterProps": [
-        "remaining",
-        "helper_stays",
-        "rejected_flatbread"
-      ],
       "changed": true,
       "uncertain": false
     }
   ],
   "spokenLines": 24,
   "eventCoveredLines": 24,
-  "geometrySamples": 3129,
-  "faceChecks": 6050,
-  "faceRectIntersections": 0,
-  "maxProjectedTableBottom": 586.24,
+  "geometrySamples": 3133,
+  "maxProjectedTableBottom": 581.65,
+  "maxBodyDisplacement": 4,
   "spotlight": false,
-  "idleMotion": 0,
-  "defaultCameraFixed": true,
-  "onlyMainMove": "C09 one 0.7-second pullback",
-  "assetsVerified": 9,
+  "benyuSprites": 0,
+  "doubaoSourceCommit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+  "cameraEvidence": {
+    "C01": {
+      "intent": {
+        "type": "follow",
+        "reason": "跟随昨日岗位纸入画；笨鱼只存在于音轨",
+        "at": 1.44,
+        "duration": 0.8,
+        "to": {
+          "cx": 640
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.06,
+        "cx": 600,
+        "cy": 420
+      },
+      "end": {
+        "z": 1.06,
+        "cx": 640,
+        "cy": 420
+      },
+      "cameraSamples": 120
+    },
+    "C02": {
+      "intent": {
+        "type": "pan",
+        "reason": "@词点将视线让给豆包已有全身图",
+        "at": 7.83,
+        "duration": 0.65,
+        "to": {
+          "cx": 700
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.08,
+        "cx": 630,
+        "cy": 415
+      },
+      "end": {
+        "z": 1.08,
+        "cx": 700,
+        "cy": 415
+      },
+      "cameraSamples": 334
+    },
+    "C03": {
+      "intent": {
+        "type": "push",
+        "reason": "通知先到而未面试，推近放大错误",
+        "at": 21.27,
+        "duration": 0.8,
+        "to": {
+          "z": 1.2,
+          "cx": 610,
+          "cy": 420
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.08,
+        "cx": 640,
+        "cy": 430
+      },
+      "end": {
+        "z": 1.2,
+        "cx": 610,
+        "cy": 420
+      },
+      "cameraSamples": 324
+    },
+    "C04": {
+      "intent": {
+        "type": "push",
+        "reason": "从万能经历转向本鲸的质疑",
+        "at": 34.53,
+        "duration": 0.8,
+        "to": {
+          "z": 1.55,
+          "cx": 520,
+          "cy": 360
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.16,
+        "cx": 540,
+        "cy": 410
+      },
+      "end": {
+        "z": 1.55,
+        "cx": 520,
+        "cy": 360
+      },
+      "cameraSamples": 424
+    },
+    "C05": {
+      "intent": {
+        "type": "push",
+        "reason": "护食反问交给本鲸上半身与桌面反问条",
+        "at": 53.22,
+        "duration": 0.65,
+        "to": {
+          "z": 1.14,
+          "cx": 620,
+          "cy": 420
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.04,
+        "cx": 600,
+        "cy": 410
+      },
+      "end": {
+        "z": 1.14,
+        "cx": 620,
+        "cy": 420
+      },
+      "cameraSamples": 454
+    },
+    "C06": {
+      "intent": {
+        "type": "static",
+        "reason": "条件纸insert，保证划线/圈记和条件能读完"
+      },
+      "start": {
+        "z": 1.35,
+        "cx": 640,
+        "cy": 430
+      },
+      "end": {
+        "z": 1.35,
+        "cx": 640,
+        "cy": 430
+      },
+      "cameraSamples": 341
+    },
+    "C07": {
+      "intent": {
+        "type": "push",
+        "reason": "翻到背面复用，近看岗位要求",
+        "at": 67.83,
+        "duration": 0.6,
+        "to": {
+          "z": 1.22,
+          "cx": 560,
+          "cy": 438
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.13,
+        "cx": 550,
+        "cy": 432
+      },
+      "end": {
+        "z": 1.22,
+        "cx": 560,
+        "cy": 438
+      },
+      "cameraSamples": 259
+    },
+    "C08": {
+      "intent": {
+        "type": "pan",
+        "reason": "顺着要求纸滑向豆包，不模拟未校准手部接触",
+        "at": 78.030901,
+        "duration": 0.5,
+        "to": {
+          "cx": 700
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.06,
+        "cx": 630,
+        "cy": 420
+      },
+      "end": {
+        "z": 1.06,
+        "cx": 700,
+        "cy": 420
+      },
+      "cameraSamples": 484
+    },
+    "C09": {
+      "intent": {
+        "type": "pull",
+        "reason": "交还选择权；拉远一次后锁住，无尾卡",
+        "at": 91.215,
+        "duration": 0.7,
+        "to": {
+          "z": 1.02,
+          "cx": 640,
+          "cy": 390
+        },
+        "easing": "smoothstep"
+      },
+      "start": {
+        "z": 1.12,
+        "cx": 640,
+        "cy": 410
+      },
+      "end": {
+        "z": 1.02,
+        "cx": 640,
+        "cy": 390
+      },
+      "cameraSamples": 393
+    }
+  },
+  "assetsVerified": 14,
   "sampleFrames": [
+    15,
+    27,
     233,
     244,
     636,
@@ -1021,20 +960,28 @@
     3087,
     3099
   ],
+  "finalResultHoldSeconds": 1.0600000000000023,
   "limitations": [
-    "ASR whole-word intervals and automated pinyin mapping, not human listening or phoneme-exact character alignment",
-    "Prop slides/flip are stylized 2D events; not a claim of calibrated hand-to-paper contact",
-    "Face check is calibrated eye/mouth rectangle, supplemented by still review"
+    "No face/mouth/eyelid animation; no face-ROI motion acceptance",
+    "Original PNG pose switches have whole-body transitions, not feature morphing",
+    "No calibrated hand-to-paper claim",
+    "Human dynamic review is pending, automated/still inspection cannot replace it"
   ],
   "inputs": {
-    "episode.production.spec.mjs": "3fc2b9254c4d5242830958387382726dfc2e7214f97e914db5269771406ee6d5",
+    "episode.production.spec.mjs": "8172ca9e85efef7694278d577d0afe834a9ad09df4b1420048168ed40c7b4b46",
     "voice_alignment.json": "2add9d7c9c9f824cf19469e504c4231563e78f6b149fff7449f92eccb9ca9c91",
     "subtitle_timing.json": "5ad89d5adb1c493cfe93fbac41e7afb88a213831248eac9db04156b3e2f1f0d9",
     "visual_events.json": "ea055d84d51fa79339088fd104b428e559340682f3b768d17fe108f303b25b90",
-    "../engine/render_episode.mjs": "575e292643d458ac3aeff3b3b8d6fec1163ed571d8280cabeae552ff26879d13",
-    "../engine/semantic_tracks.mjs": "80a5075014354224b9d3ff7cbc0affa5c8affbe6a4609fb7a2ba88d246ddc922",
+    "../engine/render_episode.mjs": "3c8b0fadde9b25660a5a691b2462738ddeaa446f11128d3461439106e7f2752f",
+    "../engine/semantic_tracks.mjs": "15ceeab5ba6c7e0fdf92246c8a2d8497ca5854c7640d928e00b79750174ed078",
     "../engine/scene_compositor.mjs": "41b28e187fc0c6fd91dac12e1cff45cec6d3b885b3dbe77361d5f8f40ecd84ad",
     "../engine/prop_registry.mjs": "ec777a66c4314f7abd19b3bfeb6fe411efe3693a389d80c6bffec07bcc4dfc1c",
-    "../engine/opener_director.mjs": "158fce30b0699bdf7e2615330a5bc1981e9754c2a4d28cda600d1b390fd08666"
+    "../engine/opener_director.mjs": "73e534d40a659cfe26a6c2bb5029bc543eb7eedb99d86bc7e451a41ad5349987",
+    "../engine/camera_plan.mjs": "06b23c8e3529fea80f6410152f8d57219bfa5558842d6740b55d8413201338f9",
+    "../engine/performance_v2.mjs": "a248a8f47d4c852200033655c093759c2a37a5409e816fca6eab501bd17a80c9",
+    "../engine/director_contract.mjs": "374cda4ccd0774dbc0154a382fab12e56c4c5107ba7c6db4f8c525eda51cafde",
+    "../engine/schema_validator.mjs": "4f970298a29fa5541b813199104d64460113b370cd40bfdf0f6992aad1a4e164",
+    "../../assets/ai-girls/doubao/source.json": "dc2ae105f6dbebda13a596fd554a6c8feb715191325d3810f18fb4ce4f0df226",
+    "../../assets/ai-girls/doubao/doubao-cutout.png": "c0d88e7c1a22076866d2de58619e2d3f707b01e2e1d767044d08ad6a4f2b46b4"
   }
 }

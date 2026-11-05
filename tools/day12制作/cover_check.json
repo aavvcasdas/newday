@@ -1,9 +1,9 @@
 {
   "passed": true,
-  "method": "original verified character PNGs; text extent assertions; no generated character replacement",
+  "method": "verified whale PNG + upstream Doubao cutout; text extent assertions; no generated character replacement",
   "checks": [
     {
-      "text": "鲸鱼摇人 · 笨鱼回归",
+      "text": "鲸鱼摇人 · 豆包入画",
       "width": 397.0685729980469,
       "x": 540,
       "y": 105,
@@ -45,7 +45,7 @@
       "size": 25
     },
     {
-      "text": "鲸鱼摇人 · 笨鱼回归",
+      "text": "鲸鱼摇人 · 豆包入画",
       "width": 330.890869140625,
       "x": 80,
       "y": 75,

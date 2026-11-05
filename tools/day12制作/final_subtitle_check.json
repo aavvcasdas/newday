@@ -211,49 +211,49 @@
       "time": 0.7333333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L01"
     },
     {
       "time": 2.3333333333333335,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 180,
+      "cyan_pixels": 179,
       "label": "L01"
     },
     {
       "time": 4.833333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L02"
     },
     {
       "time": 6.5,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L02"
     },
     {
       "time": 7.933333333333334,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L02"
     },
     {
       "time": 10.166666666666666,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 180,
+      "cyan_pixels": 179,
       "label": "L03"
     },
     {
       "time": 13.566666666666666,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 174,
+      "cyan_pixels": 175,
       "label": "L03"
     },
     {
@@ -274,7 +274,7 @@
       "time": 20.933333333333334,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 206,
+      "cyan_pixels": 207,
       "label": "L05"
     },
     {
@@ -295,14 +295,14 @@
       "time": 26.6,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L07"
     },
     {
       "time": 29.166666666666668,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 207,
+      "cyan_pixels": 208,
       "label": "L07"
     },
     {
@@ -323,7 +323,7 @@
       "time": 37.63333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L09"
     },
     {
@@ -337,56 +337,56 @@
       "time": 41.3,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 236,
+      "cyan_pixels": 234,
       "label": "L10"
     },
     {
       "time": 43.2,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L10"
     },
     {
       "time": 45.166666666666664,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L11"
     },
     {
       "time": 47.03333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L11"
     },
     {
       "time": 48.86666666666667,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L11"
     },
     {
       "time": 50.56666666666667,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L12"
     },
     {
       "time": 52.166666666666664,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L12"
     },
     {
       "time": 53.43333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 175,
+      "cyan_pixels": 176,
       "label": "L12"
     },
     {
@@ -449,21 +449,21 @@
       "time": 69.73333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L16"
     },
     {
       "time": 71.73333333333333,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L17"
     },
     {
       "time": 73.93333333333334,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 176,
+      "cyan_pixels": 175,
       "label": "L17"
     },
     {
@@ -491,7 +491,7 @@
       "time": 82.3,
       "expected": true,
       "visible": true,
-      "cyan_pixels": 179,
+      "cyan_pixels": 180,
       "label": "L19"
     },
     {
@@ -617,14 +617,14 @@
       "time": 36.733333333333334,
       "expected": false,
       "visible": false,
-      "cyan_pixels": 0,
+      "cyan_pixels": 26,
       "label": "气口"
     },
     {
       "time": 39.733333333333334,
       "expected": false,
       "visible": false,
-      "cyan_pixels": 0,
+      "cyan_pixels": 28,
       "label": "气口"
     },
     {

@@ -1,0 +1,63 @@
+{
+  "performanceVersion": 2,
+  "cameraIntentCount": 9,
+  "check": "planning_structure_only",
+  "passed": true,
+  "measured": false,
+  "visualApproved": false,
+  "productionReady": false,
+  "sourceScriptSha256": "eb24b21cbdffd4f688f22ecaf634cd5a6af94efff4e6d2f594ccff9f110cc579",
+  "lines": 24,
+  "shots": 9,
+  "framings": [
+    {
+      "id": "C01",
+      "framing": "two_shot",
+      "cameraMove": "follow"
+    },
+    {
+      "id": "C02",
+      "framing": "two_shot",
+      "cameraMove": "pan"
+    },
+    {
+      "id": "C03",
+      "framing": "insert_center",
+      "cameraMove": "push"
+    },
+    {
+      "id": "C04",
+      "framing": "close_left",
+      "cameraMove": "push"
+    },
+    {
+      "id": "C05",
+      "framing": "medium_right",
+      "cameraMove": "push"
+    },
+    {
+      "id": "C06",
+      "framing": "insert_center",
+      "cameraMove": "static"
+    },
+    {
+      "id": "C07",
+      "framing": "medium_left",
+      "cameraMove": "push"
+    },
+    {
+      "id": "C08",
+      "framing": "two_shot",
+      "cameraMove": "pan"
+    },
+    {
+      "id": "C09",
+      "framing": "wide",
+      "cameraMove": "pull"
+    }
+  ],
+  "missingAssets": [],
+  "blockers": [
+    "结构检查未提供/核验实测音频、词级时间、动态观影或最终视频"
+  ]
+}

@@ -26,12 +26,19 @@ export function semanticStateAt(track, time) {
     const p = smooth((time - move.at) / move.duration);
     x = mix(x, move.x, p); y = mix(y, move.y ?? y, p);
   }
-  let scaleX = 1;
+  let scaleX = 1, scale=1, opacity=1;
+  if(track.enter){const q=Math.max(0,Math.min(1,(time-track.from)/(track.enter.duration||.45)));const ease=1-(1-q)**3;
+    x+=(track.enter.dx||0)*(1-ease);y+=(track.enter.dy||0)*(1-ease);opacity=Math.min(1,q*3);
+    if(track.enter.overshoot)scale=1+.035*Math.sin(Math.PI*q)*Math.sin(2*Math.PI*q);
+  }
+  for(const move of track.moves||[]){const age=time-move.at-move.duration;if(age>=0&&age<.12)y-=Math.sin(Math.PI*age/.12)*1.5;}
+  for(const em of track.emphasis||[]){const age=time-em.at;if(age>=0&&age<em.duration)scale*=1+.035*Math.sin(Math.PI*age/em.duration);}
+
   for (const flip of track.flips || []) {
     const age = time - flip.at;
     if (age >= 0 && age < flip.duration) scaleX = Math.max(.045, Math.abs(Math.cos(Math.PI * age / flip.duration)));
   }
-  return { id: track.id, kind: track.kind, x, y, w: track.w, h: track.h, state, scaleX,
+  return { id: track.id, kind: track.kind, x, y, w: track.w, h: track.h, state, scaleX, scale, opacity,
     marks: (track.marks || []).filter((m) => time >= m.at).map((m) => ({ ...m, progress: smooth((time - m.at) / (m.duration || .16)) })) };
 }
 function box(g, x, y, w, h, fill, stroke) {
@@ -46,7 +53,7 @@ export function drawSemanticTracks(g, time, tracks) {
   const drawn = [];
   for (const track of tracks || []) {
     const s = semanticStateAt(track, time); if (!s) continue;
-    drawn.push(s);g.save();g.translate(s.x, s.y);g.scale(s.scaleX, 1);
+    drawn.push(s);g.save();g.globalAlpha=s.opacity;g.translate(s.x, s.y);g.scale(s.scaleX*s.scale, s.scale);
     if (track.kind === 'bowl' || track.kind === 'prop') { getProp(track.propId || 'empty_bowl').draw(g, time, s.state);g.restore();continue; }
     const paper = track.kind === 'sheet', state = s.state;
     box(g, -track.w / 2, -track.h / 2, track.w, track.h, state.fill || (paper ? '#EEE4C8' : '#DCE9E7'), state.stroke || '#536779');

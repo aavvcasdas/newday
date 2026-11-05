@@ -1,0 +1,43 @@
+{
+  "repository": "shuaizenge/ai-girls",
+  "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+  "assets": [
+    {
+      "upstream": "README.md",
+      "path": "assets/ai-girls/doubao/repository-README.md",
+      "gitBlobSha1": "b296e65965f3b6746c55c33f12ae140218d3b63e",
+      "sha256": "6dcfaf8c285a9774196bf8cafc6e757731a50d632cd37aa3888a7488dc8448a4"
+    },
+    {
+      "upstream": "characters/doubao/README.md",
+      "path": "assets/ai-girls/doubao/README.md",
+      "gitBlobSha1": "15e75fa9dae0888ad7bad66962e1edb7b14bf355",
+      "sha256": "f8ccfb3b1c5339c6c86de20142b6d661d62b5ae154d90787a9a79f30fd5fbb0c"
+    },
+    {
+      "upstream": "characters/doubao/generated/doubao-fullbody.jpg",
+      "path": "assets/ai-girls/doubao/doubao-fullbody.jpg",
+      "gitBlobSha1": "db2ce3b0f1dbf7e9f9943a97c5151664c86260e6",
+      "sha256": "5b52f8e147abac0abc8c8f557445237090d6c22b98d1bd9ac99c5469aa03fafa"
+    },
+    {
+      "upstream": "characters/doubao/official/doubao-avatar.png",
+      "path": "assets/ai-girls/doubao/doubao-avatar.png",
+      "gitBlobSha1": "3f46c94bf417de9f78278ff99b4bf5f07dea2ae2",
+      "sha256": "3f50295851accd33c7d68e27ad88fbbe439b783fe9e068ffdfa0d1e88c8c3268"
+    }
+  ],
+  "derived": {
+    "path": "assets/ai-girls/doubao/doubao-cutout.png",
+    "sha256": "c0d88e7c1a22076866d2de58619e2d3f707b01e2e1d767044d08ad6a4f2b46b4",
+    "method": "edge-connected light-blue alpha removal; original RGB pixels retained; no generative editing",
+    "crop": [
+      196,
+      75,
+      524,
+      1206
+    ],
+    "isOfficialFullbody": false,
+    "license": "No blanket open license asserted; see upstream NOTICE"
+  }
+}

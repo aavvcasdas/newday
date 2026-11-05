@@ -20,7 +20,11 @@ export function validateCameraPlan(shot) {
   }
   if (shot.push && shot.pushes) throw new Error('每镜只能声明一次主运镜，不同时使用 push/pushes');
   if (shot.pushes != null && !Array.isArray(shot.pushes)) throw new Error('pushes 必须为数组');
-  const moves = shot.pushes || (shot.push ? [shot.push] : []);
+  if (shot.cameraIntent && shot.cameraIntent.type !== 'static' && (shot.push || shot.pushes)) throw new Error('cameraIntent不可叠加旧push');
+  const ci=shot.cameraIntent;
+  if(ci && (!['static','push','pull','pan','follow'].includes(ci.type)||!ci.reason)) throw new Error('cameraIntent缺类型/理由');
+  const im=ci&&ci.type!=='static'?{at:ci.at,duration:ci.duration,...ci.to}:null;
+  const moves = im?[im]:(shot.pushes || (shot.push ? [shot.push] : []));
   if (moves.length > 1) throw new Error('每镜只允许一个主运镜，禁止连续推拉叠加');
   for (const move of moves) {
     if (!move || typeof move !== 'object') throw new Error('push 必须为对象');
@@ -38,7 +42,8 @@ export function validateCameraPlan(shot) {
 /** 固定机位，无开场隐式三段推拉。push 可推近、拉远或平移，完成后保持终点。 */
 export function cameraFor(shot, t, cues = []) {
   const base = { ...(CAMERA_PRESETS[shot.framing] || { z: 1.08, cx: 640, cy: 378 }), ...(shot.camera || {}) };
-  const move = shot.push || shot.pushes?.[0];
+  const ci=shot.cameraIntent;
+  const move = ci&&ci.type!=='static'?{at:ci.at,duration:ci.duration,...ci.to}:(shot.push || shot.pushes?.[0]);
   if (!move) return ambientCamera(t, base);
   const start = move.line != null ? cues[move.line - 1]?.start : (move.at ?? shot.start);
   if (!Number.isFinite(start)) throw new Error('显式运镜缺少已绑定的起点');

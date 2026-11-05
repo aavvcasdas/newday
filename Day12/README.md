@@ -1,70 +1,72 @@
-# Day12｜鲸鱼摇人：指定原音源有声重做
+# Day12 v2｜豆包入画，移除笨鱼立绘
 
-## 直接交付
+## 交付与审看状态
 
-- **[播放完整有声BGM版](成片/Day12_鲸鱼摇人_有声BGM版.mp4)**：104.300秒，1920×1080，30fps，3129帧。
-- [3:4封面](封面/Day12_封面_3比4.png) · [横版封面](封面/Day12_封面_横版.png)
-- **[标题、简介、话题](发布文案.md)**
-- [本轮实测音画双栏与逐镜表](Day12有声分镜.md)
-- [本轮完整验收报告](../tools/day12制作/final_check.json)
+- **[完整有声BGM重渲染版](成片/Day12_鲸鱼摇人_有声BGM版.mp4)**：104.3秒、1920×1080、30fps、3129帧。
+- **[四段动态审看片](样片/Day12_v2_四段动态审看_有声.mp4)**：从这次BGM母版剪出，33.1秒，开场／C03错误／C07纠偏／完整C09结尾；不是连续剧情。精确来源区间和母版SHA见[v2_review.json](../tools/day12制作/v2_review.json)。
+- [v2九镜实施导演表](Day12_v2修复导演表.md) · [技术验收及人工待审状态](../tools/day12制作/final_check.json)
+- [竖版封面](封面/Day12_封面_3比4.png) · [横版封面](封面/Day12_封面_横版.png) · [标题简介](发布文案.md)
 
-这不是给原33.43秒无声样片贴音轨：按用户指定的根目录`鲸鱼摇人_克隆配音_最终版.wav`重新编排/完整渲染九镜。旧无声样片及报告仍留在[样片](样片/README.md)，仅作历史，不代表本轮有声验收。
+**自动技术检查与真人动态审看分开。**`final_check.json`中的`automatedPassed=true`表示技术检查通过；`passed=false / approvalStatus=pending_human_dynamic_review`表示还没有真人对四段进行实时播放批准。抽帧、差分和结构检查均不冒充人工动态审看；全片可以播放，不把它标成已获人工最终批准。
 
-## 本轮改动
+## 这次具体改了什么
 
-- **关闭聚光灯**；开场用平面双行高对比钩子横幅（不是光束）保证可读性，合规角标另有深底；不持续推拉、不原地大抖；idleMotion=0，只有显式走位/反应。仅结尾一次0.7秒拉远，其后固定。
-- 实跑Vosk中文ASR（231词），用原稿拼音序列映射修正文案。41个事件绑定**真实整词区间**，不按字数均分，不称逐字音素强制对齐。错词/邻词不确定项公开保留。
-- @豆包、通知递入、入职先排、夸口后道歉、拉向笨鱼的帮手条、护碗、划掉敲代码、标记距离/熬人、翻面、推要求、圈疑点、候选递回老大、末句实体大饼与拒绝斜线，都有词点可见事件。C08旧标记与新疑点分行保留，避免出现空圈。
-- 豆包只有标牌/帮手纸，不新增脸或声线。角色仍用固定上游原PNG；道具移位/翻面是2D演示，**未冒称完整手掌接触动画**。
-- 程序化128 BPM轻芯片风BGM，按对白ducking；仅4处显式轻音效，不另加默认片头撞击。对白段伴奏平均低约20.86 dB；源音频原速完整保留。
-- 封面复用现有原角色、中文安全边界检查；未生成新角色脸。只制作发布素材，未发布/代发评论。
+- **笨鱼的所有角色画面均移除**，但原配音/字幕中的“笨鱼”仍保留；用岗位纸入画表现回归，不把鲸鱼原图当第二个笨鱼。
+- **真正加入豆包已有全身素材**，出现在C02／C03／C08／C09；相对本鲸缩小，留出纸面空间。C05改为本鲸单人反问，豆包以帮手纸承接，避免再挤满两个角色。
+- 固定PNG：**不做眨眼、口型、局部五官、真实头转或脸部插值**。已有本鲸姿态通过0.25秒身体顿挫和半程切PNG到位；豆包只作整体呼吸/滑入，绝不冒称有多个豆包姿态或手部校准。
+- `idleMotion`使用0.35–0.4，连续3.8秒相位不因切镜/换句重置；词点身体轻顿挫、后仰/前倾有明确起止，组合位移封顶4px。不恢复周期相机漂移或大晃。
+- 九镜均有`cameraIntent`：follow、pan、push、static、pull；每镜最多一个主运镜，到位锁定。C04从完整人物推成裁脚反应近景，不只是换一个景别标签；C06无人桌面insert，static理由明确。
+- 纸条入场0.45秒缓动，落点微弹；要求纸0.5秒滑动；划线0.22秒、圈记0.25秒逐笔长出；通知翻面0.4秒压缩换背面。道歉条独立滑入，万能经历被划掉的是“所有岗位”，不划否定句制造反义。
+- 每镜声明`ambient[] / bodyEvents[] / propTracks[] / transitions / insertEmphasis[]`，实际由共用渲染器执行。稀疏尘埃、评论光标、通知弹入提供环境层小动态；0.2秒淡入/滑动只作用场景，不让字幕两层叠字。
+- 保持**无聚光灯、无尾卡**；保留原速配音、BGM对白ducking及4个既有词点轻音效。不叠第二套“说话推镜”去破坏单主运镜约束。
 
-### 为什么字幕是24行
+### 豆包来源与处理边界
 
-原25行锁稿`Day12配音台词.txt`不改。实际音源开头直接说“笨鱼又回来了”，**没有读“找新朋友来帮忙。”**。
-本片另用[24行视频字幕稿](Day12视频字幕台词.txt)，不补录、不把缺失首句硬塞进0秒。
-ASR保留未编辑输出与置信度；自动拼音映射不是真人听审，声线身份未核验。
+用户指定仓库：`shuaizenge/ai-girls`，固定提交`dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76`。
 
-源文件WAV头帧数异常；真实解码为104.3秒，不是旧接收记录误读的26843秒。原字节SHA256始终为`4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00`。
+使用`characters/doubao/generated/doubao-fullbody.jpg`：**来源仓库已有的生成参考全身，不是官方发布的全身原图**。本轮只抠除边缘连通的浅蓝背景、裁透明边，保留原RGB；没有再生图、重绘脸或把三视图当多套动作。原文件、官方头像参考、仓库说明、NOTICE与SHA记录保存在[assets/ai-girls/doubao](../assets/ai-girls/doubao/)。
 
-### 尾段不造假
+[素材清单与派生记录](../assets/ai-girls/doubao/source.json) · [源仓库NOTICE](../assets/ai-girls/doubao/NOTICE.md)。公开仓库不等于统一商用授权；不额外声明CC0/MIT或官方合作。商用/发布前需自行核实相应权利。
 
-末句RMS界为103.575秒；原音源本来就有0.725秒低能量尾段。为保留完整指定原源，明确使用`--preserve-source-tail`例外：必须整片与原源等长、尾段≤1秒、10ms RMS峰值低于−45dB，实际为−53.46dB。没有延长cue、没有新增尾卡。其他影片默认0.15–0.35秒尾段规则不变。
+## 真实时间与原稿
 
-## 验收与限制
+原25行`Day12配音台词.txt`、Day11锁稿和指定WAV均未改。音源没有读首句“找新朋友来帮忙。”，本片继续用原先已说明的[24行视频字幕稿](Day12视频字幕台词.txt)，不补录、不硬塞首句。
 
-|项目|证据|
+保留实际Vosk 231词和41个语义词点。它们是**真实整词区间＋自动拼音序列映射**，不是按字数均分、不是音素级强制对齐，也未声称真人听审/声线身份核验。原始ASR错词、置信度和不确定映射保留在`asr_words.json / alignment_review.json`。
+
+源音频104.3秒；原WAV头帧数异常已在接收记录纠正，不更改原字节。SHA256：`4782532083e1eb18f17a10dbe3956a439633f338a1d0c62607b13f632b035f00`。
+
+末句RMS界103.575秒后有原生0.725秒低能量尾段。继续使用严格的“完整原源尾静音”例外：视频必须与原源等长，尾段≤1秒且10ms RMS峰值低于−45dB；没有延长cue假造语音。其他影片默认0.15–0.35秒规则不变。
+
+## 分项验收
+
+|项目|报告|
 |---|---|
-|原源SHA、24行逐句/逐屏文本、1080p30、完整解码、原速零偏移人声|[dry_media_check.json](../tools/day12制作/dry_media_check.json)|
-|伴奏独立stem、视频基本流复制、减stem恢复人声、增益/峰值/ducking|[bgm_check.json](../tools/day12制作/bgm_check.json)|
-|41个词绑定、24行均有事件、3129帧几何检查、固定机位/不压眼口/桌脚安全区|[production_check.json](../tools/day12制作/production_check.json)|
-|3129帧实际编码解码，无黑/平帧；28张关键帧对照当前渲染器|[encoded_check.json](../tools/day12制作/encoded_check.json)|
-|51屏中点、气口、换屏边界；最终BGM片复查|[final_subtitle_check.json](../tools/day12制作/final_subtitle_check.json)|
-|前两秒可见事件与合成画面|[opener_check.json](../tools/day12制作/opener_check.json)|
-|原稿未改、全部报告绑定同一成片SHA、测试|[final_check.json](../tools/day12制作/final_check.json)|
+|九镜结构、可执行v2字段、缺素材检查；不冒称视觉批准|[storyboard_v2_check.json](../tools/day12制作/storyboard_v2_check.json)|
+|41词绑定、24行事件、无笨鱼立绘、素材SHA、身体幅度、单次相机轨迹/到位保持|[production_check.json](../tools/day12制作/production_check.json)|
+|实际整片解码、无黑/平帧、30张编码关键帧对照；全画面差分及词点间隙动态|[encoded_check.json](../tools/day12制作/encoded_check.json)|
+|原配音零偏移/原速、51屏文本/时间与实际字幕、原生尾段|[dry_media_check.json](../tools/day12制作/dry_media_check.json)|
+|独立stem、视频流不改、减stem恢复人声、峰值/增益/对白ducking|[bgm_check.json](../tools/day12制作/bgm_check.json)|
+|最终BGM版51屏上/下屏、气口与换屏帧差|[final_subtitle_check.json](../tools/day12制作/final_subtitle_check.json)|
+|开场亮度/事件/声音，未降低旧阈值|[opener_check.json](../tools/day12制作/opener_check.json)|
+|技术报告与成片SHA汇总；真人动态批准单列pending|[final_check.json](../tools/day12制作/final_check.json)|
 
-字幕色框/帧差检查不是OCR；ASR词区间不是音素对齐；静帧抽看不是完整真人实时观影/听审。手纸真实接触没有冒称通过。旧`episode.spec.mjs`、旧导演表、旧planning报告是历史25行无声方案，本片权威为`episode.production.spec.mjs`与本轮有声分镜。没有把旧spec直接改ready绕门禁；本轮ready方案有独立音源/字幕/语义轨和实际编码验证。
+**v2不以脸部ROI运动验收“活”。**实际编码全画面差分检查最长近零差分段≤15帧；≥0.4秒的词点间隙还要有全画面小动态。环境运动不算角色位移，身体另有数值上限，相机另验证单调一次到位。纸/手未校准真实接触不冒称实现。四段须真人播放后才能补人工批准，静帧看起来正常不算这一项通过。
 
 ## 复现
 
-依赖：Node、`npm ci --prefix tools/engine`；Python独立虚拟环境内`numpy pillow vosk pypinyin`；可用的FFmpeg/FFprobe（可通过`FFMPEG`、`FFPROBE`环境变量指定）。
+依赖：Node与`npm ci --prefix tools/engine`；Python独立环境`numpy pillow vosk pypinyin`；FFmpeg/FFprobe，可通过`FFMPEG / FFPROBE`指定。原ASR与实测轴已入库，无需为重渲染重新下载识别模型。
 
 ```bash
-# gh已配置的GitHub连接；只恢复固定原blob并校验SHA，不执行上游脚本、不生成替代脸
 python tools/day12制作/restore_sample_assets.py --manifest tools/day12制作/production_assets.json
-# 若重跑ASR，先自行取得Vosk中文模型并指定绝对路径；缓存模型权重不入Git
-python tools/音频/transcribe_vosk.py --voice 鲸鱼摇人_克隆配音_最终版.wav --model /实际模型目录 --out tools/day12制作/asr_words.json
-python tools/day12制作/align_production.py
-# 下列完整流程：渲染→实际干声验收→混音→最终字幕/解码/开场→封面→单测→SHA汇总
+python tools/day12制作/prepare_doubao.py --verify-only
+# 若需重建背景抠除：不带--verify-only；缺原图时按清单固定blob恢复
+# 先输出干声四段预览（不是连续片、不是人工批准）
+node tools/day12制作/render_review_v2.mjs
+# 完整渲染→技术门禁→混音→编码/字幕/开场→从新母版剪四段→封面/单测→SHA汇总
 python tools/day12制作/finish_day12.py --render
-# 已有本轮干声基片则省去渲染（混音/所有实际验收仍重跑）
+# 已有当前干声基片时省去渲染，其余实际检查仍重跑
 python tools/day12制作/finish_day12.py
 ```
 
-模型镜像固定`jimy7945/vosk-model-cn@c3eca5074b0ac967ecd6dd107e0dd64d9a7c5e28`；仅权重，非执行其来源脚本；未擅自声明模型许可。原始识别/模型来源/不确定项见`asr_words.json`、`alignment_review.json`；字与词映射过程在`align_production.py`。
-
-干声基片、stem和检查抽帧可重建，按.gitignore不重复入Git；正式BGM片与两张封面入库。入口没有调用旧25行planning的累计final门禁冒充BGM验收，指定原音源版用上述显式流程，干声与混音分别验证。
-
-## 文案与人格历史
-
-[原锁稿](Day12配音台词.txt) · [原文案/因果自检](Day12文案.md) · [剧情skill](../00_运营总览/skills/剧情生成/SKILL.md)。大肥鱼/鲸鱼娘仍是主角，魔丸只是人格移植；Day11锁稿不变。
+干声基片、stem、抽帧按.gitignore可重建；本轮BGM母版、四段审看片、两张封面入库。历史33.43秒无声样片与v1规划不代表本次结果。未代发视频、评论或实际@任何账号。

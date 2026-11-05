@@ -4,6 +4,7 @@ import { CALIBRATION, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
 import { PROP_REGISTRY, propBottom } from './prop_registry.mjs';
 import { validateOpenerActors } from './opener_director.mjs';
 import { validateCameraPlan } from './camera_plan.mjs';
+import { IMAGE_ACTORS,validatePerformanceShot } from './performance_v2.mjs';
 import { validateSemanticTracks } from './semantic_tracks.mjs';
 import { validateDirection, validateShotContrast } from './director_contract.mjs';
 import { createHash } from 'node:crypto';
@@ -30,7 +31,7 @@ function posesOf(actor) {
 export function validateActor(actor, where) {
   if (!actor || typeof actor !== 'object') throw new Error(`${where} 角色配置缺失`);
   for (const pose of posesOf(actor)) {
-    if (!VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
+    if (actor.assetId ? !IMAGE_ACTORS[actor.assetId] : !VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
   }
   if (actor.action != null) throw new Error(`${where} action 尚未接入统一引擎；28个旧动作不能冒充可执行的姿态`);
   if (actor.idleMotion != null && (!Number.isFinite(actor.idleMotion) || actor.idleMotion < 0 || actor.idleMotion > 1)) throw new Error(`${where} idleMotion 必须在0..1`);
@@ -96,6 +97,7 @@ export function validateSpec(spec, opts = {}) {
     if (!Number.isInteger(shot.fromLine) || !Number.isInteger(shot.toLine) || shot.fromLine > shot.toLine) throw new Error(`${where} fromLine/toLine 无效`);
     if (cueCount != null && (shot.fromLine < 1 || shot.toLine > cueCount)) throw new Error(`${where} 行号超出台词范围`);
     validateCameraPlan(shot);
+    if(spec.performanceVersion===2)validatePerformanceShot(shot);
     if (shot.semanticTracks) validateSemanticTracks(shot.semanticTracks, where);
     if (spec.directorVersion === 1) {
       validateDirection(shot, { cues: opts.cues, final: i === spec.shots.length - 1, requireWordTimes: opts.requireWordTimes });

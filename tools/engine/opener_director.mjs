@@ -127,6 +127,7 @@ export function drawRolePlates(ctx, plates, t, enterAt = 0.85) {
 /** 顶部路人钩子横幅（仅 0-2.8s，正片第 0 帧之上，无独立片头）。 */
 export function drawOpenerHookBanner(ctx, t, hook = {}) {
   const st = openerBannerState(t);
+  if(hook.enterDuration&&t<hook.enterDuration){const q=Math.max(0,t/hook.enterDuration);st.scale=.88+.12*easeOutBack(q);st.alpha=.65+.35*q;}
   if (!st.visible) return false;
   const prefix = hook.headlinePrefix || '';
   const highlight = hook.headlineHighlight || '';

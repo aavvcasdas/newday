@@ -17,6 +17,7 @@ import { getProp, assertForegroundWithinStage } from './prop_registry.mjs';
 import { loadContactActors, actorAnchors, drawContactActor } from '../互动元素/actor_contacts.mjs';
 import { CORE } from '../互动元素/cue_props_engine.mjs';
 import { cameraFor } from './camera_plan.mjs';
+import {bodyPerformance,loadImageActors,drawImageActor,drawAmbient} from './performance_v2.mjs';
 import { drawSemanticTracks } from './semantic_tracks.mjs';
 export { ambientCamera, cameraFor, CAMERA_PRESETS } from './camera_plan.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
@@ -118,9 +119,12 @@ export function resolveActor(plan, t, line, cues = []) {
       anim = { ...anim, bones: { ...anim.bones, ...gaitAnim(t, start, duration).bones } };
     }
   }
-  const body = livingBody(t, seed, plan.idleMotion ?? 1);
+  const perf=plan.performanceV2?bodyPerformance(plan,t):null;
+  const body = perf?{dx:perf.dx,dy:perf.dy,lean:perf.lean,squash:0}:livingBody(t, seed, plan.idleMotion ?? 1);
+  if(perf?.pose)pose=perf.pose;
   return {
-    pose, name: plan.name, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: plan.u ?? 38,
+    assetId:plan.assetId,height:plan.height,opacity:perf?.opacity??1,imageScale:perf?.scale??1,
+    pose, name: plan.name, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: (plan.u ?? 38)*(perf?.scale??1),
     flip: !!plan.flip, lean: (plan.lean ?? 0) + body.lean, squash: body.squash, anim,
   };
 }
@@ -170,8 +174,9 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
   const duration = spec.preserveSourceDuration ? alignment.source_duration_seconds : cues[cues.length - 1].end + 0.24;
   const frames = Math.ceil(duration * FPS);
   const actorPlans = [spec.opener.actorA, spec.opener.actorB, ...spec.shots.flatMap((s) => s.actors || s.actorsPlan || [])];
-  const poses = [...new Set(actorPlans.flatMap((a) => [a.pose || 'idle', ...(a.poses || []).map((p) => p.pose), ...(a.poseChanges || []).map((p) => p.pose)]))];
+  const poses = [...new Set(actorPlans.filter(a=>!a.assetId).flatMap((a) => [a.pose || 'idle', ...(a.poses || []).map((p) => p.pose), ...(a.poseChanges || []).map((p) => p.pose)]))];
   await loadContactActors({ createCanvas, loadImage, poses });
+  await loadImageActors(actorPlans);
   const sub = createDay2Subtitle({ fontOf: (n, w) => `${w} ${n}px NotoSansSC`, measureCtx: createCanvas(1, 1).getContext('2d') });
   const stamp = spec.opener.stampWord
     ? { time: resolveWordTime(cues, spec.opener.stampWord.line, spec.opener.stampWord.char).time, text: spec.opener.stampText, at: spec.opener.stampAt || [640, 520] }
@@ -221,14 +226,15 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
             drawProp(g, ref, t, ref.carry ? 1 : 0.85 + 0.15 * smooth((rawTime - from) / 0.25));
           }
         },
-        actors: (g) => { for (const a of actors) drawContactActor(g, a); },
+        actors: (g) => { for (const a of actors) {if(a.assetId)drawImageActor(g,a);else drawContactActor(g,a);} },
         foreground: (g) => {
           if (shot.foregroundTable) {
             const { x, y, width } = shot.foregroundTable;
             drawForegroundTable(g, x, y, width);
           }
           drawSemanticTracks(g, rawTime, shot.semanticTracks);
-          for (const a of actors) if (a.name) drawText(g, a.name, a.x, a.y - 10.4 * a.u - 18, 17, '#E5E8DD');
+          drawAmbient(g,rawTime,shot.ambient);
+          for (const a of actors) if (a.name && a.opacity>.7 && !(isOpener&&spec.performanceVersion===2)) drawText(g, a.name, a.x, a.y - (a.assetId?a.height:10.4*a.u) - 18, 17, '#E5E8DD');
           // 头顶身份铭牌（场景空间，位于头顶上方，不贴角色本体）
           if (isOpener && spec.opener.rolePlates) {
             const plates = spec.opener.rolePlates.map((text, i) => {
@@ -272,8 +278,18 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
     if (s) sub.draw(ctx, { lines: sub.wrap(s.text), speaker: spec.speaker || '本鲸', vis: 1, W, H });
   }
 
+  const transitionCanvas=createCanvas(W*1.5,H*1.5),previousCanvas=createCanvas(W*1.5,H*1.5);
+  let previousKey=null;
   function renderFrame(ctx, rawTime, opts = {}) {
-    const info = renderScene(ctx, rawTime, opts);
+    const shot=shotAt(rawTime),tr=shot.transitions,age=rawTime-shot.start,index=shots.indexOf(shot);
+    let info;
+    if(index>0&&tr&&tr.type!=='none'&&age>=0&&age<tr.duration){
+      if(previousKey!==shot.id){const pg=previousCanvas.getContext('2d');pg.setTransform(1.5,0,0,1.5,0,0);pg.clearRect(0,0,W,H);renderScene(pg,shot.start-1/30,opts);previousKey=shot.id;}
+      const ng=transitionCanvas.getContext('2d');ng.setTransform(1.5,0,0,1.5,0,0);ng.clearRect(0,0,W,H);info=renderScene(ng,rawTime,opts);
+      const q=smooth(age/tr.duration);ctx.save();ctx.drawImage(previousCanvas,0,0,W,H);
+      if(tr.type==='fade')ctx.globalAlpha=q;
+      ctx.drawImage(transitionCanvas,tr.type==='slide'?(1-q)*W:0,0,W,H);ctx.restore();
+    }else info=renderScene(ctx, rawTime, opts);
     if (!opts.noHud) renderHud(ctx, rawTime);
     return info;
   }
