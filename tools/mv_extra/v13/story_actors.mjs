@@ -5,10 +5,16 @@ import {ROOT, loadImage} from './actors.mjs';
 const lead={};
 for(const n of ['whale_swim','whale_point','whale_bird']) lead[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}.png`));
 const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird_cutout.png'));
+const story={};
+for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const mapping={claude:'claude_letter',gemini:'gemini_shell',doubao:'doubao_cup',gpt:'gpt_letter',kimi:'kimi_photo',qwen:'qwen_lantern',zai:'zai_read'};
 const guest={};
 for(const [name,pose] of Object.entries(mapping))guest[name]=await loadImage(path.join(ROOT,'assets/ai-girls/actions-v12',`${pose}.png`));
 export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
+ if(index===12||index===13||index===14){
+  c.save();c.globalAlpha*=alpha;c.translate(x,y);if(flipX)c.scale(-1,1);
+  c.drawImage(story.whale_sit_final_retry,-h*384/416/2,-h,h*384/416,h);c.restore();return {row:0,column:0};
+ }
  const n=index===25||index===26?'whale_swim':index===9?'whale_point':index===29?'whale_bird':null;
  if(!n)return false;
  const lt=Math.max(0,t-shot.start),dur=Math.max(0.2,shot.end-shot.start);
@@ -32,6 +38,19 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  return {row:0,column:f};
 }
 export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
+ if(shot.index===25||shot.index===26){
+  // Avoid land-only tea cups / lanterns underwater. These swimming cels travel
+  // through the scene but are not yet articulated limb animation.
+  const n=name==='kimi'?'kimi_underwater_final':name==='gemini'?'gemini_swim':null;
+  if(!n)return {row:0,column:0};
+  const p=Math.max(0,Math.min(1,(t-shot.start)/(shot.end-shot.start)));
+  const im=story[n], crop=n==='kimi_underwater_final'?[0,120,384,288]:[0,70,384,336];
+  // Missing-cast wing positions were designed for upright figures; keep the
+  // wider swimming silhouettes in frame and orient them toward the centre.
+  const w=h*crop[2]/crop[3], swimX=n==='kimi_underwater_final'?210+50*p:1030-45*p;
+  c.save();c.globalAlpha*=alpha;c.translate(swimX,y+Math.sin(t*3)*7);if(n==='kimi_underwater_final')c.scale(-1,1);
+  c.drawImage(im,...crop,-w/2,-h,w,h);c.restore();return {row:0,column:0};
+ }
  const im=guest[name]; if(!im)return false;
  const d=[350,220,180,180,180,400,350,180,180,180,1000],lt=Math.max(0,(t-shot.start)*1000-['doubao','claude','gemini','qwen','gpt','kimi','zai'].indexOf(name)*80);let ms=lt, f=0;
  while(f<10&&ms>=d[f]){ms-=d[f++];}

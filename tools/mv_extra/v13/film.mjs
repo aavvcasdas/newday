@@ -273,7 +273,7 @@ export function buildStills() {
   console.log('Stills generated: cast sheet, 32-shot sheet, 16-line strips, and 16:9 + 3:4 covers.');
 }
 
-async function encodeVideoRange({
+export async function encodeVideoRange({
   startFrame,
   endFrame,
   outPath,

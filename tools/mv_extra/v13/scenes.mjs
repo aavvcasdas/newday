@@ -14,6 +14,7 @@
 import { createCanvas, travelMotion, recordActor, drawActorProp } from './actors.mjs';
 import { drawCharacter } from './animation.mjs';
 import { drawLead, drawGuest } from './story_actors.mjs';
+import { drawLyricDetails } from './lyric_details.mjs';
 import { directionFor, localClock } from './direction.mjs';
 import { actionForShot, actionFrame } from './actions.mjs';
 import { drawCatenaryGarland, drawDriftingParticles, drawOrigamiBirds, drawMacroForegroundBokeh, drawWindFloraRow, drawVolumetricBeams, drawMiniPolaroid, computeCamera, withCamera } from './diorama.mjs';
@@ -1792,6 +1793,7 @@ export function paintShot(c, t, shot, env) {
   c.save();
   withCamera(c, cam, 0.45, () => paintBaseShot(c, t, shot, env));
   c.restore();
+  drawLyricDetails(c, t, shot);
   // Place the planned companions missing from the original plate at the wings.
   // The characters on the base plate remain the focal pair.
   const missing = shot.cast.filter(name => !sceneCast.has(name));
