@@ -65,3 +65,9 @@ for f in range(16):
  if f in (8,9):frame.paste(closed,(0,0),eye)
  atlas.alpha_composite(frame,(W*f,0))
 atlas.save(OUT/'whale_sit_blink_action.png',optimize=True)
+# Purpose-specific gestures; small movements preserve the generated contact.
+build('kimi_stargaze_seated','kimi_stargaze_seated_under',polygon([(84,87),(100,86),(112,104),(126,126),(149,136),(153,158),(138,170),(111,164),(94,153),(84,138),(77,120)]),(146,151),lambda u:7*(1-u)**2)
+build('zai_clock','zai_clock_under',polygon([(150,230),(164,220),(187,218),(205,218),(225,218),(237,234),(238,259),(221,271),(192,268),(164,268),(150,255)]),(189,249),lambda u:5*(1-u)**2)
+build('whale_camera','whale_camera_under',polygon([(118,208),(131,200),(175,199),(196,200),(212,210),(214,242),(201,257),(173,260),(140,257),(121,246)]),(165,230),lambda u:5*(1-u)**2)
+# Experimental umbrella pose: the moving free arm is separate from the held rod.
+build('doubao_rain_umbrella','doubao_rain_umbrella_under',polygon([(84,155),(109,148),(132,153),(166,150),(190,154),(193,172),(177,186),(152,188),(128,190),(107,199),(86,197),(79,180)]),(183,162),lambda u:12*(1-u)**2)
