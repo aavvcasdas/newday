@@ -464,6 +464,12 @@ function drawSunriseSceneCore(c, t, bound, { showWhale = false, whaleAlpha = 1, 
     });
   }
 
+  // Finale cast belongs to the landscape itself. In S32 this function is
+  // painted inside the scaled postcard, so everyone stays inside its frame.
+  if (sceneShot?.index === 31 || sceneShot?.index === 32) {
+    const guests=[['claude',100],['qwen',235],['kimi',370],['gpt',905],['zai',1040],['gemini',1175]];
+    for (const [name,x] of guests) guest(c,name,{x,y:590,h:166});
+  }
   const doubaoX = showWhale ? 748 : 650;
   guest(c, 'doubao', {
     x: doubaoX,
@@ -1695,7 +1701,7 @@ function paintBaseShot(c, t, shot, env) {
 
   if (id === 'S31_remember_love_self') {
     const reuniteK = easeOut(prog(t, 51.45, 53.32));
-    const whaleAlpha = mix(0.42, 1.0, reuniteK);
+    const whaleAlpha = 1;
     drawSunriseSceneCore(c, t, bound, {
       showWhale: true,
       whaleAlpha,
@@ -1703,35 +1709,7 @@ function paintBaseShot(c, t, shot, env) {
       headlineLine: 0,
     });
 
-    // Three glowing jigsaw pieces flying home into Whale Girl to make her whole again!
-    if (reuniteK < 0.98) {
-      const pieces = [
-        { x0: 270, y0: 250, fill: '#8fd2e8' },
-        { x0: 325, y0: 455, fill: '#f3cf82' },
-        { x0: 660, y0: 268, fill: '#f5a996' },
-      ];
-      pieces.forEach((p, idx) => {
-        const pk = easeOut(clamp((reuniteK - idx * 0.12) / 0.76));
-        const px = mix(p.x0, 504, pk);
-        const py = mix(p.y0, 488, pk);
-        drawExtrudedPiece(
-          c,
-          px,
-          py,
-          44 * (1 - pk * 0.45),
-          38 * (1 - pk * 0.45),
-          { top: 1, right: -1, bottom: 1, left: 0 },
-          {
-            fill: p.fill,
-            side: '#9e7a52',
-            stroke: '#fff7e2',
-            depth: 4,
-            angle: (1 - pk) * (idx - 1) * 0.45,
-            alpha: 1 - clamp((pk - 0.82) / 0.18),
-          }
-        );
-      });
-    }
+    // Do not fly loose pieces through characters or obscure their faces.
 
     drawStampTiles(c, cue, bound, t, { y: 86, darkTheme: true });
     return;

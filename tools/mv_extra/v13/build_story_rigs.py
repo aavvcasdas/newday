@@ -17,6 +17,10 @@ SPECS={
  'whale_walk_retry':('whale_walk_retry_under',[(151,302),(166,304),(170,319),(157,344),(161,384),(125,393),(113,370),(122,343),(138,317)],(157,309),'walk'),
  'kimi_walk_story':('kimi_walk_story_under',[(194,294),(221,295),(226,316),(243,330),(245,378),(214,380),(209,350),(196,335)],(200,306),'walk'),
  'doubao_comfort':('doubao_comfort_under',[(80,175),(106,161),(129,168),(171,160),(189,163),(190,186),(165,193),(126,198),(81,202)],(177,173),'comfort'),
+ 'doubao_memory':('doubao_memory_under',[(88,116),(122,116),(132,158),(172,158),(188,166),(187,190),(165,195),(126,181),(97,179)],(178,174),'offer_left'),
+ 'gpt_star':('gpt_star_under',[(218,182),(239,172),(268,161),(268,119),(320,119),(320,196),(284,211),(251,217),(224,211)],(222,190),'offer_right'),
+ 'gemini_flower':('gemini_flower_under',[(80,157),(117,155),(135,176),(166,190),(170,213),(150,221),(121,206),(82,197)],(163,208),'offer_left'),
+ 'zai_memento':('zai_memento_under',[(92,236),(138,233),(165,240),(170,260),(150,280),(95,278)],(162,247),'offer_left'),
 }
 for name,(under_name,polygon,pivot,kind) in SPECS.items():
  base,apply=normalized(name); under=apply(cutout(fit_raw(under_name)))
@@ -38,6 +42,10 @@ for name,(under_name,polygon,pivot,kind) in SPECS.items():
    angle=7*math.sin(u*math.pi*2); moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   elif kind=='comfort':
    angle=12+14*(1-u)**2; moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
+  elif kind.startswith('offer_'):
+   # Rise towards the offered memento and settle rather than looping a wave.
+   angle=(12 if kind=='offer_left' else -12)*(1-u)**2
+   moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   elif kind=='swimarms':
    angle=7*math.sin(u*math.pi*2); moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   else:
