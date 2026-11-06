@@ -162,3 +162,18 @@ test('bird release strand starts at the hand and slips free toward the bird',()=
  assert.equal(later.release,1);assert.equal(later.endX,later.bx);assert.equal(later.endY,later.by);
  assert.ok(later.bx<atHand.bx && later.by<atHand.by);
 });
+
+test('Qwen farewell hand and blink animate while lantern remains held',async()=>{
+ const im=await loadImage(path.join(dir,'qwen_bird_wave36_action.png'));
+ const c=createCanvas(384,416).getContext('2d');
+ const pixels=(f,x,y,w,h)=>{c.clearRect(0,0,384,416);c.drawImage(im,f*384,0,384,416,0,0,384,416);return Buffer.from(c.getImageData(x,y,w,h).data)};
+ assert.notDeepEqual(pixels(0,230,140,50,70),pixels(4,230,140,50,70));
+ assert.notDeepEqual(pixels(0,149,94,77,33),pixels(9,149,94,77,33));
+ assert.deepEqual(pixels(0,84,166,45,80),pixels(4,84,166,45,80));
+});
+
+test('Qwen farewell phase is continuous at the S28-S29 cut',()=>{
+ const c=createCanvas(500,500).getContext('2d'),opt={x:250,y:450,h:190};
+ const a={index:28,start:44.6,end:1412/30},b={index:29,start:1412/30,end:1460/30};
+ assert.equal(drawGuest(c,'qwen',b.start,a,opt).column,drawGuest(c,'qwen',b.start,b,opt).column);
+});
