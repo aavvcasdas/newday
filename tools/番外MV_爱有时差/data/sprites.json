@@ -142,7 +142,7 @@
         "cellW": 192,
         "cellH": 208,
         "columns": 8,
-        "rows": 16,
+        "rows": 21,
         "footY": 200,
         "standPx": 160,
         "animations": {
@@ -159,10 +159,10 @@
             "row": 1,
             "frames": 4,
             "durationsMs": [
+              160,
               140,
-              120,
-              140,
-              120
+              160,
+              140
             ],
             "loop": true
           },
@@ -170,10 +170,10 @@
             "row": 2,
             "frames": 4,
             "durationsMs": [
+              160,
               140,
-              120,
-              140,
-              120
+              160,
+              140
             ],
             "loop": true
           },
@@ -284,13 +284,53 @@
               520
             ],
             "loop": false
+          },
+          "sit": {
+            "row": 16,
+            "frames": 1,
+            "durationsMs": [
+              620
+            ],
+            "loop": false
+          },
+          "bend": {
+            "row": 17,
+            "frames": 1,
+            "durationsMs": [
+              560
+            ],
+            "loop": false
+          },
+          "look_up": {
+            "row": 18,
+            "frames": 1,
+            "durationsMs": [
+              620
+            ],
+            "loop": false
+          },
+          "back": {
+            "row": 19,
+            "frames": 1,
+            "durationsMs": [
+              700
+            ],
+            "loop": false
+          },
+          "point_up": {
+            "row": 20,
+            "frames": 1,
+            "durationsMs": [
+              560
+            ],
+            "loop": false
           }
         },
         "directions": [],
         "integrity": {
-          "spritesheet_sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180",
+          "spritesheet_sha256": "0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8",
           "width": 1536,
-          "height": 3328
+          "height": 4368
         }
       },
       "petUpstream": {

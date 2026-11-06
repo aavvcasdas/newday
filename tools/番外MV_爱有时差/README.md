@@ -9,11 +9,12 @@
 - `../../番外MV/角色图鉴.png`、`分镜总览.png`、`海报.png`、`分镜/S01..S16_*.png`、`制作说明.md`。
 - `../../番外MV/验收报告.json`：`verify.py` 生成的机器技术验收，不等于人工审看。
 
-## 角色口径（v5，2026-11-06）
+## 角色口径（v6，2026-11-06）
 
 8 位 AI 娘（含当前鲸鱼娘），**无项目配角**。**全 Q 版**；用户指出 v3“人在跳很奇怪”，v4 废弃整图 bounce/hop/sway，改为分层纸艺立体书＋真逐帧宠物动画：
 
-- **鲸鱼娘**：v5 改用本仓库 `tools/角色Q版库/pets/whale` 的 **16 状态 Q 版真帧图集**（AI 生成派生，用户授权 `gen_new`；192×208 格、公共脚底、按 `pet.json` 毫秒）。真多帧循环 `idle`(呼吸眨眼)/`walk-right`/`walk-left`/`wave`/`typing`，另有 point/think/shock/cry/cheer/confident_hips/bow/eat/sleep/handoff/peek。该图集**无 16 向 look 行**，分镜不得对鲸娘用 `look`。上游 pets 图集保留为 `petUpstream`，来源与许可记录不丢。
+- **鲸鱼娘**：v5 改用本仓库 `tools/角色Q版库/pets/whale` 的 **21 状态 Q 版真帧图集**（AI 生成派生，用户授权 `gen_new`；192×208 格、公共脚底、按 `pet.json` 毫秒）。真多帧循环 `idle`(呼吸眨眼)/`walk-right`/`walk-left`/`wave`/`typing`，另有 point/think/shock/cry/cheer/confident_hips/bow/eat/sleep/handoff/peek，以及 v6 新增 look_up/point_up/bend/back/sit（`sit` 实为屈膝欠身、**未使用**）。步态源姿势明确朝右，左向由打包器镜像派生。该图集**无 16 向 look 行**，分镜不得对鲸娘用 `look`。上游 pets 图集保留为 `petUpstream`，来源与许可记录不丢。
+  **重打包角色库后必须 `npm run assets`**：图集是复制进本目录 `assets/` 的，manifest 落后会让新状态被兜底成 idle（v6 已删兜底改抛错，并加 sha/行号/帧数一致性测试）。
 - **GPT**：沿用 `tqlearning/ai-girl-chatgpt-pets` 上游图集（9 状态＋16 方向），按 `pet.json` 毫秒整格播放，不用 jumping 冒充动态。
 - **Claude / Gemini / Kimi / Qwen / Z.AI**：`shuaizenge/ai-girls` Q版 chibi 截帧抠图，作为**静态纸偶**；动态来自镜头、道具、光与事件，不整图跳。
 - **豆包**：上游无 Q 版，沿用 Day12 cutout 做**像素保真分段仿射重排**派生 Q（头×1.25、躯干×0.9/0.62、腿×0.82/0.5，重叠接缝）；正常比例 cutout 归档为 `doubao_normal.png`。文档明确这是派生排版，不是上游 chibi。

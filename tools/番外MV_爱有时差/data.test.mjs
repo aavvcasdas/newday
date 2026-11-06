@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { createHash } from 'node:crypto';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createDay2Subtitle, DAY2_SUB } from '../字幕/day2_style_sub.mjs';
@@ -111,4 +112,63 @@ test('shared Day2 subtitle component is the project default', () => {
   const measureCtx = { font: '', measureText: (t) => ({ width: t.length * 28 }) };
   const sub = createDay2Subtitle({ measureCtx, fontOf: (px, w) => `${w} ${px}px sans-serif` });
   assert.deepEqual(sub.wrap('短句'), ['短句']);
+});
+
+
+test('MV atlas is in sync with the Q library (no stale manifest, no silent idle fallback)', () => {
+  const mv = read('data/sprites.json').characters.whale.pet;
+  const lib = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/角色Q版库/pets/whale/pet.json'), 'utf8'));
+  const libStates = lib.animations.map(a => a.state).sort();
+  assert.deepEqual(Object.keys(mv.animations).sort(), libStates, 'MV manifest must expose every library state');
+  assert.equal(mv.rows, lib.grid.rows);
+  for (const a of lib.animations) {
+    assert.equal(mv.animations[a.state].row, a.row, `${a.state} row`);
+    assert.equal(mv.animations[a.state].frames, a.frame_count, `${a.state} frames`);
+    assert.deepEqual(mv.animations[a.state].durationsMs, a.frame_durations_ms, `${a.state} timings`);
+  }
+  const sha = (f) => createHash('sha256').update(fs.readFileSync(f)).digest('hex');
+  assert.equal(
+    sha(path.join(HERE, mv.file)),
+    sha(path.join(ROOT, 'tools/角色Q版库/pets/whale/spritesheet.png')),
+    'copied atlas bytes must match the library; run npm run assets after rebuilding pets',
+  );
+});
+
+test('every atlas-backed actor state referenced by the film exists in its atlas', () => {
+  const chars = read('data/sprites.json').characters;
+  const vocab = {};
+  for (const [id, c] of Object.entries(chars)) if (c.pet) vocab[id] = new Set(Object.keys(c.pet.animations));
+  const src = fs.readFileSync(path.join(HERE, 'src/film.js'), 'utf8');
+  const whaleStates = new Set();
+  let checked = 0;
+  // 括号配对抓完整 drawActor 调用，单行正则抓不到多行写法
+  for (const m of src.matchAll(/drawActor\(c,\s*'([a-z]+)'/g)) {
+    const id = m[1];
+    if (!vocab[id]) continue;
+    let i = m.index + m[0].length, depth = 1;
+    while (i < src.length && depth) { if (src[i] === '(') depth++; else if (src[i] === ')') depth--; i++; }
+    const call = src.slice(m.index, i);
+    for (const st of call.matchAll(/state:\s*'([a-z_-]+)'/g)) {
+      const name = st[1];
+      assert.ok(vocab[id].has(name), `${id} state '${name}' missing from atlas (line ${src.slice(0, m.index).split('\n').length})`);
+      checked++;
+      if (id === 'whale') whaleStates.add(name);
+    }
+  }
+  assert.ok(checked >= 30, `expected many directed states, got ${checked}`);
+  assert.ok(whaleStates.size >= 10, `expected rich whale blocking, got ${whaleStates.size}`);
+  for (const st of ['look_up', 'point_up', 'bend', 'back']) assert.ok(whaleStates.has(st), `${st} should be directed into the film`);
+  // 语义偏差的姿势不得启用
+  assert.ok(!whaleStates.has('sit'), 'sit is a knee-bent standing pose, must not be directed as a seated action');
+});
+
+test('walk gait faces the direction of travel in the Q library', () => {
+  const lib = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/角色Q版库/pets/whale/pet.json'), 'utf8'));
+  const cast = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/角色Q版库/cast.json'), 'utf8'));
+  const st = cast.characters.whale.states;
+  assert.ok(!st['walk-right'].mirror, 'walk-right source faces right; must not be mirrored');
+  assert.equal(st['walk-left'].mirror, true);
+  const r = lib.animations.find(a => a.state === 'walk-right');
+  assert.ok(r.frame_count >= 4);
+  assert.deepEqual(r.source_poses, ['stride_a', 'stride_b', 'stride_c', 'stride_d']);
 });

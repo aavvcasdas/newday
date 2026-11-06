@@ -188,3 +188,60 @@ export function warmLight(ctx, alpha = 0.18) {
 export function finishPaper(ctx) {
   ctx.save(); ctx.fillStyle = grainPattern(ctx); ctx.fillRect(0, 0, W, H); ctx.restore();
 }
+
+// ---- v5 场景细节：参照用户给定样片的空气感与手作层 ----
+// 全部用便宜的路径绘制，不用 shadowBlur / ctx.filter（软件 canvas 上会慢 50 倍）。
+
+/** 漂浮纸屑/尘埃：缓慢上升＋横向摆动，12fps 量化保持定格手作感。 */
+export function motes(ctx, t, n = 26, alpha = 0.5, tint = '255,246,216') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save();
+  for (let i = 0; i < n; i++) {
+    const sp = 14 + hash(i) * 26;
+    const x = (hash(i * 3.3) * (W + 160) - 80) + Math.sin(q * 0.6 + i) * 26;
+    const y = H + 40 - ((q * sp + hash(i * 7.1) * (H + 200)) % (H + 200));
+    const r = 2 + hash(i * 5.5) * 4;
+    ctx.fillStyle = `rgba(${tint},${alpha * (0.35 + hash(i * 9.1) * 0.65)})`;
+    ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.7, hash(i) * 3.14, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/** 草丛剪纸：坡面上的小簇草叶，给地面加手作细节而不是纯色块。 */
+export function grassTufts(ctx, y, seed, color = '#8fae72', n = 26) {
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const x = hash(i + seed) * (W + 120) - 60;
+    const yy = y + Math.sin(x * 0.004 + seed) * 14 + hash(i * 2.7 + seed) * 60;
+    const h = 10 + hash(i * 4.1 + seed) * 14;
+    for (let b = -1; b <= 1; b++) {
+      ctx.beginPath(); ctx.moveTo(x, yy);
+      ctx.quadraticCurveTo(x + b * 5, yy - h * 0.6, x + b * 9, yy - h);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/** 远处飞鸟：两点折线，缓慢横移，给天空加生命但不抢主体。 */
+export function birds(ctx, t, x0, y0, n = 5, color = 'rgba(90,100,115,0.55)') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const x = x0 + q * (16 + hash(i) * 12) + i * 46, y = y0 + Math.sin(q * 1.2 + i) * 8 + i * 13;
+    const flap = Math.sin(q * 6 + i * 1.7) * 4;
+    ctx.beginPath(); ctx.moveTo(x - 8, y + flap); ctx.lineTo(x, y - 3); ctx.lineTo(x + 8, y + flap); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** 地面接触阴影带：让纸台/坡面与角色脚下有厚度承接。 */
+export function groundShade(ctx, y, alpha = 0.12) {
+  ctx.save();
+  const g = ctx.createLinearGradient(0, y - 30, 0, y + 60);
+  g.addColorStop(0, 'rgba(60,50,40,0)');
+  g.addColorStop(0.5, `rgba(60,50,40,${alpha})`);
+  g.addColorStop(1, 'rgba(60,50,40,0)');
+  ctx.fillStyle = g; ctx.fillRect(-100, y - 30, W + 200, 90);
+  ctx.restore();
+}

@@ -53,7 +53,7 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 硬边界：`MAX_ON_SCREEN=2` 超员抛错；动作只能引用图集真实存在的状态；走位须配 `walk-*` 真步态；拒绝 `idleMotion/livingBody/bodyEvents` 与 bounce/hop/sway；未生成图集的客串不得上场充数；无实测轴只能 `--silent-planning` 出 `measured=false` 无声结构样片，画面自带标识。该轮受单轮 10 张生图上限限制，只完成鲸娘 10 姿势（walk 为真 4 帧循环，idle 当时仍是 point 占位）——**此进度已被下方 v5 段更新：鲸娘现为 16 状态、idle 已是真呼吸眨眼帧、pending 清空**；豆包与 6 位客串的图集仍为 pending，见 `cast.json` 与库 README，不得声称全员动作已接入。Day0–Day12 旧 renderer、锁稿与成片不改不重渲；BGM 第22条、Day2 字幕、常驻角标、尾部0.24s、无片尾卡继续有效。改完须跑 `node --test tools/engine/*.test.mjs` 并推送 `arena/e9e1d8ec-newday`。
 
 
-## 2026-11-06 番外MV v5 完整成片＋同屏≤2人（当前口径，覆盖 v4 的"MV 不回溯"）
+## 2026-11-06 番外MV v5 完整成片＋同屏≤2人（历史留档；成片与 sha 已被下方 v6 段取代）
 
 用户本轮说「继续，然后完整mv」，并在 ask_user 选定 **`cap2_keep_finale`**：MV 正片每镜同屏最多 2 人，**仅终帧 S16 保留全员 hold**。这覆盖上一条里"≤2 人不回溯适用于 MV / MV v4 保持现状"的说法；日更新集仍严格 ≤2 人无例外。
 
@@ -61,4 +61,31 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 
 MV 入口仍是 `tools/番外MV_爱有时差/`：`prepare_assets.mjs` 把 `tools/角色Q版库/pets/whale` 登记为 `characters.whale.pet`（`artOrigin: ai-derived`），**上游图集保留为 `petUpstream`**；`data/shots.json` `directorVersion=5` ＋ `castPolicy{maxOnScreen:2, finaleException:'S16'}`；`src/film.js` 有**逐帧运行时人数探针**，正片超员直接抛错（不是只改声明）。鲸娘因新图集无 look 方向行，分镜不得用 `look`；GPT 沿用上游 pets 与 look。
 
-验收：`npm test` **6/6**、`npm run smoke` 8 镜无报错、`python3 verify.py` **18/18**（新增 `v5_on_screen_cap_two`、`v5_whale_q_library_real_frames`）。成片 1346 帧 / 56.08s / 1080p24 / 音轨 copy，sha256 `a678109b4d98e4e86ed72915d772207649f696e53e742ce051a96ff511381857`。分镜目检发现并修掉两处本轮引入的遮挡：S09 纸条糊脸（轨迹抬到头顶以上）、S08 鲸娘压罐子（走位终点 620→420）。Day13 样例产出已按新图集同步重渲（sha256 `5deec118d4554ea6ec4f01dab08e42a96ebe967b9071060b1a6bba0e6055bcea`）。机器验收不等于人工听审/艺术批准。
+验收（v5 当时）：`npm test` 6/6、`npm run smoke` 8 镜无报错、`python3 verify.py` **18/18**（新增 `v5_on_screen_cap_two`、`v5_whale_q_library_real_frames`）。成片当时 1346 帧 / 56.08s / 1080p24 / 音轨 copy（该版 sha 已过期，现值见下方 v6 段）。分镜目检发现并修掉两处本轮引入的遮挡：S09 纸条糊脸（轨迹抬到头顶以上）、S08 鲸娘压罐子（走位终点 620→420）。Day13 样例产出当时按 16 状态图集重渲（该 sha 已过期，v6 段为现值）。机器验收不等于人工听审/艺术批准。
+
+
+## 2026-11-06 番外MV v6：修 sleep 肢体 / 走路反向 / 站桩，并按样片补画面细节（当前口径）
+
+用户第 2 轮反馈四条：①`sleep` 双腿重复；②走路方向反了；③「现在整体还是站着不动的」，要更丰富的细节动作；④画面细节参照用户给定的《把回忆拼好给你》.mp4。本轮生图额度 10 张已用满。
+
+**①sleep**：旧图画了多余肢体，已重画为侧坐、明确一对腿脚；生图 prompt 现在显式约束肢体数量，规则写进 `agent.md` 第33条(e)。
+
+**②走路反向**：根因是旧 `walk_a/b/c` 偏正面/朝左却登记成 `walk-right`，位移向右而身体朝左＝倒着走。换成明确朝右的 `stride_a/b/c/d` 四帧，左向一律 `mirror` 派生；旧 3 张进 `deprecatedPoses` 留档、退出注册。`cast.json` 加 `generation.facingRule`；`paper_contract.mjs` 加**步态朝向 vs 位移方向门禁**（含 flip 异或）＋3 条回归测试（`paper_contract.test.mjs` 13/13）。
+
+**③站桩**：查出四个独立原因，不是加个晃动就完事——
+- **MV 图集过期**：`assets/` 副本仍是 16 状态而库已 21 状态，`petCell` 的 `|| animations.idle` 把 `look_up/bend/back` **静默兜底成 idle**。已删兜底改抛错、重跑 `prepare_assets`，并加 sha/行号/帧数/时长一致性测试。这是"改了却看不出来"的真正原因。
+- **双重平移**：调用方先 `lerp` 出 x 再交给 `walk` 又平移一次（S01 起点 -40）。契约改为**有 walk 时 x 必须等于 walk.to**，违反抛错。引擎侧本来是直接赋值，无此 bug。
+- **framing 只是标签**：medium/close 完全不影响构图，全片实际一个远景。现 `FRAMINGS` 七档真做 translate/scale 取景。
+- **走位缺失**：S01–S15 补真走入、`bend→handoff` 事件链、`look_up/point_up` 反应；6 位静态纸偶全部加 `enter` 画外推入＋`faceAt` 节拍转身。仍然**不是整图弹跳**。
+
+**④样片细节**：抽帧比对后新增 `motes`/`grassTufts`/`birds`/`groundShade`（纯路径、12fps 量化、**无逐帧 blur**），接入 10 镜；**S10 改背影看烟花**，采纳样片 t36 构图（新增 `back` 状态的动因）。尚未复刻：真正的脸部大特写、四格拼贴的分格内容；歌词仍按项目规则用 Day2 字幕，未改成样片的逐字小纸片。
+
+图集现为 **21 状态 / 26 姿势**，sha256 `0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8` / 970774 B，`edgeClampedPoses=[]`。**两处生图语义偏差如实登记不夸大**：`sit` 实为屈膝欠身站姿（非真坐姿，已登记但故意不用于任何镜头）、`bend` 实为前倾俯身伸手（非深蹲）。豆包仍静态纸偶、6 位客串仍无图集不得上场充数。
+
+`cap2_keep_finale` 不变：正片每镜 ≤2 人，仅终帧 S16 全员 hold。Day0–Day12 不改不重渲。机器验收不等于人工听审/艺术批准。
+
+**v6 验收（本轮实测）**：MV `npm test` **9/9**（新增图集 sha/行号/帧数一致性、全角色状态词表、步态朝向 3 条）、`npm run smoke` 8 镜 `errors=[]`、`python3 verify.py` **18/18**、引擎全量 `node --test tools/engine/*.test.mjs` **54/54**（纸艺契约 13/13）。成片 1346 帧 / 56.08s / 1080p24 / 音轨 copy，sha256 `4809423807c9a62f4318b0f538635d7e60ef439a8e3ab06e198d5570a6c3bca0` / 15524978 B。Day13 样例按 21 状态图集重渲，sha256 `45b1b69ed0a62bc2bfabfc8ca9af560e73c177c8fca0b2bf6333dd24e867c4c0` / 8317206 B。
+
+**本轮新增的防复发机制**：`render.mjs` 在开 ffmpeg 之前做**全时间轴预检**（562 采样）。此前一个不存在的图集状态在 62% 处才抛错、白烧 190s 编码；预检把这类错误压到秒级，并当场揪出 static 测试漏掉的 `group()` 助手里的第三处非法状态（S16 的 gpt `think`）。**删掉静默兜底后共查出 3 处历史遗留非法状态**：S11 gpt `think`→`review`、S15 gpt `wave`→`waving`、S16 group gpt `think`→`review`——它们此前一直被 `|| animations.idle` 掩盖成站桩。
+
+目检证据：从**成片解码**抽帧复核（不是只看渲染器），确认 S01 走入时朝右、S13 朝左镜像、S10 真背影→look_up→cheer、S11 insert 取景不切脚、21 状态动作目录里 sleep 只有一对腿脚。机器验收仍不等于人工听审/艺术批准。

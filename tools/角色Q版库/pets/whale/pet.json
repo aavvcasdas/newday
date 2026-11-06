@@ -8,7 +8,7 @@
   "art_origin": "AI 生成重绘（用户授权）；非上游原画，不主张官方授权",
   "grid": {
     "columns": 8,
-    "rows": 16,
+    "rows": 21,
     "cell_width": 192,
     "cell_height": 208
   },
@@ -48,17 +48,17 @@
       "row": 1,
       "frame_count": 4,
       "frame_durations_ms": [
+        160,
         140,
-        120,
-        140,
-        120
+        160,
+        140
       ],
       "loop": true,
       "source_poses": [
-        "walk_a",
-        "walk_b",
-        "walk_c",
-        "walk_b"
+        "stride_a",
+        "stride_b",
+        "stride_c",
+        "stride_d"
       ],
       "mirrored": false
     },
@@ -69,17 +69,17 @@
       "row": 2,
       "frame_count": 4,
       "frame_durations_ms": [
+        160,
         140,
-        120,
-        140,
-        120
+        160,
+        140
       ],
       "loop": true,
       "source_poses": [
-        "walk_a",
-        "walk_b",
-        "walk_c",
-        "walk_b"
+        "stride_a",
+        "stride_b",
+        "stride_c",
+        "stride_d"
       ],
       "mirrored": true
     },
@@ -285,9 +285,86 @@
         "peek"
       ],
       "mirrored": false
+    },
+    {
+      "state": "sit",
+      "cn": "屈膝欠身",
+      "kind": "hold",
+      "row": 16,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        620
+      ],
+      "loop": false,
+      "source_poses": [
+        "sit"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "bend",
+      "cn": "俯身伸手",
+      "kind": "gesture",
+      "row": 17,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        560
+      ],
+      "loop": false,
+      "source_poses": [
+        "bend"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "look_up",
+      "cn": "仰望惊叹",
+      "kind": "expression",
+      "row": 18,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        620
+      ],
+      "loop": false,
+      "source_poses": [
+        "look_up"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "back",
+      "cn": "背影",
+      "kind": "hold",
+      "row": 19,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        700
+      ],
+      "loop": false,
+      "source_poses": [
+        "back"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "point_up",
+      "cn": "指向上方",
+      "kind": "gesture",
+      "row": 20,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        560
+      ],
+      "loop": false,
+      "source_poses": [
+        "point_up"
+      ],
+      "mirrored": false
     }
   ],
   "generated_poses_sha256": {
+    "back": "aa1bec2b86f1e8727be292483ee403d7adcd37b20d42c47d70f1e3cff89a9f36",
+    "bend": "e39c728c07f585150e536ecb2718453696061e6f06bcada64b5986467db162ba",
     "bow": "cd41c9bb2a86956d5687b8c6ba2317a238b77f8ac22b75036a0b485d6cd3d857",
     "cheer": "0a5ccdb6a55bb4b01b0a8bf07d95aa7ef10d31188a5a11b92bf8e8b16ee1417f",
     "cry": "df7fdccff438239804d3697e41bd0cc00382b1472e61fa1f4653aa6babc9faa3",
@@ -296,23 +373,27 @@
     "hips": "c185be420e4509d434daf31aa7dee612e5ac24d68f3b314b8af5cc18d18222f8",
     "idle_a": "4d7f818f1b7908741d79acb3bbf0dbec73153301fc0b82dc5897c67f3daf4a48",
     "idle_b": "5a34b56825c47c2d410e160c6f48cbf2bd8b8fb4ef245a38f05261d93c3cc74a",
+    "look_up": "e2e2f47cc96fe412976918bba6505c8cf8b31d4aa64635baf94d683ee503da75",
     "peek": "3e5cf940f219721b8a90a0d4bd3d17760d6e6d3c5dabadde3fd1a21a02e872ad",
     "point": "0ae85b8e84cca40f795f5eaececcee02a3e880ab2785d205495dc6e2302090c2",
+    "point_up": "b7bd2366e8b2e9b15638327dfc5181e3bdec88418e434ff5200fc2bcf1ef8066",
     "shock": "118512bfd6755281840c427b45a6d0d545cb49b8739263a003a17677abc6b313",
-    "sleep": "74cf0f7d20c464f4337f01152eb2c551e80988e45b1e36257dc4973bd42c9b50",
+    "sit": "3eee7d0a3924a182d98caf7c45ea763946bb3ca9a58761da6bf9c537f6342d6f",
+    "sleep": "03eacc470c48476bb6d45c24edcfc430afc2039fde4d28dfb7b8d2b634893b0d",
+    "stride_a": "397828d3932c399fc9a292efd7741b5a2873c51a65a145ee1300e34690d53932",
+    "stride_b": "88568f0f551cccab6d1b4d05863ea80ecd585b98e9671db680e4f7eb1f4fe453",
+    "stride_c": "a0a23da06f39c52e5f438338db6e10e88ea85b755c8d78edb92f607a3948c730",
+    "stride_d": "d3ced18e9b8bb6342bff7e1c6b53b5ca01aa12f5f18d4e36755006e320b18d61",
     "think": "0e91b92d607e3f81b3bf74d72cbfac09ee9ebb0ebe53e25d10d5a0a9c2b87db2",
     "typing_a": "655882cb971600873a51c664cc34e4a6d32f0dc3f1b619dba9afa44d03619809",
     "typing_b": "9e1a61f48aee11071c9fe96549d808918938955ea70772ec52aa038d9c96714c",
-    "walk_a": "6daec5d8681a7e432d2caaf3d11c786f58fc95d7275b9cfbc9b1c7742f7914cc",
-    "walk_b": "b2fc3f37ece094ee844361bfb494d11c626ce3ff678751b64b879733a8ded8f4",
-    "walk_c": "41107c02ff710f0755999f238a24463bafcec8ca9179ef0b0170501659cd669c",
     "wave_a": "fe1746865fa0c24277a304bf1ad6aad5eae05c969dd61c96d33ba216da5ad38f",
     "wave_b": "330cc7839197b6e8b311de678f6c08c25fdb3174c815f599e10faf673348d421"
   },
   "pending_poses": [],
   "integrity": {
-    "spritesheet_sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180",
+    "spritesheet_sha256": "0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8",
     "width": 1536,
-    "height": 3328
+    "height": 4368
   }
 }

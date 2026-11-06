@@ -3,8 +3,8 @@
   "ok": true,
   "characters": {
     "whale": {
-      "states": 16,
-      "frames": 27,
+      "states": 21,
+      "frames": 32,
       "cycles": [
         "idle",
         "walk-right",
@@ -20,8 +20,8 @@
         "edgeClampedPoses": []
       },
       "sheet": "pets/whale/spritesheet.png",
-      "bytes": 749625,
-      "sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180"
+      "bytes": 970774,
+      "sha256": "0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8"
     },
     "doubao": {
       "skipped": true,

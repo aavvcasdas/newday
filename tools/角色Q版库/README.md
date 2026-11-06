@@ -25,7 +25,7 @@
 
 | 路径 | 内容 |
 |---|---|
-| `cast.json` | 角色登记、格几何、状态语义（中文名）、待补清单、同屏上限 |
+| `cast.json` | 角色登记、格几何、状态语义（中文名）、朝向规则、弃用姿势、待补清单、同屏上限 |
 | `generations/<id>/<pose>.png` | AI 生成的单姿势原图（白底，一图一姿势） |
 | `build_pets.mjs` | 去白底 → 归一化 → 打包图集＋`pet.json`＋校验报告 |
 | `pets/<id>/spritesheet.png`、`pet.json` | 播放用图集与元数据 |
@@ -35,23 +35,37 @@
 
 ## 当前进度（诚实口径）
 
-主角鲸娘已完成 **20 张姿势 / 16 个状态**（两轮生图，每轮 10 张上限）：
+主角鲸娘已完成 **26 张姿势 / 21 个状态**（三轮生图，每轮 10 张上限）：
 
-- **真多帧循环**：`idle` 慢呼吸＋眨眼（2 帧）、`walk-right` / `walk-left`（4 帧步态，左向镜像）、
+- **真多帧循环**：`idle` 慢呼吸＋眨眼（2 帧）、`walk-right` / `walk-left`（**4 帧强侧面步态**，左向镜像派生）、
   `wave` 打招呼（4 帧）、`typing` 打字（2 帧）
 - **单帧表情/动作**：`point` 指证、`think` 思考、`shock` 震惊、`cry` 委屈、`cheer` 欢呼、
   `confident_hips` 得意、`bow` 道歉合十、`eat` 吃饭、`sleep` 打瞌睡、`handoff` 递拼图、`peek` 探看
+- **本轮新增（细节动作）**：`look_up` 仰望惊叹、`point_up` 指向上方、`bend` 俯身伸手取物、
+  `back` 背影（无脸，用于并肩看烟花/远景）、`sit` 屈膝欠身
+
+### 朝向硬规则（本轮修复）
+
+`cast.json` 的 `generation.facingRule`：**`walk-*` 的源姿势一律画成朝右**，朝左只能由打包器 `mirror: true` 派生。
+上一轮 `walk_a/b/c` 画成偏正面/朝左却登记为 `walk-right`，导致角色**倒着走**；
+现已换成明确朝右的 `stride_a/b/c/d`，旧 3 张移入 `deprecatedPoses`（文件留档，不再注册进图集）。
+
+门禁在 `tools/engine/paper_contract.mjs`：走位方向与步态朝向（含 flip 异或）不一致直接抛错；
+MV 侧 `data.test.mjs` 另有 3 条回归测试。
 
 打包期归一化（`build_report.json` 可核查）：
 
-- **全角色共用一套缩放**，以 `referencePose: idle_a` 定标；多帧动作之间不会忽大忽小，坐姿如实更矮。
-- 水平锚点＝可见 bbox 中心。实测 20 姿势：bbox 中心 **0 次边缘钳制**，帧间漂移 idle 2.0px / walk 1.2px / typing 0.0px；
-  脚底重心锚点反而在 `walk_a/b/c`＋`sleep` 上钳制 4 次，故按实测不采用。
+- **全角色共用一套缩放**，以 `referencePose: idle_a` 定标（`sharedScale` 0.184971）；多帧动作之间不会忽大忽小。
+- 水平锚点＝可见 bbox 中心。实测 26 姿势：bbox 中心 **0 次边缘钳制**；
+  脚底重心锚点会在步态与 sleep 上钳制 4 次并推移身体，故按实测不采用。
 - 整格写入，播放期不再逐帧裁切/居中/拉伸。
+- 图集 sha256 `0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8` / 970774 B / 21 行。
 
 已知偏差（不掩饰）：
 
-- `walk_*` 偏正面小碎步，腿部差异较小，不是强侧面大跨步。
+- **`sleep` 上一轮画出重复双腿（多余肢体），本轮已重画**为侧坐、明确只有一对腿脚；后续坐/蹲姿生图 prompt 必须显式约束肢体数量。
+- **`sit` 不是真坐姿**：生图实为屈膝欠身站姿（大腿未水平）。已如实登记，**故意不用于任何镜头**，不得当长椅坐姿使用。
+- **`bend` 不是深蹲**：实为前倾俯身伸手，只能用作取物前的接近动作。
 - `confident_hips` 生图为双手置身前得意，不是严格叉腰；语义按「得意」使用。
 - `bow` 实为闭眼合十小鞠躬，不是深鞠躬。
 - 豆包仍是 Day12 cutout 派生 Q 的**静态纸偶**（`fallbackSprite`），没有图集；
@@ -87,11 +101,15 @@ python3 tools/init_episode.py --day 13 --title '本集标题'
 
 1. 用生图工具画**一张一姿势**，白底、全身、居中、留边；以该角色已有姿势图作设计基准，保持同一套服装/配色/比例。
 2. 存 `generations/<id>/<pose>.png`。
-3. 在 `cast.json` 的 `states` 里登记：中文语义、帧序列、每帧毫秒、`loop`、`kind`（cycle/gesture/expression/hold）；多帧动作按顺序列 `frames`。
+3. 在 `cast.json` 的 `states` 里登记：中文语义、帧序列、每帧毫秒、`loop`、`kind`（cycle/gesture/expression/hold）；多帧动作按顺序列 `frames`。**步态源姿势必须朝右**，左向用 `mirror: true`。生图若语义与命名不符（如 sit/bend），必须在 `note` 里写实际画到什么，不得夸大。
 4. `node build_pets.mjs --check` 重新打包。
 5. 出动作目录目检；分镜里才允许引用这个状态名。
 
 未登记/未生成的状态会被 `paper_contract` 拒绝，不会被静默当成已有动作。
+
+**消费方必须同步**：MV 等下游把图集复制进自己的 `assets/`，重打包后必须重跑 `npm run assets`。
+本轮实际踩到——MV manifest 落后一个版本（16 vs 21 状态），`look_up`/`bend`/`back` 被 `|| animations.idle`
+静默兜底成站桩，看上去就像"没做动作"。现已删掉该兜底改为抛错，并加 sha/行号/帧数一致性测试。
 
 ## 门禁边界
 

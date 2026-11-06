@@ -97,6 +97,31 @@ try {
   await page.waitForFunction(() => window.__mv && window.__mv.ready, null, { timeout: 120000 });
   console.log('renderer:', await page.evaluate(() => window.__mv.renderer));
 
+  // 全时间轴预检：便宜地跑一遍所有镜头分支，再决定要不要开 ffmpeg。
+  // 之前一个不存在的图集状态在 62% 处才炸，白烧 190s 编码；这类错误必须秒级失败。
+  {
+    const t0 = Date.now();
+    const pf = await page.evaluate(async () => {
+      const D = window.__mv.duration, errs = [], seen = new Set();
+      const ts = [];
+      for (let t = 0; t < D - 0.02; t += 0.1) ts.push(+t.toFixed(3));
+      ts.push(D - 0.05);
+      for (const t of ts) {
+        try { window.__mv.renderAt(t); }
+        catch (e) {
+          const msg = String(e && e.message || e);
+          if (!seen.has(msg)) { seen.add(msg); errs.push({ t, msg }); }
+        }
+      }
+      return { sampled: ts.length, errs };
+    });
+    if (pf.errs.length) {
+      for (const e of pf.errs) console.error(`[preflight] t=${e.t} ${e.msg}`);
+      throw new Error(`全时间轴预检失败：${pf.errs.length} 类错误，未开始编码`);
+    }
+    console.log(`preflight ${pf.sampled} samples clean (${((Date.now() - t0) / 1000).toFixed(1)}s)`);
+  }
+
   async function frame(t) {
     const dataUrl = await page.evaluate((time) => window.__mv.exportFrame(time), t);
     return Buffer.from(dataUrl.split(',')[1], 'base64');

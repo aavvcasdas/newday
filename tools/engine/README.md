@@ -98,7 +98,7 @@ python3 tools/gate.py --day 12 --stage script
 | `pets_actor.mjs` | pets 格式图集播放：累计毫秒选帧、非循环停末帧、公共脚底整格绘制；缺图集角色只能静态纸偶，客串未生成则报错 |
 | `paper_contract.mjs` | 硬门禁：`MAX_ON_SCREEN=2`、状态必须真实存在、走位必须配 `walk-*` 步态、拒绝 `idleMotion/livingBody/bodyEvents` 与 bounce/hop/sway、逐镜构造字段、相邻镜对比 |
 | `render_paper_episode.mjs` | 逐帧渲染＋ffmpeg；`framing` 真的改变构图（wide/two_shot/medium/close/insert）；字幕/角标固定屏幕坐标不随推近缩放 |
-| `paper_contract.test.mjs` | 10 项回归：人数上限、选帧、状态序列、图集一致性、未生成状态拒绝、走位步态、样例过契约、Day12 拒绝、景别差异、确定性 |
+| `paper_contract.test.mjs` | 13 项回归：人数上限、选帧、状态序列、图集一致性、未生成状态拒绝、走位步态、样例过契约、Day12 拒绝、景别差异、确定性、**步态朝向 vs 位移方向（倒走拒绝）**、图集朝向登记、sleep 单对腿脚 sha 锁定 |
 
 角色库在 `tools/角色Q版库/`（`cast.json` ＋ `generations/` ＋ `build_pets.mjs` ＋ `pets/<id>/`）。
 

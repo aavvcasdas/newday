@@ -71,8 +71,20 @@ export function validatePaperActor(actor, where, cast) {
   if (actor.walk) {
     const { from, to, dur } = actor.walk;
     if (![from, to, dur].every(Number.isFinite) || dur <= 0) throw new Error(`${where} ${actor.id} walk 须 from/to/dur 有限且 dur>0`);
-    const gait = states.some((s) => /^walk-/.test(s.state));
-    if (!gait) throw new Error(`${where} ${actor.id} 有走位却没有 walk-* 步态状态：禁止平移滑行`);
+    const gaits = states.map((s) => s.state).filter((n) => /^walk-/.test(n));
+    if (!gaits.length) throw new Error(`${where} ${actor.id} 有走位却没有 walk-* 步态状态：禁止平移滑行`);
+    // 步态朝向必须与位移方向一致，否则就是"倒着走"（本轮用户实际发现的 bug）。
+    // flip 会整体镜像，因此有效朝向 = 步态朝向 XOR flip。
+    const dx = to - from;
+    if (dx !== 0) {
+      const want = dx > 0 ? 'walk-right' : 'walk-left';
+      const gait = gaits[0];
+      const facesRight = (gait === 'walk-right') !== !!actor.flip;
+      if ((dx > 0) !== facesRight) {
+        throw new Error(`${where} ${actor.id} 步态朝向与位移相反：位移 ${from}→${to} 需 ${want}`
+          + `${actor.flip ? '（或 flip 配合反向步态）' : ''}，实为 ${gait}${actor.flip ? ' + flip' : ''}`);
+      }
+    }
   }
   return true;
 }

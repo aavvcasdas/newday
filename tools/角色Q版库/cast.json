@@ -16,7 +16,8 @@
     "reference": "pets 上游鲸娘 idle 格 → 首张 point.png → 其后各姿势以 point.png 为设计基准",
     "backgroundRemoval": "边界连通 flood-fill 去白底；角色 RGB 不重绘",
     "normalization": "全角色共用一套缩放（基准 referencePose 定标）＋脚底 footY=200＋可见 bbox 中心水平锚点（实测 0 边缘钳制，优于脚底重心）；整格写入，播放期不再逐帧裁切/居中/拉伸",
-    "disclosure": "AI 派生美术，非上游原画；不得冒称 ZipZipPipe 原作或官方授权"
+    "disclosure": "AI 派生美术，非上游原画；不得冒称 ZipZipPipe 原作或官方授权",
+    "facingRule": "walk-* 源姿势必须明确朝右；朝左一律用 mirror 派生，禁止把朝左素材直接登记成 walk-right"
   },
   "characters": {
     "whale": {
@@ -43,37 +44,39 @@
         "walk-right": {
           "cn": "向右走",
           "frames": [
-            "walk_a",
-            "walk_b",
-            "walk_c",
-            "walk_b"
+            "stride_a",
+            "stride_b",
+            "stride_c",
+            "stride_d"
           ],
           "durationsMs": [
+            160,
             140,
-            120,
-            140,
-            120
+            160,
+            140
           ],
           "loop": true,
-          "kind": "cycle"
+          "kind": "cycle",
+          "note": "源姿势明确朝右，不镜像。替换旧 walk_a/b/c（那批朝左，登记反了导致倒走）"
         },
         "walk-left": {
           "cn": "向左走",
           "frames": [
-            "walk_a",
-            "walk_b",
-            "walk_c",
-            "walk_b"
+            "stride_a",
+            "stride_b",
+            "stride_c",
+            "stride_d"
           ],
           "durationsMs": [
+            160,
             140,
-            120,
-            140,
-            120
+            160,
+            140
           ],
           "loop": true,
           "kind": "cycle",
-          "mirror": true
+          "mirror": true,
+          "note": "朝右源姿势镜像得到朝左"
         },
         "point": {
           "cn": "指证",
@@ -205,7 +208,7 @@
           ],
           "loop": false,
           "kind": "hold",
-          "note": "坐姿，共用缩放下如实更矮"
+          "note": "坐姿打瞌睡；已重生成修复旧图双腿重复问题，现为一对腿"
         },
         "handoff": {
           "cn": "递拼图",
@@ -228,9 +231,69 @@
           ],
           "loop": false,
           "kind": "expression"
+        },
+        "sit": {
+          "cn": "屈膝欠身",
+          "frames": [
+            "sit"
+          ],
+          "durationsMs": [
+            620
+          ],
+          "loop": false,
+          "kind": "hold",
+          "note": "生图实为屈膝欠身站姿，非真正坐姿（大腿未水平）；不得当长椅坐姿使用"
+        },
+        "bend": {
+          "cn": "俯身伸手",
+          "frames": [
+            "bend"
+          ],
+          "durationsMs": [
+            560
+          ],
+          "loop": false,
+          "kind": "gesture",
+          "note": "生图实为前倾俯身伸手，非深蹲；可用于取物前的接近动作"
+        },
+        "look_up": {
+          "cn": "仰望惊叹",
+          "frames": [
+            "look_up"
+          ],
+          "durationsMs": [
+            620
+          ],
+          "loop": false,
+          "kind": "expression"
+        },
+        "back": {
+          "cn": "背影",
+          "frames": [
+            "back"
+          ],
+          "durationsMs": [
+            700
+          ],
+          "loop": false,
+          "kind": "hold",
+          "note": "纯背面，无面部；用于并肩看远处/烟花的反打"
+        },
+        "point_up": {
+          "cn": "指向上方",
+          "frames": [
+            "point_up"
+          ],
+          "durationsMs": [
+            560
+          ],
+          "loop": false,
+          "kind": "gesture"
         }
       },
       "poses": [
+        "back",
+        "bend",
         "bow",
         "cheer",
         "cry",
@@ -239,21 +302,33 @@
         "hips",
         "idle_a",
         "idle_b",
+        "look_up",
         "peek",
         "point",
+        "point_up",
         "shock",
+        "sit",
         "sleep",
+        "stride_a",
+        "stride_b",
+        "stride_c",
+        "stride_d",
         "think",
         "typing_a",
         "typing_b",
-        "walk_a",
-        "walk_b",
-        "walk_c",
         "wave_a",
         "wave_b"
       ],
       "pending": [],
-      "referencePose": "idle_a"
+      "referencePose": "idle_a",
+      "deprecatedPoses": {
+        "files": [
+          "walk_a",
+          "walk_b",
+          "walk_c"
+        ],
+        "reason": "身体朝左却登记为 walk-right，导致走路反向；已由 stride_* 取代，文件保留归档不再打包"
+      }
     },
     "doubao": {
       "name": "豆包",

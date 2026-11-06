@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "renderer": "Canvas2D paper diorama (v5 · ≤2 on screen, finale excepted)",
+  "renderer": "Canvas2D paper diorama (v6 · ≤2 cast, real gait facing, framing applied)",
   "shots": [
     "S01",
     "S03",
