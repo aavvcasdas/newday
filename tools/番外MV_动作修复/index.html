@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>把回忆拼好给你 · AI娘全员番外</title>
+  <link rel="stylesheet" href="/style.css" />
+  <script type="importmap">
+    {"imports":{"three":"/vendor/three.module.js","three/addons/":"/vendor/addons/"}}
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="eyebrow">NEWDAY · 番外</span>
+        <h1>把回忆拼好给你 <em>AI娘全员</em></h1>
+      </div>
+      <div class="top-actions">
+        <button id="castBtn" class="ghost">全员图鉴</button>
+        <button id="infoBtn" class="ghost">制作说明</button>
+        <a id="downloadBtn" class="primary" href="/media/final.mp4" download>下载成片</a>
+      </div>
+    </header>
+
+    <main class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="gl" aria-hidden="true"></canvas>
+        <canvas id="film" aria-label="MV 画面"></canvas>
+        <div id="loading" class="loading"><div class="spinner"></div><p>正在点亮小世界…</p></div>
+        <button id="bigPlay" class="big-play" aria-label="播放">▶</button>
+      </div>
+      <div class="controls">
+        <button id="playBtn" class="icon" aria-label="播放/暂停">▶</button>
+        <button id="restartBtn" class="icon" aria-label="回到开头">⟲</button>
+        <span id="timecode" class="timecode">00:00 / 00:56</span>
+        <span id="shotLabel" class="shot-label">S01 · 渺小</span>
+        <div class="spacer"></div>
+        <button id="muteBtn" class="icon" aria-label="静音">♪</button>
+        <button id="fullBtn" class="icon" aria-label="全屏">⛶</button>
+      </div>
+      <nav id="chapters" class="chapters" aria-label="歌词分镜"></nav>
+    </main>
+
+    <aside id="castDrawer" class="drawer" hidden>
+      <div class="drawer-head"><h2>AI娘全员 · 8 位</h2><button class="icon close" data-close="castDrawer">×</button></div>
+      <p class="drawer-note">8 位 AI 娘（含鲸鱼娘），无项目配角。v3 主形象为 shuaizenge/ai-girls 的 Q版 chibi 抠图；鲸鱼娘情感特写用 JAdpp/dsh-whale-galgame 差分；动作镜头用 xiaosia/voxel-mv 帧；豆包沿用 Day12 cutout。同一角色同一镜头只出现一种形象。</p>
+      <div id="castGrid" class="cast-grid"></div>
+      <img class="cast-sheet" src="/cast-gallery.png" alt="全员形象图鉴" />
+    </aside>
+
+    <aside id="infoDrawer" class="drawer" hidden>
+      <div class="drawer-head"><h2>制作说明</h2><button class="icon close" data-close="infoDrawer">×</button></div>
+      <div class="info-body">
+        <p><strong>音源：</strong>用户提供的《把回忆拼好给你》.mp4 原速音轨，未变速、未改词、未另配音。</p>
+        <p><strong>歌词：</strong>按用户本轮文本逐字锁定；第5句不补参考片里的“里”。第8句按参考片内部换词点拆成两屏。</p>
+        <p><strong>对轴：</strong>参考片内嵌歌词_tile_的 6fps OCR 调查 + 人工核对，吸附到 24fps；不是逐字声学对齐。Vosk 对演唱轨失败的结果单独保留，未拿来造词时。</p>
+        <p><strong>画面方法：</strong>自有微缩体素舞台＋上游真实角色素材；参照 Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词/确定性逐帧，以及 JohnHeibel/PDoomVideo 的整身 bounce/hop/sway、挤压拉伸、笔刷/iris/wipe/flash 转场方法（未复制其代码/素材）。v3 主形象=ai-girls Q版 chibi 抠图，鲸鱼娘情感特写=dsh-whale-galgame，动作镜头=voxel-mv，豆包=Day12 cutout；同一角色同一镜头单形象。</p>
+        <p><strong>字幕：</strong>复用项目统一 Day2 加更字幕组件；不做逐字点亮。</p>
+        <p><strong>边界：</strong>非官方同人 · AI 生成内容 · 剧情演绎。角色与品牌权利归原权利人；素材许可见 NOTICE。不得冒称官方合作或统一商用授权。</p>
+      </div>
+    </aside>
+    <div id="scrim" class="scrim" hidden></div>
+  </div>
+  <audio id="audio" preload="auto" src="/media/reference.wav"></audio>
+  <script type="module" src="/main.js"></script>
+</body>
+</html>
