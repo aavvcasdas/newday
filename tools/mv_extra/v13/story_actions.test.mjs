@@ -111,3 +111,9 @@ test('shared umbrella cel retains the arm gesture and has no original canopy',as
  const shot={index:13,start:19.03,end:20.67},opt={x:300,y:400,h:300};
  assert.notEqual(drawGuest(c,'doubao',19.03,shot,opt).column,drawGuest(c,'doubao',20.2,shot,opt).column);
 });
+
+
+test('time-zone scene uses the Z.AI watch-hand action',()=>{
+ const c=createCanvas(500,500).getContext('2d'),shot={index:27,start:42.7,end:44.6},opt={x:250,y:440,h:250};
+ assert.notEqual(drawGuest(c,'zai',42.7,shot,opt).column,drawGuest(c,'zai',43.6,shot,opt).column);
+});

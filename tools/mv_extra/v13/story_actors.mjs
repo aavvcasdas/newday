@@ -91,6 +91,7 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(name==='kimi'&&shot.index===11)return drawStoryAction(c,'kimi_stargaze_seated',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='claude'&&shot.index===11)return drawStoryAction(c,'claude_collect',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='claude'&&[1,18,31,32].includes(shot.index))return drawStoryAction(c,'claude_place',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='zai'&&shot.index===27)return drawStoryAction(c,'zai_clock',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='zai'&&[18,31].includes(shot.index))return drawStoryAction(c,'zai_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&[15,16].includes(shot.index))return drawStoryAction(c,'gpt_push_final',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&[30,31,32].includes(shot.index))return drawLegacyAction(c,'gpt_heart',t,shot,{x,y,h,alpha,flipX,noShadow});

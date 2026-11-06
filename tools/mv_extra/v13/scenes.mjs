@@ -1637,6 +1637,8 @@ function paintBaseShot(c, t, shot, env) {
         poly(c, [[0, 548], [680, 532], [680, 720], [0, 720]], '#cbb07c');
         drawTickClock(310, 182, 68, -0.8 + (t - 42.7) * 0.22, 1.2 + (t - 42.7) * 1.6, '#fffaf0', '#c78c44', '#4d3926');
         guest(c, 'doubao', { x: 332, y: 590, h: 292 });
+        // Z.AI reads a pocket watch in the warm side of the time-zone split.
+        guest(c, 'zai', { x: 510, y: 590, h: 215 });
       },
       { stroke: '#fbf1dc', lineWidth: 4.5, tabSize: 0.16 }
     );
