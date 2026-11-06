@@ -5,7 +5,7 @@
  * Upgrades per user review:
  *  1. Protagonist uses pinned Day12 HD Whale Girl anime illustration poses (24 poses, zero 笨鱼,
  *     zero legacy blocky pixel rig) driven by both multi-pose switching and 10-bone LBS mesh.
- *  2. ALL 6 supporting characters (Doubao, 14-pose Chibi Claude, Gemini, Qwen, GPT, Kimi) are
+ *  2. ALL 6 supporting characters (Doubao, Claude, Gemini, Qwen, GPT, Kimi) are
  *     rigged with a Face-Shielded 10-Bone LBS triangle mesh + voxel-mv style beat-locked
  *     choreography phrases (walking, side-tapping, jumping, waving, turning, canon/mirror group
  *     formations, and live prop handoffs) — zero static cutout frames!
@@ -51,7 +51,7 @@ export const GUEST_NAMES = ['doubao', 'claude', 'gemini', 'qwen', 'gpt', 'kimi']
 export const ACTOR_META = {
   whale:  { cn: '鲸鱼娘', accent: '#53b8e6', glow: 'rgba(105, 205, 255, 0.48)', chibi: true },
   doubao: { cn: '豆包',   accent: '#ff8e6e', glow: 'rgba(255, 162, 128, 0.45)', chibi: false },
-  claude: { cn: 'Claude', accent: '#ff9d42', glow: 'rgba(255, 180, 98, 0.48)',  chibi: true },
+  claude: { cn: 'Claude', accent: '#ff9d42', glow: 'rgba(255, 180, 98, 0.48)',  chibi: false },
   gemini: { cn: 'Gemini', accent: '#9d7BFF', glow: 'rgba(172, 140, 255, 0.48)', chibi: false },
   qwen:   { cn: '千问',   accent: '#6c8cff', glow: 'rgba(130, 162, 255, 0.46)', chibi: false },
   gpt:    { cn: 'GPT',    accent: '#7cdbc5', glow: 'rgba(145, 235, 212, 0.45)', chibi: false },
@@ -283,10 +283,10 @@ function buildFaceShieldedRig(img, { chibi = true, addRim = true } = {}) {
 
 // Load raw images & build rigs
 export const images = {};
-for (const n of ['gemini', 'qwen', 'gpt', 'kimi']) {
-  images[n] = await loadImage(path.join(ROOT, `assets/ai-girls/extra-guests/cutouts/${n}.png`));
+for (const n of ['claude', 'gemini', 'gpt', 'kimi']) {
+  images[n] = await loadImage(path.join(ROOT, `assets/ai-girls/galgame/${n}.webp`));
 }
-images.claude = await loadImage(path.join(ROOT, 'assets/ai-girls/extra-guests/claude.png'));
+images.qwen = await loadImage(path.join(ROOT, 'assets/ai-girls/extra-guests/cutouts/qwen.png'));
 images.doubao = await loadImage(path.join(ROOT, 'assets/ai-girls/doubao/doubao-cutout.png'));
 
 const WHALE_RIGS = new Map();
@@ -299,19 +299,8 @@ for (const [pose, fn] of Object.entries(WHALE_POSE_FILES)) {
   WHALE_RIGS.set(pose, buildFaceShieldedRig(im, { chibi: true, addRim: true }));
 }
 
-const CLAUDE_RIGS = new Map();
-for (const [pose, fn] of Object.entries(CLAUDE_POSE_FILES)) {
-  const p = path.join(CLAUDE_CACHE_DIR, fn);
-  if (!fs.existsSync(p)) {
-    throw new Error(`Missing cached Claude Chibi pose ${p} — run setup_v4.py`);
-  }
-  const im = await loadImage(p);
-  // Claude chibi stickers already carry a clean cream sticker outline
-  CLAUDE_RIGS.set(pose, buildFaceShieldedRig(im, { chibi: true, addRim: false }));
-}
-
 const GUEST_RIGS = new Map();
-for (const n of ['doubao', 'gemini', 'qwen', 'gpt', 'kimi']) {
+for (const n of ['doubao', 'claude', 'gemini', 'qwen', 'gpt', 'kimi']) {
   GUEST_RIGS.set(n, buildFaceShieldedRig(images[n], { chibi: false, addRim: true }));
 }
 
@@ -389,7 +378,7 @@ function getRiggedStamp(rigKey, rig, anim) {
       anim: qa,
     });
     STAMP_CACHE.set(key, stamp);
-    if (STAMP_CACHE.size > 256) {
+    if (STAMP_CACHE.size > 32) {
       STAMP_CACHE.delete(STAMP_CACHE.keys().next().value);
     }
   }
@@ -892,7 +881,7 @@ export function whale(
 }
 
 /**
- * Render an active LBS-rigged & beat-choreographed AI companion (Doubao, Claude 12-pose, Gemini, Qwen, GPT, Kimi).
+ * Render an active LBS-rigged & beat-choreographed AI companion using the selected still illustration.
  */
 export function guest(
   c,
@@ -920,19 +909,10 @@ export function guest(
   const targetH = h ?? defaultH;
   const ch = solveChoreography(t, { move, canon, mirror, energy, speed, travel });
 
-  let rig;
-  let rigKey;
-  let resolvedPose = name;
-  if (name === 'claude') {
-    resolvedPose = pose && CLAUDE_RIGS.has(pose) ? pose : ch.claudeCycle;
-    if (!CLAUDE_RIGS.has(resolvedPose)) resolvedPose = 'wave_hi';
-    rig = CLAUDE_RIGS.get(resolvedPose);
-    rigKey = `claude:${resolvedPose}`;
-  } else {
-    rig = GUEST_RIGS.get(name);
-    if (!rig) throw new Error(`Unknown companion: ${name}`);
-    rigKey = `guest:${name}`;
-  }
+  const rig = GUEST_RIGS.get(name);
+  if (!rig) throw new Error(`Unknown companion: ${name}`);
+  const rigKey = `guest:${name}`;
+  const resolvedPose = name;
 
   const px = x + ch.dx;
   const py = y + ch.dy;
@@ -1027,7 +1007,7 @@ export function renderCastSheet() {
   const lineup = [
     { kind: 'whale', label: '鲸鱼娘 (Day12高清主角)', sub: '24姿态 + 10骨蒙皮', x: 196, pose: 'jump_joy', move: 'cheer_jump', prop: 'sparkler' },
     { kind: 'doubao', label: '豆包 (搭档·你)', sub: '10骨蒙皮 + 走位/撑伞/挥手', x: 452, h: 292, move: 'wave_beat', prop: 'lantern' },
-    { kind: 'claude', label: 'Claude 大小姐', sub: '12姿态切换 + 10骨蒙皮', x: 706, h: 256, pose: 'cheer', move: 'clap_step' },
+    { kind: 'claude', label: 'Claude 大小姐', sub: 'Galgame 立绘 + 10骨蒙皮', x: 706, h: 256, pose: 'cheer', move: 'clap_step' },
     { kind: 'gemini', label: 'Gemini', sub: '10骨蒙皮 + 欢呼跳/烟花', x: 960, h: 292, move: 'cheer_jump', prop: 'sparkler' },
     { kind: 'qwen', label: 'Qwen 千问', sub: '10骨蒙皮 + 踏步/灯笼', x: 1214, h: 294, move: 'side_tap', prop: 'paper_boat' },
     { kind: 'gpt', label: 'GPT', sub: '10骨蒙皮 + 拼图收集舞', x: 1468, h: 292, move: 'groove_sway', prop: 'puzzle' },

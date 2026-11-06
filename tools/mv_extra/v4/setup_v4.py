@@ -56,6 +56,16 @@ def main() -> None:
         for fut in futures:
             fut.result()
 
+    galgame = {
+        "claude": "d85403607bc7fcc167e964b1a8a0f918d8355025f833eb364ea1fc99476099c2",
+        "gpt": "f61f587e9eec4f193097b755c7309daedf5ff26398b181661c0f289caa00f2e5",
+        "gemini": "9c7842d4d7d122480d5e5e5cee668eb40675480ffedceea25fcd22a4b9166bba",
+        "kimi": "c6f07e2430a4d102abf4356ac3f785124a894cbf1213e05eec1738204d3943f9",
+    }
+    for name, expected in galgame.items():
+        path = ROOT / "assets/ai-girls/galgame" / f"{name}.webp"
+        assert path.is_file() and sha256_file(path) == expected, f"Galgame asset missing or mismatched: {path}"
+
     doubao = ROOT / "assets/ai-girls/doubao/doubao-cutout.png"
     assert doubao.exists(), f"Missing doubao cutout: {doubao}"
 
@@ -67,7 +77,7 @@ def main() -> None:
 
     print(
         f"v4 setup verified: source audio/video, {len(manifest['actors'])} Day12/Claude HD poses, "
-        f"guest cutouts, and OFL fonts ready."
+        f"galgame cast, guest cutouts, and OFL fonts ready."
     )
 
 
