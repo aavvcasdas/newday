@@ -11,6 +11,14 @@ const actions={};
 for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella','whale_side_rainwalk','whale_side_crouch','whale_rain_reach_blink','kimi_swim_pull','kimi_stargaze_seated_blink','claude_collect_blink','kimi_swim_padded_fixed_stroke35']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
+// Coordinates are in the same logical canvas space as drawLead; this bridge
+// visually links the bird and hand, but does not claim a continuous morph.
+export function birdReleaseGeometry(lt,dur,x,y,h){
+ const fly=clamp((lt-.15)/Math.max(.7,dur-.3)),k=h/416;
+ const bx=x-95*k-150*fly,by=y-208*k-95*fly,release=clamp(fly/.38);
+ const handX=x+(150-192)*k,handY=y-(416-230)*k;
+ return {fly,k,bx,by,release,endX:handX+(bx-handX)*release,endY:handY+(by-handY)*release};
+}
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
  const duration=Math.max(.2,shot.end-shot.start),u=clamp((t-shot.start)/duration);
  const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite','whale_side_rainwalk'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
@@ -79,9 +87,17 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  else {const w=h*384/416;c.drawImage(lead[n],f*384,0,384,416,-w/2,-h,w,h);}
  c.restore();
  if(n==='whale_bird'){
-  const fly=Math.max(0,Math.min(1,(lt-.15)/Math.max(.7,dur-.3))),k=h/416;
-  const x0=x-95*k,y0=y-208*k;
-  c.save();c.globalAlpha*=alpha*(1-Math.max(0,(fly-.8)/.2));c.translate(x0-150*fly,y0-95*fly);c.rotate(-.18*fly);
+  const {fly,k,bx,by,release,endX,endY}=birdReleaseGeometry(lt,dur,x,y,h);
+  // A short red strand remains between the open hand and the origami as it
+  // departs, then slips free. This is a drawn bridge, not a cloth-to-bird morph.
+  if(release<1){
+   c.save();c.globalAlpha*=alpha*(1-release);c.lineCap='round';
+   for(const [color,width] of [['#a64b48',5.5],['#ee8e7e',3.2]]){
+    c.strokeStyle=color;c.lineWidth=width*k;c.beginPath();c.moveTo(endX,endY);
+    c.quadraticCurveTo((endX+bx)/2+13*k,(endY+by)/2+19*k,bx,by+4*k);c.stroke();
+   }c.restore();
+  }
+  c.save();c.globalAlpha*=alpha*(1-Math.max(0,(fly-.8)/.2));c.translate(bx,by);c.rotate(-.18*fly);
   c.drawImage(bird,-bird.width*k/2,-bird.height*k/2,bird.width*k,bird.height*k);c.restore();
  }
  return {row:0,column:f};

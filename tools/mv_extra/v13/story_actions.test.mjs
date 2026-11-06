@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
-import {drawGuest,drawLead} from './story_actors.mjs';
+import {drawGuest,drawLead,birdReleaseGeometry} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
 for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella','whale_side_rainwalk','whale_side_crouch','whale_rain_reach_blink','kimi_swim_pull','kimi_stargaze_seated_blink','claude_collect_blink']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
@@ -151,4 +151,14 @@ test('Kimi underwater arm region moves in the S25 stroke cel',async()=>{
  const before=Buffer.from(c.getImageData(0,285,160,90).data);
  c.clearRect(0,0,384,416);c.drawImage(im,4*384,0,384,416,0,0,384,416);
  assert.notDeepEqual(before,Buffer.from(c.getImageData(0,285,160,90).data));
+});
+
+
+test('bird release strand starts at the hand and slips free toward the bird',()=>{
+ const h=208,x=468,y=592,atHand=birdReleaseGeometry(0,1.6,x,y,h);
+ assert.equal(atHand.release,0);assert.equal(atHand.endX,x+(150-192)*h/416);
+ assert.equal(atHand.endY,y-(416-230)*h/416);
+ const later=birdReleaseGeometry(1,1.6,x,y,h);
+ assert.equal(later.release,1);assert.equal(later.endX,later.bx);assert.equal(later.endY,later.by);
+ assert.ok(later.bx<atHand.bx && later.by<atHand.by);
 });
