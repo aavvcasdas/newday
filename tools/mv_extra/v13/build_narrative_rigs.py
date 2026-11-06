@@ -52,3 +52,16 @@ print('built narrative rigs')
 build('claude_collect','claude_collect_under',polygon([(77,332),(91,323),(119,324),(126,338),(123,365),(113,378),(93,380),(75,368),(71,352)]),(113,328),lambda u:10*(1-u)**2)
 # A small book-and-hands tilt, not a simulated page turn.
 build('whale_read','whale_read_under',polygon([(177,255),(187,240),(195,229),(250,227),(273,220),(279,246),(273,275),(261,285),(224,291),(193,288),(177,279)]),(191,268),lambda u:3*(1-u))
+# Sad walk: one leg articulates; this is not a full natural gait.
+build('whale_rainwalk','whale_rainwalk_under',polygon([(158,305),(180,303),(198,306),(212,332),(226,352),(243,364),(246,388),(222,407),(200,406),(188,385),(177,358),(164,337)]),(167,309),lambda u:6*math.sin(u*math.pi*2))
+# Small raised-leg motion while holding a spool; string attachment is separate.
+build('gemini_kite','gemini_kite_leg_clean',polygon([(203,319),(218,318),(235,323),(240,343),(236,359),(227,369),(213,366),(207,351)]),(207,322),lambda u:6*math.sin(u*math.pi*2))
+# Retain the original sad sitting drawing; only substitute the matching eyes.
+base,apply=normalized('whale_sit_final_retry');closed=apply(cutout(fit_raw('whale_sit_closed')))
+eye=polygon([(120,145),(245,145),(246,187),(120,187)])
+atlas=Image.new('RGBA',(W*16,H))
+for f in range(16):
+ frame=base.copy()
+ if f in (8,9):frame.paste(closed,(0,0),eye)
+ atlas.alpha_composite(frame,(W*f,0))
+atlas.save(OUT/'whale_sit_blink_action.png',optimize=True)

@@ -8,12 +8,12 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
  const duration=Math.max(.2,shot.end-shot.start),u=clamp((t-shot.start)/duration);
- const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
+ const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
  const heldFinal=(shot.index===32 && ['doubao_memory','gpt_star','gemini_flower','zai_memento','claude_place','qwen_reach'].includes(name)) ||
   (shot.index===31 && ['doubao_memory','gpt_star','gemini_flower'].includes(name)) || (shot.index===7 && name==='doubao_comfort');
  const f=heldFinal?15:cycle?Math.min(15,Math.floor(((t-shot.start)/1.25%1)*16)):Math.min(15,Math.floor(u*20));
@@ -49,10 +49,8 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if([1,17,31].includes(index))return drawStoryAction(c,'whale_gather_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===32)return drawStoryAction(c,'whale_selfkind_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===14)return drawStoryAction(c,'whale_rain_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
- if(index===12||index===13){
-  c.save();c.globalAlpha*=alpha;c.translate(x,y);if(flipX)c.scale(-1,1);
-  const w=h*(384/416);c.drawImage(story.whale_sit_final_retry,-w*0.5,-h,w,h);c.restore();return {row:0,column:0};
- }
+ if(index===12)return drawStoryAction(c,'whale_sit_blink',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(index===13)return drawStoryAction(c,'whale_rainwalk',t,shot,{x,y,h,alpha,flipX,noShadow});
  const n=index===25||index===26?'whale_swim':index===9?'whale_point':index===29?'whale_bird':null;
  if(!n)return false;
  const lt=Math.max(0,t-shot.start),dur=Math.max(0.2,shot.end-shot.start);
@@ -84,6 +82,10 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(name==='gpt'&&[15,16].includes(shot.index))return drawStoryAction(c,'gpt_push_final',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&[30,31,32].includes(shot.index))return drawLegacyAction(c,'gpt_heart',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='doubao'&&[6,7,13,14].includes(shot.index))return drawStoryAction(c,'doubao_comfort',t,shot,{x,y,h,alpha,flipX:false,noShadow});
+ if(name==='gemini'&&shot.index===11){
+  const u=clamp((t-shot.start)/(shot.end-shot.start));
+  return drawStoryAction(c,'gemini_kite',t,shot,{x:x-18*u,y,h,alpha,flipX,noShadow});
+ }
  if(name==='gemini'&&shot.index===5)return drawStoryAction(c,'gemini_star_toss',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&shot.index===19)return drawStoryAction(c,'gpt_sweep',t,shot,{x:x+12*clamp((t-shot.start)/(shot.end-shot.start)),y,h,alpha,flipX,noShadow});
  if(name==='kimi'&&[2,3].includes(shot.index))return drawStoryAction(c,'kimi_walk_story',t,shot,{x:x+25*clamp((t-shot.start)/(shot.end-shot.start)),y,h,alpha,flipX,noShadow});

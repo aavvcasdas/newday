@@ -915,11 +915,13 @@ function paintBaseShot(c, t, shot, env) {
         rect(c, gx, gy + 224, qw, 90, '#e5cfab');
         const kx = gx + 478 + Math.sin(t * 2.4) * 9;
         const ky = gy + 74 + Math.cos(t * 2.1) * 6;
-        // Free trailing string: it is not calibrated to either character's hand.
-        line(c, [[kx - 34, ky + 58], [kx - 18, ky + 34], [kx, ky]], 'rgba(255, 248, 232, 0.8)', 1.3);
+        // The cord begins at Gemini's spool, using the same travel timing as her cel.
+        const kiteU = Math.max(0, Math.min(1, (t-sceneShot.start)/(sceneShot.end-sceneShot.start)));
+        const spoolX = gx + 386 - 18 * kiteU, spoolY = gy + 246 - 190 * (1 - 235/416);
         poly(c, [[kx, ky - 18], [kx + 14, ky], [kx, ky + 18], [kx - 14, ky]], '#e05a4f', '#fff3df', 1.2);
         whale(c, { x: gx + 246, y: gy + 246, u: 19, view: 'front', pose: 'wave', arm: -0.32, variant: 'whale_rain_reach' });
         guest(c, 'gemini', { x: gx + 386, y: gy + 246, h: 190 });
+        line(c, [[spoolX, spoolY], [spoolX + 55, spoolY - 5], [kx - 18, ky + 34], [kx, ky]], 'rgba(255, 248, 232, 0.88)', 1.3);
       },
     ];
 
@@ -1028,7 +1030,7 @@ function paintBaseShot(c, t, shot, env) {
       c.stroke();
     }
 
-    // Mint-green umbrella canopy held over Whale Girl & Doubao (iconic spot-color from ref #13-#14!)
+    // Mint-green umbrella is an environmental object, not a calibrated hand-held prop.
     const umbX = close ? 612 : 636;
     const umbY = close ? 314 : 332;
     const umbR = close ? 176 : 154;

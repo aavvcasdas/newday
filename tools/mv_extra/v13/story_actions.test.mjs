@@ -4,11 +4,11 @@ import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
 import {drawGuest,drawLead} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
-for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read']){
+for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
   const im=await loadImage(path.join(dir,`${name}_action.png`));assert.equal(im.width,384*16);assert.equal(im.height,416);
   const cv=createCanvas(384,416),g=cv.getContext('2d');g.drawImage(im,0,0,384,416,0,0,384,416);const a=Buffer.from(g.getImageData(0,0,384,416).data);
-  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
+  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
   assert.notDeepEqual(a,b);
  });
 }
@@ -36,5 +36,19 @@ test('self embrace includes an actual closed-eye frame',async()=>{
  const cv=createCanvas(384,416),c=cv.getContext('2d');
  c.drawImage(im,0,0,384,416,0,0,384,416);const open=Buffer.from(c.getImageData(120,150,110,45).data);
  c.clearRect(0,0,384,416);c.drawImage(im,11*384,0,384,416,0,0,384,416);const closed=Buffer.from(c.getImageData(120,150,110,45).data);
+ assert.notDeepEqual(open,closed);
+});
+
+test('rain shelter walking uses a different cel from the seated blink',()=>{
+ const c=createCanvas(400,450).getContext('2d'), opt={x:200,y:420,h:300};
+ const seated={index:12,start:0,end:2},walking={index:13,start:2,end:4};
+ assert.equal(drawLead(c,12,1.05,seated,opt).column,10);
+ assert.notEqual(drawLead(c,13,2,walking,opt).column,drawLead(c,13,2.3,walking,opt).column);
+});
+test('sad seated lead has a localized closed-eye frame',async()=>{
+ const im=await loadImage(path.join(dir,'whale_sit_blink_action.png'));
+ const c=createCanvas(384,416).getContext('2d');
+ c.drawImage(im,0,0,384,416,0,0,384,416);const open=Buffer.from(c.getImageData(120,145,126,42).data);
+ c.clearRect(0,0,384,416);c.drawImage(im,9*384,0,384,416,0,0,384,416);const closed=Buffer.from(c.getImageData(120,145,126,42).data);
  assert.notDeepEqual(open,closed);
 });
