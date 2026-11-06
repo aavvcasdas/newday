@@ -7,13 +7,26 @@ for(const n of ['whale_swim','whale_point','whale_bird']) lead[n]=await loadImag
 const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird_cutout.png'));
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
+const actions={};
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+const clamp=x=>Math.max(0,Math.min(1,x));
+function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
+ const duration=Math.max(.2,shot.end-shot.start),u=clamp((t-shot.start)/duration);
+ const cycle=name==='doubao_step';
+ const f=cycle?Math.min(15,Math.floor(((t-shot.start)/1.0%1)*16)):Math.min(15,Math.floor(u*20));
+ if(cycle)x-=55*u;
+ if(!noShadow){c.save();c.globalAlpha*=alpha;c.fillStyle='rgba(18,28,40,.18)';c.beginPath();c.ellipse(x,y+2,h*.23,h*.035,0,0,Math.PI*2);c.fill();c.restore();}
+ c.save();c.globalAlpha*=alpha;c.translate(x,y);if(flipX)c.scale(-1,1);
+ const w=h*384/416;c.drawImage(actions[name],f*384,0,384,416,-w/2,-h,w,h);c.restore();return {row:0,column:f};
+}
 const mapping={claude:'claude_letter',gemini:'gemini_shell',doubao:'doubao_cup',gpt:'gpt_letter',kimi:'kimi_photo',qwen:'qwen_lantern',zai:'zai_read'};
 const guest={};
 for(const [name,pose] of Object.entries(mapping))guest[name]=await loadImage(path.join(ROOT,'assets/ai-girls/actions-v12',`${pose}.png`));
 export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
+ if([1,17,31].includes(index))return drawStoryAction(c,'whale_gather_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===12||index===13||index===14){
   c.save();c.globalAlpha*=alpha;c.translate(x,y);if(flipX)c.scale(-1,1);
-  c.drawImage(story.whale_sit_final_retry,-h*384/416/2,-h,h*384/416,h);c.restore();return {row:0,column:0};
+  const w=h*(384/416);c.drawImage(story.whale_sit_final_retry,-w*0.5,-h,w,h);c.restore();return {row:0,column:0};
  }
  const n=index===25||index===26?'whale_swim':index===9?'whale_point':index===29?'whale_bird':null;
  if(!n)return false;
@@ -38,6 +51,11 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  return {row:0,column:f};
 }
 export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
+ if(name==='claude'&&[1,18,31].includes(shot.index))return drawStoryAction(c,'claude_place',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='zai'&&[18,31].includes(shot.index))return drawStoryAction(c,'zai_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='gpt'&&[15,16].includes(shot.index))return drawStoryAction(c,'gpt_push_final',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='doubao'&&shot.index===13)return drawStoryAction(c,'doubao_step',t,shot,{x,y,h,alpha,flipX:false,noShadow});
+ if(name==='qwen'&&[11,31].includes(shot.index))return drawStoryAction(c,'qwen_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(shot.index===25||shot.index===26){
   // Avoid land-only tea cups / lanterns underwater. These swimming cels travel
   // through the scene but are not yet articulated limb animation.
@@ -49,7 +67,9 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
   // wider swimming silhouettes in frame and orient them toward the centre.
   const w=h*crop[2]/crop[3], swimX=n==='kimi_underwater_final'?210+50*p:1030-45*p;
   c.save();c.globalAlpha*=alpha;c.translate(swimX,y+Math.sin(t*3)*7);if(n==='kimi_underwater_final')c.scale(-1,1);
-  c.drawImage(im,...crop,-w/2,-h,w,h);c.restore();return {row:0,column:0};
+  const frame=Math.min(15,Math.floor(((t-shot.start)/1.25%1)*16));
+  c.drawImage(actions[n],frame*384+crop[0],crop[1],crop[2],crop[3],-w/2,-h,w,h);
+  c.restore();return {row:0,column:frame};
  }
  const im=guest[name]; if(!im)return false;
  const d=[350,220,180,180,180,400,350,180,180,180,1000],lt=Math.max(0,(t-shot.start)*1000-['doubao','claude','gemini','qwen','gpt','kimi','zai'].indexOf(name)*80);let ms=lt, f=0;

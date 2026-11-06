@@ -7,7 +7,18 @@ export function drawLyricDetails(c,t,shot){
  if(i>=4&&i<=5){for(let n=0;n<7;n++){let q=clamp(u*2-n*.12);star(c,210+n*140,186+Math.sin(n*2)*32,3+q*5,`rgba(255,226,145,${.25+q*.7})`)}}
  if(i>=6&&i<=7){for(let n=0;n<7;n++){let q=clamp(u*2-n*.14);c.fillStyle=`rgba(255,222,145,${q*.65})`;c.fillRect(50+n*180,210+(n%2)*38,13,18)}}
  if(i>=9&&i<=10){c.fillStyle='rgba(255,255,250,.86)';const x=900+u*80;c.beginPath();c.moveTo(x,376);c.lineTo(x+13,348);c.lineTo(x+13,376);c.closePath();c.fill();c.fillStyle='#d88962';c.fillRect(x-3,379,23,3)}
- if(i>=12&&i<=14){for(let n=0;n<5;n++)ripple(c,140+n*240,556+(n%2)*27,9+((t*19+n*11)%26),.35);c.fillStyle='rgba(255,215,147,.38)';c.fillRect(90,183,19,34);c.fillRect(1170,202,15,28)}
+ if(i===11){
+  // Four seasonal hints echo the existing four-piece composition.
+  for(let n=0;n<3;n++){const x=70+n*28;c.fillStyle='rgba(115,187,112,.7)';c.beginPath();c.ellipse(x,240+Math.sin(t*2+n)*3,7,3,-.55,0,Math.PI*2);c.fill();}
+  for(let n=0;n<4;n++){c.strokeStyle='rgba(116,186,222,.7)';c.beginPath();c.moveTo(695+n*22,210+(t*40+n*21)%46);c.lineTo(690+n*22,220+(t*40+n*21)%46);c.stroke()}
+  for(let n=0;n<4;n++){c.fillStyle='rgba(231,158,92,.75)';c.save();c.translate(70+n*26,485+((t*18+n*17)%28));c.rotate(.7+n);c.fillRect(-4,-2,8,4);c.restore()}
+  for(let n=0;n<4;n++)star(c,720+n*27,482+(n%2)*14,4,'rgba(244,248,255,.85)');
+ }
+ if(i>=12&&i<=14){
+  for(let n=0;n<5;n++)ripple(c,140+n*240,556+(n%2)*27,9+((t*19+n*11)%26),.35);
+  c.fillStyle='rgba(255,215,147,.38)';c.fillRect(90,183,19,34);c.fillRect(1170,202,15,28);
+  if(i===14){const x=930-110*u,y=540;c.fillStyle='#f9edce';c.beginPath();c.moveTo(x-15,y);c.lineTo(x+17,y);c.lineTo(x+9,y+7);c.lineTo(x-8,y+7);c.closePath();c.fill();c.fillStyle='#dfcaa4';c.beginPath();c.moveTo(x,y-13);c.lineTo(x+9,y);c.lineTo(x,y);c.closePath();c.fill();ripple(c,x,y+9,20,.3)}
+ }
  if(i>=15&&i<=16){const a=.12+.18*u;c.fillStyle=`rgba(255,223,125,${a})`;for(let n=0;n<4;n++){c.beginPath();c.moveTo(640,55);c.lineTo(180+n*270,315);c.lineTo(230+n*270,315);c.closePath();c.fill()}}
  if(i>=17&&i<=19){for(let n=0;n<6;n++){const q=(u+n*.16)%1;star(c,110+n*210,380-q*80,5,'rgba(255,216,104,.7)')}}
  if(i>=20&&i<=23){for(let n=0;n<12;n++){const q=(u+n*.11)%1;star(c,55+n*106,140+q*195,2+(n%3),`rgba(255,219,153,${.7*(1-q)})`)}}

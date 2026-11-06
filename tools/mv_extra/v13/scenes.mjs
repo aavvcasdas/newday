@@ -26,7 +26,8 @@ function whale(c, options = {}) {
   sceneCast.add('whale');
   const index = sceneShot?.index || 1;
   const state = directionFor(index,'whale').state;
-  const h = options.u != null ? options.u * 7.4 : (options.h ?? 228);
+  const baseH = options.u != null ? options.u * 7.4 : (options.h ?? 228);
+  const h = [1,17].includes(index) ? baseH * 1.2 : baseH;
   const x = options.x ?? 520, y = options.y ?? 605;
   const f = drawLead(c,index,sceneTime,sceneShot,{x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow}) || drawCharacter(c,'whale',state,localClock(sceneShot,sceneTime,'whale'), {x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow});
   // The picture visibly contains its puzzle piece. Other inherited props are
@@ -1799,12 +1800,16 @@ export function paintShot(c, t, shot, env) {
   const missing = shot.cast.filter(name => !sceneCast.has(name));
   const slots = [120, 1160, 275, 1005, 365, 915];
   missing.forEach((name, i) => {
-    const x = slots[i % slots.length];
+    const feature = (shot.index === 1 && name === 'claude') || ([15,16].includes(shot.index) && name === 'gpt');
+    const x = feature ? 1050 : slots[i % slots.length];
     const y = shot.id === 'S32_completed_keepsake' ? 535 : 590;
-    const h = shot.id === 'S32_completed_keepsake' ? 120 : 190;
+    const h = shot.id === 'S32_completed_keepsake' ? 120 : feature ? 270 : 190;
     if (name === 'whale') whale(c, { x, y, h });
     else guest(c, name, { x, y, h });
   });
+  // The v8 director plan did not include Z.AI; add her puzzle action in the
+  // treasure-box insert without changing the original background plate.
+  if (shot.index === 18) guest(c, 'zai', {x: 930, y: 594, h: 200});
   if (shot.id !== 'S32_completed_keepsake') {
     if (shot.act === 'D') {
       if (shot.index >= 20 && shot.index <= 23) drawCatenaryGarland(c, t, { y0: 56, y1: 66, sag: 28, count: 13, kind: 'bulbs' });
