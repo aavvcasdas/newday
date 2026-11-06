@@ -635,9 +635,20 @@ function paintBaseShot(c, t, shot, env) {
       view: standUp > 0.65 ? 'q' : 'front',
       pose: standUp > 0.7 ? 'wave' : 'heart',
       kneel: (1 - standUp) * 0.78,
-      heldLantern: standUp < 0.75,
       arm: standUp > 0.7 ? -0.22 : 0,
     });
+
+    // Companion islands share the original starry world and support the feet;
+    // no floor shadows floating unsupported in empty space.
+    const companions = id === 'S04_rain_planet'
+      ? [['kimi', 180, 515], ['claude', 1100, 515]]
+      : [['kimi', 175, 515]];
+    for (const [name, x, y] of companions) {
+      drawExtrudedPiece(c, x - 72, y, 144, 38,
+        { top: 0, right: 1, bottom: 1, left: -1 },
+        { fill: '#788ca4', side: '#435673', stroke: '#d9d9cd', depth: 8 });
+      guest(c, name, {x, y: y + 5, h: 158, noShadow: true});
+    }
 
     // S05: Floating warm golden star-island with Gemini on upper-right!
     if (id === 'S05_star_across') {
