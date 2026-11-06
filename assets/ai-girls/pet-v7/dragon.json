@@ -1,0 +1,33 @@
+{
+  "version": 1,
+  "cell_width": 384,
+  "cell_height": 416,
+  "columns": 8,
+  "rows": 2,
+  "states": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "durations_ms": [
+        280,
+        110,
+        110,
+        140,
+        140,
+        320
+      ]
+    },
+    "thinking": {
+      "row": 1,
+      "frames": 6,
+      "durations_ms": [
+        260,
+        150,
+        120,
+        120,
+        150,
+        260
+      ]
+    }
+  }
+}

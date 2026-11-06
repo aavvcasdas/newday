@@ -1,0 +1,19 @@
+{
+  "version": "v7.0.0",
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "totalFrames": 1681,
+  "durationSeconds": 56.03333333333333,
+  "lyricScriptSha256": "e330c1bb49c617a07f6e8bc95a6ea569827e9ed6445e7a2688bc8242a330b75f",
+  "sourceAudioPath": "assets/mv-extra/user_reference_audio.m4a",
+  "sourceAudioSha256": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+  "sourceAudioMode": "lossless stream copy (-c:a copy) from user_reference_audio.m4a",
+  "sampleAudioMode": "48kHz PCM slice from tools/mv_extra/cache/source48.wav encoded AAC 192k",
+  "masterOutput": {
+    "path": "番外MV/把回忆拼好给你/成片/把回忆拼好给你_v7完整复刻版.mp4",
+    "sha256": "bccdedfb2e32e86c7bc9868dec22bcc8baafad07230e87a8c9a0b48e1c186648",
+    "bytes": 41149290
+  },
+  "sampleOutput": null
+}

@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "cell_width": 384,
+  "cell_height": 416,
+  "columns": 8,
+  "rows": 3,
+  "states": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "durations_ms": [
+        280,
+        110,
+        110,
+        140,
+        140,
+        320
+      ]
+    },
+    "eating": {
+      "row": 1,
+      "frames": 6,
+      "durations_ms": [
+        220,
+        160,
+        170,
+        220,
+        180,
+        180
+      ]
+    },
+    "empty": {
+      "row": 2,
+      "frames": 6,
+      "durations_ms": [
+        300,
+        180,
+        180,
+        180,
+        180,
+        300
+      ]
+    }
+  }
+}
