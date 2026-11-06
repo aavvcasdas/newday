@@ -1,0 +1,11 @@
+{
+  "greyShore": {"bg":"#232a3d","fog":"#39415a","stars":true},
+  "lanternPier": {"bg":"#2b2a44","fog":"#5a4a63","stars":true},
+  "openSea": {"bg":"#1d2b4c","fog":"#3f5f8f","stars":false},
+  "memoryRoom": {"bg":"#2a2438","fog":"#5a4a63","stars":false},
+  "rainStop": {"bg":"#252b3d","fog":"#4a5268","stars":false},
+  "joyWorkshop": {"bg":"#2c2a40","fog":"#6a5a6a","stars":false},
+  "fireworkRooftop": {"bg":"#11182e","fog":"#2c3654","stars":true},
+  "timeBridge": {"bg":"#1c2440","fog":"#4a5268","stars":true},
+  "dawnGarden": {"bg":"#3a2f4e","fog":"#c89a8a","stars":false}
+}
