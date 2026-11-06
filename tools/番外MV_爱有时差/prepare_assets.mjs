@@ -38,7 +38,7 @@ const CHIBI_SOURCES = {
   qwen: 'characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png',
   glm: 'characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png',
 };
-const manifest = { version: 3, targetStandPx: TARGET, primaryForm: 'ai-girls-chibi', characters: {} };
+const manifest = { version: 4, targetStandPx: TARGET, primaryForm: 'q-chibi-pets', characters: {} };
 const cutoutRecords = [];
 
 // Alpha-only white-background cutout. Flood-fill from the image border through
@@ -169,6 +169,31 @@ for (const id of VOXEL_IDS) {
   console.log('chibi+voxel', id, '→', key, Object.keys(v.actions).length, 'actions');
 }
 
+// v4 pet atlases: keep the upstream 192×208 cells intact (FORMAT.md explicitly
+// forbids per-frame autocrop/recenter/stretch). Playback uses pet.json durations.
+for (const [key, petId] of [['whale', 'deepseek-whale'], ['gpt', 'gpt-dragon']]) {
+  const dir = path.join(UP, 'pets/assets', petId);
+  const pj = JSON.parse(fs.readFileSync(path.join(dir, 'pet.json'), 'utf8'));
+  const file = `assets/sprites/pets/${key}.png`;
+  fs.mkdirSync(path.dirname(path.join(HERE, file)), { recursive: true });
+  fs.copyFileSync(path.join(dir, 'spritesheet.png'), path.join(HERE, file));
+  const idleFile = `assets/sprites/pets/${key}_idle.png`;
+  const sheetImg = await loadImage(fs.readFileSync(path.join(HERE, file)));
+  const cell = createCanvas(pj.cell_width, pj.cell_height);
+  cell.getContext('2d').drawImage(sheetImg, 0, 0, pj.cell_width, pj.cell_height, 0, 0, pj.cell_width, pj.cell_height);
+  fs.writeFileSync(path.join(HERE, idleFile), cell.toBuffer('image/png'));
+  manifest.characters[key].pet = {
+    file, preview: idleFile, source: `tqlearning/ai-girl-chatgpt-pets assets/${petId}`,
+    cellW: pj.cell_width, cellH: pj.cell_height, columns: pj.columns, rows: pj.rows,
+    footY: 200, standPx: 160,
+    animations: Object.fromEntries(pj.animations.map(a => [a.state, { row: a.row, frames: a.frame_count, durationsMs: a.frame_durations_ms, loop: ['idle', 'running-right', 'running-left', 'running'].includes(a.state) }])),
+    directions: pj.look_directions.samples,
+    integrity: pj.integrity,
+  };
+  manifest.characters[key].preview = idleFile;
+  console.log('pet atlas', key, pj.animations.length, 'states', pj.look_directions.samples.length, 'looks');
+}
+
 // Whale galgame expression inserts (JAdpp/dsh-whale-galgame, CC BY-NC-SA 4.0 chain).
 const EXPRS = ['cheerful', 'shy', 'serious', 'confused', 'angry', 'frightened', 'exasperated', 'starry'];
 const gimgs = await Promise.all(EXPRS.map(e => loadImage(fs.readFileSync(path.join(UP, 'galgame/assets/default', `whale-${e}.webp`)))));
@@ -182,15 +207,29 @@ manifest.characters.whale.preview = manifest.characters.whale.chibi.file;
 console.log('galgame whale expressions:', EXPRS.length, 'union crop', gmetas[0].width + 'x' + gmetas[0].height);
 
 // Doubao: Day12 cutout of shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg.
+// Upstream has no Q版 doubao, so v4 derives a chibi layout from the SAME cutout
+// pixels (head ×1.25, torso ×0.9/0.62, legs ×0.82/0.5, overlapped seams). This is
+// an affine re-layout, not a redraw; the normal-proportion cutout is archived.
 const doubao = await loadImage(fs.readFileSync(path.join(ROOT, 'assets/ai-girls/doubao/doubao-cutout.png')));
-const [dmeta] = await saveUnion([doubao], ['assets/sprites/doubao.png'], 900);
+const [normalMeta] = await saveUnion([doubao], ['assets/sprites/doubao_normal.png'], 900);
+const qW = 420, qH = 860;
+const qc = createCanvas(qW, qH), qx = qc.getContext('2d');
+const headH = 330, torsoY0 = 300, torsoY1 = 680, legsY0 = 650, hs = 1.25;
+qx.drawImage(doubao, 0, 0, doubao.width, headH, (qW - doubao.width * hs) / 2, 0, doubao.width * hs, headH * hs);
+const tw = doubao.width * 0.9, th = (torsoY1 - torsoY0) * 0.62;
+qx.drawImage(doubao, 0, torsoY0, doubao.width, torsoY1 - torsoY0, (qW - tw) / 2, headH * hs - 40, tw, th);
+const lw = doubao.width * 0.82, lh = (doubao.height - legsY0) * 0.5;
+qx.drawImage(doubao, 0, legsY0, doubao.width, doubao.height - legsY0, (qW - lw) / 2, headH * hs - 40 + th - 30, lw, lh);
+const [dmeta] = await saveUnion([qc], ['assets/sprites/doubao.png'], 900);
 manifest.characters.doubao = {
   kind: 'static',
-  source: 'shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg (Day12 cutout)',
+  source: 'shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg (Day12 cutout → v4 Q版 affine re-layout; not an upstream chibi)',
   preview: dmeta.file,
   sprite: dmeta,
+  normal: normalMeta,
+  qLayout: { headScale: 1.25, torsoScale: [0.9, 0.62], legsScale: [0.82, 0.5], method: 'pixel-preserving segment affine re-layout' },
 };
-console.log('doubao static sprite', dmeta.width + 'x' + dmeta.height);
+console.log('doubao Q sprite', dmeta.width + 'x' + dmeta.height, '(normal archived)');
 
 fs.writeFileSync(path.join(HERE, 'data/sprites.json'), JSON.stringify(manifest, null, 2) + '\n');
 fs.writeFileSync(path.join(HERE, 'data/chibi_cutouts.json'), JSON.stringify({ version: 3, records: cutoutRecords }, null, 2) + '\n');
@@ -204,7 +243,7 @@ s.fillStyle = bg; s.fillRect(0, 0, 1920, 1080);
 s.fillStyle = '#f6ecd8'; s.font = '700 50px "Noto Sans SC"';
 s.fillText('AI娘全员 · 8 位', 64, 84);
 s.fillStyle = '#9fb2cc'; s.font = '24px "Noto Sans SC"';
-s.fillText('主形象 shuaizenge/ai-girls Q版小AI · 鲸鱼娘特写 galgame · 动作镜头 voxel-mv · 豆包 Day12 抠图', 64, 126);
+s.fillText('v4 Q版：鲸娘/GPT 真帧 Pet 动画 · 其余 ai-girls Q版 · 豆包 Day12 抠图 · 无整图弹跳', 64, 126);
 for (let i = 0; i < cast.length; i++) {
   const item = cast[i];
   const x = 64 + (i % 4) * 456, y = 160 + Math.floor(i / 4) * 448, w = 424, h = 424;

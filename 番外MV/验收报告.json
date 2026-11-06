@@ -1,8 +1,8 @@
 {
   "ok": true,
   "final": "/home/user/newday/番外MV/成片/把回忆拼好给你_AI娘全员番外.mp4",
-  "sha256": "e66fce1ccd72c198b077610db394ff0a73e9f4752df2e1e5bf1993c5a2a8ebab",
-  "bytes": 22177842,
+  "sha256": "671501a50e91515c913897857263cf3b1f2caba4a9da46b1c9fa26d6a8ca6b49",
+  "bytes": 16532147,
   "duration": 56.08,
   "decodedFrames": 1346,
   "ffmpeg": "/home/user/.cache/mv-venv/lib/python3.11/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v9.0.2",
@@ -38,19 +38,14 @@
       "detail": ""
     },
     {
-      "name": "primary_form_ai_girls_chibi",
+      "name": "primary_form_q_chibi_pets",
       "ok": true,
-      "detail": "ai-girls chibi primary + Day12 doubao cutout"
+      "detail": "pets real-frame whale/gpt + ai-girls chibi + Day12-derived Q doubao"
     },
     {
-      "name": "v3_source_routes_used",
+      "name": "v4_paper_stage_no_bounce",
       "ok": true,
-      "detail": "chibi,galgame,static,voxel"
-    },
-    {
-      "name": "shots_single_nonstatic_form",
-      "ok": true,
-      "detail": "one non-static form per shot; doubao static exception"
+      "detail": "layered paper diorama; no whole-image bounce direction"
     },
     {
       "name": "srt_contains_cues",
@@ -90,111 +85,111 @@
     {
       "name": "sample_frames_extracted",
       "ok": true,
-      "detail": "/home/user/newday/.cache/v3-verify-frames"
+      "detail": "../../.cache/v4-verify-frames"
     }
   ],
   "sampleFrames": [
     {
       "t": 2.2,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_00_2.200.png",
+      "file": "../../.cache/v4-verify-frames/check_00_2.200.png",
       "ok": true,
-      "bytes": 1099268
+      "bytes": 1044806
     },
     {
       "t": 6.646,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_01_6.646.png",
+      "file": "../../.cache/v4-verify-frames/check_01_6.646.png",
       "ok": true,
-      "bytes": 1106012
+      "bytes": 1069376
     },
     {
       "t": 10.167,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_02_10.167.png",
+      "file": "../../.cache/v4-verify-frames/check_02_10.167.png",
       "ok": true,
-      "bytes": 1197227
+      "bytes": 984434
     },
     {
       "t": 13.708,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_03_13.708.png",
+      "file": "../../.cache/v4-verify-frames/check_03_13.708.png",
       "ok": true,
-      "bytes": 1352555
+      "bytes": 1111461
     },
     {
       "t": 17.292,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_04_17.292.png",
+      "file": "../../.cache/v4-verify-frames/check_04_17.292.png",
       "ok": true,
-      "bytes": 1144763
+      "bytes": 1144091
     },
     {
       "t": 20.708,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_05_20.708.png",
+      "file": "../../.cache/v4-verify-frames/check_05_20.708.png",
       "ok": true,
-      "bytes": 1118460
+      "bytes": 1027050
     },
     {
       "t": 23.958,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_06_23.958.png",
+      "file": "../../.cache/v4-verify-frames/check_06_23.958.png",
       "ok": true,
-      "bytes": 1350852
+      "bytes": 876179
     },
     {
       "t": 27.208,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_07_27.208.png",
+      "file": "../../.cache/v4-verify-frames/check_07_27.208.png",
       "ok": true,
-      "bytes": 1148412
+      "bytes": 1245343
     },
     {
       "t": 30.208,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_08_30.208.png",
+      "file": "../../.cache/v4-verify-frames/check_08_30.208.png",
       "ok": true,
-      "bytes": 962402
+      "bytes": 1058963
     },
     {
       "t": 33.542,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_09_33.542.png",
+      "file": "../../.cache/v4-verify-frames/check_09_33.542.png",
       "ok": true,
-      "bytes": 1007084
+      "bytes": 1249075
     },
     {
       "t": 37.292,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_10_37.292.png",
+      "file": "../../.cache/v4-verify-frames/check_10_37.292.png",
       "ok": true,
-      "bytes": 754668
+      "bytes": 1048464
     },
     {
       "t": 40.708,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_11_40.708.png",
+      "file": "../../.cache/v4-verify-frames/check_11_40.708.png",
       "ok": true,
-      "bytes": 1061319
+      "bytes": 1185882
     },
     {
       "t": 43.625,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_12_43.625.png",
+      "file": "../../.cache/v4-verify-frames/check_12_43.625.png",
       "ok": true,
-      "bytes": 1055264
+      "bytes": 1041378
     },
     {
       "t": 46.792,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_13_46.792.png",
+      "file": "../../.cache/v4-verify-frames/check_13_46.792.png",
       "ok": true,
-      "bytes": 1063187
+      "bytes": 1177783
     },
     {
       "t": 49.896,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_14_49.896.png",
+      "file": "../../.cache/v4-verify-frames/check_14_49.896.png",
       "ok": true,
-      "bytes": 1197226
+      "bytes": 1194004
     },
     {
       "t": 52.604,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_15_52.604.png",
+      "file": "../../.cache/v4-verify-frames/check_15_52.604.png",
       "ok": true,
-      "bytes": 1125108
+      "bytes": 1324276
     },
     {
       "t": 55.883,
-      "file": "/home/user/newday/.cache/v3-verify-frames/check_16_55.883.png",
+      "file": "../../.cache/v4-verify-frames/check_16_55.883.png",
       "ok": true,
-      "bytes": 1084836
+      "bytes": 1336372
     }
   ],
   "note": "Machine technical check only; not a human visual/audio approval."

@@ -58,16 +58,12 @@ try {
     setExportSize: (w, h) => film.setExportSize(w, h),
     exportSceneRaw: async (t) => {
       const { canvas } = film.renderSceneOnly(t);
-      const c = document.createElement('canvas');
-      c.width = canvas.width; c.height = canvas.height;
-      const cx = c.getContext('2d');
-      cx.drawImage(canvas, 0, 0);
-      const data = cx.getImageData(0, 0, c.width, c.height).data;
+      const data = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
       const r = await fetch('/frame', { method: 'POST', body: data.buffer });
       if (!r.ok) throw new Error('frame sink ' + r.status);
-      return { w: c.width, h: c.height, bytes: data.length };
+      return { w: canvas.width, h: canvas.height, bytes: data.length };
     },
-    renderer: film.engine.renderer.getContext().getParameter(film.engine.renderer.getContext().RENDERER),
+    renderer: film.rendererName,
   };
   loading.style.display = 'none';
   render(0);

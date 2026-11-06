@@ -36,35 +36,25 @@ test('all 8 upstream AI girls are directed into the MV, no supporting cast', () 
   assert.equal(cast.length, 8);
   assert.equal(data.supportingCount, 0);
   assert.deepEqual([...ids].sort(), ['claude', 'doubao', 'gemini', 'gpt', 'kimi', 'qwen', 'whale', 'zai']);
-  // every directed performance must exist in the upstream-sprite manifest
-  const sprites = read('data/sprites.json').characters;
-  assert.equal(read('data/sprites.json').primaryForm, 'ai-girls-chibi');
-  let chibiShots = 0;
-  for (const s of shots) {
-    const arts = new Set();
-    for (const id of s.cast) {
-      const p = (s.perform || {})[id];
-      assert.ok(p, `${s.id} missing perform ${id}`);
-      const ch = sprites[id];
-      assert.ok(ch, `${s.id} perform ${id}`);
-      const art = p.art || (ch.kind === 'static' ? 'static' : ch.chibi ? 'chibi' : 'voxel');
-      arts.add(art);
-      if (art === 'chibi') { assert.ok(ch.chibi, `${s.id} ${id} chibi`); chibiShots++; }
-      else if (art === 'static') assert.ok(ch.sprite, `${s.id} ${id} static`);
-      else if (art === 'galgame') {
-        assert.ok(ch.galgame.expressions[p.expr], `${s.id} ${id} expr ${p.expr}`);
-        if (p.then) assert.ok(ch.galgame.expressions[p.then], `${s.id} ${id} then ${p.then}`);
-      } else if (art === 'voxel') {
-        for (const a of [p.action, p.then, p.walk ? 'walk_side' : null].filter(Boolean)) {
-          assert.ok(ch.actions[a], `${s.id} ${id} action ${a}`);
-        }
-      } else assert.fail(`unknown art ${art}`);
+  // v4: all-Q routing. whale/gpt have real pet atlases; the other five use
+  // ai-girls chibi cutouts; doubao is a Day12-cutout-derived Q layout.
+  const manifest = read('data/sprites.json');
+  const sprites = manifest.characters;
+  assert.equal(manifest.primaryForm, 'q-chibi-pets');
+  for (const id of ['whale', 'gpt']) {
+    const pet = sprites[id].pet;
+    assert.ok(pet, `${id} pet atlas`);
+    assert.equal(pet.cellW, 192); assert.equal(pet.cellH, 208);
+    for (const st of ['idle', 'running-right', 'running-left', 'waving', 'failed', 'waiting', 'review']) {
+      assert.ok(pet.animations[st], `${id} pet state ${st}`);
+      assert.equal(pet.animations[st].durationsMs.length, pet.animations[st].frames);
     }
-    // One non-static form per shot; doubao may remain the fixed Day12 static cutout.
-    const nonStatic = [...arts].filter(a => a !== 'static');
-    assert.ok(nonStatic.length <= 1, `${s.id} mixes forms: ${nonStatic}`);
+    assert.equal(pet.directions.length, 16);
   }
-  assert.ok(chibiShots >= 8, 'ai-girls chibi must be the primary form');
+  for (const id of ['claude', 'gemini', 'kimi', 'qwen', 'zai']) assert.ok(sprites[id].chibi, `${id} chibi`);
+  assert.ok(sprites.doubao.sprite && sprites.doubao.qLayout, 'doubao derived Q layout');
+  assert.ok(shots.every(s => s.stage === 'paper-diorama' && s.motion), 'paper stage + directed motion');
+  assert.ok(!shots.some(s => /bounce|hop|sway/i.test(s.motion || '')), 'no whole-image bounce direction');
 });
 
 test('shot sets have export palettes', () => {

@@ -55,24 +55,8 @@ function composite(buf, f) {
   const pal = palette[shot.set];
   overlay.drawBackdrop(outCtx, W, H, pal, t, pal.stars);
   outCtx.drawImage(sceneCanvas, 0, 0, W, H);
-  // Match the browser preview's miniature tilt-shift: blur only top/bottom bands.
-  blurCtx.clearRect(0, 0, 480, 270);
-  blurCtx.filter = 'blur(1.4px)';
-  blurCtx.drawImage(sceneCanvas, 0, 0, 480, 270);
-  blurCtx.filter = 'none';
-  blurCtx.globalCompositeOperation = 'destination-in';
-  const mask = blurCtx.createLinearGradient(0, 0, 0, 270);
-  mask.addColorStop(0, 'rgba(0,0,0,0.7)');
-  mask.addColorStop(0.2, 'rgba(0,0,0,0)');
-  mask.addColorStop(0.78, 'rgba(0,0,0,0)');
-  mask.addColorStop(1, 'rgba(0,0,0,0.6)');
-  blurCtx.fillStyle = mask;
-  blurCtx.fillRect(0, 0, 480, 270);
-  blurCtx.globalCompositeOperation = 'source-over';
-  outCtx.drawImage(blurCanvas, 0, 0, W, H);
   overlay.drawVignette(outCtx, W, H);
   overlay.drawTransition(outCtx, shot, t, W, H);
-  overlay.drawPolaroid(outCtx, shot, t, W, H);
   overlay.drawKeyword(outCtx, shot, t, W, H);
   overlay.drawSubtitle(outCtx, SUB, cue, t, W, H);
   overlay.drawBadge(outCtx, W, H);

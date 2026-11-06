@@ -1,424 +1,284 @@
-// Deterministic lyric-MV compositor. Every frame is a function of song time.
-// Narrative-interface method reference: Nyankomintsu/world-execute-me-lyric-mv
-// (MIT; no silhouettes, lyrics, or audio copied from that project).
-import * as THREE from 'three';
-import { createEngine, W, H } from './engine.js';
-import { drawTransition } from './overlay.js';
-import { createDay2Subtitle } from '/shared/day2_style_sub.mjs';
+// v4 · 把回忆拼好给你 · AI娘全员番外（爱有时差）
+// Canvas2D layered paper diorama. Pure function of t; no real-time capture.
+// Character motion: whale/gpt use tqlearning/ai-girl-chatgpt-pets real atlases
+// (pet.json durations, full 192×208 cells, common foot baseline). Other girls are
+// ai-girls Q版 cutouts / Day12 doubao cutout held as paper puppets — life comes
+// from camera, props, light and events, never whole-image bounce.
 import timeline from '../data/timeline.json' with { type: 'json' };
-import shotPlan from '../data/shots.json' with { type: 'json' };
-import castData from '../data/cast.json' with { type: 'json' };
-import features from '../data/audio_features.json' with { type: 'json' };
+import shotData from '../data/shots.json' with { type: 'json' };
 import sprites from '../data/sprites.json' with { type: 'json' };
+import * as P from './paper.js';
+import { drawVignette, drawTransition, drawKeyword, drawSubtitle, drawBadge } from './overlay.js';
+import { createDay2Subtitle } from '/shared/day2_style_sub.mjs';
 
-const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
-const lerp = (a, b, k) => a + (b - a) * k;
-const smooth = (k) => { k = clamp(k); return k * k * (3 - 2 * k); };
-const easeOut = (k) => 1 - Math.pow(1 - clamp(k), 3);
-const hash = (n) => { const x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+const { W, H, clamp, lerp, ease, smooth, hash, jitter } = P;
+const FPS = timeline.fps;
+const SHOTS = shotData.shots.map((s, i) => ({ ...s, cue: timeline.cues[i], index: i, start: i === 0 ? 0 : timeline.cues[i].start, end: i + 1 < shotData.shots.length ? timeline.cues[i + 1].start : timeline.duration }));
+const shotAt = t => SHOTS.find(s => t >= s.start && t < s.end) || SHOTS[SHOTS.length - 1];
+const cueAt = t => timeline.cues.find(c => t >= c.start && t < c.end) || null;
 
-const SHOTS = shotPlan.shots.map((s, i) => {
-  const cue = timeline.cues[i];
-  const start = i === 0 ? 0 : cue.start;
-  const end = i === timeline.cues.length - 1 ? timeline.duration : timeline.cues[i + 1].start;
-  return { ...s, index: i, start, end, cue };
-});
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = () => rej(new Error('image ' + src)); i.src = '/' + src; }); }
 
-const CAM = [
-  { from: [9, 7.2, 15], to: [6.8, 5.6, 12], look: [-0.8, 1.2, 0.8] },
-  { from: [5.2, 4.2, 9.5], to: [4.6, 3.9, 8.8], look: [-1.1, 1.3, 1.0] },
-  { from: [7.5, 5.0, 11.5], to: [5.8, 4.4, 10], look: [0, 1.2, 0.9] },
-  { from: [6.5, 5.0, 11], to: [10, 7.5, 17], look: [0, 1.0, -1] },
-  { from: [0, 6.5, 17], to: [1.5, 6.0, 15.5], look: [0, 1.2, 1.0] },
-  { from: [3.8, 3.2, 8], to: [3.8, 3.2, 8], look: [0, 1.3, 1.9] },
-  { from: [6.0, 4.5, 10.5], to: [4.8, 4.0, 9.2], look: [0.8, 1.4, 1.2] },
-  { from: [0, 6.2, 16.5], to: [1.2, 5.8, 15], look: [0, 1.2, 1.0] },
-  { from: [-0.5, 2.6, 6.5], to: [-1.2, 2.4, 5.8], look: [-2.4, 1.4, 1.3] },
-  { from: [0, 6.8, 17.5], to: [0, 7.6, 16.5], look: [0, 2.6, 0] },
-  { from: [0, 6.0, 15.5], to: [0, 6.0, 15.5], look: [0, 1.5, 1.0] },
-  { from: [-0.8, 2.5, 6.2], to: [-1.4, 2.3, 5.6], look: [-2.4, 1.4, 1.3] },
-  { from: [8.5, 6.0, 14], to: [8.5, 6.0, 14], look: [0, 1.5, 0.8] },
-  { from: [6.0, 4.8, 11], to: [4.8, 4.2, 9.6], look: [-0.5, 1.2, 0.8] },
-  { from: [0, 6.8, 17.5], to: [1.5, 7.4, 19], look: [0, 1.2, 1.0] },
-  { from: [0, 7.4, 19], to: [0, 8.0, 20.5], look: [0, 1.2, 1.0] },
-];
+// ---- pet atlas playback (no autocrop / no recenter / no stretch per frame) ----
+function petCell(meta, state, lt) {
+  if (state && state.look != null) {
+    const d = meta.directions.reduce((a, b) => Math.abs(b.degrees - state.look) < Math.abs(a.degrees - state.look) ? b : a);
+    return { row: d.row, col: d.column };
+  }
+  const name = state?.state || 'idle';
+  const a = meta.animations[name] || meta.animations.idle;
+  const total = a.durationsMs.reduce((x, y) => x + y, 0);
+  let ms = (lt * 1000) % total;
+  if (!a.loop) ms = Math.min(lt * 1000, total - 1);
+  let f = 0; while (f < a.frames - 1 && ms >= a.durationsMs[f]) { ms -= a.durationsMs[f]; f++; }
+  return { row: a.row, col: f };
+}
+function seqState(seq, lt) {
+  if (!seq) return { state: 'idle' };
+  let acc = 0;
+  for (const s of seq) { const d = s.dur ?? Infinity; if (lt < acc + d) return { ...s, local: lt - acc }; acc += d; }
+  const last = seq[seq.length - 1]; return { ...last, local: lt - acc + (last.dur ?? 0) };
+}
 
 export async function createFilm(glCanvas, outCanvas) {
-  const engine = createEngine(glCanvas);
-  const ctx = outCanvas.getContext('2d');
-  outCanvas.width = W; outCanvas.height = H;
-  const blurCanvas = document.createElement('canvas');
-  blurCanvas.width = 480; blurCanvas.height = 270;
-  const bctx = blurCanvas.getContext('2d');
+  const assets = { pet: {}, chibi: {}, static: {} };
+  const jobs = [];
+  for (const [id, m] of Object.entries(sprites.characters)) {
+    if (m.pet) jobs.push(loadImg(m.pet.file).then(i => assets.pet[id] = i));
+    if (m.chibi) jobs.push(loadImg(m.chibi.file).then(i => assets.chibi[id] = i));
+    if (m.sprite) jobs.push(loadImg(m.sprite.file).then(i => assets.static[id] = i));
+  }
+  await Promise.all(jobs);
+  outCanvas.width = 1920; outCanvas.height = 1080;
+  const outCtx = outCanvas.getContext('2d');
+  const sceneCanvas = document.createElement('canvas');
+  let exportW = 1920, exportH = 1080;
+  sceneCanvas.width = exportW; sceneCanvas.height = exportH;
+  const ctx = sceneCanvas.getContext('2d');
+  const measure = document.createElement('canvas').getContext('2d');
+  const SUB = createDay2Subtitle({ measureCtx: measure, fontOf: (px, w) => `${w} ${px}px "Noto Sans SC"` });
 
-  await Promise.all([
-    document.fonts.load('800 28px "Noto Sans SC"'),
-    document.fonts.load('700 52px "Noto Sans SC"'),
-    document.fonts.load('400 96px "ZCOOL KuaiLe"'),
-    document.fonts.load('400 22px "Silkscreen"'),
-  ]);
-  const SUB = createDay2Subtitle({
-    fontOf: (size, weight) => `${weight} ${size}px "Noto Sans SC", sans-serif`,
-    measureCtx: ctx,
-  });
-
-  // Upstream character art (user-directed sources, see NOTICE.md), v3:
-  //   ai-girls Q版 chibi cutouts are the primary form; galgame whale expressions
-  //   are emotional inserts; voxel-mv frames appear only in directed action shots;
-  //   doubao remains the Day12 static cutout. One form per character per shot.
-  const loader = new THREE.TextureLoader();
-  async function loadTex(file) {
-    const tex = await loader.loadAsync('/' + file);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.magFilter = THREE.LinearFilter;
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    tex.anisotropy = 4;
-    return tex;
-  }
-  const neededVoxel = {};
-  const neededExpr = new Set();
-  for (const s of shotPlan.shots) {
-    for (const [id, p] of Object.entries(s.perform || {})) {
-      const ch = sprites.characters[id];
-      if (!ch) continue;
-      if (p.art === 'galgame') {
-        neededExpr.add(p.expr);
-        if (p.then) neededExpr.add(p.then);
-      } else if (p.art === 'voxel') {
-        (neededVoxel[id] ||= new Set()).add(p.action || 'idle');
-        if (p.then) neededVoxel[id].add(p.then);
-        if (p.walk) neededVoxel[id].add('walk_side');
-      }
-    }
-  }
-  const anims = {};   // id -> action -> {fps, loop, texs[]}
-  const exprs = {};   // galgame whale expression -> {tex, meta}
-  const statics = {}; // id -> {tex, meta}
-  const chibis = {};  // id -> {tex, meta}
-  await Promise.all(Object.entries(sprites.characters).map(async ([id, ch]) => {
-    if (ch.chibi) chibis[id] = { tex: await loadTex(ch.chibi.file), meta: ch.chibi };
-    if (ch.kind === 'static' || ch.sprite) statics[id] = { tex: await loadTex(ch.sprite.file), meta: ch.sprite };
-    if (ch.actions && neededVoxel[id]) {
-      anims[id] = {};
-      const acts = new Set([...neededVoxel[id], 'idle']);
-      for (const action of acts) {
-        const a = ch.actions[action];
-        if (!a) throw new Error(`missing action ${id}/${action}`);
-        anims[id][action] = { fps: a.fps, loop: a.loop, texs: await Promise.all(a.frames.map(loadTex)) };
-      }
-    }
-    if (ch.galgame) {
-      for (const e of neededExpr) {
-        const meta = ch.galgame.expressions[e];
-        if (!meta) throw new Error(`missing whale expression ${e}`);
-        exprs[e] = { tex: await loadTex(meta.file), meta };
-      }
-    }
-  }));
-
-  const actors = {};
-  const shadowGeo = new THREE.CircleGeometry(0.5, 24);
-  for (const c of castData.cast) {
-    const group = new THREE.Group();
-    const material = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.08, side: THREE.DoubleSide });
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
-    plane.castShadow = true;
-    group.add(plane);
-    const shadow = new THREE.Mesh(shadowGeo, new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.2, depthWrite: false }));
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = 0.012;
-    group.add(shadow);
-    group.visible = false;
-    engine.scene.add(group);
-    actors[c.id] = { group, plane, shadow, data: c };
-  }
-
-  function energyAt(t) {
-    const i = clamp(Math.floor(t * features.featureFps), 0, features.rms.length - 1);
-    return features.rms[i] || 0;
-  }
-  function onsetPulse(t) {
-    let last = -10;
-    for (const o of features.onsets) { if (o <= t) last = o; else break; }
-    return Math.max(0, 1 - (t - last) / 0.22);
-  }
-  function shotAt(t) {
-    for (const s of SHOTS) if (t >= s.start && t < s.end) return s;
-    return SHOTS[SHOTS.length - 1];
-  }
-  function cueAt(t) {
-    for (const c of timeline.cues) if (t >= c.start && t < c.end) return c;
-    return null;
-  }
-
-  // Pick one texture + normalized sprite meta for an actor at local shot time.
-  // v3 never mixes two forms of the same character in one shot.
-  function spriteFor(id, shot, lt) {
-    const ch = sprites.characters[id];
-    const perf = (shot.perform || {})[id] || {};
-    const art = perf.art || (ch.kind === 'static' ? 'static' : ch.chibi ? 'chibi' : 'voxel');
-    if (art === 'galgame') {
-      let e = perf.expr;
-      if (perf.then && lt >= perf.at) e = perf.then;
-      return { tex: exprs[e].tex, meta: exprs[e].meta, flip: false, dx: 0, art };
-    }
-    if (art === 'static') return { tex: statics[id].tex, meta: statics[id].meta, flip: false, dx: 0, art };
-    if (art === 'chibi') return { tex: chibis[id].tex, meta: chibis[id].meta, flip: false, dx: 0, art };
-    let aName = perf.action || 'idle';
-    let localT = lt, flip = false, dx = 0;
-    if (perf.walk && lt < perf.walk.dur) {
-      aName = 'walk_side';
-      dx = perf.walk.fromDX * (1 - smooth(lt / perf.walk.dur));
-      flip = perf.walk.fromDX > 0; // walk_side frames face right; flip when moving left
+  function drawActor(c, id, x, y, h, perf = {}, lt = 0, flip = false) {
+    const m = sprites.characters[id]; if (!m) return;
+    c.save(); c.translate(x, y); if (flip) c.scale(-1, 1);
+    // paper contact shadow
+    c.save(); c.fillStyle = 'rgba(50,40,35,0.22)'; c.beginPath(); c.ellipse(0, 6, h * 0.30, h * 0.07, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    if (m.pet && perf.art !== 'chibi') {
+      const meta = m.pet, st = seqState(perf.seq, lt);
+      let walkX = 0;
+      if (perf.walk) { const k = smooth(0, perf.walk.dur, lt); walkX = lerp(perf.walk.from, perf.walk.to, k) - perf.walk.to; }
+      const cell = petCell(meta, st, st.local ?? lt);
+      const k = h / meta.standPx;
+      c.translate(walkX, 0);
+      c.drawImage(assets.pet[id], cell.col * meta.cellW, cell.row * meta.cellH, meta.cellW, meta.cellH,
+        -meta.cellW / 2 * k, -meta.footY * k, meta.cellW * k, meta.cellH * k);
     } else {
-      if (perf.walk) localT = lt - perf.walk.dur;
-      if (perf.then && localT >= perf.at) { aName = perf.then; localT -= perf.at; }
+      const meta = m.chibi || m.sprite; const img = assets.chibi[id] || assets.static[id];
+      if (meta && img) { const k = h / meta.standPx; c.drawImage(img, -meta.width / 2 * k, -meta.footY * k, meta.width * k, meta.height * k); }
     }
-    const anim = anims[id][aName] || anims[id].idle;
-    const n = anim.texs.length;
-    let fi = Math.floor(localT * anim.fps);
-    fi = anim.loop ? ((fi % n) + n) % n : Math.max(0, Math.min(fi, n - 1));
-    return { tex: anim.texs[fi], meta: ch, flip, dx, art };
+    c.restore();
   }
 
-  function updateActors(shot, t, energy) {
-    const place = engine.placements[shot.set] || {};
-    const lt = t - shot.start;
-    const dur = shot.end - shot.start;
-    for (const [id, a] of Object.entries(actors)) {
-      const visible = shot.cast.includes(id);
-      a.group.visible = visible;
-      if (!visible) continue;
-      const [bx0, bz0, h, yOff = 0] = place[id] || [0, 0, 2.2];
-      // Emotional close-ups step in front of the rooftop bench so the skirt/feet
-      // are not hidden by the seat; ensemble shots keep the original blocking.
-      const close = (shot.framing === 'close' || shot.framing === 'message') && id === 'whale';
-      const bx = bx0 + (close ? -0.4 : 0), bz = bz0 + (close ? 1.0 : 0);
-      const sp = spriteFor(id, shot, lt);
-      const perf = (shot.perform || {})[id] || {};
-      let dx = sp.dx, dy = 0, tilt = 0, sx = 1, sy = 1;
-      const seed = [...id].reduce((s, c) => s + c.charCodeAt(0), 0) * 0.37;
-      const pulse = onsetPulse(t);
-      if (sp.art === 'chibi') {
-        // PDoom-inspired whole-body performance: beat bounce, hop, squash/stretch,
-        // anticipation/lean. No facial redraw, lip-sync or fake head turn.
-        const move = perf.move || 'sway';
-        if (move === 'bounce') {
-          dy = pulse * 0.16; sy = 1 - pulse * 0.07; sx = 1 + pulse * 0.06;
-          tilt = Math.sin(t * 2 + seed) * 0.02;
-        } else if (move === 'hop') {
-          const hp = Math.max(0, Math.sin(lt * 3.0 + seed));
-          dy = hp * 0.22; sy = 1 - hp * 0.05; sx = 1 + hp * 0.04;
-          tilt = Math.sin(lt * 3 + seed) * 0.03;
-        } else {
-          tilt = Math.sin(t * 1.4 + seed) * 0.05;
-          dx += Math.sin(t * 0.9 + seed) * 0.05;
-          dy = Math.abs(Math.sin(t * 1.4 + seed)) * 0.03;
-        }
-        if (perf.enter && lt < perf.enter.dur) {
-          const k = smooth(lt / perf.enter.dur);
-          dx += perf.enter.fromDX * (1 - k);
-          dy += Math.sin(Math.PI * k) * 0.16;
-        }
-        const react = perf.react;
-        if (react === 'look_up') tilt -= 0.06 * smooth(lt / 0.6);
-        if (react === 'pray') tilt += 0.04 * smooth(lt / 0.6);
-        if (react === 'happy') dy += pulse * 0.08;
-        if (react === 'wave') tilt += Math.sin(lt * 6 + seed) * 0.06 * smooth(lt / 0.4);
-        if (react === 'reach') tilt += (id === 'gemini' ? -0.05 : 0.05) * smooth(lt / 0.6);
-        if (react === 'sad') { tilt += 0.04; dy -= 0.02; }
-        if (react === 'heart') { dy += pulse * 0.1; sx = 1 + pulse * 0.04; }
-      } else if (sp.art === 'static' || sp.art === 'galgame') {
-        dy = Math.sin(t * 1.3 + h) * 0.01;
-      } else {
-        // S13: the two leads lean toward the gap they cannot close.
-        if (shot.index === 12 && id === 'whale') tilt = 0.05 * smooth(lt / 0.8);
-        if (shot.index === 12 && id === 'claude') tilt = -0.05 * smooth(lt / 0.8);
-      }
-      const x = bx + dx, z = bz;
-      a.group.position.set(x, dy + yOff, z);
-      a.group.rotation.z = tilt;
-      a.group.scale.set(sx, sy, 1);
-      // yaw-only billboard keeps feet on the ground plane
-      a.group.rotation.y = Math.atan2(engine.camera.position.x - x, engine.camera.position.z - z);
-      const m = sp.meta;
-      const pxW = m.boxW ?? m.width, pxH = m.boxH ?? m.height;
-      const worldH = h * pxH / m.standPx;
-      const worldW = h * pxW / m.standPx;
-      a.plane.material.map = sp.tex;
-      a.plane.material.needsUpdate = true;
-      a.plane.scale.set(sp.flip ? -worldW : worldW, worldH, 1);
-      a.plane.position.y = worldH * (m.footY / pxH - 0.5);
-      a.shadow.scale.set(h * 0.55 * (1 - dy * 0.4), h * 0.18 * (1 - dy * 0.4), 1);
-      a.shadow.material.opacity = Math.max(0.08, 0.2 - dy * 0.25);
-    }
-  }
-
-  function drawBackdrop(shot, t) {
-    const s = engine.sets[shot.set];
-    const g = ctx.createLinearGradient(0, 0, 0, H);
-    g.addColorStop(0, s.bg);
-    g.addColorStop(1, s.fog);
-    ctx.fillStyle = g;
-    ctx.fillRect(0, 0, W, H);
-    if (['greyShore', 'lanternPier', 'fireworkRooftop', 'timeBridge'].includes(shot.set)) {
-      for (let i = 0; i < 46; i++) {
-        const x = hash(i) * W, y = hash(i + 90) * H * 0.45;
-        const a = 0.18 + 0.22 * Math.sin(t * 1.5 + i);
-        ctx.fillStyle = `rgba(246,236,216,${Math.max(0.05, a)})`;
-        ctx.fillRect(x, y, 2, 2);
-      }
-    }
-  }
-
-  function drawPost(shot) {
-    // soft miniature tilt-shift: blur only the top/bottom bands, keep faces sharp
-    const bw = blurCanvas.width, bh = blurCanvas.height;
-    bctx.clearRect(0, 0, bw, bh);
-    bctx.filter = 'blur(1.4px)';
-    bctx.drawImage(engine.renderer.domElement, 0, 0, bw, bh);
-    bctx.filter = 'none';
-    bctx.globalCompositeOperation = 'destination-in';
-    const mask = bctx.createLinearGradient(0, 0, 0, bh);
-    mask.addColorStop(0, 'rgba(0,0,0,0.7)');
-    mask.addColorStop(0.2, 'rgba(0,0,0,0)');
-    mask.addColorStop(0.78, 'rgba(0,0,0,0)');
-    mask.addColorStop(1, 'rgba(0,0,0,0.6)');
-    bctx.fillStyle = mask;
-    bctx.fillRect(0, 0, bw, bh);
-    bctx.globalCompositeOperation = 'source-over';
-    ctx.drawImage(blurCanvas, 0, 0, W, H);
-    const v = ctx.createRadialGradient(W / 2, H / 2, H * 0.35, W / 2, H / 2, H * 0.9);
-    v.addColorStop(0, 'rgba(0,0,0,0)');
-    v.addColorStop(1, 'rgba(8,10,20,0.32)');
-    ctx.fillStyle = v;
-    ctx.fillRect(0, 0, W, H);
-  }
-
-  function drawKeyword(shot, t) {
-    const lt = t - shot.start;
-    const dur = shot.end - shot.start;
-    const a = smooth(lt / 0.3) * (1 - smooth((lt - dur + 0.25) / 0.25));
-    if (a <= 0) return;
+  // camera / parallax layer helper
+  let cam = { zoom: 1, px: 0, py: 0 };
+  function layer(depth, fn) {
     ctx.save();
-    ctx.globalAlpha = a;
-    const message = shot.framing === 'message';
-    if (message) {
-      const x = 104, y = 170, w = 660, h = 280;
-      ctx.fillStyle = 'rgba(18,24,42,0.82)';
-      ctx.strokeStyle = 'rgba(246,236,216,0.28)';
-      ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.roundRect(x, y, w, h, 18); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = '#9fb2cc'; ctx.font = '22px "Noto Sans SC"';
-      ctx.fillText('她们的小世界', x + 28, y + 44);
-      ctx.fillStyle = 'rgba(246,236,216,0.1)';
-      ctx.beginPath(); ctx.roundRect(x + 28, y + 70, w - 56, 120, 14); ctx.fill();
-      ctx.fillStyle = '#f6ecd8'; ctx.font = '54px "ZCOOL KuaiLe"';
-      ctx.fillText(shot.keyword, x + 52, y + 146);
-      ctx.fillStyle = '#9fb2cc'; ctx.font = '20px "Silkscreen", monospace';
-      ctx.fillText(shot.motif, x + 28, y + 232);
-      // cursor
-      const cx = x + w - 70, cy = y + h - 44;
-      ctx.fillStyle = '#f6ecd8';
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + 16, cy + 22); ctx.lineTo(cx + 7, cy + 20); ctx.lineTo(cx + 2, cy + 30); ctx.closePath(); ctx.fill();
-    } else {
-      const center = ['openSea', 'timeBridge', 'dawnGarden'].includes(shot.set);
-      const x = center ? W / 2 : 104;
-      const y = shot.set === 'fireworkRooftop' ? 150 : 170;
-      ctx.textAlign = center ? 'center' : 'left';
-      ctx.font = '92px "ZCOOL KuaiLe"';
-      ctx.lineWidth = 8; ctx.strokeStyle = 'rgba(12,16,30,0.55)';
-      ctx.strokeText(shot.keyword, x, y);
-      ctx.fillStyle = shot.set === 'dawnGarden' ? '#ffd98a' : '#f6ecd8';
-      ctx.fillText(shot.keyword, x, y);
-      ctx.font = '22px "Silkscreen", monospace';
-      ctx.fillStyle = 'rgba(246,236,216,0.72)';
-      ctx.fillText(shot.motif, x, y + 42);
-      ctx.textAlign = 'left';
-    }
-    ctx.restore();
+    const z = 1 + (cam.zoom - 1) * (0.45 + depth * 0.55);
+    ctx.translate(W / 2, H / 2); ctx.scale(z, z); ctx.translate(-W / 2 + cam.px * (0.25 + depth), -H / 2 + cam.py * (0.25 + depth));
+    fn(ctx); ctx.restore();
+  }
+  function setCam(lt, dur, push = 0.05, px = 0, py = 0) { cam = { zoom: 1 + push * ease(clamp(lt / dur, 0, 1)), px: px * lt, py: py * lt }; }
+
+  const ALL = ['whale', 'claude', 'gemini', 'doubao', 'gpt', 'kimi', 'qwen', 'zai'];
+  function group(c, lt, y, h, opts = {}) {
+    const xs = [330, 540, 750, 960, 1170, 1380, 1590, 1770];
+    ALL.forEach((id, i) => {
+      const perf = id === 'whale' ? { seq: [{ state: 'waving', dur: 1.1 }, { state: 'idle' }] } : id === 'gpt' ? { seq: [{ state: 'review', dur: 1.4 }, { state: 'idle' }] } : {};
+      drawActor(c, id, xs[i] + (opts.dx || 0), y + (i % 2 ? 14 : 0), h * (id === 'doubao' ? 0.94 : 1), perf, lt + i * 0.13, i > 4);
+    });
   }
 
-  function drawPolaroid(shot, t) {
-    if (shot.index !== 10) return;
-    const lt = t - shot.start;
-    const k = smooth(lt / 0.5);
-    ctx.save();
-    ctx.globalAlpha = k;
-    ctx.fillStyle = 'rgba(8,10,20,0.35)';
-    ctx.fillRect(0, 0, W, H);
-    const x = 380, y = 120, w = 1160, h = 740;
-    ctx.strokeStyle = '#f6ecd8'; ctx.lineWidth = 26;
-    ctx.strokeRect(x, y, w, h);
-    ctx.fillStyle = '#f6ecd8';
-    ctx.fillRect(x - 13, y + h - 13, w + 26, 92);
-    ctx.fillStyle = '#2b2f42'; ctx.font = '42px "ZCOOL KuaiLe"'; ctx.textAlign = 'center';
-    ctx.fillText('一刹那', W / 2, y + h + 48);
-    ctx.textAlign = 'left';
-    ctx.restore();
+  // ------------------------------ scenes ------------------------------
+  const scenes = {
+    S01(lt, dur) { // 渺小：灰色拼图墙 + 缺口纸台，鲸娘真帧走入
+      setCam(lt, dur, 0.06, -6, 0);
+      layer(0, c => { c.fillStyle = '#cfd4d8'; c.fillRect(-200, -200, W + 400, H + 400);
+        for (let i = 0; i < 18; i++) { const x = (i % 6) * 340 - 60, y = Math.floor(i / 6) * 300 - 40; P.paper(c, P.puzzlePath(x, y, 320, 280, [1, -1, 1, -1]), i % 3 ? '#c3c9ce' : '#b8bfc6', { shadow: 6, dy: 4, edge: '#e8ecef' }); }
+        P.cloud(c, 200 + jitter(lt, 1), 140, 1.4, '#e6e9eb', { blur: 2 }); P.cloud(c, 1300 + jitter(lt, 2), 110, 1.7, '#dfe3e6', { blur: 2 }); });
+      layer(0.5, c => { P.hill(c, 760, 30, '#aeb6bd', 3); P.hill(c, 860, 24, '#9aa3ab', 7); });
+      layer(0.8, c => { P.paper(c, P.puzzlePath(700, 700, 520, 260, [1, 1, -1, -1]), '#f3e7cf', { shadow: 22, dy: 14 });
+        P.paper(c, P.puzzlePath(1230, 720, 200, 180, [-1, 1, 1, -1]), '#d7dbdf', { shadow: 10, dy: 8 }); });
+      layer(1, c => { const k = smooth(0, 1.6, lt); drawActor(c, 'whale', lerp(430, 900, k), 880, 310, { seq: [{ state: 'running-right', dur: 1.6 }, { state: 'idle' }, { look: 0 }], walk: { from: 430, to: 900, dur: 1.6 } }, lt); });
+      layer(1.2, c => { P.paper(c, P.puzzlePath(-80, 820, 360, 300, [1, -1, 1, 1]), '#8f989f', { blur: 3, shadow: 20 }); });
+      P.warmLight(ctx, 0.10);
+    },
+    S02(lt, dur) { // 小世界：雨中拼图地球，星愿补口
+      setCam(lt, dur, 0.05, 4, 0);
+      layer(0, c => { c.fillStyle = '#5d6b7d'; c.fillRect(-200, -200, W + 400, H + 400); P.cloud(c, 260, 150, 2.2, '#78889c', { blur: 2 }); P.cloud(c, 1150, 120, 2.6, '#6f7f93', { blur: 2 }); });
+      layer(0.6, c => { const cx = 960, cy = 560, r = 300;
+        P.paper(c, P.circlePath(cx, cy, r), '#7fa8c9', { shadow: 26, dy: 16 });
+        c.save(); c.beginPath(); c.arc(cx, cy, r - 6, 0, Math.PI * 2); c.clip();
+        for (let i = 0; i < 10; i++) P.paper(c, P.puzzlePath(cx - 280 + (i % 4) * 150, cy - 260 + Math.floor(i / 4) * 170, 150, 160, [1, -1, 1, -1]), i % 2 ? '#8fb9d8' : '#6f9cc0', { shadow: 4, dy: 3, edge: '#dcebf5' });
+        P.paper(c, P.puzzlePath(cx + 60, cy - 120, 150, 160, [-1, 1, -1, 1]), '#5a6878', { shadow: 2, dy: 2 }); c.restore();
+        const glow = smooth(1.2, 2.6, lt); if (glow > 0) { P.star(c, cx + 135, cy - 40, 46 * glow, '#ffe9a8', lt * 0.4); P.lightShaft(c, cx + 135, cy - 260, 120, 300, 0.25 * glow); } });
+      layer(1, c => { P.hill(c, 880, 20, '#46536b', 5); drawActor(c, 'whale', 960, 850, 290, { seq: [{ state: 'waiting', dur: 1.4 }, { state: 'idle' }, { look: 0 }] }, lt); });
+      layer(1.1, c => P.rain(c, lt, 110, 0.45));
+    },
+    S03(lt, dur) { // 遇见你：两块拼图合拢，暖光点亮
+      setCam(lt, dur, 0.05, 0, 0);
+      layer(0, c => { c.fillStyle = '#d8d2c6'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 12; i++) P.paper(c, P.puzzlePath((i % 4) * 500 - 40, Math.floor(i / 4) * 360 - 30, 480, 340, [1, -1, 1, -1]), '#cfc8ba', { shadow: 5, dy: 3, edge: '#efe8da' }); });
+      layer(0.7, c => { const k = smooth(0.3, 1.8, lt); P.paper(c, P.puzzlePath(lerp(120, 430, k), 640, 520, 300, [1, 1, -1, -1]), '#f1e3c8'); P.paper(c, P.puzzlePath(lerp(1280, 970, k), 640, 520, 300, [-1, 1, 1, -1]), '#f6ead2'); });
+      layer(1, c => { drawActor(c, 'whale', lerp(560, 800, smooth(0, 1.6, lt)), 880, 320, { seq: [{ state: 'running-right', dur: 1.6 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }], walk: { from: 560, to: 800, dur: 1.6 } }, lt);
+        drawActor(c, 'claude', 1120, 880, 330, {}, lt, true); });
+      layer(1.1, c => { const g = smooth(1.4, 2.6, lt); if (g > 0) { P.lightShaft(c, 960, 120, 260, 700, 0.3 * g); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + lt * 0.3; P.star(c, 960 + Math.cos(a) * 220 * g, 520 + Math.sin(a) * 140 * g, 14, '#ffd76a', a); } } });
+      P.warmLight(ctx, 0.16 * smooth(1.2, 2.4, lt));
+    },
+    S04(lt, dur) { // 大海：iris 打开成 layered 海面
+      setCam(lt, dur, 0.04, -8, 0);
+      const open = smooth(0, 1.1, lt);
+      layer(0, c => { c.fillStyle = '#bfe3ef'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1560, 180, 90), '#ffe9a8'); P.cloud(c, 300, 150, 1.6, '#ffffff', { blur: 2 }); P.cloud(c, 1000, 110, 1.3, '#f4fbff', { blur: 2 }); });
+      layer(0.4, c => { P.hill(c, 620, 10, '#8fc7d8', 2, { edge: '#e8f6fb' }); });
+      layer(0.6, c => { for (let b = 0; b < 4; b++) { const y = 660 + b * 90; P.paper(c, c2 => { c2.moveTo(-100, y); for (let x = -100; x <= W + 100; x += 60) c2.lineTo(x, y + Math.sin(x * 0.02 + lt * 2 + b) * 12); c2.lineTo(W + 100, H + 100); c2.lineTo(-100, H + 100); c2.closePath(); }, ['#7db8cf', '#6aa9c4', '#589ab8', '#4a8caa'][b], { dy: 0, shadow: 8, edge: '#dff2f8' }); } });
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'whale', 760, 940, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt); drawActor(c, 'gemini', 1120, 940, 310, {}, lt, true); });
+      if (open < 1) { ctx.save(); ctx.fillStyle = '#2a3440'; ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(960, 540, lerp(60, 1400, open), 0, Math.PI * 2, true); ctx.fill('evenodd'); ctx.restore(); }
+    },
+    S05(lt, dur) { // 取代：四格回忆拼贴 + 全员
+      setCam(lt, dur, 0.03, -10, 0);
+      layer(0, c => { c.fillStyle = '#efe6d4'; c.fillRect(-200, -200, W + 400, H + 400); });
+      layer(0.5, c => {
+        const panels = [[140, 120, '#9fb6c9'], [700, 100, '#f4c98a'], [1260, 130, '#5d6b8a'], [420, 420, '#b9d6a2']];
+        panels.forEach(([x, y, col], i) => { const k = smooth(0.2 + i * 0.35, 1.0 + i * 0.35, lt); if (k <= 0) return;
+          P.paper(c, P.puzzlePath(x, y + (1 - k) * 40, 500, 280, [1, -1, 1, -1]), col, { alpha: k, shadow: 16, dy: 10 });
+          c.save(); c.globalAlpha = k; c.fillStyle = 'rgba(255,255,255,0.5)'; c.font = '28px sans-serif'; c.fillText(['雨', '晴', '夜', '野'][i], x + 30, y + 50); c.restore(); });
+        P.paper(c, P.puzzlePath(1020, 430, 500, 280, [-1, 1, -1, 1]), '#e8d7b8', { shadow: 16, dy: 10 });
+      });
+      layer(1, c => group(c, lt, 940, 250));
+    },
+    S06(lt, dur) { // 发呆：雨站长椅伞
+      setCam(lt, dur, 0.02, 0, 0);
+      layer(0, c => { c.fillStyle = '#6b7686'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#525d6e', 4, { blur: 2 }); P.cloud(c, 300, 130, 2, '#7d8a9c', { blur: 2 }); });
+      layer(0.6, c => { P.hill(c, 820, 12, '#5b6675', 6); P.lampPost(c, 1500, 860, 0.8); });
+      layer(0.9, c => { P.bench(c, 640, 800, 1.1); P.umbrella(c, 980, 560, 1.2, '#e8b04b', -0.06 + jitter(lt, 3, 0.01)); });
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'waiting' }] }, lt); drawActor(c, 'doubao', 1080, 800, 295, {}, lt, true); });
+      layer(1.15, c => P.rain(c, lt, 130, 0.5));
+    },
+    S07(lt, dur) { // 拨开阴霾：云开光束
+      setCam(lt, dur, 0.05, 0, -2);
+      const part = smooth(0.4, 2.2, lt);
+      layer(0, c => { c.fillStyle = lerpColor('#6b7686', '#cfe6f2', part); c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#7d8a9c', 4, { blur: 2, alpha: 1 - part * 0.4 }); });
+      layer(0.4, c => { P.cloud(c, lerp(500, 120, part), 140, 2.4, '#8b98aa', { blur: 2 }); P.cloud(c, lerp(900, 1400, part), 120, 2.6, '#93a0b2', { blur: 2 }); if (part > 0.3) P.paper(c, P.circlePath(960, 160, 80), '#ffe9a8', { alpha: part }); });
+      layer(0.8, c => { P.hill(c, 840, 14, '#8fa3b8', 6); P.bench(c, 640, 800, 1.1); P.lampPost(c, 1500, 860, 1 - part); });
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'waiting', dur: 1 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'doubao', 1080, 800, 295, {}, lt, true); drawActor(c, 'gemini', 460, 860, 220); drawActor(c, 'qwen', 1360, 860, 220, {}, lt, true); drawActor(c, 'zai', 1560, 860, 220, {}, lt, true); });
+      layer(1.1, c => { if (part < 0.8) P.rain(c, lt, 100, 0.4 * (1 - part)); P.lightShaft(c, 960, 160, 320, 700, 0.35 * part); });
+    },
+    S08(lt, dur) { // 收集快乐 / 淘汰不开心（27s 分事件）
+      setCam(lt, dur, 0.04, 0, 0);
+      const toss = smooth(dur * 0.5, dur * 0.62, lt);
+      layer(0, c => { c.fillStyle = '#dff0d8'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1620, 160, 90), '#ffd76a'); P.cloud(c, 260, 140, 1.5, '#ffffff', { blur: 2 }); });
+      layer(0.5, c => { P.hill(c, 720, 30, '#b9d6a2', 3); P.hill(c, 840, 22, '#a2c48c', 8); });
+      layer(0.9, c => { P.jar(c, 620, 700, 1.2, smooth(0.3, dur * 0.5, lt), '快乐'); P.box(c, 1180, 760, 1.2, 1 - toss); });
+      layer(0.95, c => { for (let i = 0; i < 10; i++) { const t0 = 0.4 + i * 0.5; const k = smooth(t0, t0 + 1.2, lt); if (k <= 0 || k >= 1) continue; const gray = i % 3 === 2; const tx = gray ? 1270 : 700, ty = gray ? 780 : 720; const x = lerp(300 + hash(i) * 1300, tx, k), y = lerp(200 + hash(i * 3) * 200, ty, k) - Math.sin(k * Math.PI) * 160; P.paper(c, P.puzzlePath(x, y, 70, 60, [1, -1, 1, -1]), gray ? '#9aa3ad' : '#ffd76a', { shadow: 8, dy: 5 }); } });
+      layer(1, c => { drawActor(c, 'whale', lerp(420, 560, smooth(0, 2, lt)), 900, 290, { seq: [{ state: 'running-right', dur: 2 }, { state: 'review', dur: 1.4 }, { state: 'idle' }], walk: { from: 420, to: 560, dur: 2 } }, lt);
+        drawActor(c, 'gpt', 1050, 900, 290, { seq: [{ state: 'review', dur: 1.6 }, { state: 'idle' }] }, lt, true);
+        ['claude', 'gemini', 'doubao', 'kimi', 'qwen', 'zai'].forEach((id, i) => drawActor(c, id, 260 + i * 280, 960, 215, {}, lt, i > 2)); });
+      P.warmLight(ctx, 0.16);
+    },
+    S09(lt, dur) { // 情话：屋顶纸条
+      setCam(lt, dur, 0.06, 0, 0);
+      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(255,246,216,${0.3 + hash(i) * 0.6})`; c.fillRect(hash(i * 3) * W, hash(i * 7) * 420, 3, 3); } P.city(c, 760, '#232c42', 9, { blur: 2 }); });
+      layer(0.7, c => { P.hill(c, 860, 8, '#3a4560', 4); P.paper(c, P.rectPath(300, 820, 1320, 40, 8), '#4a5570'); });
+      layer(1, c => { drawActor(c, 'whale', 820, 840, 340, { seq: [{ state: 'waiting', dur: 1 }, { state: 'review', dur: 1.2 }, { state: 'idle' }] }, lt); drawActor(c, 'claude', 1120, 840, 350, {}, lt, true); });
+      layer(1.05, c => { for (let i = 0; i < 5; i++) { const t0 = 0.3 + i * 0.5, k = smooth(t0, t0 + 1.6, lt); if (k <= 0) continue; const x = lerp(1080, 880, k), y = lerp(560, 420, k) - Math.sin(k * Math.PI) * 60 + jitter(lt, i, 2); P.paper(c, P.rectPath(x, y, 120, 70, 8), '#fff6d8', { shadow: 10, dy: 6, alpha: 1 - smooth(0.8, 1, k) }); } });
+    },
+    S10(lt, dur) { // 烟花
+      setCam(lt, dur, 0.04, 0, -6);
+      layer(0, c => { c.fillStyle = '#232c42'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 780, '#1a2236', 9, { blur: 2 }); });
+      layer(0.5, c => { [[420, 260, 0.2, '#ff9a8a'], [960, 200, 1.1, '#ffd76a'], [1480, 280, 2.0, '#8ad0ff'], [700, 320, 2.9, '#c9a2ff'], [1240, 240, 3.6, '#9affc9']].forEach(([x, y, t0, col]) => P.firework(c, x, y, lt - t0, x, col)); });
+      layer(0.8, c => { P.hill(c, 880, 8, '#3a4560', 4); P.paper(c, P.rectPath(260, 840, 1400, 36, 8), '#4a5570'); });
+      layer(1, c => group(c, lt, 860, 265));
+    },
+    S11(lt, dur) { // 一刹那：拍立得显影
+      setCam(lt, dur, 0.03, 0, 0);
+      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 800, '#232c42', 9, { blur: 3 }); });
+      layer(1, c => { const dev = smooth(0.3, 2.2, lt);
+        P.photoFrame(c, 620, 180, 680, 620, -0.04 + jitter(lt, 2, 0.004), (cc, w, h) => {
+          cc.fillStyle = '#232c42'; cc.fillRect(0, 0, w, h); cc.save(); cc.globalAlpha = dev; P.firework(cc, w * 0.5, h * 0.3, 1.0, 5, '#ffd76a'); P.firework(cc, w * 0.25, h * 0.4, 0.8, 9, '#ff9a8a'); cc.fillStyle = '#3a4560'; cc.fillRect(0, h * 0.75, w, h * 0.25); cc.restore();
+          if (dev < 1) { cc.fillStyle = `rgba(240,238,228,${1 - dev})`; cc.fillRect(0, 0, w, h); }
+        });
+        for (let i = 0; i < 12; i++) { const k = smooth(0.5 + i * 0.15, 2.5, lt); if (k <= 0) continue; P.paper(c, P.puzzlePath(300 + hash(i) * 1300, 100 + k * 700 + hash(i * 3) * 100, 60, 52, [1, -1, 1, -1]), i % 2 ? '#ffd76a' : '#8ad0ff', { alpha: 1 - k * 0.6, shadow: 6, dy: 4 }); } });
+      layer(1.1, c => { drawActor(c, 'whale', 420, 940, 270, { seq: [{ state: 'idle' }, { look: 0 }] }, lt); drawActor(c, 'gpt', 1500, 940, 270, { seq: [{ state: 'review', dur: 1.4 }, { state: 'idle' }] }, lt, true); });
+    },
+    S12(lt, dur) { // 无法自拔：拼图漩涡
+      setCam(lt, dur, 0.06, 0, 0);
+      layer(0, c => { c.fillStyle = '#3a4560'; c.fillRect(-200, -200, W + 400, H + 400); P.lightShaft(c, 960, 0, 260, 800, 0.2); });
+      layer(0.6, c => { for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2 + lt * 0.5, r = 220 + hash(i) * 320 + Math.sin(lt + i) * 20; const x = 960 + Math.cos(a) * r, y = 520 + Math.sin(a) * r * 0.6; P.paper(c, P.puzzlePath(x, y, 80, 70, [1, -1, 1, -1]), i % 4 ? '#5d6b8a' : '#ffd76a', { shadow: 8, dy: 5, alpha: 0.9 }); } });
+      layer(1, c => { P.hill(c, 900, 10, '#2f3a55', 4); drawActor(c, 'whale', 960, 900, 340, { seq: [{ state: 'failed', dur: 1.4 }, { state: 'waiting' }] }, lt); });
+    },
+    S13(lt, dur) { // 时差：昼夜缝 + 双钟
+      setCam(lt, dur, 0.02, 0, 0);
+      layer(0, c => { c.fillStyle = '#cfe6f2'; c.fillRect(-200, -200, W / 2 + 200, H + 400); c.fillStyle = '#2f3a55'; c.fillRect(W / 2, -200, W / 2 + 200, H + 400); P.paper(c, P.circlePath(420, 180, 80), '#ffe9a8'); for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(255,246,216,0.7)'; c.fillRect(W / 2 + hash(i * 3) * W / 2, hash(i * 7) * 400, 3, 3); } });
+      layer(0.5, c => { P.paper(c, P.puzzlePath(W / 2 - 60, 100, 120, 880, [1, -1, 1, -1]), '#e8d7b8', { shadow: 18, dy: 10 }); P.clock(c, 420, 420, 110, lt * 0.4, '#fffdf4'); P.clock(c, 1500, 420, 110, lt * 0.4 + Math.PI, '#fffdf4'); });
+      layer(0.8, c => { P.hill(c, 860, 12, '#a2c48c', 3); c.save(); c.beginPath(); c.rect(W / 2, 0, W / 2, H); c.clip(); P.hill(c, 860, 12, '#3a4560', 3); c.restore(); });
+      layer(1, c => { drawActor(c, 'gpt', 620, 880, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt); drawActor(c, 'kimi', 380, 900, 265);
+        drawActor(c, 'whale', 1300, 880, 300, { seq: [{ state: 'running-left', dur: 1.2 }, { state: 'waiting' }], walk: { from: 1450, to: 1300, dur: 1.2 } }, lt); drawActor(c, 'claude', 1560, 900, 275, {}, lt, true); });
+    },
+    S14(lt, dur) { // 放下：丝带随风
+      setCam(lt, dur, 0.04, 8, 0);
+      layer(0, c => { c.fillStyle = '#f4c98a'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1400, 300, 110), '#ff9a6a'); P.cloud(c, 300, 160, 1.6, '#ffe0b8', { blur: 2 }); });
+      layer(0.5, c => { P.hill(c, 720, 30, '#d9a86c', 3); P.hill(c, 840, 22, '#b98a5e', 8); });
+      layer(0.9, c => { P.paper(c, P.rectPath(760, 760, 20, 160, 6), '#7a5a3a'); const k = smooth(0.6, 2.8, lt); c.save(); c.strokeStyle = '#e86a5a'; c.lineWidth = 18; c.lineCap = 'round'; c.beginPath(); c.moveTo(770, 780); for (let i = 1; i <= 8; i++) { const x = 770 + i * 60 * k + Math.sin(lt * 3 + i) * 20 * k, y = 780 - i * 30 * k + Math.sin(lt * 2 + i * 0.7) * 24 * k; c.lineTo(x, y); } c.stroke(); c.restore(); });
+      layer(1, c => { drawActor(c, 'whale', 620, 900, 315, { seq: [{ state: 'failed', dur: 1.2 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'gemini', 1080, 920, 275); drawActor(c, 'doubao', 1300, 920, 275, {}, lt, true); drawActor(c, 'qwen', 1500, 920, 265, {}, lt, true); drawActor(c, 'zai', 1680, 920, 265, {}, lt, true); });
+    },
+    S15(lt, dur) { // 炙热：夕照心形
+      setCam(lt, dur, 0.05, 0, 0);
+      layer(0, c => { c.fillStyle = '#ff9a6a'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(960, 420, 160), '#ffd76a'); P.cloud(c, 260, 180, 1.8, '#ffc9a2', { blur: 2 }); P.cloud(c, 1300, 150, 1.5, '#ffc9a2', { blur: 2 }); });
+      layer(0.5, c => { for (let b = 0; b < 3; b++) P.hill(c, 680 + b * 90, 14, ['#e88a5a', '#d97a4a', '#c96a3a'][b], b + 2, { edge: '#ffe0c8' }); });
+      layer(0.9, c => { const g = smooth(0.4, 1.8, lt); P.heart(c, 960, 300, 180 * g, '#ff6a5a', { shadow: 20, dy: 10 }); P.lightShaft(c, 960, 420, 300, 500, 0.25 * g); });
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'gpt', 820, 940, 320, { seq: [{ state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'whale', 1120, 940, 320, { seq: [{ state: 'idle' }, { look: 270 }] }, lt, true); });
+      P.warmLight(ctx, 0.22);
+    },
+    S16(lt, dur) { // 爱自己：全员 framed puzzle hold，无片尾卡
+      const holdT = Math.min(lt, timeline.cues[15].end - SHOTS[15].start);
+      setCam(holdT, dur, 0.04, 0, 0);
+      layer(0, c => { c.fillStyle = '#ffd9a8'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(960, 300, 130), '#ffe9a8'); P.cloud(c, 260, 160, 1.6, '#fff0d8', { blur: 2 }); P.cloud(c, 1350, 140, 1.4, '#fff0d8', { blur: 2 }); });
+      layer(0.5, c => { P.hill(c, 760, 24, '#b9d6a2', 3); P.hill(c, 880, 18, '#a2c48c', 8); });
+      layer(0.9, c => { P.paper(c, P.puzzlePath(260, 260, 1400, 640, [1, 1, -1, -1]), 'rgba(255,253,244,0.35)', { shadow: 24, dy: 14, edge: '#fffdf4' }); });
+      layer(1, c => group(c, holdT, 900, 285));
+      P.warmLight(ctx, 0.2);
+    },
+  };
+
+  function lerpColor(a, b, k) {
+    const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+    const r = Math.round(lerp(pa >> 16, pb >> 16, k)), g = Math.round(lerp((pa >> 8) & 255, (pb >> 8) & 255, k)), bl = Math.round(lerp(pa & 255, pb & 255, k));
+    return `rgb(${r},${g},${bl})`;
   }
 
-  function drawSubtitle(t) {
-    const cue = cueAt(t);
-    if (!cue) return;
-    let text = cue.text, start = cue.start;
-    if (cue.segments) {
-      const seg = cue.segments.find(s => t >= s.start && t < s.end) || cue.segments[cue.segments.length - 1];
-      text = seg.text; start = seg.start;
-    }
-    const vis = smooth((t - start) / 0.12);
-    SUB.draw(ctx, { lines: SUB.wrap(text), speaker: '她们 · 心声', vis, W, H });
-  }
-
-  function drawBadge() {
-    ctx.save();
-    ctx.font = '18px "Noto Sans SC"';
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(246,236,216,0.72)';
-    ctx.fillText('非官方同人 · AI生成 · 剧情演绎', W - 36, 42);
-    ctx.textAlign = 'left';
-    ctx.fillStyle = 'rgba(246,236,216,0.62)';
-    ctx.font = '20px "Noto Sans SC"';
-    ctx.fillText('番外 · 把回忆拼好给你', 36, 42);
-    ctx.restore();
-  }
-
-  function updateScene(time) {
-    const t = clamp(time, 0, timeline.duration - 1e-4);
-    const shot = shotAt(t);
-    shot.local = t - shot.start;
-    const energy = energyAt(t);
-    const cam = CAM[shot.index];
-    const dur = shot.end - shot.start;
-    const k = smooth(shot.local / Math.max(0.8, dur * 0.6));
-    engine.camera.position.set(lerp(cam.from[0], cam.to[0], k), lerp(cam.from[1], cam.to[1], k), lerp(cam.from[2], cam.to[2], k));
-    const look = cam.look;
-    engine.camera.lookAt(look[0], look[1], look[2]);
-    engine.showSet(shot.set, t, shot, energy);
-    updateActors(shot, t, energy);
-    engine.renderer.render(engine.scene, engine.camera);
-    return { t, shot, cue: cueAt(t) };
-  }
-
-  function renderSceneOnly(time) {
-    const info = updateScene(time);
-    const s = engine.sets[info.shot.set];
-    return { canvas: engine.renderer.domElement, ...info, colors: { bg: s.bg, fog: s.fog } };
-  }
-
-  function renderAt(time) {
-    const { t, shot } = updateScene(time);
+  function renderScene(t) {
+    const shot = shotAt(t); let lt = t - shot.start; const dur = shot.end - shot.start;
+    ctx.save(); ctx.setTransform(exportW / W, 0, 0, exportH / H, 0, 0);
     ctx.clearRect(0, 0, W, H);
-    drawBackdrop(shot, t);
-    ctx.drawImage(engine.renderer.domElement, 0, 0);
-    drawPost(shot);
-    drawTransition(ctx, shot, t, W, H);
-    drawPolaroid(shot, t);
-    drawKeyword(shot, t);
-    drawSubtitle(t);
-    drawBadge();
-    return { t, shot: shot.id, set: shot.set, cue: cueAt(t)?.id || null };
+    (scenes[shot.id] || scenes.S01)(lt, dur);
+    P.finishPaper(ctx);
+    ctx.restore();
+    return shot;
   }
-
-  return { renderAt, renderSceneOnly, setExportSize: (w, h) => engine.renderer.setSize(w, h, false), duration: timeline.duration, fps: timeline.fps, timeline, shots: SHOTS, engine, ready: true };
+  function renderAt(t) {
+    const shot = renderScene(t);
+    outCtx.clearRect(0, 0, outCanvas.width, outCanvas.height);
+    outCtx.drawImage(sceneCanvas, 0, 0, outCanvas.width, outCanvas.height);
+    const cue = cueAt(t);
+    drawVignette(outCtx, outCanvas.width, outCanvas.height);
+    drawTransition(outCtx, shot, t, outCanvas.width, outCanvas.height);
+    drawKeyword(outCtx, shot, t, outCanvas.width, outCanvas.height);
+    drawSubtitle(outCtx, SUB, cue, t, outCanvas.width, outCanvas.height);
+    drawBadge(outCtx, outCanvas.width, outCanvas.height);
+    return { shot: shot.id, t };
+  }
+  return {
+    duration: timeline.duration, fps: FPS, shots: SHOTS, rendererName: 'Canvas2D paper diorama (v4)',
+    renderAt,
+    renderSceneOnly(t) { renderScene(t); return { canvas: sceneCanvas }; },
+    setExportSize(w, h) { exportW = w; exportH = h; sceneCanvas.width = w; sceneCanvas.height = h; },
+  };
 }

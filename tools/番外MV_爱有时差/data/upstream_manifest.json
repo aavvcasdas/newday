@@ -11,6 +11,10 @@
     "voxel-mv": {
       "repo": "xiaosia/voxel-mv",
       "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5"
+    },
+    "pets": {
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d"
     }
   },
   "files": [
@@ -256,6 +260,96 @@
       "blob": "c891b2a085eb69cba421f4a80b8bb08a4cf7004e",
       "sha256": "4251799b06bac357488703253e0ab81f5bc30e90ac87d44ba94c1fc23aea6f75",
       "bytes": 3761
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "assets/deepseek-whale/pet.json",
+      "blob": "1ff66a48c1d24d01b887885c78d99d7a4da14e3a",
+      "sha256": "75068b7928a03bc673e96fb43e0ad7aa99aa8401e7f1f863020b33a8b58ee604",
+      "bytes": 5616
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "assets/deepseek-whale/spritesheet.png",
+      "blob": "3789fb25155d8ccc5046743e0235208ec1364d90",
+      "sha256": "028c35595bc3a6939413500f1ddee98527aaf4fef61d67e576eddbd5e781d236",
+      "bytes": 2608893
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "assets/gpt-dragon/pet.json",
+      "blob": "93b97eaef5bc3b05cedab32b2fb457308c910c5f",
+      "sha256": "4d95a6d1ae299cdbeb2329c47d10385d1eae8933a27a0cac42a4fc37e95a6251",
+      "bytes": 5595
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "assets/gpt-dragon/spritesheet.png",
+      "blob": "cb59dfb94bafe38fefd9e4fc84ebb52bc137845b",
+      "sha256": "58ff74425fa8d1e6cf1359532312d39d60735f9515c00df4633b75390485c843",
+      "bytes": 2602295
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "ATTRIBUTION.md",
+      "blob": "33ded81c489e4846feada7f76893f1b0b277ee62",
+      "sha256": "7b963db41ef11fda88490e0dd8107730f7c08fb6702310aeb240eed5bb7c1797",
+      "bytes": 1280
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "FORMAT.md",
+      "blob": "a4cb0e8d245e32240c3db010bfdf0dfa15e4a4c1",
+      "sha256": "b92a5baf4f87e6c803aef9bcf95ba071f074bf446bc7cdbf077320df9cc2062b",
+      "bytes": 3129
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "LICENSE",
+      "blob": "ac79e536dc84da88791f1027f89117ccc5e71a4e",
+      "sha256": "c538665ca88394d66655258efd9080cce0221a205f1149f0b4eb229ed8b87b6f",
+      "bytes": 1789
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "README.md",
+      "blob": "1714a275b2bdd2bd4f0141afea11949f2ecd71d8",
+      "sha256": "70509401e153186226da5cc71215d26faec7dc251c35c99383f073cb58dee283",
+      "bytes": 4176
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "RIGHTS.md",
+      "blob": "85081896b6c3d3a9aa12649cbe84ea124ef396de",
+      "sha256": "64445d921be6b0d43bc37fd0a32627c6b87d5d99aa82475cd2939329e65a1706",
+      "bytes": 2255
+    },
+    {
+      "source": "pets",
+      "repo": "tqlearning/ai-girl-chatgpt-pets",
+      "commit": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "path": "SHA256SUMS",
+      "blob": "39ff071db795cc613895e618907682fe90343941",
+      "sha256": "985c75231b7d07aa0a74fb3e66b09fb4a45b93d15edde478a12fb82f4f4525c6",
+      "bytes": 1813
     },
     {
       "source": "voxel-mv",

@@ -38,3 +38,7 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 ## 2026-11-06 番外MV v3 多来源主形象（当前口径）
 
 用户指出 v2 “怎么就全从 voxel-mv”，并要求参照 `Nyankomintsu/world-execute-me-lyric-mv` 与 `JohnHeibel/PDoomVideo` 解决歌词画面/细节不对位、人物呆板。ask_user 最新口径：**主形象=shuaizenge/ai-girls Q版 chibi**；voxel“使用，但是别的也要用啊，不要同时出现就好一个形象”。当前执行：三来源都要用，同一角色同一镜头只出现一种形象；chibi 为主，鲸鱼娘情感特写 S06/S09/S12 用 galgame，动作镜头 S03/S07/S13 用 voxel，豆包沿用 Day12 cutout。`data/shots.json` directorVersion=3，perform.art=chibi/voxel/galgame/static；`prepare_assets.mjs` 生成 chibi 边界抠图与 `data/chibi_cutouts.json`；`src/film.js` 单形象路由＋PDoom 式整身动作；`src/overlay.js`/render 消费 transition。PDoom 未检测到 LICENSE，只借鉴方法，不复制代码/素材。歌词/音轨/时间轴/Day2 字幕/常驻标注/终帧 hold 不变。改完须 npm test＋storyboard 目检＋全渲＋verify.py＋smoke，并推送 `arena/e9e1d8ec-newday`。
+
+## 2026-11-06 番外MV v4 全 Q 版纸艺＋真逐帧（当前口径）
+
+用户否定 v3“人在跳很奇怪”，要求研究 `tqlearning/ai-girl-chatgpt-pets` 让个别人物有动画、MV 人物改 Q 版，背景/细节参照 `Win-Hao/music-mv`。当前执行：废弃 Three voxel 舞台与整图 bounce/hop/sway；`src/paper.js`+`src/film.js` Canvas2D 分层纸艺立体书（纸边/刀口/纸厚、6–8 层景深、暖光、12fps 道具手摆、慢推 5%）。鲸鱼娘/GPT 用 pets 真逐帧（整格 192×208、pet.json 毫秒、公共脚底、不 jumping）；Claude/Gemini/Kimi/Qwen/Z.AI 用 ai-girls chibi 静态纸偶（镜头/道具/事件做动态）；豆包上游无 Q，用 Day12 cutout 像素保真分段仿射派生 Q（头×1.25/躯干×0.9,0.62/腿×0.82,0.5），正常件归档，文档注明派生非上游。galgame/voxel 因全 Q 口径退出正片主形象，素材链/许可保留不静默丢。`data/shots.json` version=4 stage=paper-diorama；`sprites.json` primaryForm=q-chibi-pets。歌词 16 行/音轨 copy/Day2 字幕/常驻标注/终帧全员 hold 无片尾卡不变。改完须 npm test＋storyboard 目检＋全渲＋verify.py＋smoke，并推送 `arena/e9e1d8ec-newday`。

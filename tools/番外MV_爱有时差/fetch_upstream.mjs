@@ -21,6 +21,9 @@ const REPOS = {
   'ai-girls': { repo: 'shuaizenge/ai-girls', commit: 'dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76' },
   'galgame': { repo: 'JAdpp/dsh-whale-galgame', commit: '0ec130efebf15ffb63a2733b909d423b769db9c5' },
   'voxel-mv': { repo: 'xiaosia/voxel-mv', commit: '0caefec6c40ddca779ed498629069ac51dcb00a5' },
+  // v4: real transparent pet atlases (9 animation states + 16 look poses each).
+  // Art rights are unresolved upstream; MIT covers docs/layout metadata only.
+  'pets': { repo: 'tqlearning/ai-girl-chatgpt-pets', commit: '3afe14603b40e24c75e87e097cbfee1bfc10290d' },
 };
 
 // Curated animation sets per relay girl (enough for every shot, no typing bulk).
@@ -64,6 +67,10 @@ function wantedFiles() {
   files.push(['ai-girls', 'characters/doubao/generated/doubao-fullbody.jpg'], ['ai-girls', 'characters/doubao/README.md'], ['ai-girls', 'NOTICE.md']);
   for (const p of Object.values(AI_GIRLS_CHIBI)) files.push(['ai-girls', p]);
   files.push(['ai-girls', 'README.md'], ['ai-girls', 'catalog.json'], ['ai-girls', 'sources/source-records.json']);
+  for (const pet of ['deepseek-whale', 'gpt-dragon']) {
+    files.push(['pets', `assets/${pet}/spritesheet.png`], ['pets', `assets/${pet}/pet.json`]);
+  }
+  files.push(['pets', 'README.md'], ['pets', 'FORMAT.md'], ['pets', 'RIGHTS.md'], ['pets', 'ATTRIBUTION.md'], ['pets', 'LICENSE'], ['pets', 'SHA256SUMS']);
   return files;
 }
 

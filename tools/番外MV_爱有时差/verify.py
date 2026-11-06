@@ -95,18 +95,19 @@ def main() -> int:
     check("final_shot_full_cast", set(shots[-1].get("cast", [])) == ids)
     chars = sprites.get("characters", {})
     check(
-        "primary_form_ai_girls_chibi",
-        sprites.get("primaryForm") == "ai-girls-chibi"
-        and all(chars.get(i, {}).get("chibi") for i in ids - {"doubao"})
-        and bool(chars.get("doubao", {}).get("sprite")),
-        "ai-girls chibi primary + Day12 doubao cutout",
+        "primary_form_q_chibi_pets",
+        sprites.get("primaryForm") == "q-chibi-pets"
+        and all(chars.get(i, {}).get("pet") for i in ("whale", "gpt"))
+        and all(chars.get(i, {}).get("chibi") for i in ids - {"doubao", "whale", "gpt"})
+        and bool(chars.get("doubao", {}).get("sprite"))
+        and bool(chars.get("doubao", {}).get("qLayout")),
+        "pets real-frame whale/gpt + ai-girls chibi + Day12-derived Q doubao",
     )
-    arts = {p.get("art") for s in shots for p in s.get("perform", {}).values()}
-    check("v3_source_routes_used", {"chibi", "galgame", "voxel", "static"} <= arts, ",".join(sorted(a for a in arts if a)))
     check(
-        "shots_single_nonstatic_form",
-        all(len({p.get("art") for p in s.get("perform", {}).values() if p.get("art") != "static"}) <= 1 for s in shots),
-        "one non-static form per shot; doubao static exception",
+        "v4_paper_stage_no_bounce",
+        all(s.get("stage") == "paper-diorama" for s in shots)
+        and not any(re.search(r"bounce|hop|sway", s.get("motion", ""), re.I) for s in shots),
+        "layered paper diorama; no whole-image bounce direction",
     )
     missing_srt = []
     for c in timeline["cues"]:
