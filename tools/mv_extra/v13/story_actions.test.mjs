@@ -4,7 +4,7 @@ import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
 import {drawGuest,drawLead} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
-for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear']){
+for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
   const im=await loadImage(path.join(dir,`${name}_action.png`));assert.equal(im.width,384*16);assert.equal(im.height,416);
   const cv=createCanvas(384,416),g=cv.getContext('2d');g.drawImage(im,0,0,384,416,0,0,384,416);const a=Buffer.from(g.getImageData(0,0,384,416).data);
@@ -64,4 +64,11 @@ test('underwater Qwen is drawn instead of silently omitted',()=>{
 test('time-zone crossing advances the lead walk cel',()=>{
  const c=createCanvas(500,500).getContext('2d'),shot={index:27,start:0,end:2},opt={x:250,y:450,h:250,flipX:true};
  assert.notEqual(drawLead(c,27,0,shot,opt).column,drawLead(c,27,.35,shot,opt).column);
+});
+
+test('dragon thought contains closed-eye frame',async()=>{
+ const im=await loadImage(path.join(dir,'gpt_think_action.png')),c=createCanvas(384,416).getContext('2d');
+ c.drawImage(im,0,0,384,416,0,0,384,416);const open=Buffer.from(c.getImageData(173,105,59,32).data);
+ c.clearRect(0,0,384,416);c.drawImage(im,9*384,0,384,416,0,0,384,416);
+ assert.notDeepEqual(open,Buffer.from(c.getImageData(173,105,59,32).data));
 });

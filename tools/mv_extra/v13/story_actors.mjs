@@ -8,7 +8,7 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
@@ -22,6 +22,14 @@ function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false
  c.save();c.globalAlpha*=alpha;c.translate(x,y);if(flipX)c.scale(-1,1);
  const w=h*0.9230769230769231, groundAdjust=['whale_walk_retry','kimi_walk_story'].includes(name)?h*0.019230769230769232+2:0;
  c.drawImage(actions[name],f*384,0,384,416,-w/2,-h+groundAdjust,w,h);
+ if(name==='qwen_water_full'){
+  // A short stream starts at the can spout and ends at the planted sprout.
+  // It is illustrative overlay; final frame-by-frame contact is still unreviewed.
+  const k=h/416, flow=clamp((u-.22)/.18)*(1-clamp((u-.80)/.15));
+  if(flow>0){c.save();c.globalAlpha*=flow;c.strokeStyle='rgba(160,226,248,.9)';c.lineWidth=2.4*k;
+   c.beginPath();c.moveTo((134-192)*k,-h+326*k);c.quadraticCurveTo((132-192)*k,-h+343*k,(145-192)*k,-h+359*k);c.stroke();c.restore();}
+ }
+
  if(name==='doubao_lantern' && shot.index<=21){
   // Hold in S20, release once in S21. Keep raised empty hands in S22/23.
   const flight=shot.index===20?0:clamp((u-.4)/.55),k=h/416;
@@ -77,6 +85,8 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
 export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
  const finale={doubao:'doubao_memory',gpt:'gpt_star',gemini:'gemini_flower',zai:'zai_memento'};
  if([30,31,32].includes(shot.index) && finale[name])return drawStoryAction(c,finale[name],t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='qwen'&&shot.index===11)return drawStoryAction(c,'qwen_water_full',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(name==='gpt'&&shot.index===17)return drawStoryAction(c,'gpt_think',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='kimi'&&shot.index===11)return drawStoryAction(c,'kimi_stargaze_seated',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='claude'&&shot.index===11)return drawStoryAction(c,'claude_collect',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='claude'&&[1,18,31,32].includes(shot.index))return drawStoryAction(c,'claude_place',t,shot,{x,y,h,alpha,flipX,noShadow});

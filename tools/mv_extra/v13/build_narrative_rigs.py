@@ -77,3 +77,26 @@ build('qwen_swim_full_retry','qwen_swim_full_retry_under',polygon([(276,262),(28
 build('gemini_swim_full','gemini_swim_full_under',polygon([(244,307),(258,297),(272,287),(284,277),(296,278),(309,282),(322,291),(322,306),(314,316),(295,319),(273,321),(257,322)]),(249,315),lambda u:4*math.sin(u*math.pi*2))
 # Hand stays at the cheek at the end; the start is only a local gesture.
 build('whale_wipe_tear','whale_wipe_tear_under',polygon([(139,190),(145,174),(152,167),(162,170),(174,185),(173,203),(165,216),(154,222),(143,215),(137,204)]),(151,212),lambda u:8*(1-u)**2)
+# Two-shoe watering cel: remove a faint scan line from the generated white
+# margin and tighten the sprite around the actual figure before staging it.
+build('qwen_water_full','qwen_water_full_under',polygon([(145,201),(160,197),(183,200),(203,204),(210,219),(205,241),(192,254),(168,258),(148,253),(140,236)]),(182,222),lambda u:8*(1-u)**2)
+raw=Image.open(OUT/'qwen_water_full_action.png').convert('RGBA');atlas=Image.new('RGBA',(W*16,H))
+for f in range(16):
+ cell=raw.crop((f*W+70,0,f*W+320,315)).resize((317,400),Image.Resampling.LANCZOS)
+ atlas.alpha_composite(cell,(f*W+33,8))
+atlas.save(OUT/'qwen_water_full_action.png',optimize=True)
+
+# Dragon's pondering hand, eyes and tail are independent local layers.
+name='gpt_think';base,apply=normalized(name)
+armclean=apply(cutout(fit_raw('gpt_think_under')));tailclean=apply(cutout(fit_raw('gpt_think_tail_under')));closed=apply(cutout(fit_raw('gpt_think_closed')))
+arm=polygon([(141,143),(154,133),(170,139),(180,154),(178,177),(173,199),(162,219),(148,224),(135,212),(137,190)])
+tail=polygon([(250,285),(273,277),(304,280),(329,294),(343,311),(344,339),(334,356),(316,368),(284,371),(263,360),(251,343)])
+eyes=polygon([(173,105),(230,105),(232,137),(174,137)])
+body=base.copy();body.paste(tailclean,(0,0),tail);body.paste(armclean,(0,0),arm)
+hand=part_of(base,arm);tailpart=part_of(base,tail);atlas=Image.new('RGBA',(W*16,H))
+for f in range(16):
+ u=f/15;frame=Image.alpha_composite(body,tailpart.rotate(3*math.sin(u*math.pi*2),Image.Resampling.BICUBIC,center=(257,306)))
+ if f in (9,10):frame.paste(closed,(0,0),eyes)
+ frame=Image.alpha_composite(frame,hand.rotate(7*(1-u)**2,Image.Resampling.BICUBIC,center=(150,207)))
+ atlas.alpha_composite(frame,(W*f,0))
+atlas.save(OUT/'gpt_think_action.png',optimize=True)
