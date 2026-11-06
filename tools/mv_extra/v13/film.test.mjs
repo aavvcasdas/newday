@@ -33,3 +33,11 @@ test('each shot contains at least one actual sprite-frame transition when sample
     if(global.gc)global.gc();
   }
 });
+
+test('first and repeated S24 frame have the same pixels when snapshot cache initializes', async()=>{
+  const {execFileSync}=await import('node:child_process');
+  const src=`import {frame} from './tools/mv_extra/v13/film.mjs';
+    const a=Buffer.from(frame(38.5).data());const b=Buffer.from(frame(38.5).data());
+    if(!a.equals(b))process.exit(1);`;
+  execFileSync(process.execPath,['--input-type=module','-e',src],{cwd:process.cwd(),timeout:30000});
+});

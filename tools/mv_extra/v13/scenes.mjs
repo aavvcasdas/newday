@@ -15,6 +15,7 @@ import { createCanvas, travelMotion, recordActor, drawActorProp } from './actors
 import { drawCharacter } from './animation.mjs';
 import { drawLead, drawGuest } from './story_actors.mjs';
 import { drawLyricDetails } from './lyric_details.mjs';
+import { shotAtTime } from './plan.mjs';
 import { directionFor, localClock } from './direction.mjs';
 import { actionForShot, actionFrame } from './actions.mjs';
 import { drawCatenaryGarland, drawDriftingParticles, drawOrigamiBirds, drawMacroForegroundBokeh, drawWindFloraRow, drawVolumetricBeams, drawMiniPolaroid, computeCamera, withCamera } from './diorama.mjs';
@@ -353,8 +354,14 @@ function getPolaroidSnapshot() {
     count: 68,
     seed: 47,
   });
-  whale(g, { x: 560, y: deckY + 12, u: 25, view: 'back', pose: 'wave' });
-  guest(g, 'doubao', { x: 705, y: deckY + 12, h: 250 });
+  // Snapshot actors belong to the frozen S23, not the live shot's cast or time.
+  // Drawing them directly prevents cache initialization from hiding S24 actors.
+  const snapShot=shotAtTime(tSnap);
+  const whaleOpt={x:560,y:deckY+12,h:25*7.4};
+  const state=directionFor(snapShot.index,'whale').state;
+  drawLead(g,snapShot.index,tSnap,snapShot,whaleOpt) ||
+    drawCharacter(g,'whale',state,localClock(snapShot,tSnap,'whale'),whaleOpt);
+  drawGuest(g,'doubao',tSnap,snapShot,{x:705,y:deckY+12,h:250});
   POLAROID_SNAP = cv;
   return cv;
 }
@@ -786,7 +793,7 @@ function paintBaseShot(c, t, shot, env) {
     ellipse(c, 640, 390, 250, 250, 'rgba(255, 252, 242, 0.52)');
     whale(c, {
       x: 640,
-      y: 918,
+      y: 760,
       u: 72,
       view: 'front',
       pose: 'wave',
@@ -1082,7 +1089,7 @@ function paintBaseShot(c, t, shot, env) {
       headTilt: crouch * 0.08,
     });
     guest(c, 'doubao', {
-      x: id === 'S12_irreplaceable_lock' ? 716 : (close ? 690 : 700),
+      x: id === 'S12_irreplaceable_lock' ? 716 : (close ? 684 : 700),
       y: 590,
       h: id === 'S12_irreplaceable_lock' ? 284 : (close ? 280 : 320),
       lean: close ? -0.02 : 0,

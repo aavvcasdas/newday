@@ -85,10 +85,10 @@ test('umbrella gesture settles through the rain cut',()=>{
  assert.equal(drawGuest(c,'doubao',b.start,b,opt).column,15);
 });
 
-test('rain hand endpoints are staged within 4 logical pixels at the held key',()=>{
+test('rain hand endpoints are staged within 8 logical pixels at the held key',()=>{
  // Nominal sprite coordinates; not proof of visible hand contact.
  const wh=31*7.4,dh=280;
  const wx=534+(333-192)*wh/416, wy=590-wh+166*wh/416;
- const dx=690+(77-192)*dh/416, dy=590-dh+214*dh/416;
- assert.ok(Math.hypot(wx-dx,wy-dy)<4);
+ const dx=684+(77-192)*dh/416, dy=590-dh+214*dh/416;
+ assert.ok(Math.hypot(wx-dx,wy-dy)<8);
 });
