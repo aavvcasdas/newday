@@ -1,0 +1,224 @@
+{
+  "schemaVersion": 3,
+  "note": "Timing-only table modeled on world-execute-me-lyric-mv: contains no lyric strings. Run fill_lyrics.mjs to bind lyrics.txt.",
+  "sourceAudioPath": "assets/mv-extra/user_reference_audio.m4a",
+  "sourceAudioSha256": "cf59eff8cbfa99743db00fc882f3332a6b1d8a07b0f29357c1dda7aded79869e",
+  "sourcePcmFloatSha256": "36a35901ef6342ceae3988f408249d136dc60a086640a1a9fcf51dc144419b8e",
+  "sourceAudioSeconds": 56.00503401360544,
+  "fps": 30,
+  "totalFrames": 1681,
+  "durationSeconds": 56.03333333333333,
+  "tempo": {
+    "bpm": 70.59,
+    "doubleTimeBpm": 141.18,
+    "spb": 0.85,
+    "halfBeat": 0.425,
+    "beat0": 0.2833333333333333
+  },
+  "axisProvenance": "Reference-caption onset timings (±0.25s) combined with measured audio envelope onsets; not phoneme/ASR forced alignment.",
+  "phonemeAligned": false,
+  "humanListeningApproved": false,
+  "lines": [
+    {
+      "line": 1,
+      "section": "verse1",
+      "start": 1.1333333333333333,
+      "end": 4.6,
+      "charCount": 10,
+      "stamps": [
+        [0, 2, 0.0, false, 1.0],
+        [2, 4, 0.42, false, 1.0],
+        [4, 6, 0.95, true, 0.68],
+        [6, 8, 1.48, false, 1.0],
+        [8, 10, 1.95, true, 1.06]
+      ]
+    },
+    {
+      "line": 2,
+      "section": "verse1",
+      "start": 4.6,
+      "end": 8.366666666666667,
+      "charCount": 11,
+      "stamps": [
+        [0, 2, 0.0, true, 1.0],
+        [2, 6, 0.55, false, 1.0],
+        [6, 9, 1.35, false, 1.0],
+        [9, 11, 2.05, true, 1.0]
+      ]
+    },
+    {
+      "line": 3,
+      "section": "verse1",
+      "start": 8.366666666666667,
+      "end": 11.7,
+      "charCount": 13,
+      "stamps": [
+        [0, 4, 0.0, false, 1.0],
+        [4, 5, 0.52, true, 1.12],
+        [5, 9, 1.05, false, 1.0],
+        [9, 13, 1.78, true, 1.06]
+      ]
+    },
+    {
+      "line": 4,
+      "section": "verse1",
+      "start": 11.7,
+      "end": 15.4,
+      "charCount": 15,
+      "stamps": [
+        [0, 3, 0.0, false, 1.0],
+        [3, 8, 0.55, false, 1.0],
+        [8, 12, 1.45, true, 1.1],
+        [12, 15, 2.05, true, 1.15]
+      ]
+    },
+    {
+      "line": 5,
+      "section": "verse2",
+      "start": 15.4,
+      "end": 19.033333333333335,
+      "charCount": 12,
+      "stamps": [
+        [0, 1, 0.0, false, 1.0],
+        [1, 2, 0.25, true, 1.1],
+        [2, 6, 0.65, false, 1.0],
+        [6, 9, 1.35, false, 1.0],
+        [9, 12, 1.95, true, 1.06]
+      ]
+    },
+    {
+      "line": 6,
+      "section": "verse2",
+      "start": 19.033333333333335,
+      "end": 22.433333333333334,
+      "charCount": 13,
+      "stamps": [
+        [0, 7, 0.05, false, 1.0],
+        [7, 13, 1.55, true, 1.0]
+      ]
+    },
+    {
+      "line": 7,
+      "section": "prechorus",
+      "start": 22.433333333333334,
+      "end": 25.2,
+      "charCount": 11,
+      "stamps": [
+        [0, 1, 0.0, true, 1.1],
+        [1, 7, 0.42, false, 1.0],
+        [7, 9, 1.58, true, 1.08],
+        [9, 11, 1.92, false, 1.0]
+      ]
+    },
+    {
+      "line": 8,
+      "section": "prechorus",
+      "start": 25.2,
+      "end": 28.833333333333332,
+      "charCount": 15,
+      "stamps": [
+        [0, 3, 0.0, true, 1.06],
+        [3, 7, 0.58, true, 1.04],
+        [7, 11, 1.95, false, 1.0],
+        [11, 15, 2.45, false, 1.0]
+      ]
+    },
+    {
+      "line": 9,
+      "section": "chorus",
+      "start": 28.833333333333332,
+      "end": 31.4,
+      "charCount": 7,
+      "stamps": [
+        [0, 1, 0.15, true, 1.0],
+        [1, 2, 0.38, false, 1.0],
+        [2, 3, 0.62, false, 1.0],
+        [3, 4, 0.86, false, 1.0],
+        [4, 5, 1.1, false, 1.0],
+        [5, 6, 1.38, true, 1.08],
+        [6, 7, 1.65, true, 1.08]
+      ]
+    },
+    {
+      "line": 10,
+      "section": "chorus",
+      "start": 31.4,
+      "end": 35.86666666666667,
+      "charCount": 8,
+      "stamps": [
+        [0, 5, 0.15, false, 1.0],
+        [5, 6, 1.45, false, 1.0],
+        [6, 8, 2.45, true, 1.14]
+      ]
+    },
+    {
+      "line": 11,
+      "section": "chorus",
+      "start": 35.86666666666667,
+      "end": 38.833333333333336,
+      "charCount": 8,
+      "stamps": [
+        [0, 5, 0.12, false, 1.06],
+        [5, 8, 2.16, true, 1.12]
+      ]
+    },
+    {
+      "line": 12,
+      "section": "chorus",
+      "start": 38.833333333333336,
+      "end": 42.7,
+      "charCount": 7,
+      "stamps": [
+        [0, 3, 0.1, false, 1.0],
+        [3, 7, 1.15, true, 1.06]
+      ]
+    },
+    {
+      "line": 13,
+      "section": "chorus2",
+      "start": 42.7,
+      "end": 44.6,
+      "charCount": 8,
+      "stamps": [
+        [0, 6, 0.05, false, 1.0],
+        [6, 7, 0.78, true, 1.25],
+        [7, 8, 1.08, true, 1.25]
+      ]
+    },
+    {
+      "line": 14,
+      "section": "chorus2",
+      "start": 44.6,
+      "end": 48.666666666666664,
+      "charCount": 8,
+      "stamps": [
+        [0, 2, 0.08, false, 1.0],
+        [2, 3, 0.55, true, 1.08],
+        [3, 6, 1.15, false, 1.0],
+        [6, 8, 2.45, true, 1.1]
+      ]
+    },
+    {
+      "line": 15,
+      "section": "outro",
+      "start": 48.666666666666664,
+      "end": 51.0,
+      "charCount": 5,
+      "stamps": [
+        [0, 4, 0.08, true, 1.12],
+        [4, 5, 0.95, true, 1.18]
+      ]
+    },
+    {
+      "line": 16,
+      "section": "outro",
+      "start": 51.0,
+      "end": 54.166666666666664,
+      "charCount": 6,
+      "stamps": [
+        [0, 3, 0.08, false, 1.0],
+        [3, 6, 1.28, true, 1.12]
+      ]
+    }
+  ]
+}
