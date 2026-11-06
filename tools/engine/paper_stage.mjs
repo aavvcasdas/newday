@@ -198,3 +198,117 @@ export function makeLayer(ctx, cam) {
     ctx.restore();
   };
 }
+
+// ---------------------------------------------------------------------------
+// Day13+ 通用画面细节层（2026-11-06 用户第 3 轮反馈后从番外MV 提取为全项目通用）
+// 全部纯路径 + 12fps 量化手摆，禁止逐帧 blur（软件 canvas 慢约 50×）。
+// 参照用户给定样片《把回忆拼好给你》：纸屑尘埃、坡面草簇、远处飞鸟、地面承接。
+// ---------------------------------------------------------------------------
+
+/** 漂浮纸屑尘埃：给空气加层次，不是噪点滤镜。 */
+export function motes(ctx, t, n = 26, alpha = 0.5, tint = '255,246,216') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save();
+  for (let i = 0; i < n; i++) {
+    const sp = 14 + hash(i) * 26;
+    const x = (hash(i * 3.3) * (W + 160) - 80) + Math.sin(q * 0.6 + i) * 26;
+    const y = H + 40 - ((q * sp + hash(i * 7.1) * (H + 200)) % (H + 200));
+    const r = 2 + hash(i * 5.5) * 4;
+    ctx.fillStyle = `rgba(${tint},${alpha * (0.35 + hash(i * 9.1) * 0.65)})`;
+    ctx.beginPath(); ctx.ellipse(x, y, r, r * 0.7, hash(i) * 3.14, 0, TAU); ctx.fill();
+  }
+  ctx.restore();
+}
+
+/** 草丛剪纸：坡面上的小簇草叶，给地面加手作细节而不是纯色块。 */
+export function grassTufts(ctx, y, seed, color = '#8fae72', n = 26) {
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 3; ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const x = hash(i + seed) * (W + 120) - 60;
+    const yy = y + Math.sin(x * 0.004 + seed) * 14 + hash(i * 2.7 + seed) * 60;
+    const h = 10 + hash(i * 4.1 + seed) * 14;
+    for (let b = -1; b <= 1; b++) {
+      ctx.beginPath(); ctx.moveTo(x, yy);
+      ctx.quadraticCurveTo(x + b * 5, yy - h * 0.6, x + b * 9, yy - h);
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+/** 远处飞鸟：两点折线，缓慢横移，给天空加生命但不抢主体。 */
+export function birds(ctx, t, x0, y0, n = 5, color = 'rgba(90,100,115,0.55)') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const x = x0 + q * (16 + hash(i) * 12) + i * 46, y = y0 + Math.sin(q * 1.2 + i) * 8 + i * 13;
+    const flap = Math.sin(q * 6 + i * 1.7) * 4;
+    ctx.beginPath(); ctx.moveTo(x - 8, y + flap); ctx.lineTo(x, y - 3); ctx.lineTo(x + 8, y + flap); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** 地面接触阴影带：让纸台/坡面与角色脚下有厚度承接。 */
+export function groundShade(ctx, y, alpha = 0.12) {
+  ctx.save();
+  const g = ctx.createLinearGradient(0, y - 30, 0, y + 60);
+  g.addColorStop(0, 'rgba(60,50,40,0)');
+  g.addColorStop(0.5, `rgba(60,50,40,${alpha})`);
+  g.addColorStop(1, 'rgba(60,50,40,0)');
+  ctx.fillStyle = g; ctx.fillRect(-100, y - 30, W + 200, 90);
+  ctx.restore();
+}
+
+/** 雨丝：斜向短线，12fps 量化，纸艺雨不是粒子模糊。 */
+export function rainStreaks(ctx, t, n = 90, alpha = 0.30, tint = '220,232,245') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save(); ctx.strokeStyle = `rgba(${tint},${alpha})`; ctx.lineWidth = 2; ctx.lineCap = 'round';
+  for (let i = 0; i < n; i++) {
+    const sp = 620 + hash(i) * 420;
+    const x = hash(i * 3.7) * (W + 300) - 150;
+    const y = (q * sp + hash(i * 5.1) * (H + 200)) % (H + 200) - 100;
+    const len = 16 + hash(i * 8.3) * 20;
+    ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - len * 0.28, y + len); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+/** 夜城窗光：给远景楼群点亮的窗格，12fps 轻微明灭。 */
+export function cityWindows(ctx, t, seed = 1, y = 780, cols = 14, tint = '255,214,150') {
+  const q = Math.floor(t * 12) / 12;
+  ctx.save();
+  for (let i = 0; i < cols; i++) {
+    const bx = 60 + i * ((W - 120) / cols), bw = 70 + hash(i + seed) * 50;
+    const bh = 150 + hash(i * 2.3 + seed) * 300;
+    for (let r = 0; r < Math.floor(bh / 46); r++) {
+      for (let c2 = 0; c2 < 2; c2++) {
+        if (hash(i * 9.1 + r * 3.7 + c2 + seed) < 0.55) continue;
+        const flick = 0.45 + 0.55 * hash(Math.floor(q * 0.8) + i * 3 + r + c2);
+        ctx.fillStyle = `rgba(${tint},${0.5 * flick})`;
+        ctx.fillRect(bx + 12 + c2 * (bw * 0.42), y - bh + 18 + r * 46, 10, 14);
+      }
+    }
+  }
+  ctx.restore();
+}
+
+/**
+ * 通用细节调度：每镜按 `details` 声明绘制，缺省给一层纸屑保证空气感。
+ * 契约要求每镜至少一项细节层，避免"纯色背景 + 站桩纸偶"。
+ */
+export const DETAIL_KINDS = Object.freeze(['motes', 'grass', 'birds', 'ground', 'rain', 'windows']);
+export function drawDetails(ctx, t, list = [], opts = {}) {
+  for (const d of list) {
+    const kind = typeof d === 'string' ? d : d.kind;
+    const o = typeof d === 'string' ? {} : d;
+    switch (kind) {
+      case 'motes': motes(ctx, t, o.n ?? 24, o.alpha ?? 0.45, o.tint ?? '255,246,216'); break;
+      case 'grass': grassTufts(ctx, o.y ?? 910, o.seed ?? 3, o.color ?? '#8fae72', o.n ?? 26); break;
+      case 'birds': birds(ctx, t, o.x ?? 240, o.y ?? 190, o.n ?? 5, o.color); break;
+      case 'ground': groundShade(ctx, o.y ?? 930, o.alpha ?? 0.12); break;
+      case 'rain': rainStreaks(ctx, t, o.n ?? 90, o.alpha ?? 0.30, o.tint); break;
+      case 'windows': cityWindows(ctx, t, o.seed ?? 1, o.y ?? 780, o.cols ?? 14, o.tint); break;
+      default: throw new Error(`未知画面细节层 ${kind}（可用：${DETAIL_KINDS.join('/')}）`);
+    }
+  }
+}

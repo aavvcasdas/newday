@@ -1,5 +1,5 @@
 {
-  "directorVersion": 6,
+  "directorVersion": 7,
   "status": "production",
   "timingSource": "data/timeline.json",
   "visualReference": "用户给定《把回忆拼好给你》.mp4 的拼图/雨站/烟花/时差意象；Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词/确定性逐帧；JohnHeibel/PDoomVideo 的逐句事件、节拍反应、挤压拉伸、道具交接与笔刷转场方法。",
@@ -22,10 +22,13 @@
       "keyword": "渺小",
       "motif": "we.exist();",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 walk-right 真四帧步态走入→idle→look_up 仰望→point_up 指向拼图墙；灰色拼图墙/云 12fps 手摆；冷色纸屑漂浮",
-      "maxOnScreen": 1
+      "maxOnScreen": 1,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S02",
@@ -43,10 +46,14 @@
       "keyword": "小世界",
       "motif": "wish(smallWorld)",
       "transition": "iris",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 think→look_up→cheer；雨中拼图地球缺口由星愿补上；雨丝＋冷色尘埃",
-      "maxOnScreen": 1
+      "maxOnScreen": 1,
+      "details": [
+        "motes",
+        "rain"
+      ]
     },
     {
       "id": "S03",
@@ -65,10 +72,13 @@
       "keyword": "遇见你",
       "motif": "you.online → light.on",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 walk-right 走近→wave 真帧打招呼；Claude 纸偶从画外推入就位、1.7s 转身面向鲸娘；两块拼图合拢；暖纸屑＋光束",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S04",
@@ -87,10 +97,14 @@
       "keyword": "大海",
       "motif": "sea.withoutEnd",
       "transition": "wipe",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 walk-right 走入海边→look_up 仰望；Gemini 纸偶推入、1.6s 转身对望；iris 打开成分层海面；远处飞鸟＋沙岸草簇",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "birds",
+        "grass"
+      ]
     },
     {
       "id": "S05",
@@ -109,10 +123,13 @@
       "keyword": "取代",
       "motif": "memory.keep(you)",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 bend 俯身拾起拼图→handoff 递出→cheer；Kimi 纸偶推入、2.1s 转身接手；四格回忆拼贴依次落位；暖纸屑",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S06",
@@ -131,10 +148,14 @@
       "keyword": "发呆",
       "motif": "pause(together)",
       "transition": "iris",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 peek 探看→idle→bow 合十；豆包纸偶推入、1.5s 转身同侧长椅；伞 12fps 手摆；雨丝",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "rain",
+        "windows"
+      ]
     },
     {
       "id": "S07",
@@ -153,10 +174,13 @@
       "keyword": "拨开阴霾",
       "motif": "clouds.part()",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 shock→look_up→point_up 指向云开处；Qwen 纸偶推入、1.8s 转身；云层拨开光束落下",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "rain"
+      ]
     },
     {
       "id": "S08",
@@ -175,10 +199,15 @@
       "keyword": "收集快乐",
       "motif": "joy.collect(); sadness.release()",
       "transition": "wipe",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 walk-right 走入→bend 俯身拾快乐→cheer；GPT 上游 pet review 真帧；快乐入罐、灰块淘汰；草簇＋地面承接＋花粉纸屑",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "grass",
+        "ground",
+        "motes"
+      ]
     },
     {
       "id": "S09",
@@ -197,10 +226,14 @@
       "keyword": "情话",
       "motif": "message.from(you)",
       "transition": "iris",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 think→cry 情绪近景；Claude 纸偶递纸条；纸条轨迹在头顶以上 12fps 手摆飘近，不糊脸",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "windows",
+        "motes"
+      ]
     },
     {
       "id": "S10",
@@ -219,10 +252,14 @@
       "keyword": "烟花",
       "motif": "firework.bloom()",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 back 背影并肩看烟花→look_up→cheer；Z.AI 纸偶推入并肩；烟花分层绽放；上升火星",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "windows",
+        "motes"
+      ]
     },
     {
       "id": "S11",
@@ -241,10 +278,13 @@
       "keyword": "一刹那",
       "motif": "hold(thisMoment)",
       "transition": "flash",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 idle 呼吸；GPT 上游 pet review 真帧；拍立得显影，拼图飘落",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "windows"
+      ]
     },
     {
       "id": "S12",
@@ -262,10 +302,13 @@
       "keyword": "无法自拔",
       "motif": "fall.into(memory)",
       "transition": "iris",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 look_up→cry→bow；拼图漩涡绕身旋转",
-      "maxOnScreen": 1
+      "maxOnScreen": 1,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S13",
@@ -284,10 +327,13 @@
       "keyword": "时差",
       "motif": "love.offset ≠ 0",
       "transition": "wipe",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "昼夜缝两侧各一人：GPT 上游 pet idle 在日侧，鲸娘 walk-left 真步态走入夜侧→idle；双钟反相",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S14",
@@ -306,10 +352,14 @@
       "keyword": "放下",
       "motif": "let_go()",
       "transition": "brush",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "鲸娘 cry→wave 告别真帧；Gemini 纸偶推入、2.0s 转身；丝带随风拉开；坡面草簇＋暖尘埃",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "grass",
+        "motes"
+      ]
     },
     {
       "id": "S15",
@@ -328,10 +378,13 @@
       "keyword": "炙热",
       "motif": "warm(you)",
       "transition": "iris",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "GPT 上游 pet waving 真帧；鲸娘 confident_hips→look_up 仰望心形；夕照心形纸雕升起；暖尘埃",
-      "maxOnScreen": 2
+      "maxOnScreen": 2,
+      "details": [
+        "motes"
+      ]
     },
     {
       "id": "S16",
@@ -356,10 +409,14 @@
       "keyword": "爱自己",
       "motif": "warm(me too)",
       "transition": "none",
-      "version": 6,
+      "version": 7,
       "stage": "paper-diorama",
       "motion": "终帧全员 framed puzzle hold：鲸娘 wave 真帧、GPT 上游 review 真帧，其余静态纸偶站位；草簇＋暖纸屑；无片尾卡",
-      "maxOnScreen": 8
+      "maxOnScreen": 8,
+      "details": [
+        "grass",
+        "motes"
+      ]
     }
   ],
   "version": 4,
@@ -370,6 +427,7 @@
     "finaleException": "S16",
     "note": "用户 2026-11-06 裁定 cap2_keep_finale：正片每镜同屏最多 2 人，仅终帧 S16 保留全员 hold。8 位 AI 娘分散到各镜全部出场。"
   },
-  "detailReference": "用户给定《把回忆拼好给你》样片：分层剪纸/纸厚投影、雨丝、城市窗光、漂浮纸屑尘埃、坡面草簇、远处飞鸟、暖光光束、道具 12fps 手摆。v6 逐镜补入 motes/grassTufts/birds/groundShade。",
-  "blockingNote": "v6 修三类问题：(1) walk 源姿势朝向登记反了导致倒着走，已换 stride_* 明确朝右＋mirror 派生左向；(2) 调用方同时传 lerp 过的 x 与 walk 造成双重平移，已加运行时契约守卫；(3) framing 此前只是标签不影响构图，现由 FRAMINGS 真正做取景变换。纸偶用 enter 推入＋faceAt 转身做调度，不是整图弹跳。"
+  "detailReference": "用户给定《把回忆拼好给你》样片：分层剪纸/纸厚投影、雨丝、城市窗光、漂浮纸屑尘埃、坡面草簇、远处飞鸟、暖光光束、道具 12fps 手摆。v6 逐镜补入 motes/grassTufts/birds/groundShade。 v7 追加：夜城窗光 12fps 轻微明灭（样片夜城质感）。",
+  "blockingNote": "v6 修三类问题：(1) walk 源姿势朝向登记反了导致倒着走，已换 stride_* 明确朝右＋mirror 派生左向；(2) 调用方同时传 lerp 过的 x 与 walk 造成双重平移，已加运行时契约守卫；(3) framing 此前只是标签不影响构图，现由 FRAMINGS 真正做取景变换。纸偶用 enter 推入＋faceAt 转身做调度，不是整图弹跳。",
+  "performanceNote": "v7：病根是单帧状态久持＝纸偶站桩。10 个高频情绪/动作状态升为真 2 帧表演（预备→峰值），图集 21 状态/42 帧，其中 15 状态多帧。每镜补表演节拍与反应链；夜城窗光 12fps 明灭。"
 }

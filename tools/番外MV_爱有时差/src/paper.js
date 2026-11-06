@@ -73,6 +73,7 @@ export function hill(ctx, y, amp, fill, seed, opts = {}) {
   }, fill, { dy: 0, shadow: 18, ...opts });
 }
 export function city(ctx, y, fill, seed, opts = {}) {
+  const t = opts.t ?? 0;
   paper(ctx, c => {
     c.moveTo(-50, y + 200);
     let x = -50;
@@ -82,11 +83,15 @@ export function city(ctx, y, fill, seed, opts = {}) {
     }
     c.closePath();
   }, fill, { dy: 0, shadow: 10, ...opts });
-  // windows
-  ctx.save(); ctx.fillStyle = 'rgba(255,224,150,0.55)';
+  // windows：12fps 量化轻微明灭，夜城不再是死掉的点阵（样片细节）
+  ctx.save();
+  const q = Math.floor(t * 12) / 12;
   for (let i = 0; i < 90; i++) {
     const x = hash(i + seed) * W, yy = y - 30 - hash(i * 3 + seed) * 200;
-    if (hash(i * 5 + seed) > 0.45) ctx.fillRect(x, yy, 8, 12);
+    if (hash(i * 5 + seed) <= 0.45) continue;
+    const flick = 0.55 + 0.45 * hash(Math.floor(q * 0.7) * 3.1 + i + seed);
+    ctx.fillStyle = `rgba(255,224,150,${0.55 * flick})`;
+    ctx.fillRect(x, yy, 8, 12);
   }
   ctx.restore();
 }

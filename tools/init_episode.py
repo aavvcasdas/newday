@@ -56,10 +56,18 @@ export default {{
 }};
 """
 
-PAPER_SPEC_TEMPLATE = """// Day{day}《{title}》纸艺 Q 版单集配置（Day13+ 通用模板）
+PAPER_SPEC_TEMPLATE = """// Day{day}《{title}》纸艺 Q 版单集配置（Day13+ 通用模板 v7）
 // 先读 agent.md 第 33 条与 tools/角色Q版库/README.md。
 // 硬约束：同屏最多 2 人；动作只用 pets 图集里真实存在的状态；禁止整图 bounce/hop/sway。
 // 填好台词 SHA、逐镜构造字段前禁止生产渲染；无实测轴只能 planning + 无声结构样片。
+//
+// 细节标准（2026-11-06 用户第 3 轮反馈后为全项目通用，契约强制）：
+//   1. 每镜必填 details 画面细节层：motes/grass/birds/ground/rain/windows 至少一项；
+//   2. 主演每镜 ≥2 段表演节拍（states 多段），或用 walk/enter/faceAt 调度，禁止整镜站桩；
+//   3. 情绪/动作状态用真多帧（预备→峰值）；单帧状态持有不得超过 1.2s；
+//   4. 配角静态纸偶用 enter 画外推入 + faceAt 节拍转身，不是整图弹跳；
+//   5. 有 walk 时 x 必须等于 walk.to（位移只由步态驱动一次，避免双重平移）。
+// 参考实现：tools/角色Q版库/样例/paper.demo.spec.mjs（照抄这个细节密度）。
 import fs from 'node:fs';
 import {{ createHash }} from 'node:crypto';
 
@@ -71,6 +79,11 @@ const sourceScriptSha256 = createHash('sha256').update(script).digest('hex');
 const lead = (states, extra = {{}}) => ({{
   id: 'whale', x: 620, y: 920, h: 400, states, ...extra,
 }});
+// 第二人（同屏上限 2）示例：静态纸偶也要有入画与转身调度，别贴着不动。
+// const guest = (states, extra = {{}}) => ({{
+//   id: 'doubao', x: 1300, y: 920, h: 380, states, flip: true,
+//   enter: {{ from: 1620, dur: 0.8 }}, faceAt: 1.6, ...extra,
+// }});
 const dir = (o) => ({{
   kind: 'prop', settleSeconds: 0.1, holdSeconds: 0.4,
   trigger: '待填词点触发', reaction: '待填反应', exit: '待填出镜',
@@ -92,10 +105,17 @@ export default {{
         wordLine: 1, wordChar: '填', holdSeconds: 0.75,
       }}),
       // 同屏最多 2 人；要第三人就拆镜，不许缩小塞满画面
-      actors: [lead([{{ state: 'walk-right', dur: 1.2 }}, {{ state: 'idle' }}], {{
-        walk: {{ from: 320, to: 620, dur: 1.2 }},
+      // 表演要有节拍：走入 → 站定呼吸 → 仰望反应，不是一个状态撑满整镜。
+      actors: [lead([
+        {{ state: 'walk-right', dur: 1.2 }},
+        {{ state: 'idle', dur: 0.6 }},
+        {{ state: 'look_up' }},
+      ], {{
+        walk: {{ from: 320, to: 620, dur: 1.2 }},   // x 必须等于 walk.to
       }})],
       props: [{{ kind: 'desk', x: 640, y: 720, w: 660 }}],
+      // 画面细节层必填，否则契约拒绝（纯色背景 + 站桩纸偶＝不合格）
+      details: [{{ kind: 'motes', n: 20, alpha: 0.4 }}, {{ kind: 'ground', y: 930 }}, 'birds'],
     }},
   ],
 }};
@@ -123,7 +143,13 @@ STORYBOARD_TEMPLATE = """# Day{day}《{title}》分镜 · 纸艺 Q 版（Day13+ 
 - 人物：全 Q 版，动作来自 `tools/角色Q版库/pets/<id>/pet.json` 真帧状态。
 - **同屏最多 2 人**。需要第三人时拆镜或让角色退场，不得缩小硬塞。
 - 禁止整图 bounce/hop/sway、`idleMotion`、`livingBody`、`bodyEvents` 冒充动画。
-- 有走位必须配 `walk-*` 真步态，禁止平移滑行。
+- 有走位必须配 `walk-*` 真步态，禁止平移滑行；步态源姿势朝右，左向靠镜像；有 walk 时 `x` 必须等于 `walk.to`。
+- **细节动作表情（v7 全项目通用，契约强制）**：情绪/动作状态用真多帧（预备→峰值），
+  单帧状态持有不得超过 **1.2s**；主演每镜 **≥2 段表演节拍**，或用 `walk`/`enter`/`faceAt` 调度。
+  单帧久持＝纸偶站桩，这是前三轮返工的真正病根。
+- **画面细节层必填**：每镜 `details` 至少一项 `motes`(纸屑尘埃)/`grass`(草簇)/`birds`(飞鸟)/
+  `ground`(地面承接)/`rain`(雨丝)/`windows`(夜城窗光)。纯色背景加大小人＝不合格。
+- 配角即使没有图集（静态纸偶），也要用 `enter` 画外推入＋`faceAt` 节拍转身做调度。
 
 ## 估时（measured=false，配音响定后以实测轴重排）
 
@@ -136,9 +162,9 @@ STORYBOARD_TEMPLATE = """# Day{day}《{title}》分镜 · 纸艺 Q 版（Day13+ 
 
 ## 音画双栏
 
-| 镜号 | 行范围 | 景别 | 场景 | 同屏人物（≤2） | 口播 | 第一视觉 | 准备→动作→结果→反应 | 道具/落点 | 停留 |
-|---|---|---|---|---|---|---|---|---|---|
-| C01 | L01 | wide | sea_room | 本鲸 | 待填 | 待填 | 待填 | 待填 | 0.5s |
+| 镜号 | 行范围 | 景别 | 场景 | 同屏人物（≤2） | 口播 | 第一视觉 | 准备→动作→结果→反应 | 表演节拍（≥2 段真帧） | 画面细节层 | 道具/落点 | 停留 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| C01 | L01 | wide | sea_room | 本鲸 | 待填 | 待填 | 待填 | walk-right→idle→look_up | motes/ground/birds | 待填 | 0.5s |
 
 ## 逐镜构造卡
 
@@ -148,6 +174,9 @@ STORYBOARD_TEMPLATE = """# Day{day}《{title}》分镜 · 纸艺 Q 版（Day13+ 
 - 景别/构图/前中后景：待填
 - 人物站位与朝向、入镜状态：待填
 - 准备 → 动作 → 结果 → 反应：待填
+- 表演节拍（≥2 段，写真帧状态名与时长）：待填
+- 画面细节层（motes/grass/birds/ground/rain/windows）：待填
+- 配角调度（enter 推入 / faceAt 转身）：待填
 - 使用的 pets 状态序列：待填（须真实存在）
 - 道具接触与落点：待填
 - 出镜状态与下一镜接法：待填

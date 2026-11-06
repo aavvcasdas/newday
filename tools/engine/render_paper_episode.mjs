@@ -152,9 +152,23 @@ export async function createPaperFilm(spec, { cues }) {
       for (const a of shot.actors || []) {
         const st = stateAt(a.states, lt);
         let x = a.x;
-        if (a.walk) x = P.lerp(a.walk.from, a.walk.to, P.smooth(0, a.walk.dur, lt));
-        drawPetsActor(c, actors[a.id], { x, y: a.y, h: a.h, state: st.state, local: st.local, flip: !!a.flip });
+        // 有 walk 时 x 必须等于 walk.to，位移只由步态驱动一次（禁止调用方再 lerp）。
+        if (a.walk) {
+          if (Math.abs(a.x - a.walk.to) > 0.5) {
+            throw new Error(`${shot.id} ${a.id} walk 契约违反：x 必须等于 walk.to`);
+          }
+          x = P.lerp(a.walk.from, a.walk.to, P.smooth(0, a.walk.dur, lt));
+        } else if (a.enter) {
+          // 静态纸偶的入画调度：画外推入后锁死，不是整图弹跳。
+          const d = a.enter.dur ?? 0.7;
+          x = P.lerp(a.enter.from, a.x, P.smooth(0, d, lt));
+        }
+        let flip = !!a.flip;
+        if (a.faceAt != null && lt >= a.faceAt) flip = !flip;
+        drawPetsActor(c, actors[a.id], { x, y: a.y, h: a.h, state: st.state, local: st.local, flip });
       }
+      // 画面细节层在角色之后、暖光之前，保证空气感但不盖住表演。
+      P.drawDetails(c, t, shot.details || []);
     });
     ctx.restore();
     P.lightShaft(ctx, W * 0.3, 0, 260, 720, 0.10);

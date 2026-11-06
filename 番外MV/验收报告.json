@@ -1,8 +1,8 @@
 {
   "ok": true,
   "final": "/home/user/newday/番外MV/成片/把回忆拼好给你_AI娘全员番外.mp4",
-  "sha256": "4809423807c9a62f4318b0f538635d7e60ef439a8e3ab06e198d5570a6c3bca0",
-  "bytes": 15524978,
+  "sha256": "c7a3924b88a74486a088f81e7ab565a3426f2ea6525044b270666a6f80acb858",
+  "bytes": 15644878,
   "duration": 56.08,
   "decodedFrames": 1346,
   "ffmpeg": "/home/user/.cache/mv-venv/lib/python3.11/site-packages/imageio_ffmpeg/binaries/ffmpeg-linux-x86_64-v9.0.2",
@@ -95,109 +95,109 @@
     {
       "name": "sample_frames_extracted",
       "ok": true,
-      "detail": "/tmp/mv-verify-7vdt3pbz"
+      "detail": "/tmp/mv-verify-hh58n7f0"
     }
   ],
   "sampleFrames": [
     {
       "t": 2.2,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_00_2.200.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_00_2.200.png",
       "ok": true,
-      "bytes": 1056127
+      "bytes": 1057050
     },
     {
       "t": 6.646,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_01_6.646.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_01_6.646.png",
       "ok": true,
-      "bytes": 1078966
+      "bytes": 1081361
     },
     {
       "t": 10.167,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_02_10.167.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_02_10.167.png",
       "ok": true,
       "bytes": 995729
     },
     {
       "t": 13.708,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_03_13.708.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_03_13.708.png",
       "ok": true,
-      "bytes": 1106173
+      "bytes": 1105282
     },
     {
       "t": 17.292,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_04_17.292.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_04_17.292.png",
       "ok": true,
-      "bytes": 1019337
+      "bytes": 1018418
     },
     {
       "t": 20.708,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_05_20.708.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_05_20.708.png",
       "ok": true,
-      "bytes": 1018719
+      "bytes": 1019900
     },
     {
       "t": 23.958,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_06_23.958.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_06_23.958.png",
       "ok": true,
-      "bytes": 807747
+      "bytes": 807036
     },
     {
       "t": 27.208,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_07_27.208.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_07_27.208.png",
       "ok": true,
-      "bytes": 1124791
+      "bytes": 1125353
     },
     {
       "t": 30.208,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_08_30.208.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_08_30.208.png",
       "ok": true,
-      "bytes": 1177282
+      "bytes": 1175822
     },
     {
       "t": 33.542,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_09_33.542.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_09_33.542.png",
       "ok": true,
-      "bytes": 1082824
+      "bytes": 1079438
     },
     {
       "t": 37.292,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_10_37.292.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_10_37.292.png",
       "ok": true,
-      "bytes": 1050226
+      "bytes": 1050812
     },
     {
       "t": 40.708,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_11_40.708.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_11_40.708.png",
       "ok": true,
-      "bytes": 1241431
+      "bytes": 1243736
     },
     {
       "t": 43.625,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_12_43.625.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_12_43.625.png",
       "ok": true,
-      "bytes": 960612
+      "bytes": 961400
     },
     {
       "t": 46.792,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_13_46.792.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_13_46.792.png",
       "ok": true,
-      "bytes": 1138371
+      "bytes": 1146876
     },
     {
       "t": 49.896,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_14_49.896.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_14_49.896.png",
       "ok": true,
-      "bytes": 1183774
+      "bytes": 1183296
     },
     {
       "t": 52.604,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_15_52.604.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_15_52.604.png",
       "ok": true,
       "bytes": 1321597
     },
     {
       "t": 55.883,
-      "file": "/tmp/mv-verify-7vdt3pbz/check_16_55.883.png",
+      "file": "/tmp/mv-verify-hh58n7f0/check_16_55.883.png",
       "ok": true,
       "bytes": 1336789
     }

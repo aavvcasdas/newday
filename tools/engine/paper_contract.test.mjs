@@ -7,7 +7,7 @@ import { fileURLToPath } from 'node:url';
 import { frameAt, stateAt, loadCast } from './pets_actor.mjs';
 import {
   validatePaperSpec, validatePaperShot, assertCastCap, MAX_ON_SCREEN,
-  loadCastLibrary, availableStates, BANNED_MOTION,
+  loadCastLibrary, availableStates, BANNED_MOTION, validatePaperActor, stateMeta,
 } from './paper_contract.mjs';
 import { loadPaperSpec, planningCues, createPaperFilm, FRAMINGS } from './render_paper_episode.mjs';
 
@@ -171,4 +171,60 @@ test('sleep 已修复双腿：姿势文件已更新且仍在注册中', () => {
   // 重生成后的修复图应比旧的双腿图更大/不同；此处校验 sha 已登记，避免静默回退旧图
   const pet = JSON.parse(fs.readFileSync(path.join(ROOT, 'tools/角色Q版库/pets/whale/pet.json'), 'utf8'));
   assert.ok(pet.generated_poses_sha256.sleep, 'sleep 源图 sha 须登记');
+});
+
+// --- v7 细节表演门禁（2026-11-06 用户第 3 轮反馈：分镜细节不够到位）---
+
+test('单帧状态久持被拒绝：纸偶站桩不算表演', () => {
+  const cast = loadCastLibrary();
+  // point 只有 1 帧且 kind=gesture，持有 2s 超过 1.2s 上限
+  assert.throws(() => validatePaperActor({
+    id: 'whale', x: 600, y: 920, h: 400,
+    states: [{ state: 'point', dur: 2.0 }],
+  }, 'T', cast), /只有 1 帧却持有/);
+  // 同一状态短持有允许
+  assert.ok(validatePaperActor({
+    id: 'whale', x: 600, y: 920, h: 400,
+    states: [{ state: 'point', dur: 0.6 }, { state: 'idle' }],
+  }, 'T', cast));
+  // hold 语义（back）单帧久持允许
+  assert.ok(validatePaperActor({
+    id: 'whale', x: 600, y: 920, h: 400,
+    states: [{ state: 'back', dur: 2.5 }],
+  }, 'T', cast));
+});
+
+test('高频情绪状态必须是真多帧表演，不再单帧久持', () => {
+  for (const st of ['look_up', 'cheer', 'cry', 'think', 'shock', 'bow', 'handoff', 'peek', 'bend', 'point_up']) {
+    const m = stateMeta('whale', st);
+    assert.ok(m, `${st} 应在图集`);
+    assert.ok(m.frames >= 2, `${st} 须 ≥2 帧真表演，实为 ${m.frames}`);
+  }
+});
+
+test('每镜必须有画面细节层，纯色背景站桩被拒绝', async () => {
+  const { spec, cues } = await demoSpec();
+  const a = structuredClone(spec);
+  delete a.shots[0].details;
+  assert.throws(() => validatePaperSpec(a, { cues }), /缺画面细节层 details/);
+  const b = structuredClone(spec);
+  b.shots[0].details = [{ kind: 'sparkle' }];
+  assert.throws(() => validatePaperSpec(b, { cues }), /未知细节层/);
+});
+
+test('整镜单一单帧状态＝表演单薄，被拒绝', async () => {
+  const { spec, cues } = await demoSpec();
+  const a = structuredClone(spec);
+  a.shots[1].actors = [{ id: 'whale', x: 560, y: 920, h: 400, states: [{ state: 'point', dur: 0.5 }] }];
+  assert.throws(() => validatePaperSpec(a, { cues }), /表演过于单薄/);
+});
+
+test('有 walk 时 x 必须等于 walk.to（禁止双重平移）', () => {
+  const cast = loadCastLibrary();
+  // 契约层允许声明，渲染器负责运行时守卫；这里校验步态与方向仍一致
+  assert.ok(validatePaperActor({
+    id: 'whale', x: 620, y: 920, h: 400,
+    states: [{ state: 'walk-right', dur: 1.2 }, { state: 'idle' }],
+    walk: { from: 300, to: 620, dur: 1.2 },
+  }, 'T', cast));
 });

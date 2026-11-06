@@ -17,6 +17,25 @@ export const PAPER_VERSION = 1;
 export const BANNED_MOTION = /\b(bounce|hop|sway|squash|breathbob)\b|整图弹跳|整体晃动|整身弹跳/i;
 
 const DIRECTION_REQUIRED = ['focus', 'entry', 'action', 'trigger', 'result', 'reaction', 'exit', 'transition'];
+
+// Day13+ 细节表演硬门禁（2026-11-06 用户第 3 轮反馈：「分镜细节还是不够到位」）。
+// 病根是单帧状态久持＝纸偶站桩。情绪/动作状态必须真多帧，且每镜要有表演节拍与画面细节层。
+export const MIN_BEATS = 2;            // 每镜主演至少 2 段表演节拍
+export const MAX_SINGLE_HOLD = 1.2;    // 单帧状态最长持有时长（秒）
+export const DETAIL_KINDS = Object.freeze(['motes', 'grass', 'birds', 'ground', 'rain', 'windows']);
+const STILL_KINDS = new Set(['hold', 'static']);
+
+/** 读某角色某状态的真帧数与语义种类；无图集返回 null（静态纸偶另判）。 */
+export function stateMeta(id, state) {
+  const file = petJsonPath(id);
+  if (!fs.existsSync(file)) return null;
+  const pet = JSON.parse(fs.readFileSync(file, 'utf8'));
+  const a = (pet.animations || []).find((x) => x.state === state);
+  if (!a) return null;
+  const cast = loadCastLibrary();
+  const kind = cast.characters?.[id]?.states?.[state]?.kind || null;
+  return { frames: a.frame_count, kind };
+}
 const text = (v) => typeof v === 'string' && v.trim().length > 0;
 
 export function loadCastLibrary() {
@@ -68,6 +87,17 @@ export function validatePaperActor(actor, where, cast) {
       throw new Error(`${where} ${actor.id} 状态 ${s.state} 不在 pets 图集中（现有：${avail.join('/')}）；不得用未生成的动作冒充`);
     }
   }
+  // 单帧状态不得长时间久持：那是纸偶站桩，不是表演。
+  for (const s of states) {
+    const m = stateMeta(actor.id, s.state);
+    if (!m || m.frames > 1) continue;
+    if (STILL_KINDS.has(m.kind)) continue;   // back/sit 等静止语义允许单帧
+    const hold = s.dur ?? 0;
+    if (hold > MAX_SINGLE_HOLD) {
+      throw new Error(`${where} ${actor.id} 状态 ${s.state} 只有 1 帧却持有 ${hold}s`
+        + `（上限 ${MAX_SINGLE_HOLD}s）；请补真多帧表演或拆成多段节拍，不得单帧久持冒充动画`);
+    }
+  }
   if (actor.walk) {
     const { from, to, dur } = actor.walk;
     if (![from, to, dur].every(Number.isFinite) || dur <= 0) throw new Error(`${where} ${actor.id} walk 须 from/to/dur 有限且 dur>0`);
@@ -116,6 +146,27 @@ export function validatePaperShot(shot, { cast, cues = null, final = false } = {
   const hasEvent = (shot.props || []).length || (shot.events || []).length
     || (shot.actors || []).some((a) => a.walk || (a.states || []).length > 1);
   if (!hasEvent) throw new Error(`${shot.id} 没有可见事件：至少一个道具/事件，或角色走位与多段真帧表演`);
+  // 每镜必须有画面细节层，杜绝"纯色背景 + 站桩纸偶"。
+  const details = shot.details || [];
+  if (!Array.isArray(details) || !details.length) {
+    throw new Error(`${shot.id} 缺画面细节层 details（至少一项：${DETAIL_KINDS.join('/')}）`);
+  }
+  for (const d of details) {
+    const kind = typeof d === 'string' ? d : d?.kind;
+    if (!DETAIL_KINDS.includes(kind)) throw new Error(`${shot.id} 未知细节层 ${kind}`);
+  }
+  // 主演要有表演节拍：多段真帧状态切换，或走位/入画调度。终帧 hold 例外。
+  if (!final) {
+    for (const a of shot.actors || []) {
+      const beats = (a.states || []).length;
+      const staged = !!(a.walk || a.enter || a.faceAt);
+      const rich = (a.states || []).some((s) => (stateMeta(a.id, s.state)?.frames ?? 0) > 1);
+      if (beats < MIN_BEATS && !staged && !rich) {
+        throw new Error(`${shot.id} ${a.id} 表演过于单薄：需 ≥${MIN_BEATS} 段节拍、`
+          + `或走位/入画/转身调度、或多帧真表演状态；不得整镜站着不动`);
+      }
+    }
+  }
   if (cues) {
     const line = cues[d.wordLine - 1];
     if (!line?.text?.includes(d.wordChar)) throw new Error(`${shot.id} 触发字不在对应台词中`);

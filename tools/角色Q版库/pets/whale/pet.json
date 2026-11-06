@@ -103,13 +103,15 @@
       "cn": "翻本子思考",
       "kind": "gesture",
       "row": 4,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        520
+        620,
+        560
       ],
-      "loop": false,
+      "loop": true,
       "source_poses": [
-        "think"
+        "think",
+        "think_b"
       ],
       "mirrored": false
     },
@@ -118,13 +120,15 @@
       "cn": "震惊",
       "kind": "expression",
       "row": 5,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        360
+        260,
+        420
       ],
       "loop": false,
       "source_poses": [
-        "shock"
+        "shock",
+        "shock_b"
       ],
       "mirrored": false
     },
@@ -133,13 +137,15 @@
       "cn": "委屈欲哭",
       "kind": "expression",
       "row": 6,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        520
+        560,
+        620
       ],
-      "loop": false,
+      "loop": true,
       "source_poses": [
-        "cry"
+        "cry",
+        "cry_b"
       ],
       "mirrored": false
     },
@@ -148,13 +154,15 @@
       "cn": "欢呼",
       "kind": "expression",
       "row": 7,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        420
+        380,
+        340
       ],
-      "loop": false,
+      "loop": true,
       "source_poses": [
-        "cheer"
+        "cheer",
+        "cheer_b"
       ],
       "mirrored": false
     },
@@ -178,13 +186,15 @@
       "cn": "道歉合十",
       "kind": "gesture",
       "row": 9,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        560
+        420,
+        520
       ],
       "loop": false,
       "source_poses": [
-        "bow"
+        "bow",
+        "bow_b"
       ],
       "mirrored": false
     },
@@ -261,13 +271,15 @@
       "cn": "递拼图",
       "kind": "gesture",
       "row": 14,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        600
+        460,
+        560
       ],
       "loop": false,
       "source_poses": [
-        "handoff"
+        "handoff",
+        "handoff_b"
       ],
       "mirrored": false
     },
@@ -276,13 +288,15 @@
       "cn": "怯生生探看",
       "kind": "expression",
       "row": 15,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        520
+        520,
+        560
       ],
-      "loop": false,
+      "loop": true,
       "source_poses": [
-        "peek"
+        "peek",
+        "peek_b"
       ],
       "mirrored": false
     },
@@ -306,13 +320,15 @@
       "cn": "俯身伸手",
       "kind": "gesture",
       "row": 17,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        560
+        420,
+        520
       ],
       "loop": false,
       "source_poses": [
-        "bend"
+        "bend",
+        "bend_b"
       ],
       "mirrored": false
     },
@@ -321,13 +337,15 @@
       "cn": "仰望惊叹",
       "kind": "expression",
       "row": 18,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        620
+        620,
+        520
       ],
-      "loop": false,
+      "loop": true,
       "source_poses": [
-        "look_up"
+        "look_up",
+        "look_up_b"
       ],
       "mirrored": false
     },
@@ -351,13 +369,15 @@
       "cn": "指向上方",
       "kind": "gesture",
       "row": 20,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        560
+        480,
+        420
       ],
       "loop": false,
       "source_poses": [
-        "point_up"
+        "point_up",
+        "point_up_b"
       ],
       "mirrored": false
     }
@@ -365,19 +385,28 @@
   "generated_poses_sha256": {
     "back": "aa1bec2b86f1e8727be292483ee403d7adcd37b20d42c47d70f1e3cff89a9f36",
     "bend": "e39c728c07f585150e536ecb2718453696061e6f06bcada64b5986467db162ba",
+    "bend_b": "b4b92fae6cc8c49d2710f5e94a82c4f7bb7f1cd308db8398beb30ca7961d94a1",
     "bow": "cd41c9bb2a86956d5687b8c6ba2317a238b77f8ac22b75036a0b485d6cd3d857",
+    "bow_b": "275c62fa6a22a15a706de35fad1ba8c16dfb904d6dd2a6bc5b75088f16dbb419",
     "cheer": "0a5ccdb6a55bb4b01b0a8bf07d95aa7ef10d31188a5a11b92bf8e8b16ee1417f",
+    "cheer_b": "65eb26cb77f39d80c99ea241b027211ca6c2c12070f09f8888315da5a46c45c3",
     "cry": "df7fdccff438239804d3697e41bd0cc00382b1472e61fa1f4653aa6babc9faa3",
+    "cry_b": "40833f63ded3bb1af916c819cf7aa69790e575c118fb145b47021635954cfaf3",
     "eat": "45879268b13af6de0d19053af540eb37d3ef9b4cb5ca90c880d7b8c34a5294cc",
     "handoff": "1a1d012bc837d12b514695b39aa088ef8f796b29695aeaf462167d2faa3fd53f",
+    "handoff_b": "510c1313d26dfe996e6018fa0a7e793260e82108e2b0f06d7625122076caf280",
     "hips": "c185be420e4509d434daf31aa7dee612e5ac24d68f3b314b8af5cc18d18222f8",
     "idle_a": "4d7f818f1b7908741d79acb3bbf0dbec73153301fc0b82dc5897c67f3daf4a48",
     "idle_b": "5a34b56825c47c2d410e160c6f48cbf2bd8b8fb4ef245a38f05261d93c3cc74a",
     "look_up": "e2e2f47cc96fe412976918bba6505c8cf8b31d4aa64635baf94d683ee503da75",
+    "look_up_b": "9036eb25479cfd658d983079c5bc772a720b6be11024dc9d2088e7eb46d943e6",
     "peek": "3e5cf940f219721b8a90a0d4bd3d17760d6e6d3c5dabadde3fd1a21a02e872ad",
+    "peek_b": "df216474a05490904f8e002b8f4c9a568d4dfc270b3afad92c1b618708b76d9b",
     "point": "0ae85b8e84cca40f795f5eaececcee02a3e880ab2785d205495dc6e2302090c2",
     "point_up": "b7bd2366e8b2e9b15638327dfc5181e3bdec88418e434ff5200fc2bcf1ef8066",
+    "point_up_b": "2ef7ff7691d8fa13d60523787d98822d06b2439bff6a4f32af10f198a67621c3",
     "shock": "118512bfd6755281840c427b45a6d0d545cb49b8739263a003a17677abc6b313",
+    "shock_b": "5e8a505af7a003e99c68de3d00abde723f1bf3bd1190f64f446dd784a5035965",
     "sit": "3eee7d0a3924a182d98caf7c45ea763946bb3ca9a58761da6bf9c537f6342d6f",
     "sleep": "03eacc470c48476bb6d45c24edcfc430afc2039fde4d28dfb7b8d2b634893b0d",
     "stride_a": "397828d3932c399fc9a292efd7741b5a2873c51a65a145ee1300e34690d53932",
@@ -385,6 +414,7 @@
     "stride_c": "a0a23da06f39c52e5f438338db6e10e88ea85b755c8d78edb92f607a3948c730",
     "stride_d": "d3ced18e9b8bb6342bff7e1c6b53b5ca01aa12f5f18d4e36755006e320b18d61",
     "think": "0e91b92d607e3f81b3bf74d72cbfac09ee9ebb0ebe53e25d10d5a0a9c2b87db2",
+    "think_b": "cf489134d480c328aa4bee0b9b5650d6c2ff03870ff4fafc16b9e18719cd625b",
     "typing_a": "655882cb971600873a51c664cc34e4a6d32f0dc3f1b619dba9afa44d03619809",
     "typing_b": "9e1a61f48aee11071c9fe96549d808918938955ea70772ec52aa038d9c96714c",
     "wave_a": "fe1746865fa0c24277a304bf1ad6aad5eae05c969dd61c96d33ba216da5ad38f",
@@ -392,7 +422,7 @@
   },
   "pending_poses": [],
   "integrity": {
-    "spritesheet_sha256": "0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8",
+    "spritesheet_sha256": "166f9bd9a0a69f8d490162b9f666bc48c33df868db159de009c1eb6ebe2cfcaf",
     "width": 1536,
     "height": 4368
   }

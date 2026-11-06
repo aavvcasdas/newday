@@ -158,7 +158,7 @@ export async function createFilm(glCanvas, outCanvas) {
         for (let i = 0; i < 10; i++) P.paper(c, P.puzzlePath(cx - 280 + (i % 4) * 150, cy - 260 + Math.floor(i / 4) * 170, 150, 160, [1, -1, 1, -1]), i % 2 ? '#8fb9d8' : '#6f9cc0', { shadow: 4, dy: 3, edge: '#dcebf5' });
         P.paper(c, P.puzzlePath(cx + 60, cy - 120, 150, 160, [-1, 1, -1, 1]), '#5a6878', { shadow: 2, dy: 2 }); c.restore();
         const glow = smooth(1.2, 2.6, lt); if (glow > 0) { P.star(c, cx + 135, cy - 40, 46 * glow, '#ffe9a8', lt * 0.4); P.lightShaft(c, cx + 135, cy - 260, 120, 300, 0.25 * glow); } });
-      layer(1, c => { P.hill(c, 880, 20, '#46536b', 5); drawActor(c, 'whale', 960, 850, 290, { seq: [{ state: 'think', dur: 1.2 }, { state: 'look_up', dur: 1.0 }, { state: 'cheer' }] }, lt); });
+      layer(1, c => { P.hill(c, 880, 20, '#46536b', 5); drawActor(c, 'whale', 960, 850, 290, { seq: [{ state: 'think', dur: 1.2 }, { state: 'peek', dur: 0.7 }, { state: 'look_up', dur: 1.0 }, { state: 'cheer' }] }, lt); });
       layer(1.1, c => P.rain(c, lt, 110, 0.45));
       layer(1.2, c => P.motes(c, lt, 14, 0.22, '200,220,240'));
     },
@@ -178,7 +178,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0, c => { c.fillStyle = '#bfe3ef'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1560, 180, 90), '#ffe9a8'); P.cloud(c, 300, 150, 1.6, '#ffffff', { blur: 2 }); P.cloud(c, 1000, 110, 1.3, '#f4fbff', { blur: 2 }); });
       layer(0.4, c => { P.hill(c, 620, 10, '#8fc7d8', 2, { edge: '#e8f6fb' }); });
       layer(0.6, c => { for (let b = 0; b < 4; b++) { const y = 660 + b * 90; P.paper(c, c2 => { c2.moveTo(-100, y); for (let x = -100; x <= W + 100; x += 60) c2.lineTo(x, y + Math.sin(x * 0.02 + lt * 2 + b) * 12); c2.lineTo(W + 100, H + 100); c2.lineTo(-100, H + 100); c2.closePath(); }, ['#7db8cf', '#6aa9c4', '#589ab8', '#4a8caa'][b], { dy: 0, shadow: 8, edge: '#dff2f8' }); } });
-      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'whale', 760, 940, 300, { seq: [{ state: 'walk-right', dur: 1.1 }, { state: 'look_up' }], walk: { from: 520, to: 760, dur: 1.1 } }, lt);
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'whale', 760, 940, 300, { seq: [{ state: 'walk-right', dur: 1.1 }, { state: 'look_up', dur: 0.9 }, { state: 'point_up' }], walk: { from: 520, to: 760, dur: 1.1 } }, lt);
         drawActor(c, 'gemini', 1120, 940, 310, { enter: { from: 1380, dur: 1.0 }, faceAt: 1.6 }, lt, true); });
       layer(0.3, c => P.birds(c, lt, 220, 200, 4, 'rgba(90,120,140,0.5)'));
       layer(1.05, c => P.grassTufts(c, 950, 11, '#cdb98d', 16));
@@ -200,10 +200,10 @@ export async function createFilm(glCanvas, outCanvas) {
     },
     S06(lt, dur) { // 发呆：雨站长椅伞
       setCam(lt, dur, 0.02, 0, 0);
-      layer(0, c => { c.fillStyle = '#6b7686'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#525d6e', 4, { blur: 2 }); P.cloud(c, 300, 130, 2, '#7d8a9c', { blur: 2 }); });
+      layer(0, c => { c.fillStyle = '#6b7686'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#525d6e', 4, { blur: 2, t: lt }); P.cloud(c, 300, 130, 2, '#7d8a9c', { blur: 2 }); });
       layer(0.6, c => { P.hill(c, 820, 12, '#5b6675', 6); P.lampPost(c, 1500, 860, 0.8); });
       layer(0.9, c => { P.bench(c, 640, 800, 1.1); P.umbrella(c, 980, 560, 1.2, '#e8b04b', -0.06 + jitter(lt, 3, 0.01)); });
-      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'peek', dur: 1.1 }, { state: 'idle', dur: 0.8 }, { state: 'bow' }] }, lt);
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'peek', dur: 1.1 }, { state: 'think', dur: 0.9 }, { state: 'idle', dur: 0.6 }, { state: 'bow' }] }, lt);
         drawActor(c, 'doubao', 1080, 800, 295, { enter: { from: 1300, dur: 0.9 }, faceAt: 1.5 }, lt, true); });
       layer(1.15, c => P.rain(c, lt, 130, 0.5));
     },
@@ -213,7 +213,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0, c => { c.fillStyle = lerpColor('#6b7686', '#cfe6f2', part); c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#7d8a9c', 4, { blur: 2, alpha: 1 - part * 0.4 }); });
       layer(0.4, c => { P.cloud(c, lerp(500, 120, part), 140, 2.4, '#8b98aa', { blur: 2 }); P.cloud(c, lerp(900, 1400, part), 120, 2.6, '#93a0b2', { blur: 2 }); if (part > 0.3) P.paper(c, P.circlePath(960, 160, 80), '#ffe9a8', { alpha: part }); });
       layer(0.8, c => { P.hill(c, 840, 14, '#8fa3b8', 6); P.bench(c, 640, 800, 1.1); P.lampPost(c, 1500, 860, 1 - part); });
-      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'shock', dur: 0.8 }, { state: 'look_up', dur: 0.9 }, { state: 'point_up' }] }, lt); drawActor(c, 'qwen', 1120, 800, 295, { enter: { from: 1360, dur: 0.8 }, faceAt: 1.8 }, lt, true); });
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'shock', dur: 0.8 }, { state: 'look_up', dur: 0.9 }, { state: 'point_up', dur: 0.9 }, { state: 'cheer' }] }, lt); drawActor(c, 'qwen', 1120, 800, 295, { enter: { from: 1360, dur: 0.8 }, faceAt: 1.8 }, lt, true); });
       layer(1.1, c => { if (part < 0.8) P.rain(c, lt, 100, 0.4 * (1 - part)); P.lightShaft(c, 960, 160, 320, 700, 0.35 * part); });
     },
     S08(lt, dur) { // 收集快乐 / 淘汰不开心（27s 分事件）
@@ -233,14 +233,14 @@ export async function createFilm(glCanvas, outCanvas) {
     },
     S09(lt, dur) { // 情话：屋顶纸条（v5 轨迹抬到头顶以上，纸条下沿≤470 < 角色头顶≈487，不糊脸）
       setCam(lt, dur, 0.06, 0, 0);
-      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(255,246,216,${0.3 + hash(i) * 0.6})`; c.fillRect(hash(i * 3) * W, hash(i * 7) * 420, 3, 3); } P.city(c, 760, '#232c42', 9, { blur: 2 }); });
+      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(255,246,216,${0.3 + hash(i) * 0.6})`; c.fillRect(hash(i * 3) * W, hash(i * 7) * 420, 3, 3); } P.city(c, 760, '#232c42', 9, { blur: 2, t: lt }); });
       layer(0.7, c => { P.hill(c, 860, 8, '#3a4560', 4); P.paper(c, P.rectPath(300, 820, 1320, 40, 8), '#4a5570'); });
-      layer(1, c => { drawActor(c, 'whale', 820, 840, 340, { seq: [{ state: 'think', dur: 1 }, { state: 'cry', dur: 1.2 }, { state: 'idle' }] }, lt); drawActor(c, 'claude', 1120, 840, 350, {}, lt, true); });
+      layer(1, c => { drawActor(c, 'whale', 820, 840, 340, { seq: [{ state: 'think', dur: 1 }, { state: 'peek', dur: 0.6 }, { state: 'cry', dur: 1.2 }, { state: 'bow' }] }, lt); drawActor(c, 'claude', 1120, 840, 350, {}, lt, true); });
       layer(1.05, c => { for (let i = 0; i < 5; i++) { const t0 = 0.3 + i * 0.5, k = smooth(t0, t0 + 1.6, lt); if (k <= 0) continue; const x = lerp(1120, 900, k), y = lerp(400, 270, k) - Math.sin(k * Math.PI) * 40 + jitter(lt, i, 2); P.paper(c, P.rectPath(x, y, 120, 70, 8), '#fff6d8', { shadow: 10, dy: 6, alpha: 1 - smooth(0.8, 1, k) }); } });
     },
     S10(lt, dur) { // 烟花
       setCam(lt, dur, 0.04, 0, -6);
-      layer(0, c => { c.fillStyle = '#232c42'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 780, '#1a2236', 9, { blur: 2 }); });
+      layer(0, c => { c.fillStyle = '#232c42'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 780, '#1a2236', 9, { blur: 2, t: lt }); });
       layer(0.5, c => { [[420, 260, 0.2, '#ff9a8a'], [960, 200, 1.1, '#ffd76a'], [1480, 280, 2.0, '#8ad0ff'], [700, 320, 2.9, '#c9a2ff'], [1240, 240, 3.6, '#9affc9']].forEach(([x, y, t0, col]) => P.firework(c, x, y, lt - t0, x, col)); });
       layer(0.8, c => { P.hill(c, 880, 8, '#3a4560', 4); P.paper(c, P.rectPath(260, 840, 1400, 36, 8), '#4a5570'); });
       layer(1, c => { drawActor(c, 'whale', 800, 900, 300, { seq: [{ state: 'back', dur: 1.6 }, { state: 'look_up', dur: 1.0 }, { state: 'cheer' }] }, lt);
@@ -249,7 +249,7 @@ export async function createFilm(glCanvas, outCanvas) {
     },
     S11(lt, dur) { // 一刹那：拍立得显影
       setCam(lt, dur, 0.03, 0, 0);
-      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 800, '#232c42', 9, { blur: 3 }); });
+      layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 800, '#232c42', 9, { blur: 3, t: lt }); });
       layer(1, c => { const dev = smooth(0.3, 2.2, lt);
         P.photoFrame(c, 620, 180, 680, 620, -0.04 + jitter(lt, 2, 0.004), (cc, w, h) => {
           cc.fillStyle = '#232c42'; cc.fillRect(0, 0, w, h); cc.save(); cc.globalAlpha = dev; P.firework(cc, w * 0.5, h * 0.3, 1.0, 5, '#ffd76a'); P.firework(cc, w * 0.25, h * 0.4, 0.8, 9, '#ff9a8a'); cc.fillStyle = '#3a4560'; cc.fillRect(0, h * 0.75, w, h * 0.25); cc.restore();
@@ -262,7 +262,7 @@ export async function createFilm(glCanvas, outCanvas) {
       setCam(lt, dur, 0.06, 0, 0);
       layer(0, c => { c.fillStyle = '#3a4560'; c.fillRect(-200, -200, W + 400, H + 400); P.lightShaft(c, 960, 0, 260, 800, 0.2); });
       layer(0.6, c => { for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2 + lt * 0.5, r = 220 + hash(i) * 320 + Math.sin(lt + i) * 20; const x = 960 + Math.cos(a) * r, y = 520 + Math.sin(a) * r * 0.6; P.paper(c, P.puzzlePath(x, y, 80, 70, [1, -1, 1, -1]), i % 4 ? '#5d6b8a' : '#ffd76a', { shadow: 8, dy: 5, alpha: 0.9 }); } });
-      layer(1, c => { P.hill(c, 900, 10, '#2f3a55', 4); drawActor(c, 'whale', 960, 900, 340, { seq: [{ state: 'look_up', dur: 0.9 }, { state: 'cry', dur: 1.3 }, { state: 'bow' }] }, lt); });
+      layer(1, c => { P.hill(c, 900, 10, '#2f3a55', 4); drawActor(c, 'whale', 960, 900, 340, { seq: [{ state: 'shock', dur: 0.6 }, { state: 'look_up', dur: 0.9 }, { state: 'cry', dur: 1.3 }, { state: 'bow' }] }, lt); });
     },
     S13(lt, dur) { // 时差：昼夜缝 + 双钟
       setCam(lt, dur, 0.02, 0, 0);
@@ -270,7 +270,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0.5, c => { P.paper(c, P.puzzlePath(W / 2 - 60, 100, 120, 880, [1, -1, 1, -1]), '#e8d7b8', { shadow: 18, dy: 10 }); P.clock(c, 420, 420, 110, lt * 0.4, '#fffdf4'); P.clock(c, 1500, 420, 110, lt * 0.4 + Math.PI, '#fffdf4'); });
       layer(0.8, c => { P.hill(c, 860, 12, '#a2c48c', 3); c.save(); c.beginPath(); c.rect(W / 2, 0, W / 2, H); c.clip(); P.hill(c, 860, 12, '#3a4560', 3); c.restore(); });
       layer(1, c => { drawActor(c, 'gpt', 560, 880, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt);
-        drawActor(c, 'whale', 1340, 880, 300, { seq: [{ state: 'walk-left', dur: 1.2 }, { state: 'idle' }], walk: { from: 1500, to: 1340, dur: 1.2 } }, lt); });
+        drawActor(c, 'whale', 1340, 880, 300, { seq: [{ state: 'walk-left', dur: 1.2 }, { state: 'idle', dur: 0.6 }, { state: 'think' }], walk: { from: 1500, to: 1340, dur: 1.2 } }, lt); });
     },
     S14(lt, dur) { // 放下：丝带随风
       setCam(lt, dur, 0.04, 8, 0);
@@ -286,7 +286,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0, c => { c.fillStyle = '#ff9a6a'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(960, 420, 160), '#ffd76a'); P.cloud(c, 260, 180, 1.8, '#ffc9a2', { blur: 2 }); P.cloud(c, 1300, 150, 1.5, '#ffc9a2', { blur: 2 }); });
       layer(0.5, c => { for (let b = 0; b < 3; b++) P.hill(c, 680 + b * 90, 14, ['#e88a5a', '#d97a4a', '#c96a3a'][b], b + 2, { edge: '#ffe0c8' }); });
       layer(0.9, c => { const g = smooth(0.4, 1.8, lt); P.heart(c, 960, 300, 180 * g, '#ff6a5a', { shadow: 20, dy: 10 }); P.lightShaft(c, 960, 420, 300, 500, 0.25 * g); });
-      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'gpt', 820, 940, 320, { seq: [{ state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'whale', 1120, 940, 320, { seq: [{ state: 'confident_hips', dur: 1.0 }, { state: 'look_up' }] }, lt, true); });
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'gpt', 820, 940, 320, { seq: [{ state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'whale', 1120, 940, 320, { seq: [{ state: 'confident_hips', dur: 1.0 }, { state: 'look_up', dur: 1.0 }, { state: 'cheer' }] }, lt, true); });
       layer(1.2, c => P.motes(c, lt, 24, 0.5, '255,210,160'));
       P.warmLight(ctx, 0.22);
     },
@@ -341,7 +341,7 @@ export async function createFilm(glCanvas, outCanvas) {
     return { shot: shot.id, t };
   }
   return {
-    duration: timeline.duration, fps: FPS, shots: SHOTS, rendererName: 'Canvas2D paper diorama (v6 · ≤2 cast, real gait facing, framing applied)',
+    duration: timeline.duration, fps: FPS, shots: SHOTS, rendererName: 'Canvas2D paper diorama (v7 · 2-frame acting, detail layers, ≤2 cast)',
     renderAt,
     renderSceneOnly(t) { renderScene(t); return { canvas: sceneCanvas }; },
     castAt(t) { renderScene(t); return lastFrameCast.slice(); },

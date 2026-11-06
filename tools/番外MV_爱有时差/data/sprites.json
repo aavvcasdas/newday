@@ -187,35 +187,39 @@
           },
           "think": {
             "row": 4,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              520
+              620,
+              560
             ],
-            "loop": false
+            "loop": true
           },
           "shock": {
             "row": 5,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              360
+              260,
+              420
             ],
             "loop": false
           },
           "cry": {
             "row": 6,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              520
+              560,
+              620
             ],
-            "loop": false
+            "loop": true
           },
           "cheer": {
             "row": 7,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              420
+              380,
+              340
             ],
-            "loop": false
+            "loop": true
           },
           "confident_hips": {
             "row": 8,
@@ -227,9 +231,10 @@
           },
           "bow": {
             "row": 9,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              560
+              420,
+              520
             ],
             "loop": false
           },
@@ -271,19 +276,21 @@
           },
           "handoff": {
             "row": 14,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              600
+              460,
+              560
             ],
             "loop": false
           },
           "peek": {
             "row": 15,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              520
+              520,
+              560
             ],
-            "loop": false
+            "loop": true
           },
           "sit": {
             "row": 16,
@@ -295,19 +302,21 @@
           },
           "bend": {
             "row": 17,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              560
+              420,
+              520
             ],
             "loop": false
           },
           "look_up": {
             "row": 18,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              620
+              620,
+              520
             ],
-            "loop": false
+            "loop": true
           },
           "back": {
             "row": 19,
@@ -319,16 +328,17 @@
           },
           "point_up": {
             "row": 20,
-            "frames": 1,
+            "frames": 2,
             "durationsMs": [
-              560
+              480,
+              420
             ],
             "loop": false
           }
         },
         "directions": [],
         "integrity": {
-          "spritesheet_sha256": "0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8",
+          "spritesheet_sha256": "166f9bd9a0a69f8d490162b9f666bc48c33df868db159de009c1eb6ebe2cfcaf",
           "width": 1536,
           "height": 4368
         }

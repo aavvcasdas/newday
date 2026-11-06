@@ -64,7 +64,7 @@ MV 入口仍是 `tools/番外MV_爱有时差/`：`prepare_assets.mjs` 把 `tools
 验收（v5 当时）：`npm test` 6/6、`npm run smoke` 8 镜无报错、`python3 verify.py` **18/18**（新增 `v5_on_screen_cap_two`、`v5_whale_q_library_real_frames`）。成片当时 1346 帧 / 56.08s / 1080p24 / 音轨 copy（该版 sha 已过期，现值见下方 v6 段）。分镜目检发现并修掉两处本轮引入的遮挡：S09 纸条糊脸（轨迹抬到头顶以上）、S08 鲸娘压罐子（走位终点 620→420）。Day13 样例产出当时按 16 状态图集重渲（该 sha 已过期，v6 段为现值）。机器验收不等于人工听审/艺术批准。
 
 
-## 2026-11-06 番外MV v6：修 sleep 肢体 / 走路反向 / 站桩，并按样片补画面细节（当前口径）
+## 2026-11-06 番外MV v6：修 sleep 肢体 / 走路反向 / 状态没播出来（历史留档；站桩问题 v7 才真正解决）
 
 用户第 2 轮反馈四条：①`sleep` 双腿重复；②走路方向反了；③「现在整体还是站着不动的」，要更丰富的细节动作；④画面细节参照用户给定的《把回忆拼好给你》.mp4。本轮生图额度 10 张已用满。
 
@@ -80,12 +80,34 @@ MV 入口仍是 `tools/番外MV_爱有时差/`：`prepare_assets.mjs` 把 `tools
 
 **④样片细节**：抽帧比对后新增 `motes`/`grassTufts`/`birds`/`groundShade`（纯路径、12fps 量化、**无逐帧 blur**），接入 10 镜；**S10 改背影看烟花**，采纳样片 t36 构图（新增 `back` 状态的动因）。尚未复刻：真正的脸部大特写、四格拼贴的分格内容；歌词仍按项目规则用 Day2 字幕，未改成样片的逐字小纸片。
 
-图集现为 **21 状态 / 26 姿势**，sha256 `0bd72d614fe12393af8225a67ef502af0410eb3455ca16d0b8833d11ce2993c8` / 970774 B，`edgeClampedPoses=[]`。**两处生图语义偏差如实登记不夸大**：`sit` 实为屈膝欠身站姿（非真坐姿，已登记但故意不用于任何镜头）、`bend` 实为前倾俯身伸手（非深蹲）。豆包仍静态纸偶、6 位客串仍无图集不得上场充数。
+图集当时为 21 状态 / 26 姿势（该 sha 已过期，v7 段为现值），`edgeClampedPoses=[]`。**两处生图语义偏差如实登记不夸大**：`sit` 实为屈膝欠身站姿（非真坐姿，已登记但故意不用于任何镜头）、`bend` 实为前倾俯身伸手（非深蹲）。豆包仍静态纸偶、6 位客串仍无图集不得上场充数。
 
 `cap2_keep_finale` 不变：正片每镜 ≤2 人，仅终帧 S16 全员 hold。Day0–Day12 不改不重渲。机器验收不等于人工听审/艺术批准。
 
-**v6 验收（本轮实测）**：MV `npm test` **9/9**（新增图集 sha/行号/帧数一致性、全角色状态词表、步态朝向 3 条）、`npm run smoke` 8 镜 `errors=[]`、`python3 verify.py` **18/18**、引擎全量 `node --test tools/engine/*.test.mjs` **54/54**（纸艺契约 13/13）。成片 1346 帧 / 56.08s / 1080p24 / 音轨 copy，sha256 `4809423807c9a62f4318b0f538635d7e60ef439a8e3ab06e198d5570a6c3bca0` / 15524978 B。Day13 样例按 21 状态图集重渲，sha256 `45b1b69ed0a62bc2bfabfc8ca9af560e73c177c8fca0b2bf6333dd24e867c4c0` / 8317206 B。
+**v6 验收（当时实测，成片与样例 sha 已被 v7 取代）**：MV `npm test` **9/9**（新增图集 sha/行号/帧数一致性、全角色状态词表、步态朝向 3 条）、`npm run smoke` 8 镜 `errors=[]`、`python3 verify.py` **18/18**、引擎全量 `node --test tools/engine/*.test.mjs` **54/54**（纸艺契约 13/13）。成片当时 1346 帧 / 56.08s / 1080p24 / 音轨 copy（sha 已过期，见 v7 段）。
 
 **本轮新增的防复发机制**：`render.mjs` 在开 ffmpeg 之前做**全时间轴预检**（562 采样）。此前一个不存在的图集状态在 62% 处才抛错、白烧 190s 编码；预检把这类错误压到秒级，并当场揪出 static 测试漏掉的 `group()` 助手里的第三处非法状态（S16 的 gpt `think`）。**删掉静默兜底后共查出 3 处历史遗留非法状态**：S11 gpt `think`→`review`、S15 gpt `wave`→`waving`、S16 group gpt `think`→`review`——它们此前一直被 `|| animations.idle` 掩盖成站桩。
 
 目检证据：从**成片解码**抽帧复核（不是只看渲染器），确认 S01 走入时朝右、S13 朝左镜像、S10 真背影→look_up→cheer、S11 insert 取景不切脚、21 状态动作目录里 sleep 只有一对腿脚。机器验收仍不等于人工听审/艺术批准。
+
+
+## 2026-11-06 v7：细节动作表情升为真多帧，并推广为全项目通用（当前口径）
+
+用户第 3 轮：「画面分镜细节还是不够到位，请多加细节动作表情，然后将整个项目的通用都改成这样的动作表情和人物，之后的 day 系列也这样」。
+
+**真正病根（前两轮没解决）**：21 个状态里 16 个只有一张静态图，`look_up` 用 7 次、`cheer` 4 次、`cry` 3 次。单帧久持＝纸偶站桩，加背景细节救不回来。v6 声称修了站桩，其实只修了"状态没播出来"，播出后仍是单帧——这一点必须如实记下来。
+
+本轮 10 张生图全部补**真第二帧**（预备→峰值）：look_up/cheer/cry/think/shock/bow/point_up/bend/handoff/peek。图集 **21 状态 / 42 帧 / 36 姿势**，**15 状态真多帧**，只剩 6 个静止语义单帧（point/confident_hips/eat/sleep/sit/back）。sha256 `166f9bd9a0a69f8d490162b9f666bc48c33df868db159de009c1eb6ebe2cfcaf` / 1279494 B。
+
+**量化证据**：单一状态持有区间内角色框像素变化 look_up 43.5% / cry 55.4% / shock 34.7% / handoff 48.6%（补帧前同样探针为 0）。帧间漂移除 shock 峰值头发 +11.7% 高度（脚底漂移 0，属真 secondary motion）外，高度跳变 ≤4.1%、脚底 ≤1px。
+
+**全项目通用落地（用户第二个要求，不是只改 MV）**：
+- `tools/engine/paper_stage.mjs` 新增 6 种通用细节层 `motes/grass/birds/ground/rain/windows` ＋ `drawDetails` 调度（纯路径、12fps 量化、无 blur）；
+- `tools/engine/paper_contract.mjs` 新增硬门禁：`MAX_SINGLE_HOLD=1.2`（单帧不得久持）、`MIN_BEATS=2`（每镜表演节拍）、`details` 必填、`stateMeta()` 查真帧数；
+- `render_paper_episode.mjs` 支持 `enter` 推入 / `faceAt` 转身 / walk 双重平移运行时守卫，并调用 `drawDetails`；
+- **`tools/init_episode.py` 的 spec 模板与分镜 MD 模板已内置全部字段**，实测生成 Day97 过契约后删除；
+- 样例 spec 升为细节标准参考实现；`agent.md` 第 33 条新增 **(b2)** 明文规则。Day13+ 每集与番外 MV 共用同一套。
+
+验收：引擎全量 **59/59**（纸艺契约 18 项，新增 4 条细节门禁）、MV `npm test` **9/9**、smoke `errors=[]`、`verify.py` **18/18**。成片 1346 帧 / 56.08s / 1080p24 / 音轨 copy，sha256 `c7a3924b88a74486a088f81e7ab565a3426f2ea6525044b270666a6f80acb858` / 15644878 B。Day13 样例重渲 sha256 `6d8168a61bef4cadccf424b9433d0bf9f04ecd39cfeda04bbacaf344fed90c70` / 9147463 B。
+
+`cap2_keep_finale`、歌词 16 行、measured cues、原音轨 copy、Day2 字幕、角标、无片尾卡均未动；Day0–Day12 不改不重渲。机器验收与像素探针都不等于人工审看。

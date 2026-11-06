@@ -92,46 +92,62 @@
         "think": {
           "cn": "翻本子思考",
           "frames": [
-            "think"
+            "think",
+            "think_b"
           ],
           "durationsMs": [
-            520
+            620,
+            560
           ],
-          "loop": false,
-          "kind": "gesture"
+          "loop": true,
+          "kind": "gesture",
+          "label": "翻本子思考→点下巴沉思",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "shock": {
           "cn": "震惊",
           "frames": [
-            "shock"
+            "shock",
+            "shock_b"
           ],
           "durationsMs": [
-            360
+            260,
+            420
           ],
           "loop": false,
-          "kind": "expression"
+          "kind": "expression",
+          "label": "吃惊→双手捧颊峰值",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。 b 帧生图头发张扬幅度偏大，打包后已核对帧间尺寸漂移。"
         },
         "cry": {
           "cn": "委屈欲哭",
           "frames": [
-            "cry"
+            "cry",
+            "cry_b"
           ],
           "durationsMs": [
-            520
+            560,
+            620
           ],
-          "loop": false,
-          "kind": "expression"
+          "loop": true,
+          "kind": "expression",
+          "label": "委屈欲哭→掩面拭泪落泪",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "cheer": {
           "cn": "欢呼",
           "frames": [
-            "cheer"
+            "cheer",
+            "cheer_b"
           ],
           "durationsMs": [
-            420
+            380,
+            340
           ],
-          "loop": false,
-          "kind": "expression"
+          "loop": true,
+          "kind": "expression",
+          "label": "欢呼（举臂→双臂张开至峰值）",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "confident_hips": {
           "cn": "得意",
@@ -148,14 +164,17 @@
         "bow": {
           "cn": "道歉合十",
           "frames": [
-            "bow"
+            "bow",
+            "bow_b"
           ],
           "durationsMs": [
-            560
+            420,
+            520
           ],
           "loop": false,
           "kind": "gesture",
-          "note": "生图实为闭眼合十小鞠躬，非深鞠躬"
+          "note": "生图实为闭眼合十小鞠躬，非深鞠躬 ｜ v7 升为真 2 帧表演（预备→峰值），不再单帧久持。",
+          "label": "合十→俯身更深致歉"
         },
         "wave": {
           "cn": "打招呼",
@@ -213,24 +232,32 @@
         "handoff": {
           "cn": "递拼图",
           "frames": [
-            "handoff"
+            "handoff",
+            "handoff_b"
           ],
           "durationsMs": [
-            600
+            460,
+            560
           ],
           "loop": false,
-          "kind": "gesture"
+          "kind": "gesture",
+          "label": "持拼图→伸臂递出",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "peek": {
           "cn": "怯生生探看",
           "frames": [
-            "peek"
+            "peek",
+            "peek_b"
           ],
           "durationsMs": [
-            520
+            520,
+            560
           ],
-          "loop": false,
-          "kind": "expression"
+          "loop": true,
+          "kind": "expression",
+          "label": "怯生生探看→侧身大胆张望",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "sit": {
           "cn": "屈膝欠身",
@@ -247,25 +274,32 @@
         "bend": {
           "cn": "俯身伸手",
           "frames": [
-            "bend"
+            "bend",
+            "bend_b"
           ],
           "durationsMs": [
-            560
+            420,
+            520
           ],
           "loop": false,
           "kind": "gesture",
-          "note": "生图实为前倾俯身伸手，非深蹲；可用于取物前的接近动作"
+          "note": "生图实为前倾俯身伸手，非深蹲；可用于取物前的接近动作 ｜ v7 升为真 2 帧表演（预备→峰值），不再单帧久持。 语义仍是前倾俯身取物，非深蹲。",
+          "label": "俯身接近→探手取物最低点"
         },
         "look_up": {
           "cn": "仰望惊叹",
           "frames": [
-            "look_up"
+            "look_up",
+            "look_up_b"
           ],
           "durationsMs": [
-            620
+            620,
+            520
           ],
-          "loop": false,
-          "kind": "expression"
+          "loop": true,
+          "kind": "expression",
+          "label": "仰望惊叹（抬头→更仰、张口惊叹）",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         },
         "back": {
           "cn": "背影",
@@ -282,31 +316,44 @@
         "point_up": {
           "cn": "指向上方",
           "frames": [
-            "point_up"
+            "point_up",
+            "point_up_b"
           ],
           "durationsMs": [
-            560
+            480,
+            420
           ],
           "loop": false,
-          "kind": "gesture"
+          "kind": "gesture",
+          "label": "抬手指天→手臂伸直跟随",
+          "note": "v7 升为真 2 帧表演（预备→峰值），不再单帧久持。"
         }
       },
       "poses": [
         "back",
         "bend",
+        "bend_b",
         "bow",
+        "bow_b",
         "cheer",
+        "cheer_b",
         "cry",
+        "cry_b",
         "eat",
         "handoff",
+        "handoff_b",
         "hips",
         "idle_a",
         "idle_b",
         "look_up",
+        "look_up_b",
         "peek",
+        "peek_b",
         "point",
         "point_up",
+        "point_up_b",
         "shock",
+        "shock_b",
         "sit",
         "sleep",
         "stride_a",
@@ -314,6 +361,7 @@
         "stride_c",
         "stride_d",
         "think",
+        "think_b",
         "typing_a",
         "typing_b",
         "wave_a",
@@ -379,5 +427,15 @@
       "point",
       "cheer"
     ]
+  },
+  "performancePolicy": {
+    "appliesFrom": "Day13",
+    "rule": "高频情绪/动作状态必须≥2 帧真表演（预备→峰值），单帧只允许 hold 类（back/sit/confident_hips 等静止语义）。",
+    "minFramesForExpression": 2,
+    "singleFrameAllowedKinds": [
+      "hold",
+      "static"
+    ],
+    "note": "2026-11-06 用户第 3 轮反馈「分镜细节还是不够到位，多加细节动作表情」后确立；单帧久持＝纸偶站桩，是前两轮的真正病根。"
   }
 }
