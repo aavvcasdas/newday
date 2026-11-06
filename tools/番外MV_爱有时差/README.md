@@ -9,21 +9,28 @@
 - `../../番外MV/角色图鉴.png`、`分镜总览.png`、`海报.png`、`分镜/S01..S16_*.png`。
 - `../../番外MV/验收报告.json`：`verify.py` 生成的机器技术验收，不等于人工审看。
 
-## 角色口径
+## 角色口径（v2，2026-11-06）
 
-当前项目已有形象全部入场：4 位 AI 娘（DeepSeek 鲸鱼娘、Claude、Gemini、豆包）＋6 位配角（人类研究员、Clawd、Agent-Reach 检索章鱼、机械小狗、深海小蓝鲸、复古小电视）。不导入参考仓库的额外 AI 娘，不把文字编制客人算作已到场角色。
+8 位 AI 娘（含当前鲸鱼娘），**无项目配角**：DeepSeek 鲸鱼娘、Claude、Gemini、豆包、GPT、Kimi、Qwen、Z.AI。形象全部取自用户指定仓库的真实素材——
+
+- 鲸鱼娘双形象：群像/动作用 `xiaosia/voxel-mv` 的 deepseek 动画帧；情感特写用 `JAdpp/dsh-whale-galgame` 高清表情差分。
+- Claude/Gemini/GPT/Kimi/Qwen/Z.AI：`xiaosia/voxel-mv` 对应角色动画帧。
+- 豆包：`shuaizenge/ai-girls` 全身图的 Day12 既有抠图。
+
+v1 的本地像素立牌与 6 位项目配角已被用户否定并移除。素材许可与署名链见 `NOTICE.md` / `REFERENCES.md`；galgame 鲸鱼娘表情的 CC BY-NC-SA 4.0 全文与署名声明在 `licenses/`。
 
 ## 运行
 
 ```bash
 cd tools/番外MV_爱有时差
 npm ci
-npm run assets       # 从项目既有角色源码/抠图生成 MV 立牌与图鉴
-npm run dev          # 0.0.0.0:5173 播放器预览
-npm run storyboard   # 16 镜分镜 PNG + 总览 + 海报
-npm run render       # 全片逐帧渲染并合成原片音轨
-npm test             # 数据/字幕组件一致性测试
-python3 verify.py    # 成片全解码 + 抽帧 + 数据交叉检查
+node fetch_upstream.mjs  # 按固定提交下载三仓库真实角色素材到 assets/upstream/（gitignored，sha 校验）
+npm run assets           # 脚底对齐/身高校正/表情 union 裁切 → MV 立牌与图鉴
+npm run dev              # 0.0.0.0:5173 播放器预览
+npm run storyboard       # 16 镜分镜 PNG + 总览 + 海报
+npm run render           # 全片逐帧渲染并合成原片音轨
+npm test                 # 数据/字幕组件一致性测试
+python3 verify.py        # 成片全解码 + 抽帧 + 数据交叉检查
 ```
 
 渲染依赖：`@sparticuz/chromium` 提供 Chromium；ffmpeg 优先 `FFMPEG_PATH`，否则尝试 `imageio_ffmpeg`（可用 `/home/user/.cache/mv-venv/bin/python`）。`assets/audio/reference.wav` 是可重建预览缓存，不入库。

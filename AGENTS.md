@@ -28,3 +28,9 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 ## 2026-11-05 独立歌词番外重新授权
 
 用户本轮明确要求重新制作独立歌词番外《把回忆拼好给你·AI娘全员番外》（副题“爱有时差”），该新授权覆盖上一条“已取消独立歌词番外”仅针对本次新番外；不自动恢复整批旧删除产物。入口为 `tools/番外MV_爱有时差/README.md`，交付在 `番外MV/`。所有当前项目 AI 娘必须入场；字幕仍强制 import `tools/字幕/day2_style_sub.mjs`。本会话固定分支为 `arena/e9e1d8ec-newday`，不切历史交付分支。
+
+## 2026-11-06 番外MV v2 角色替换（当前口径）
+
+用户否定 v1 本地像素立牌（“人物没修改啊”），要求人物取自三个仓库真实素材：`shuaizenge/ai-girls`、`JAdpp/dsh-whale-galgame`、`xiaosia/voxel-mv`；MV 方法参照 `Nyankomintsu/world-execute-me-lyric-mv` 与 `xiaosia/voxel-mv`。随后澄清：**不要 6 个项目配角**，做 **8 位 AI 娘总阵容（含当前鲸鱼娘）**：whale/claude/gemini/doubao/gpt/kimi/qwen/zai。鲸鱼娘“两者都用”——群像/动作用 voxel-mv deepseek 帧，情感特写用 galgame 高清表情；豆包用 ai-girls 全身抠图。
+
+执行入口仍是 `tools/番外MV_爱有时差/`：`fetch_upstream.mjs` 按固定提交下载真实素材（git blob sha1 校验，sha256 记 `data/upstream_manifest.json`，素材本体 gitignored），`prepare_assets.mjs` 做脚底对齐/身高校正/表情 union 裁切。`data/cast.json` aiGirlCount=8、supportingCount=0；`data/shots.json` directorVersion=2 用 perform 字段驱动 voxel 帧动画与鲸鱼娘 galgame 特写。歌词 16 行逐字、原音轨 copy、Day2 字幕、常驻“非官方同人 · AI生成 · 剧情演绎”、终帧全员 hold 无片尾卡等约束不变。voxel-mv `characters/` 帧图上游未逐项确权（THIRD_PARTY_NOTICES 排除于授权外），按用户指示非商用同人使用＋署名，NOTICE/REFERENCES 已记录，不声明可商用/可自由再分发。改完须 npm test＋verify.py 全过并推送 `arena/e9e1d8ec-newday`。

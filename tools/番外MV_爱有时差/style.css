@@ -35,7 +35,8 @@ h1{margin:4px 0 0;font-size:28px;font-weight:800}h1 em{font-style:normal;color:v
 .drawer-note{color:var(--muted);font-size:14px;line-height:1.6}
 .cast-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:16px 0}
 .cast-card{border:1px solid var(--line);border-radius:12px;padding:12px;background:rgba(246,236,216,.04);display:flex;gap:12px;align-items:center}
-.cast-card img{width:64px;height:80px;object-fit:contain;image-rendering:pixelated}.cast-card.doubao img{image-rendering:auto}
+.cast-card img{width:64px;height:80px;object-fit:contain;object-position:bottom}
+.cast-card .cast-src{margin-top:2px;color:var(--muted);font-size:11px;opacity:.8}
 .cast-card h3{margin:0 0 4px;font-size:15px}.cast-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
 .cast-sheet{width:100%;border-radius:12px;border:1px solid var(--line)}
 .info-body p{color:var(--muted);line-height:1.75;font-size:14px}.info-body strong{color:var(--cream)}

@@ -1,0 +1,2637 @@
+{
+  "pinned": {
+    "ai-girls": {
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76"
+    },
+    "galgame": {
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5"
+    },
+    "voxel-mv": {
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5"
+    }
+  },
+  "files": [
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/doubao/generated/doubao-fullbody.jpg",
+      "blob": "db2ce3b0f1dbf7e9f9943a97c5151664c86260e6",
+      "sha256": "5b52f8e147abac0abc8c8f557445237090d6c22b98d1bd9ac99c5469aa03fafa",
+      "bytes": 116004
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/doubao/README.md",
+      "blob": "15e75fa9dae0888ad7bad66962e1edb7b14bf355",
+      "sha256": "f8ccfb3b1c5339c6c86de20142b6d661d62b5ae154d90787a9a79f30fd5fbb0c",
+      "bytes": 1773
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "NOTICE.md",
+      "blob": "afb165da001b499a3a14da25c9faa06f23ca6a02",
+      "sha256": "af6c46f69ec18fc72c7558bd98df9e20eea4f3454f56ef952a63144d385cb0a4",
+      "bytes": 4420
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/licenses/dsh-deep-whale-LICENSE.txt",
+      "blob": "cbe5ad1670406e4402217edfb82d2c56af7e8631",
+      "sha256": "1349a4b6148492b44f629e64eed676612e234fe9a839e4f3b277c1482c8849f1",
+      "bytes": 20849
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/licenses/dsh-deep-whale-NOTICE.txt",
+      "blob": "c127b9dc24642e7c6b808ad12ba29c1fbdbb4c81",
+      "sha256": "45e48ba5c3fc59e03c1a9559eaa04686f8d340d684f2970ce384a7578e7ef6dd",
+      "bytes": 1325
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/maid-left.webp",
+      "blob": "2e916e33fdb4f92f0772fca330f2f530f987be2d",
+      "sha256": "af7bfd2e18505fc9d6f94cefd9febc92b31c1b2b66c756982d91fc7b93fb184c",
+      "bytes": 286224
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/README.md",
+      "blob": "1193207eccf901a94b2f29f6c5bc3b409ccf4bd5",
+      "sha256": "69fe946e20f585db738d5045a9555c1906cb1efe043a9ea63467ae0d597419ca",
+      "bytes": 4775
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-angry.webp",
+      "blob": "252f793b5bf16e49fe2d75c4691dec89da87eb61",
+      "sha256": "63bb54126cf3acc785b251a19d465a8e388865badbdc7baf17bbad4b68057a02",
+      "bytes": 321758
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-cheerful.webp",
+      "blob": "a951e76677d55e8ac378962df35dbec52286b5ee",
+      "sha256": "117ed691623da550075056963764cee7a4cd14318d5ab87ce63d11926b83aa4b",
+      "bytes": 314854
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-confused.webp",
+      "blob": "08e7864f1a27b23ddf605f8755bed936fbcb4a74",
+      "sha256": "f879656eeec7d02e07543774efcf93a62f03d5b73e577a4c5440d855b942d436",
+      "bytes": 291888
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-exasperated.webp",
+      "blob": "bb57b4f72e61e8c97d5240c12bbdacf9d189d45b",
+      "sha256": "c627bea1c000d304a538f1d63a2cf244f73824496ca585e0bda91a91450b67aa",
+      "bytes": 292488
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-frightened.webp",
+      "blob": "240e6f9cb6dbb976450762b7cbde71f324aa9b0d",
+      "sha256": "a74c7b1afd6b6deaa60d3bbceeaf079dd2379b6b8be3da6265c492921522867b",
+      "bytes": 314898
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-serious.webp",
+      "blob": "cccbc410f0231b6a607717fa6f8a036984e00aa5",
+      "sha256": "2974cc4a814f6b1f95d907d22f62d9e0094dd7e538b6145e7c8a1dbb6154de34",
+      "bytes": 283052
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-shy.webp",
+      "blob": "a35abb5ad22915ae3159f6146d7425dc792dcc55",
+      "sha256": "87dea8920f550d75e68d189a816856fcc77379532a79c169cc766f02aeeb80f4",
+      "bytes": 299002
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "assets/default/whale-starry.webp",
+      "blob": "df6151823f67233316cf4ab94f1bd7e35a5c88c0",
+      "sha256": "65a3bd1eb9ad4f8cb357af4825311f84e91be4f7f57deb5357fb79116bcad774",
+      "bytes": 319384
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "NOTICE.md",
+      "blob": "83528ef3355ba324dcb3fc386952ef56c72567b4",
+      "sha256": "54036209d25f959dd0c287d16a03c5b8c1dcdcb1d1441e75de5b256d592ded25",
+      "bytes": 12795
+    },
+    {
+      "source": "galgame",
+      "repo": "JAdpp/dsh-whale-galgame",
+      "commit": "0ec130efebf15ffb63a2733b909d423b769db9c5",
+      "path": "THIRD_PARTY_LICENSES.md",
+      "blob": "c891b2a085eb69cba421f4a80b8bb08a4cf7004e",
+      "sha256": "4251799b06bac357488703253e0ab81f5bc30e90ac87d44ba94c1fc23aea6f75",
+      "bytes": 3761
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/bad_frames.json",
+      "blob": "4c9b731e23215651cc0ce5e62dd80e40c5bc013e",
+      "sha256": "39463c1d1515e64afeb523692c6ca8d4b42a76d55aefaf83fcdce560d575e33b",
+      "bytes": 250
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/character.md",
+      "blob": "22e82a486cd251fc2d7b795a9b5f66d6f776ca63",
+      "sha256": "62a7501de3cfae33980732795d453baaf7c6160b29a32bb7d1284800a5d65591",
+      "bytes": 601
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames.json",
+      "blob": "3191746a49815ae0f16ff1e900f4277b3870d40d",
+      "sha256": "116b525d46d7f28e9f89a929978efc0ebda12dc4c85aaed9251de5855e5e8e28",
+      "bytes": 31190
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/hold_look/01.png",
+      "blob": "98e84bc6d6f1893106cf2117c2bf260ae8d47916",
+      "sha256": "e14627fd39ac32a4995867c3b26b061b66360de958359c1b7927193c88a51663",
+      "bytes": 1349308
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/hold_look/02.png",
+      "blob": "3bfcba74b8dee77181da325970c0718012ac103e",
+      "sha256": "3cb26dee1f43b87fa1ce7e6f3431b15b08a2c2d143246ed116378d4f50cdb7eb",
+      "bytes": 1325802
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/hold_look/03.png",
+      "blob": "cd47cdfe0ac07dcb924ef51a8185b9041527b509",
+      "sha256": "05386af6799230fec37cc8c05561e9ff779ab69327723baba1c55f66bd06f8b6",
+      "bytes": 1321330
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/hold_look/04.png",
+      "blob": "ddbe4511e215e541a43971294227b2f5530cfb31",
+      "sha256": "61bfe26b6f792407f7fc517869df3ad5d9ef82255f19198c9dd384347e18b646",
+      "bytes": 1296555
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/idle/01.png",
+      "blob": "221daf0e184c0b5d3fedb29c1f148af45d96d37c",
+      "sha256": "1185eb49054bcdbea23054993fe413ccc41b0aa6455b1473d06da2758674d7c6",
+      "bytes": 1397784
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/idle/02.png",
+      "blob": "06fdad77e35233c5ff4ee3c207b7e09dfce9a1d8",
+      "sha256": "a7ab0422af5ee6408c0d4dd750a87f06af50cc99e12926b4ecf51f3c92434975",
+      "bytes": 1403648
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/idle/03.png",
+      "blob": "08e7c0a5ae7aa68ec0f93786ca82138a5d0ff5f2",
+      "sha256": "c90a2b9b47977937ff359c021cc4ff4ce1c01b2cd7295a5ed7ec369671f1a0c0",
+      "bytes": 1392039
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/idle/04.png",
+      "blob": "5f3c1c3ef32afee2666485a244b3e1e0e35777cf",
+      "sha256": "d13be3434af215b86fb3f7e82590f3534e351e9f1c6674c5a13ba6ec6df94772",
+      "bytes": 1403556
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/laugh/01.png",
+      "blob": "518d31376391fd0b73d0830933de78305a346b0e",
+      "sha256": "87192ca6cf8a7228996d48a2187b461923a88f86c7d85cdf3c9765078af64a99",
+      "bytes": 1409882
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/laugh/02.png",
+      "blob": "2eb607e01afc557d82526d2d56597eb34691afa7",
+      "sha256": "ae69cd584261b565e0cf2041f5c735e538f29cca184deb33016224d9f09c0c82",
+      "bytes": 1568300
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/laugh/03.png",
+      "blob": "e88b4d94ad0a46b89b27d0dfdcd1b406aaa668a9",
+      "sha256": "946bef15afe94c221812b4a0f2d758accbbcd2f20df98b353ec2c389277cc666",
+      "bytes": 1382742
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/laugh/04.png",
+      "blob": "8f04f7ce19c1ae344a2826656557d55077e2fd31",
+      "sha256": "946364599a8a35b2a616d9858cb5889dc337d84a8c62bf9c2a9cd0ac50e6f2fe",
+      "bytes": 1401753
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/look_up/01.png",
+      "blob": "1233d2d7e090b77ce0f3d823bbada180a3f88056",
+      "sha256": "1eb52807c2acb6f67cdc71abd9aec0e019ef411ded221a051793a4e7643a7152",
+      "bytes": 1317420
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/look_up/02.png",
+      "blob": "0c0689790c8216ecc16afae5b5bf0ba3a1408439",
+      "sha256": "7da3fdbba022b483fb297e5bc7c16ba388e4919761f769b05200a43d62a7f3d3",
+      "bytes": 1315441
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/look_up/03.png",
+      "blob": "75de4dbd3a19701b75eace98814261d9771a2575",
+      "sha256": "a0029710295d036d969e3ed52a9c7658c9d5cd4d5bc2a50fb33f7ad7fa625961",
+      "bytes": 1320052
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/look_up/04.png",
+      "blob": "03797384997c312e146ea18c244c662e69ec8360",
+      "sha256": "ee4c9a41ac8bc6b828edd6e5c133a0c18cf506e3b6e39d288dfdfc611d9b4b3b",
+      "bytes": 1302572
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/pray/01.png",
+      "blob": "db3d48c3eb7c3921c552c2fe6f28ab0166124f91",
+      "sha256": "69a54125a8c95e3f8ad4dec20169c083a9208abaa8b61e7447bb4573c1f1e1d2",
+      "bytes": 1495771
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/pray/02.png",
+      "blob": "8aa944c2849b6b66f3979418a5f4c4a889af6b5a",
+      "sha256": "8e333d92490b3f36fed24bfc2bb105944186af301a5b09426557b1008f0f5c17",
+      "bytes": 1478785
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/pray/03.png",
+      "blob": "51e38172d921782ccc90b892dc17a3e008a9637e",
+      "sha256": "69362c075b8b40d0d12635ffcfd2e813d98d0427d0343649c15b4d6998ea6f24",
+      "bytes": 1404118
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/pray/04.png",
+      "blob": "ea27263448753e43efe55d5accb98215950d1c95",
+      "sha256": "d67de3e4a5e16d2af2050ed56db454f9051d840e2d8d1fb6cbd84649115a9bc1",
+      "bytes": 1432285
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/reach_out/01.png",
+      "blob": "5196a37d923bfdf114ec3a8c8daa5b6cb55c72f9",
+      "sha256": "35129a760810de05c60bace1deae68b3d926c6795c06e61e827c325468f8944c",
+      "bytes": 1082415
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/reach_out/02.png",
+      "blob": "8544521e49b32cb30f561fb555c3b2de93be302c",
+      "sha256": "d0912df4ff0f07cca1d2de7a25888cb8dcd1b2f885ab95f53e4245de7ec3870f",
+      "bytes": 1111883
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/reach_out/03.png",
+      "blob": "c82fa91dbf9f0cd2c88ea1fbe2035bf62bd1d1a3",
+      "sha256": "8c776ab2f19be2e6d13e893d8dbbef7b4e2de2d7372648809e91d9a5579a6bd9",
+      "bytes": 1101778
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/reach_out/04.png",
+      "blob": "bc53b0dbbe64456e23d4aa1fd71558d262d2fa7e",
+      "sha256": "8bebee4d20633884637e7d38df656a1526f3cb3c16e07cfa2096cd9686a6aa9f",
+      "bytes": 1144186
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/01.png",
+      "blob": "7ee9faf13bec87fd9e4d775958996f817f3af3e7",
+      "sha256": "d7c896331ca8bafa8fe6617eb6c1dc252b07f6c5dfd499eec207b7e905b8c773",
+      "bytes": 1289162
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/02.png",
+      "blob": "af3556c41a7ee349f35bfb9e60160c9da1eeeee3",
+      "sha256": "55b1b1e117d7f432c585c7a2961c70f75058d02ea6504dc742a0bf5c529d2250",
+      "bytes": 1240590
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/03.png",
+      "blob": "0d4115654d7450f0cff823fa4c70b6261f713b33",
+      "sha256": "5b280397a0181ccd5c5a1e1dc6e8ca917c56cc9f9d88c918820396fc3848562a",
+      "bytes": 1261834
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/04.png",
+      "blob": "ecb5c3860b90946c398d453b0664efcfbc0fc7b8",
+      "sha256": "09c7005bab69af64bf025dd42896d1ab2bd8ce7e6e69a6c00219b70bf45709f0",
+      "bytes": 1283474
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/05.png",
+      "blob": "e6b5ce1640d7a5b26d788cbc32168e9da1e0b309",
+      "sha256": "241109ccf2c51b298354e893ce7e7d461cdc5bc1e12c97b68e411c4125fb97ec",
+      "bytes": 1264347
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/06.png",
+      "blob": "04946c91665fb817adf26751cf34f494c360a4cb",
+      "sha256": "9ce501d7522804d95b1aa1b8f3fd11dc0c218587e4a085894ff02e4dac794493",
+      "bytes": 1254639
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/07.png",
+      "blob": "a19e39ae82acb8bd194af884a4509fded527110b",
+      "sha256": "35bd6d2000cd545699ec5ca6583310b8334f049779ff4bb9804cc2278b82c81c",
+      "bytes": 1256468
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/walk_side/08.png",
+      "blob": "9ddcde387e5fcfcf0b8dd5ec0aa71f09aff01ccb",
+      "sha256": "c7fee7b20231ebf774b58406a276caac52c326f1f0e6fb2a35b73d48cd1fb20c",
+      "bytes": 1268395
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/wave_bye/01.png",
+      "blob": "e70bbedd2f7956048849d38e6ac2b7b8c0c53094",
+      "sha256": "14016b1668f1652a41258fccc2def9131a08562827e50f082d5482dc6b73c176",
+      "bytes": 1423021
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/wave_bye/02.png",
+      "blob": "0e44a50b32e32a47af98e51293c56fc32b23dd50",
+      "sha256": "3f375c8e8004b4b46e0faf81d8a5867f47b59b6d54d9fdc3fd106e91b88776e9",
+      "bytes": 1451433
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/wave_bye/03.png",
+      "blob": "7a36051f32323e3816da58291b907e853dbd7525",
+      "sha256": "2b55b2ca5f264cc20874566ebc8c09308dae1dc8c4513e6e2437393b2ad5f129",
+      "bytes": 1424753
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/claude/frames/wave_bye/04.png",
+      "blob": "d94364f92812da59001d2b0e76c263ba97d68214",
+      "sha256": "65bd7f39b620a196fc26bcad36d2c474f3f742a79577add09964c5d54c51b0dd",
+      "bytes": 1431343
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/character.md",
+      "blob": "ee863f1b2c8f8170c921baef7a693110603fff99",
+      "sha256": "adf69ed7c00202c937de74763f2d3e748c28f12a598020135e140c2b0c84a66e",
+      "bytes": 431
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames.json",
+      "blob": "407a515c3a10674804aecd12edcc4468c7dafa46",
+      "sha256": "69e8ea39860c626bed0319ac625498477a9daad2a5282bee3160d4679f025a2d",
+      "bytes": 49004
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/hold_look/01.png",
+      "blob": "1eb7caf9a9961ba28f79da7837c4859804797364",
+      "sha256": "b448164f9278f5228c8bbb2bdff60c749c6153c99394af8a0faa4377a9264ec1",
+      "bytes": 1254267
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/hold_look/02.png",
+      "blob": "bc4393652871313f738b1f63adb616d8215ba82f",
+      "sha256": "bdbda6615db3c0d2db7f470ae009ec126f4f724aee01f00ac0ba49117a39873d",
+      "bytes": 1250989
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/hold_look/03.png",
+      "blob": "fde9eb845accdb42689f7279bcf5d8d13826714e",
+      "sha256": "7184ae66aeab1a414ca6305465486330685aaac6684e83c16a213097ea723a0d",
+      "bytes": 1267155
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/hold_look/04.png",
+      "blob": "fba53f29ca1bf08f31e52a81a61576093cc6f93b",
+      "sha256": "c34d73c615263771b22321ca82937ea18bc2f36a31642e527021ddcf34349129",
+      "bytes": 1193019
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/idle/01.png",
+      "blob": "1fa31ebb38ef385d79ef7770480aa8536b16c15b",
+      "sha256": "8d7635984f2a76f04373c06ab8634d2b79874ed5d23ab48034b93dc26bb2e9a3",
+      "bytes": 1298979
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/idle/02.png",
+      "blob": "7ccf1815a7855412c31bee76ec9e19ed7d137385",
+      "sha256": "c70db04b6afd583282ffb016a5859556b1317129b073dd56d29c95459b8bc8c9",
+      "bytes": 1289610
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/idle/03.png",
+      "blob": "6a699eb953738e018903501c0bf42180afbcb919",
+      "sha256": "b8106d34de4178ca105362c073aa3bfb7c030c39edf801759e26b37a0ec0bcc1",
+      "bytes": 1281397
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/idle/04.png",
+      "blob": "624c4587426213eadd5013e8da01e0d5fb3ad04f",
+      "sha256": "6821c52ef8f5fe56ca9539a21c7cfb9cfb9db0ea2baf693aab8cf95bc3deb734",
+      "bytes": 1290979
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/laugh/01.png",
+      "blob": "8d28afd2bbd581aaf6facf9650516e9261fa4f19",
+      "sha256": "b682c79027a2b72b80f928bc4c8b9114ec4432317209c47ebf9c04a1461f0115",
+      "bytes": 1301921
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/laugh/02.png",
+      "blob": "087cd96308d9c131fdb74caee695fe7f7841e358",
+      "sha256": "ea262efe42b2bc63cbe4e49c9bfb1989f28f2016ba866c0b236041e3f7450538",
+      "bytes": 1376923
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/laugh/03.png",
+      "blob": "75b241e51263fe433af6e3fd73ed7a900b0d3e45",
+      "sha256": "8b9accf23ef4bd20250f961a53ddfc33ec44e2d8b2dd33d57e5bc5f79c344092",
+      "bytes": 1244557
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/laugh/04.png",
+      "blob": "b2274b26d01d3d27de69715c07e5842692b2b7d6",
+      "sha256": "84af9c04fab773bda3bae8a83ff0c475784b9249b0232991018c088e05cc54d2",
+      "bytes": 1260344
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/look_up/01.png",
+      "blob": "fcc4e971399d3261f8023fd9785aaac094e9a7ef",
+      "sha256": "71c9ceddb119cfe50aeb45bd51e258c9bd17fb4f3c3154fd0768feb72a2d9a73",
+      "bytes": 1255252
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/look_up/02.png",
+      "blob": "c09b98e4fb2fb7ab5a6e529ff0919ab7a0106eff",
+      "sha256": "0647a511561677159db1427f103383e47d924d26cb52e3d4edfa4f1c1fdc9803",
+      "bytes": 1265010
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/look_up/03.png",
+      "blob": "13e4a9971459a0f9b1c9b0c47788152d09677e13",
+      "sha256": "e28c41de14e59d04a7bf6316ab6d01cca9bc55150de93691754d7fb4f0a245ea",
+      "bytes": 1294566
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/look_up/04.png",
+      "blob": "5587ef2e79426204df916ac622b348a271f25a28",
+      "sha256": "6f279952d039b7a8474e58116cb45973df10fd2aba3411ea88520c801ae04cf0",
+      "bytes": 1264002
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pick_up/01.png",
+      "blob": "17c3c0c148e4eac92c4bc25465cb090343edf35d",
+      "sha256": "dd63000e453ece0f7ba0fa286d4317674dd43d23a9d0943aef851c39db10cb2a",
+      "bytes": 1282796
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pick_up/02.png",
+      "blob": "449033ae706475e7b5c07d27942057dbc55c71be",
+      "sha256": "2af8c79b16c9eba1fe3f3a74be588a2707eac16419dbcb505b56c2fdef055426",
+      "bytes": 1184698
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pick_up/03.png",
+      "blob": "1d666aab9f08f453fc3ac1ed05c6233d7e895f61",
+      "sha256": "88699985491986413152d2e1f1cb21aef96f5d44a2e6a9810a605f7b8b03756f",
+      "bytes": 1095919
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pick_up/04.png",
+      "blob": "c7299a19f349c74ed9b9729860a3daeb9240c0e0",
+      "sha256": "87a8429bbea87929963d0858e4f1ccc2ef420d5df9a009e3a5e497a86db7838f",
+      "bytes": 1168329
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pray/01.png",
+      "blob": "1c692ec23ed066a854e2eae63697b2ce1fb33e89",
+      "sha256": "303a9421da045887a3a3f13783df7c67eaf4d0a6030841af962dde4f3cb3be40",
+      "bytes": 1315304
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pray/02.png",
+      "blob": "61281f4eb8960c748c4488058c1080806300fc8c",
+      "sha256": "a734346c4699a797b4709953c7e2a00aa2a13ec5d68af453eb71f5febd3ff3af",
+      "bytes": 1286000
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pray/03.png",
+      "blob": "1f31fd8cf3752eb73c1ed10e9757b1d606cc7e69",
+      "sha256": "ee5fa125f0a171665f206f38985b62bd2732f517b7fa04b2e44609daeca73cdb",
+      "bytes": 1266090
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/pray/04.png",
+      "blob": "91baa1896c1589718544fd16aeb19be1afeb95a0",
+      "sha256": "c0596ae3e9edb884c4a8cc8c3055f5b07b6538dc015778074835b08abb9708a1",
+      "bytes": 1261738
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/reach_out/01.png",
+      "blob": "0f7a9d9e8cf2bf8b46c1fbab24ba75ae2e3db2c9",
+      "sha256": "3e19ae4d6106794cb189dd5330cddc10e2f3832256fc16fcc58497ff7a00b59b",
+      "bytes": 937429
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/reach_out/02.png",
+      "blob": "00693f5e937636c36d30614541d9de7f3f43fcd2",
+      "sha256": "62c03e24f6dc5dd40af2c85681e0eda447b09048689e05ca3b5382b940016ecb",
+      "bytes": 998773
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/reach_out/03.png",
+      "blob": "7068d733ae0aaae16b126dbba9a802d7d919f1f8",
+      "sha256": "11e018cdfba0cd45cf454164a909cf88ae8c1efc77c329b6ea20681b87fd17aa",
+      "bytes": 978930
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/reach_out/04.png",
+      "blob": "224711425c48532b6ec61cfa3bfb0eafdb6de486",
+      "sha256": "74e7ec00c570d889f256e1e7c129ff79d5e5da62934cfee2b5a475233e8aa57e",
+      "bytes": 981822
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/stream_heart/01.png",
+      "blob": "b6a4fa07dd8f9be12486bb91c4eb264eae39282a",
+      "sha256": "a3f2dd6b9dcb5b62c139738aaac2c42ac0e27930b13b501457891b2eab63aa7b",
+      "bytes": 1404127
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/stream_heart/02.png",
+      "blob": "92559162f5dbe1926eb337300ab164b042a87223",
+      "sha256": "ed33064f428fedd54e9cb13aae3519da00483a92fcb25104c096ba94a9a0d6da",
+      "bytes": 1423081
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/stream_heart/03.png",
+      "blob": "83c281508544ad67deb8be9c0ae8738cca70a8b5",
+      "sha256": "31f83a41b901c69fe2156cb9c8236def6c5eee0c8b07ed6ab09b551ff415ffb1",
+      "bytes": 1463753
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/stream_heart/04.png",
+      "blob": "ef64fe58ae8a6a5ad2069f04a4e9b3325ea720c2",
+      "sha256": "9286494ed77b401d2d73a4d7755dcc0506c373ec4cc3f69377b1575314e3499a",
+      "bytes": 1389842
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/01.png",
+      "blob": "d6e39bea6633a6c5f310e673a34e81cc43db1dfe",
+      "sha256": "4e995ef9c848122dd629284a4f3b637daa8cc754000bd85a53f32d145e3dddbf",
+      "bytes": 1105609
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/02.png",
+      "blob": "659d61870ba46364f013d309903ca54036a0f25e",
+      "sha256": "bb9de108f051d08f225f64e9170de80c325e8939ee7b41cf05fdcc5863b398cf",
+      "bytes": 1075018
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/03.png",
+      "blob": "b96f5e0b798546911f602ea1cf70cbdcaa8b6f92",
+      "sha256": "32f85721f5e5e944ded34242cfe55ad8c22cc8122d8b39e7614f9b12088bef6a",
+      "bytes": 1087349
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/04.png",
+      "blob": "515cfa17b967f2d8484280c9a956902972789dde",
+      "sha256": "9d38949976c7a61b6fb0531172151009fbc2f4435a342b016b9371ac66bdf679",
+      "bytes": 1105044
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/05.png",
+      "blob": "f39a8ffcc9d9602a2b1c239dc4fbf0a9c226d2a5",
+      "sha256": "2368018f348b04398ac5cdc3beda750e5d3617532eecc0370de1f78038ea0230",
+      "bytes": 1123441
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/06.png",
+      "blob": "615cc69dae761fbfc44aeb7560b997cd304efa26",
+      "sha256": "1866394ad471a1d916d5a5356ff5d3450e9664b8c2d554372f5b09338b4e754d",
+      "bytes": 1121970
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/07.png",
+      "blob": "6439396084aab5e27fb32898f284811b1fd71d1b",
+      "sha256": "f30889865cf44be47821df18ac958a325d6aee3628cd0a73f82c263588c91548",
+      "bytes": 1108625
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/walk_side/08.png",
+      "blob": "49a58d330e167e889ee1ca50c5627357d93254b0",
+      "sha256": "6b558ec5f3575799e297f072223e0617da6d9b51c8a7368ac5942cc333cf9dca",
+      "bytes": 1102507
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/wave_bye/01.png",
+      "blob": "237bad6d69f1973079d08a61450bce554617d4ea",
+      "sha256": "d0b7dee5689ff931fc929ebd87eaa2d7b95fc5150f19fd5e5a8429c50dac5e9d",
+      "bytes": 1299845
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/wave_bye/02.png",
+      "blob": "7589642137f7d6a4a16bbf3ba5eb16ea97d7e0af",
+      "sha256": "3dff8c8386ff506f573bbfb6091d25ba46ad69e797c502a81dcbe3c26dc7b34b",
+      "bytes": 1322009
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/wave_bye/03.png",
+      "blob": "ffd2b2907924f5b62cda353997ca31707bcf9527",
+      "sha256": "c9c8e5b0a95c331e90ab51d85a240b194dfb4af0d52f7899658dd43ee3839af0",
+      "bytes": 1314690
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/deepseek/frames/wave_bye/04.png",
+      "blob": "386b71e50c2b32376db126046a91636be6f1739b",
+      "sha256": "da8c0b1ae56c5d306e639cd69075f9e186d8b5af1967d1d0cfe3452604ab355e",
+      "bytes": 1302463
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/character.md",
+      "blob": "dbbe8a45d0f8f8c598fd059b9f80e020fb5b48fb",
+      "sha256": "3dd4cd1e92bc22a8039ee5da3e62e86e398e2bf325add3528bf696f8a761ff04",
+      "bytes": 508
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames.json",
+      "blob": "af6ab64bf4824fb8f267bc733f49bfae4d2cf94c",
+      "sha256": "f94e1605e0c9547298b53b7feea748f409e80520e5faf68c5fa12c5eda89a235",
+      "bytes": 31161
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/hold_look/01.png",
+      "blob": "3a423c5b4777d86aaa18f1255338371b7faad371",
+      "sha256": "d3da927a3d6da5d29f2279e9dc1e6a189bb45669d3a7088e896037f29d164f36",
+      "bytes": 1405900
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/hold_look/02.png",
+      "blob": "1964291fc3f00b1d06accd1bf545975792619de0",
+      "sha256": "876aeaced39604fd370d2c07530153adb580584e5109189c333138285eb7a1fe",
+      "bytes": 1422954
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/hold_look/03.png",
+      "blob": "62d9cda97ce05a9e4ca1f7816cc6aad71d9b5ca4",
+      "sha256": "897001b1b6333a5ed27a8d27b938243f1ac053ee1719521b7f654e78efd1a98f",
+      "bytes": 1403442
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/hold_look/04.png",
+      "blob": "89efe18b48ee76d1c618ab03620d43e1f762a43e",
+      "sha256": "6e08dc15a4b03d25af790cccadd75d19ed5e49e1450a582f1a92cf6aafeb902b",
+      "bytes": 1347027
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/idle/01.png",
+      "blob": "b836012463c6e5705653b4ba13bfc364677b70d5",
+      "sha256": "5826675dafed0eabda4c09bae744a5b8d1249e41532c835b0fa3f8ce0c39cf69",
+      "bytes": 1480656
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/idle/02.png",
+      "blob": "e466d91697f2f212ff6b0e154e9d0e9479a4b985",
+      "sha256": "23d2fec16d15bd2b06182886d86e63a8e932eb60f32dc9412abfdc3d6c087e5f",
+      "bytes": 1505037
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/idle/03.png",
+      "blob": "7680cf34975f07ef4bddcdd61b3a3c0015365f29",
+      "sha256": "5022867a9664614af67898cb539aa77ffa41e6bb6570221f0eabe7b4aab6ae62",
+      "bytes": 1463503
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/idle/04.png",
+      "blob": "9d27a2fc6b2863ec1effe3e50e49e133a7a85423",
+      "sha256": "38eaea87c3b51b4d1b7c0e4fdc53505d61ef481af6aa7c44dc0663e2e6de1a85",
+      "bytes": 1486026
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/laugh/01.png",
+      "blob": "2b7135f1a435f0bac68bba67f310ebb409fccffd",
+      "sha256": "d23a6906d9ad4a54f8e595657b0a2be2996873def948c5f4ddf0de8eb435f713",
+      "bytes": 1487293
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/laugh/02.png",
+      "blob": "c68596159c77c4debfe58695ede7ee244ee438b5",
+      "sha256": "1454af0616f8ee36467bd93fedbfd367387876ddae16df8d8f3443635f2ba51c",
+      "bytes": 1518794
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/laugh/03.png",
+      "blob": "21e4966a4868563ca3c5012f858844970a68a111",
+      "sha256": "d3255201f13a84bef8515f63bf19b167e0bce1d5b3ba5b64a243e6a53ceaa1cd",
+      "bytes": 1413066
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/laugh/04.png",
+      "blob": "e67e897be0201a8209690fdab168ff6a399937d0",
+      "sha256": "e4c3314c6ee634def3fa16f62bbd4160e86b34ef034ca9a63af0f2d89ec6f757",
+      "bytes": 1444446
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/look_up/01.png",
+      "blob": "e65632c709caf091e0daaffb851b428028a595f0",
+      "sha256": "2833a8519813a08b5fc4e72a2f848eb9382b2aed2dd6251ed2f70b0edb10d840",
+      "bytes": 1475053
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/look_up/02.png",
+      "blob": "42c6a660816cf2b4cf34c2c884a4336e9e10123f",
+      "sha256": "dbfd5d9a1dfb008acfffed69d44b78c5e95cf3b90a98a3e277f729e08dd5ba44",
+      "bytes": 1434732
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/look_up/03.png",
+      "blob": "e24c22d2b926c2dd978c0c350ba24e36e5c6c851",
+      "sha256": "bc0aaa99e71e8213a14ed40262a4a743b0729404a1777c90b3b97c9318178061",
+      "bytes": 1421960
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/look_up/04.png",
+      "blob": "f457869402c8926530962d5e0c5fc28c81c0a3e8",
+      "sha256": "d9acc67d4baf67bd222f13f6bb8ca0fedf99c8fa05ce342d9ac973644c686a59",
+      "bytes": 1384354
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/reach_out/01.png",
+      "blob": "e0e38943bfc635ffac6b1f3671eea2363a5b3165",
+      "sha256": "643baf217e9b87b20348e7d4bb0cfe804d5dd8fc25a20e4aa5283fe4d9224967",
+      "bytes": 1054583
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/reach_out/02.png",
+      "blob": "cb97a04beea06f986019930e6c149246a619b0af",
+      "sha256": "28a20cd02d2fb092adde73e3fa79d637670f7989bf8672d7b9dc3b70a640c826",
+      "bytes": 1088715
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/reach_out/03.png",
+      "blob": "a32cb335ec2e52f921a2833d9243ea68be1a1ad4",
+      "sha256": "b040f5c271eed27763e2ecb4c680ebdb556f3818daf3b477fa2b3186e7ffbb14",
+      "bytes": 1098849
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/reach_out/04.png",
+      "blob": "2e7712d21a5c242b4679968878c9cd3216062450",
+      "sha256": "5f66e3b9085dbfcfc10d1a1e30044409bb9e158ccec0bccfdc1e7289565a2c3c",
+      "bytes": 1075672
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/01.png",
+      "blob": "969c358db3b28a5aa6bd3c9a93bd29dd34d301ab",
+      "sha256": "5b4ee39e241b859ee69eeee9345346dfd6a77e4e674fda81b012a1f23d9e25e4",
+      "bytes": 1332356
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/02.png",
+      "blob": "3620672397ed5c60ae8190892cc5bc44281d511d",
+      "sha256": "2daf719830fa77da326b457bdb56040cd28b920aba03e73cf579c3d082858f2c",
+      "bytes": 1287101
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/03.png",
+      "blob": "c7db1c824b218e8a965946cd689fa32400a3ef74",
+      "sha256": "e07332cda1f67ae65c35bbd5ac74a0d215ad1edc47564b89cc45a4616973a315",
+      "bytes": 1284169
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/04.png",
+      "blob": "51ad2c2aa828ba6d5d2c997acd3886df2c45545d",
+      "sha256": "bee308cadf9c0f8d5abd2a307cc98bfcbda28fb230bdcb3a780fa60ea35cc591",
+      "bytes": 1342632
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/05.png",
+      "blob": "674435e1a04e9840a0a410b429d1136b5eefc1f9",
+      "sha256": "472377740afd54be74296c0d6b7490d317ed0e8193e56f1aff13a7095bf220a9",
+      "bytes": 1266777
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/06.png",
+      "blob": "da75e4f3004bea2cee99021007318fa43055719b",
+      "sha256": "3d320b0ba3af9b7d3da934f3e664bdcfeb43b733eb23fd82504b074d17c9980a",
+      "bytes": 1249459
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/07.png",
+      "blob": "b829b08abdf31adfe20e3eacaaf70644431f4890",
+      "sha256": "d0d443d043c95f2599647b01bce9b3ef910a37ae8f9947f0066e1dedc17ae5e1",
+      "bytes": 1271472
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/walk_side/08.png",
+      "blob": "b490e7ff1f66a46a928891c591477a0f11c2d140",
+      "sha256": "4c63c96c33e9fd8334d57a186fa5bd75d12189c1b11480b87f42805f463b26b3",
+      "bytes": 1275777
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/wave_bye/01.png",
+      "blob": "3f63c5eafb43b5c91305bce257ed8a1fb5df6c14",
+      "sha256": "c022bab601aa9e7947607c392e642a49cdeade5d4d85f66707f55800c1038632",
+      "bytes": 1489683
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/wave_bye/02.png",
+      "blob": "422ccd9e91abf089bc5501534d8b989d4a69fd35",
+      "sha256": "475cc9f952662ff3f18fb8237f57f4bdd4d09bc0c1e33651090b317d483a5922",
+      "bytes": 1506509
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/wave_bye/03.png",
+      "blob": "41980f72d27a0da85c15f3d1ad36dc941036b049",
+      "sha256": "a1c2a6d18d06d6b85aa5f686eb8ae2957403b8ab81808fc793572fb98d6f2358",
+      "bytes": 1464421
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gemini/frames/wave_bye/04.png",
+      "blob": "570ab837ea81a7654df7aea7cc00c31bec217b65",
+      "sha256": "704a9ecfde7c4628ec1770ff474fa8f3c1da955d44c01adaa799e8a0e493a9b5",
+      "bytes": 1471173
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/character.md",
+      "blob": "793c2442cd91f8c4187e3c301a80e7f40a411b76",
+      "sha256": "e7276f902e784a9faeed6a2a178fbc26c7b344c7290b63764ffd166e37e92cef",
+      "bytes": 383
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames.json",
+      "blob": "c2aa1e6ab43c5fb8d1e5f97501e3ff10705b2ff1",
+      "sha256": "225e4130216d0ac5f6af632e9ca73164aa4dc8ceb9a2c9375155a8ac788752f5",
+      "bytes": 31178
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/hold_look/01.png",
+      "blob": "cb3bf3f78ae168e7ea817b831718959a54a0e83a",
+      "sha256": "d2c3fb20343d263cc79e8173d3dcc635cb142d6f92232bc4d152046c7f17cd2c",
+      "bytes": 1163450
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/hold_look/02.png",
+      "blob": "6ebaba4cafadda8e96ae03b4df312d247e545385",
+      "sha256": "8d0c5aac5bfe6a1c28ef3eda9748cfe712f272258ada762a810dcb104a70c9f7",
+      "bytes": 1146051
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/hold_look/03.png",
+      "blob": "e7c30232d2bbade4126d62e24df684f6724f78d2",
+      "sha256": "02fb55e47dc9d0365c4ff1aceaa8949e9c449e96085cb241f7a19de073f19192",
+      "bytes": 1169360
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/hold_look/04.png",
+      "blob": "724ead464b326d3bd1ec7fc89ae3124f2b61404e",
+      "sha256": "9a8a8a36930e5ddb2019e9ed1522280764d7a0a58a5ea678d232401293405557",
+      "bytes": 1129038
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/idle/01.png",
+      "blob": "4dfebff4626c600f9ac2fe155f3fbc3337f353da",
+      "sha256": "3457f9bca142b7e533a32a68062784acf5e7513e2396025d5cd7281ff8a1d336",
+      "bytes": 1255655
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/idle/02.png",
+      "blob": "f13c756b6f65240e1c1e379885a90f5a52f500b0",
+      "sha256": "6a4afde40d96c4e0c0f3e1586707bd614b8c8a49f6912dd7c1817c3808bf7b95",
+      "bytes": 1236138
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/idle/03.png",
+      "blob": "741276d272201863469eb91b27eebaa4f16efca9",
+      "sha256": "8d4eef7318d1ddd563ae7456b9284d7fc2b573269ea0c3d42e6b0b27ea64699b",
+      "bytes": 1232329
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/idle/04.png",
+      "blob": "5e88015550bde0d74bfbd7b3c8087b16dc7f8991",
+      "sha256": "e1bc0ab25e13d8bf9be9811e966dfb90d20b2e38f09bc0e4b18439bb4d6931ec",
+      "bytes": 1235929
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/laugh/01.png",
+      "blob": "d033ea7e90da57d9edefd58a30caaeac8dea8b34",
+      "sha256": "aeb025a06ff565abbe99c6827736f9065debf30383a5deddeece73d5200c4860",
+      "bytes": 1289516
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/laugh/02.png",
+      "blob": "10e49e6cbe99ccce0447847c0c3e7e865ce285c4",
+      "sha256": "87564e40dc2853295796ef7bee00f58550e3d38614b7d2f625628095b31a70d4",
+      "bytes": 1301615
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/laugh/03.png",
+      "blob": "81c72007ead56ee9c2aa3b5e38cc5294e3c02c85",
+      "sha256": "fe2d635e33d270e78ed13becbc5e565d1208be9670a96e68b8b5004a6c3c5b9a",
+      "bytes": 1240362
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/laugh/04.png",
+      "blob": "18e42540c0ff7f7245cff25121674c165ebaaac8",
+      "sha256": "0e355a658d8335dc856dd2dabec96c06be304c2d43bc828a9a492a48ea7aba6f",
+      "bytes": 1242058
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/look_up/01.png",
+      "blob": "0d266d6ca5e39c722a28fdb45d0a0f2babe386a3",
+      "sha256": "a1483bc9241662b7b4b972c92d915267f34c74ccc966d1891b0f5dfff895786c",
+      "bytes": 1331953
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/look_up/02.png",
+      "blob": "8850303f3c6c3c7e265cea6bb90db47faac4d250",
+      "sha256": "9d39cd1a90524df977795699da3b4d0e9e22611f4b13aef7503ba86229896ebf",
+      "bytes": 1343549
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/look_up/03.png",
+      "blob": "34d3878f0321f9ef1aef3741fc3a6b6fe889614f",
+      "sha256": "a5c8b2880f7f882aed7187f75189795d92b3f0b9e730f792367708f9f6a7ac84",
+      "bytes": 1315983
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/look_up/04.png",
+      "blob": "17e1fad51b42805f6de7bd86d8d799700dfb53b0",
+      "sha256": "eb7f5553dd6a4888f557fa374dd71578150f48b1e5328368329431ad2dd7edc7",
+      "bytes": 1294097
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/pick_up/01.png",
+      "blob": "b506e55d27167d8328f32543f4da5056149e8173",
+      "sha256": "3c2dcdce264b9b34018f119312568c7ec71b5fcdea0db01aef51776d03f33a58",
+      "bytes": 1182861
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/pick_up/02.png",
+      "blob": "d1d961c5f7c541ccf5e149126869a56ead6b8155",
+      "sha256": "47c11de98cc75ccd4e49561eec4efed40ec758a5acc6068cdb7ca2642292f6c6",
+      "bytes": 1070786
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/pick_up/03.png",
+      "blob": "35fabc8dac73a7176c6187632db3ce599a3a9bc1",
+      "sha256": "02c20dbc328a9db5d02f94df563c54fa9600bd71e96bfd2154f98b1b56bbabc0",
+      "bytes": 1026838
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/pick_up/04.png",
+      "blob": "ff96589956f1718ca7f062cee9750587f6464594",
+      "sha256": "3b4c043ee4b3322fe14d4aff72766f23b5236be56a9618cc2aee9af0931324bb",
+      "bytes": 1119355
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/reach_out/01.png",
+      "blob": "0f2040d7c0da4eebf16d3b7c8fc4c4f54b9511b7",
+      "sha256": "01e2de637dc7ef7b5a54bcdb8db86df12742b30c488b288142c9b8a4cce97fa4",
+      "bytes": 919884
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/reach_out/02.png",
+      "blob": "1983054180a7daff79a764e0a9ad87de81ea8b38",
+      "sha256": "396264ab6cb94f598086d716f9f1e53da3ca80a4bd70b0d96e350145ba4e0e10",
+      "bytes": 955677
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/reach_out/03.png",
+      "blob": "ac49007ad7f701ba5803acacdfeabde76f7a8f5e",
+      "sha256": "c9576881182ed70fd4180bc6573d1da45d8c8977dd44369111ede2bb9c594e89",
+      "bytes": 933284
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/reach_out/04.png",
+      "blob": "1e8d8f2d9d96088f49da8d1645658cad87402eab",
+      "sha256": "d9583a6553291bd8d737a9800f50ab3daadad57eda10ba34ce5080d781f29368",
+      "bytes": 966440
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/01.png",
+      "blob": "7665c263366bd9d8bc4180123759d6e5d678a75d",
+      "sha256": "ba403c871624042cfe8ceafcfd26a8ec3e7b2152befcff0d88c629cde7d7b599",
+      "bytes": 1160644
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/02.png",
+      "blob": "a53ba028a9cf9bacddc1ca6fdc41f3a5f71999fb",
+      "sha256": "2fd4367ba079a761defc8ba01dfec4ee8957ada8cf558d7d2038605d896431db",
+      "bytes": 1106010
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/03.png",
+      "blob": "3b860694f329291d9257933ada9b949cc28e3e81",
+      "sha256": "6821cfbb891701c98a79fc35de8e70c7f7192ef9c2dc37bf02d1c712cb37b09c",
+      "bytes": 1149831
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/04.png",
+      "blob": "bdafc25ff1c9028f82a5477bb1fdafe076449304",
+      "sha256": "713738d0d0c50b2e1a1625e1433870b0482b6feb50a09e73a50695dbafa17702",
+      "bytes": 1127856
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/05.png",
+      "blob": "8fadeb27e66491172702875ac345dc54c1073e78",
+      "sha256": "99fee8e5ff980cb0193921287f33e37869c0b1237e25544cbe9de1138f19477f",
+      "bytes": 1140112
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/06.png",
+      "blob": "728efb3ad6ece97c77c539964c9ce3e192e502db",
+      "sha256": "8515600962b90a5b4493f8dc0a634706ded86970f8daec25aa4d64159cabd3a1",
+      "bytes": 1132603
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/07.png",
+      "blob": "e8362ec6266a2aacc15533d4af016d829f2de8ba",
+      "sha256": "b4e545edc2afc9db490dda7602388c26a6e1e70250de413be5d41a04f9109516",
+      "bytes": 1123694
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/walk_side/08.png",
+      "blob": "a822ec941eabdf85fb5016417215ccbfae8d1c68",
+      "sha256": "dd7d84b02a559b75e296b4f02ff15829a68b29f5a58a2a9a748c06d9c402376a",
+      "bytes": 1115119
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/wave_bye/01.png",
+      "blob": "6fb72a69b5797abe0e7a8c8cf72d25b9a669329c",
+      "sha256": "bed587e90479c378416a7f966e5ec45e47d8bd67a0a99811ae6900017e213f64",
+      "bytes": 1269378
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/wave_bye/02.png",
+      "blob": "059d8688c511d0eedb7dd75ece51353868cfa4ac",
+      "sha256": "fabbec28f724346a8adbc1f621dc4582fc21207ae817be4166a9aa070adc740b",
+      "bytes": 1254987
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/wave_bye/03.png",
+      "blob": "0e17a7eb83485fd467245f7479fc7531d98ec276",
+      "sha256": "1fc3f234f80b42eff12a5c92e5e171d2dbf527028e14f6ffaeed3bd5dcaad9ad",
+      "bytes": 1250229
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/gpt/frames/wave_bye/04.png",
+      "blob": "ae0670ba36283490033205780a63419ddbd748f5",
+      "sha256": "f4e7f17d889e8f13e0e30a35a9b65996f4c0e02d13e60ac68ed39acb004ce09d",
+      "bytes": 1282367
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/character.md",
+      "blob": "9a84f3b1dd74910b20dbe62a517a66b7c1a8a47e",
+      "sha256": "2b799cc958a973c6ff18392daf15860fff20ebd92cdcad43b2be0860131d5257",
+      "bytes": 502
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames.json",
+      "blob": "c33f7d9ebf905f41b95f061844bdab112a6aa325",
+      "sha256": "a79be50a7e334917feba9512720400e3274f464da00766a5ab8a200a59f805b1",
+      "bytes": 31175
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/hold_look/01.png",
+      "blob": "e5d8280a9d1868eff54600777ce2a300f54c21dd",
+      "sha256": "008bac46eb21a0d8b303c4587f69cbca4fd5f9c8628663d6a391683a2541150a",
+      "bytes": 1415680
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/hold_look/02.png",
+      "blob": "8522048f32fbefc04ea421dbba23172b011fe80a",
+      "sha256": "9dbb2cbd41fcd23ae65af10f15e7181e78a4af6c8883e59fd6f55dff788fba2c",
+      "bytes": 1362071
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/hold_look/03.png",
+      "blob": "8af53f4be40db2bab463fd1b456c1168c5dbfddf",
+      "sha256": "daf98217be411d4444b78b3b1f99f6fb6869fc4b783f7824a7ba42f894add3a9",
+      "bytes": 1368144
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/hold_look/04.png",
+      "blob": "851c1bbcc19919d9b5fe62cb9692c3ab89dc5229",
+      "sha256": "4ddaf69bdfe9baaeed74cddafd99fb78d8e34f323fe584cd2857fb5c8d1c400f",
+      "bytes": 1374626
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/idle/01.png",
+      "blob": "2b7f704d2d4db76f04b93c3d14d3f667bab32823",
+      "sha256": "bb149e6212713bf50ded657855aedcbc255504612e3d8f0687ee418da128f1c4",
+      "bytes": 1467972
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/idle/02.png",
+      "blob": "a699f0c8dbaede9c0055859777c66497a474981a",
+      "sha256": "c20ac4e524ad9c60310d1e9ece3d805cca5e844d45c34301f9d7f257552e9284",
+      "bytes": 1444427
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/idle/03.png",
+      "blob": "c3a6a34f3b3ef05c422d21efc73e2008a02260bd",
+      "sha256": "b0655a7e3778e38916d5e4f9de6ac2d92f450a5b139bc326906dd8d8f59fdaae",
+      "bytes": 1470527
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/idle/04.png",
+      "blob": "8c9914bca52b8ae9e96a60b03e375cdf6e153948",
+      "sha256": "8fb2ff43a14783b61ed2cb87d1f5fbb94a281657d02dae4884f4712d7803446a",
+      "bytes": 1449228
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/laugh/01.png",
+      "blob": "c3f6ee470fb0c7ad6d1ee1c560871b5e283de96c",
+      "sha256": "e429d8d29d7f1bb897ed513770b43bb66836c07240999e9e8af78ed4e8c4b373",
+      "bytes": 1466506
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/laugh/02.png",
+      "blob": "762ee278f44ee826cc2cd10604eb76a8c45d9fd3",
+      "sha256": "c2c2621a6bd51f1caf9038ecb802031afb8e20b0d4df8a5f2d79f5d29ae8998a",
+      "bytes": 1544935
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/laugh/03.png",
+      "blob": "90506241ec8578f531e8190ab5c0015a98dd3521",
+      "sha256": "600eeb5ff71c20c38da4cc573cd8206ff2bbae8522720f051963700057fd85c1",
+      "bytes": 1451657
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/laugh/04.png",
+      "blob": "be8df1625d375ac77d9503c0279cd6ea21f2aa4e",
+      "sha256": "4b74f9a4f4e8d76e7184da80fda1bc7918260ec8743c70b01320ef1e4f70c899",
+      "bytes": 1409550
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/look_up/01.png",
+      "blob": "dc0a913dd81fb20443e9f5c82075b0f3a89f8641",
+      "sha256": "cfba965aecdfe18cd3f301b9cd9c35676a8608a4c1acb23728df851a0422cd16",
+      "bytes": 1464499
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/look_up/02.png",
+      "blob": "48f765c0118ce10b1698bdffc4c94f5548580f2a",
+      "sha256": "a69a44ec699d161a8e077b5d1f6fd79542f96b2cb631869e87606ea2c62fe77b",
+      "bytes": 1462783
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/look_up/03.png",
+      "blob": "51ab0210ba42f914a57713c468e842a9a0981d31",
+      "sha256": "00ef64b133c0fa03534eb4c894a698a5e8437a46891cefe71a7f938d9a8170ed",
+      "bytes": 1476373
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/look_up/04.png",
+      "blob": "354f7a125a7632de7ca984aa88caf56eeecabb0b",
+      "sha256": "6c3887b6ace6cbcb63b3fabdf32560170dec55277fecf7db4fee1b885e71cef2",
+      "bytes": 1431291
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/pray/01.png",
+      "blob": "4f605fbfa3b72b5b5c229a984f04cfaf83d1a557",
+      "sha256": "3f0440d0648bd53bfb7f1bc75b97d5980d2a372cf2ea0f17a24ed80bc501d524",
+      "bytes": 1487537
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/pray/02.png",
+      "blob": "d3289ef1b9b5fb27454eef2efaad95bb790fff65",
+      "sha256": "43a87fddc18d02a6eb9ac59b6d1ea88f2d965aa666d9a3e3cb29852ed67ce84f",
+      "bytes": 1468250
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/pray/03.png",
+      "blob": "abed9cfa87ceaf7bf8b9cc58cfc547b3c54e08c5",
+      "sha256": "8be2c2deb094344dd0e4dac90231cc952d36e04604d9c4a596657b4bedd4c54f",
+      "bytes": 1464626
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/pray/04.png",
+      "blob": "35f09c8f305058f915d85ea2234b1e766ba41026",
+      "sha256": "93ab675165d330233d4a148eb1795a2b9b0396b4ee434e4a591633f22aff7c4e",
+      "bytes": 1456734
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/sit_idle/01.png",
+      "blob": "8dc2b7faa5a62492d8c1c7ac2febd4b43d72da51",
+      "sha256": "c4ea14f06645b03de5269de95caef95dc77f649c594e7c7a747337b252dcdcfd",
+      "bytes": 1501999
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/sit_idle/02.png",
+      "blob": "95534daee74db25cf51382916bdcfeac698e0743",
+      "sha256": "f159816cf3b2e3912aa42bb4809bbe9fa8d5e89d952e73feac34f83ba287c843",
+      "bytes": 1482685
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/sit_idle/03.png",
+      "blob": "32782f66149923a231bb0d413af911a5c5423501",
+      "sha256": "a39fc18655edf226cd0c0390b8d3d72f049f610d7ad432b6faf8715d0c5161ff",
+      "bytes": 1469004
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/sit_idle/04.png",
+      "blob": "04197538affba1b627595ef9d03d9f3049e7f895",
+      "sha256": "bf3d0358f7ab68d32bafacaf3bf611c5fbbedc30e50e44f56603b1c84615b7e4",
+      "bytes": 1470752
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/01.png",
+      "blob": "71f1bdf6034e16f8c7b5befcd2fc8d4ddda4169f",
+      "sha256": "a349411f7dd5685c9077cecb1aecf4a41c2ffe7cbcba02ccbe5e14f1d17e760f",
+      "bytes": 1219812
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/02.png",
+      "blob": "02f6d6ca429558b067f0ce31aae997d0aa08343c",
+      "sha256": "95529fc7dd7835371d7de05f73cd16be0a62a95f12238adf1755531b1541a59b",
+      "bytes": 1203593
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/03.png",
+      "blob": "b89185e63529a58f742d01693e0a8950b0b3c610",
+      "sha256": "3e0efd641c84a8177d4ba51169d9ad34c4f6db999cbef24505082c74ebc4a16c",
+      "bytes": 1163758
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/04.png",
+      "blob": "a58f568d31de2bf17be5b2a438a6e6ba5e08021b",
+      "sha256": "bd1ba28475613754672d83081b3b70e3e5762895aec55659bf70b4cf0f61ea4a",
+      "bytes": 1222798
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/05.png",
+      "blob": "02ff0ccd98b59e9368ce44d7cc7e9e2c985fe75c",
+      "sha256": "a4704745aee53ad907f295a74050d48d9fb1495efdf22831b1d945c05d32ec72",
+      "bytes": 1210104
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/06.png",
+      "blob": "35b7728fbd8a7900a1ad9d185cd6df536b7287ba",
+      "sha256": "d354e5ae307c13f3e93abc4b1210b40b59b41c5795b54942bf73a4ded789a841",
+      "bytes": 1241510
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/07.png",
+      "blob": "40b376c113bcafb40058dd707e365c44e36a2787",
+      "sha256": "4b56310cbf28d289d2b4e099854a832adb4028085c06930a57c0ef627e5fc620",
+      "bytes": 1204452
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/walk_side/08.png",
+      "blob": "09ab6a54fd84230e9e5fb93181763081be9f06eb",
+      "sha256": "bfd1b94356d82f5bfed4d7d887c409e09e94b2b52553d67bec8f803522ba185f",
+      "bytes": 1251666
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/wave_bye/01.png",
+      "blob": "bdea8fe1893d8ee391eb584ef2f41baeb667921a",
+      "sha256": "8aea5aa8d891915f3e38618b2c9345fc259ac6f298253b4b30d3e16d8abd89ce",
+      "bytes": 1485610
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/wave_bye/02.png",
+      "blob": "32b43d280b7f3a74e7771d33520399ccb329b565",
+      "sha256": "6a6c8d1a73852a83665a1a61f4ebd30695e8ece233e9b8a21797862316289d89",
+      "bytes": 1480339
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/wave_bye/03.png",
+      "blob": "bc29286c729eb80c0cd13c5cc1c7b506c778482e",
+      "sha256": "4ea8c81f8d6ce982c41dc0ccf6551154befe2f207796f00e5ffc0f867bfa09de",
+      "bytes": 1469908
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/kimi/frames/wave_bye/04.png",
+      "blob": "36b5e5edb9f03050ff057586bbfbb938acb71236",
+      "sha256": "16ceff165324daba807967a74cc2fd27508fcc39a2a83bc6fee2b7b6d23b6406",
+      "bytes": 1447899
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/character.md",
+      "blob": "c7efd98182def674cab0387a87a0c42981a28437",
+      "sha256": "2e229615338180fa137b977d336c784d07ea9994d91906b81d70a22f533fd920",
+      "bytes": 493
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames.json",
+      "blob": "e79ed5495cb0448e0e6cf48e4fade242f9051993",
+      "sha256": "d47cebf81db6af516f0a58ad73f2aa8ac1ae6f70d29e922be75624e011fb4e6f",
+      "bytes": 31189
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/hold_look/01.png",
+      "blob": "681211caa94d3e7beb7305388a4a0e62c03569d2",
+      "sha256": "8f5d99f1a008ac6c6e2355034cf4959e7e7aedabbff11b365d286b0ed4856ce8",
+      "bytes": 1326605
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/hold_look/02.png",
+      "blob": "24a2a0e810d8a181404cff26c3ec24a2292fdf2b",
+      "sha256": "0e42553c4e6000b3cea29820d1851945761c721ec8dc3711785a8f6621b16ddf",
+      "bytes": 1340344
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/hold_look/03.png",
+      "blob": "25a15878c5f2ba6c7732da05b4ae1c0a0452d2e3",
+      "sha256": "58ea08cc323d5d4d3a6abe6fc3c956a3d2e9b521ab7a93f40d24d6a491e3253c",
+      "bytes": 1390711
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/hold_look/04.png",
+      "blob": "e3a01c5f303ad5f5649bcc9cb10bc08f6fb63f3f",
+      "sha256": "e3a35179afe58afc445f793e6bcd6c417f30addef830cdcc890cf7444ed3758e",
+      "bytes": 1328169
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/idle/01.png",
+      "blob": "6396f1a4d9a9cb345f7cd877df883594c417cca1",
+      "sha256": "a1ba502842beab0379271abe152e90fea05c15fc5b468036b4de8bc2f767421c",
+      "bytes": 1442893
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/idle/02.png",
+      "blob": "397776370d8b7945ad58ccf9239144f080acedf8",
+      "sha256": "bb8755d4cf7f0b06d4830ed9c72dea97e9c46709e4a806f4fdf60d4c75c4333c",
+      "bytes": 1457017
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/idle/03.png",
+      "blob": "07ea7a78cdf97c31ed3f5ecae18e3a3f53f733a8",
+      "sha256": "10da119c4d1935d092280df7fea7ab803d9a7fdc0724222c812735f36a51dd13",
+      "bytes": 1426365
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/idle/04.png",
+      "blob": "371f2fb291e4ec3f2cf755ae848edee72ef0cf18",
+      "sha256": "b39c54cd58f5e94d643ddc2d5b3194c400ae3e80fb050523822652a6c97ab850",
+      "bytes": 1426923
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/laugh/01.png",
+      "blob": "232225933c5a454dbc4b611295124e16a83ccc39",
+      "sha256": "04ccaa4969f36123202fb9f6f3662eedd513ce3da8b1028a182e4a898525b19b",
+      "bytes": 1439049
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/laugh/02.png",
+      "blob": "3f090778ef42a18fa45366a96d7ef986c4509450",
+      "sha256": "2cb7488ae2d7f0b4a3a53cfbb016498ece90090af18d55211181d651b7a49cb8",
+      "bytes": 1506544
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/laugh/03.png",
+      "blob": "2c74779ab2933b65bded8d654d640c513f5e799a",
+      "sha256": "77391cc72b57717ee48c0e4c761f89c27002306156d06a23a6989bc6daf058c8",
+      "bytes": 1423816
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/laugh/04.png",
+      "blob": "cd04aa718e7f0f0245764077186300303a161927",
+      "sha256": "25834d5ae66f73ae082e5b87dd987471ca84b4c896199d34a3b2e50c57c5c37e",
+      "bytes": 1397268
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/look_up/01.png",
+      "blob": "937f86fdba4787367a4d2a71bbac629019c2526a",
+      "sha256": "8e1e3776556675d7ef18a58e26bbb26b724755edb56623cf8fdc8fee4284b220",
+      "bytes": 1494526
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/look_up/02.png",
+      "blob": "108c0da9f7734759be165c5e73dfb29d5dfaa39f",
+      "sha256": "c089c76de7e7dab3c4fee0ff88fdb09df04932e0261562070c7e512d6fe4ca8c",
+      "bytes": 1575353
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/look_up/03.png",
+      "blob": "8483c3da4b927798a58a1eb627df79bf5503dfc8",
+      "sha256": "971173fec97a96156cb08644007b62610ae6359a44bab9efc67909ce5505593e",
+      "bytes": 1553342
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/look_up/04.png",
+      "blob": "127d19ebfb87c0adbdb4ad8827cf461b5337d6b1",
+      "sha256": "5811dd119420de027cacb278707839ebe50c151c210c98777d8f071104132277",
+      "bytes": 1545377
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/pick_up/01.png",
+      "blob": "e41b5c0e4efc75b7619f58bf771c61f92e6d0586",
+      "sha256": "af830373b5db668cecab577ec3670429858a231da37e9518ad47e3bb1f30788f",
+      "bytes": 1466050
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/pick_up/02.png",
+      "blob": "bfc080c0fc6c61d232477de96f1d54506290fc9a",
+      "sha256": "3450b49820d83b9370435f9dc525d169ef82b95427b2b7ec0eb938554a0564f6",
+      "bytes": 1354068
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/pick_up/03.png",
+      "blob": "7fdef36a5bed02c1cbcc20f5332adc9a89f92d46",
+      "sha256": "2049902fa86875671ff068ea2731c26dbcf1b94c31a014004f129a1c3d5f5b58",
+      "bytes": 1251304
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/pick_up/04.png",
+      "blob": "94c7b1e05291bbbfb576e45755c373d6d91d6061",
+      "sha256": "1e7f4e1ea3957a95695306319d6eabaa8f50e0dbc364490f817ab691e2fbf6ae",
+      "bytes": 1366608
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/reach_out/01.png",
+      "blob": "0126d85b8077e0c8de9e5452b21b02756c2d9c75",
+      "sha256": "865fbb972a30f0770fa0cd03acceec768ec5a79863b722050c8d379390fef4e9",
+      "bytes": 1088125
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/reach_out/02.png",
+      "blob": "5bf8b1ceeba54a64959cc23cd97fa31277a06835",
+      "sha256": "d6f49d50d896fba444d28f49a6704846e3812e8e8eea671473135d93272d25dc",
+      "bytes": 1151006
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/reach_out/03.png",
+      "blob": "6e60690d737d0df407921173c43bb769d854f029",
+      "sha256": "d6cfdfb29b374b7c520998e3dc0db91c200540fc6e2254e84d2c2336a1028a4e",
+      "bytes": 1155618
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/reach_out/04.png",
+      "blob": "06c8214dc6f7ee51b7ae6c3c04f3021bafae2f2d",
+      "sha256": "3780d4e0e95f852c22d7edfe9c3154f956faef9489924e02c6938fdf9f493f83",
+      "bytes": 1176157
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/01.png",
+      "blob": "823017bfc50be5372c592e9f85e63a127a651900",
+      "sha256": "53928513b571f5054b1f32ac3060952cac43300ad5ad8ac55cfca5f26698c6c9",
+      "bytes": 1310154
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/02.png",
+      "blob": "f519f7be3ace4622e7af2b0c1b4d51fbf1e2f3da",
+      "sha256": "7ca595f3d9c66a8af6235909e79c58d6af173cb055af1a9cdd81800b790cbff9",
+      "bytes": 1299174
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/03.png",
+      "blob": "5902589746fccf2337b5c15c09ea98f1801113de",
+      "sha256": "e1e446d3afab4f218a3646ed8b95942a8b965edbd04e427efa982b3b3df7cf48",
+      "bytes": 1288561
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/04.png",
+      "blob": "3d9346b61faceab6096b0f4026e256d4420c02d0",
+      "sha256": "9fd172d571941285ed4b8ed1f02a9e53f64a0a57be9cd18092cb0fb5b7561012",
+      "bytes": 1333658
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/05.png",
+      "blob": "1a38114ba82678e998f6ac81669969af625f899b",
+      "sha256": "93bde4909cf5d2e03a5d7de77b8dd5d069160f420fa1291b7d8430468154d134",
+      "bytes": 1253122
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/06.png",
+      "blob": "1a195c1a497a0b60c8bcbccf1084e56d340c07bd",
+      "sha256": "55deab3393ac4e84b9f9decafd6d21aae26b61b70499279c93ee6e2146660f5c",
+      "bytes": 1285560
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/07.png",
+      "blob": "dcb54e5a44d3b54235ea827a704bd62a96e21cb0",
+      "sha256": "697affa85c14dad3a47f210c7965bda6e941fcce0febf3d7babba68e0749b4c9",
+      "bytes": 1250202
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/walk_side/08.png",
+      "blob": "182909d100bcbc216412b87d6aed0f6557870138",
+      "sha256": "2edfdb4c14bc04e349708eacc61d1e96aa6c10e6f45edf4a62bc0f18464a49da",
+      "bytes": 1280820
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/wave_bye/01.png",
+      "blob": "a18ea9b81dbb2d795af57bd21a0ee4b1803dde3a",
+      "sha256": "75146d8ab67a3405ec134da393889ac7e7eb06974115ab8631d4040b950770c1",
+      "bytes": 1424600
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/wave_bye/02.png",
+      "blob": "9734acca6c2ccb84725e182c6a064c74784d0c15",
+      "sha256": "68bfb295ceed33426f1a17357bbb2e744d583ed5357a493f7381e3ff946dbfad",
+      "bytes": 1420640
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/wave_bye/03.png",
+      "blob": "650093bed965c4b4b12836abed3fcb83e893dc3a",
+      "sha256": "d5e40ad53d8abcfa3f9000ea3a2a0599226a449bbbbc725e5b4c29d199eb4d38",
+      "bytes": 1421275
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/qwen/frames/wave_bye/04.png",
+      "blob": "2b293d2aff5d0ba375381530b3bd5a80f3585e41",
+      "sha256": "d52e6900822fad0136c6016b2bacbc7e77ca8754a800d00b9efaad30bee28cd1",
+      "bytes": 1413062
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/README.md",
+      "blob": "e8e4ea0b02b4e4298b8fd3c1c39118f23c81de7e",
+      "sha256": "05d3aecab82f4785e14c6581859df3c2874e073d9425402aefd88393c63f3fab",
+      "bytes": 3035
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/character.md",
+      "blob": "0772a4ed28cdd5b997cccd3cdd8765280e955c95",
+      "sha256": "7743c0f61b095ad1677d9cbdfe7e1d94b86a23f3eb73913d4fd5a74bb272bfa9",
+      "bytes": 469
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames.json",
+      "blob": "f3da3d405912816e3ffdf4b792c14bb16a26e10d",
+      "sha256": "6e86f0fef3dbb5b5a3e1692466abcdfcd7ac8286da03c492bc4dd70e23d067de",
+      "bytes": 31178
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/cry/01.png",
+      "blob": "2b4c42fff021f92c62565375023bb8a78bb30b79",
+      "sha256": "5b1849dce57e46de6baf8b7f4a4d16c9f462aeb949d65029c5380d5f87302541",
+      "bytes": 1325908
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/cry/02.png",
+      "blob": "a94252f83d2658606de9e168880ee0c48bdb5a60",
+      "sha256": "027facc43c5ca9796a8730b1f18587d133d5b1125db347b5849e7eba086bc873",
+      "bytes": 1333698
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/cry/03.png",
+      "blob": "37b24be404ee4b9af648b4e3cf5941f3153c9a17",
+      "sha256": "00db92a8c7b3deabc49ebb109495eb8152cde3972276c00edc5fb9e05739ec6d",
+      "bytes": 1312899
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/cry/04.png",
+      "blob": "cb877c9d336a53004e386aa166f9ea3213a6034d",
+      "sha256": "1be4c30f6509531e92df1626c4e939124162d4c9021906fc33862b1f40aa8a93",
+      "bytes": 1293462
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/hold_look/01.png",
+      "blob": "f575e3cd353fdbd8fe2daabfca81ef5486682eab",
+      "sha256": "335a898f148c1356022684996c317d48d1975475925a207a165f5bcc12e0fe34",
+      "bytes": 1347593
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/hold_look/02.png",
+      "blob": "6848c652c0d4575aae5db52032f667c2182fd527",
+      "sha256": "ead3281bab32afc41f413be03dc33cb96a19ab8da68b58a20920a9b77e201b01",
+      "bytes": 1347893
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/hold_look/03.png",
+      "blob": "044aef3752836df0ff31754aded84778601d0035",
+      "sha256": "b37afd63c374f0c22f571d0b909c767b35c615a70859cf03ed76ea33a1c5d74c",
+      "bytes": 1367287
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/hold_look/04.png",
+      "blob": "ae5161559214040945da94c4eb9068072417d285",
+      "sha256": "e5424e9d742e439d963e6a40b441271e16fa20710cc7ba25a8a0dc0fe18f0ac1",
+      "bytes": 1331102
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/idle/01.png",
+      "blob": "e7f7889d444d7273da15fbb38ce51974875fedb0",
+      "sha256": "899b127e461c59d7d16bdede08c00dddf0a9b82cbfbaef5cbd5291e501ddf6bc",
+      "bytes": 1300682
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/idle/02.png",
+      "blob": "85837b026a69d85c78fab092bd39904002df0811",
+      "sha256": "110d447ec3e57f8c20f6f1ff699867e44043b38faa253f88b975e29486d0d53d",
+      "bytes": 1301756
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/idle/03.png",
+      "blob": "4d0d40e3f849b9547f70ec8d37f9f90d1c2d5345",
+      "sha256": "86b245345c721621c6a947a2f5be953f0f95ed53f5bb90be54162e8d281cc87a",
+      "bytes": 1276027
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/idle/04.png",
+      "blob": "2fa1ee985efbae1cb7da05c730f473127b7a6a56",
+      "sha256": "4b0c96bcfe8a6434c890071df6e2372087b0342c0b3cd6156b25760fc2228b51",
+      "bytes": 1295350
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/laugh/01.png",
+      "blob": "2644d55a2221841f7adc2e7c04cc77dc36df922d",
+      "sha256": "e35e1169ab7c4a998def903339f6f6a528e9c68ef32a174670d915d849ff58ca",
+      "bytes": 1366037
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/laugh/02.png",
+      "blob": "40ae98ea889bbedddd4bbee5ebf8b07dc4ab6625",
+      "sha256": "7f18a9e6e037e6ce51525368559e131bcc0ecce2a7484c244479022ae250bc87",
+      "bytes": 1331185
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/laugh/03.png",
+      "blob": "c941439af0af1a972956474b1d380fc1606cacd0",
+      "sha256": "b9af827bd2b9147e34d53796bf05950ea160096b5c555fc62a04cf207b5f96d7",
+      "bytes": 1281104
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/laugh/04.png",
+      "blob": "652b4c597884d5e6c62a42d6605cfe8038eaa49b",
+      "sha256": "c82c7db463bd08fa594ad991254b6b028c66cb4e845b5d036492802c78c90b9f",
+      "bytes": 1300815
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/look_up/01.png",
+      "blob": "ff66a57c38640e3420470f331eec8642c483aaa5",
+      "sha256": "354e7923f9c0a827752f801973516e2ac30b1583f38a8650a299a52aac317fbf",
+      "bytes": 1348015
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/look_up/02.png",
+      "blob": "82354d0e509234f96b2356aec36f33fea8d4a096",
+      "sha256": "5657f486737f491c9a591291896f80439f1dcdb465dfd0e8762d7af026386ac6",
+      "bytes": 1318648
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/look_up/03.png",
+      "blob": "46501f3fddae3efa2b11342548878472a08c5397",
+      "sha256": "5924ab7d1e679a1199b8887d7bfe7438d008fe7660a05c4f479babc9d036072f",
+      "bytes": 1345977
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/look_up/04.png",
+      "blob": "9c802b5b20f93f144e9ccaaaaf4d8cd993927d98",
+      "sha256": "4473488dbeb89c66f8d884190a69343361bb9fd1e31039849fa4a21305c7ad62",
+      "bytes": 1315748
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/reach_out/01.png",
+      "blob": "0f34e511498940a6c4ee678d76c298e673390461",
+      "sha256": "c70542739cbf90024819a7cfd8bee434952ab75885b49b5a01059cb5bd3ebd05",
+      "bytes": 1002682
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/reach_out/02.png",
+      "blob": "c149c6d892380d31c24499ccfd08840a9ea6eb23",
+      "sha256": "8778cce90160cac676a833a278e5ec6a5fb81bdb6fdb03a582ec98e29d27cf20",
+      "bytes": 1042429
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/reach_out/03.png",
+      "blob": "1328f2257c07acf72908a3d05f36312335158cca",
+      "sha256": "fc371044de0fcc4926f71e95ab5c61674426b69365b404f318072a9c1cba402e",
+      "bytes": 1049951
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/reach_out/04.png",
+      "blob": "7017b1cb267313bcf3faf08225b82dfe2abc1463",
+      "sha256": "f1f8e3a3f6a1ee496d80046f631c20deb70b4368455aed86f31a27f6473a79c7",
+      "bytes": 1095108
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/01.png",
+      "blob": "35e0ea4e766a66b1f047f05910291a2cfca100a1",
+      "sha256": "de09f51a27ac3daefda89c20442b91e5ad6ed22edd96f89fb605cd29d0c2f0a5",
+      "bytes": 1176365
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/02.png",
+      "blob": "b409ae37b06ad0ab465d2851cf8df8bba4146151",
+      "sha256": "edbd95c1be28997f3a433dbe17ef0d15d205615aca14721adac4ec74430044fa",
+      "bytes": 1146796
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/03.png",
+      "blob": "66cb5fbe7179474fd6e11d24dbd63995d43afd25",
+      "sha256": "1086d7bebd89b141a6da0bafccff1742bda219ed9e18be3ccafe6e29bd20b9cb",
+      "bytes": 1182874
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/04.png",
+      "blob": "e7f3e640371bb2aeabdbe2853075eaef1c0a47dc",
+      "sha256": "fc4dde0af4bd30e717eb30280989561b64c98b2f90f516c0fc3f34688bc84fd5",
+      "bytes": 1232694
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/05.png",
+      "blob": "0e74c024824cbd8c1490bad643e379ebf8a71181",
+      "sha256": "4a14dc72e6ba9574f4ea754de79dadcc59a884b1d435394e9f7e37b5f155c58c",
+      "bytes": 1150044
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/06.png",
+      "blob": "9a76ad75446f1490015479871da87608438039bd",
+      "sha256": "d9866ea05f1d8aafa40bc931948bc1d1d54d05607ba92ae5ccb931532b425e74",
+      "bytes": 1172370
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/07.png",
+      "blob": "29f64da532e00b81ddd6b18c7231cd53798450f9",
+      "sha256": "d8d01acfbe9da7681363d978e5cafed3a4348387118e1f70c3f71d9c35f23353",
+      "bytes": 1173857
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/walk_side/08.png",
+      "blob": "116908bb7b7deee7ed633caf2a099c14b020755a",
+      "sha256": "304216491fe0333e0cf56d030aca774a01ef7a4e242123e9a39921a3eead3da4",
+      "bytes": 1182615
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/wave_bye/01.png",
+      "blob": "3b1a47e8353dd1dffa32f272d5a87582bc20a032",
+      "sha256": "b6180233f973292fc61f96d9b44dff1437f2d5703ae1d750799532422d157582",
+      "bytes": 1388817
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/wave_bye/02.png",
+      "blob": "6b2f593024eb4b2167a5a1a585d1ba891d2cd507",
+      "sha256": "c242f374dccb34cc2d6f11c87672f6b3d68308735baaa708d8d3d111c8a7c7d8",
+      "bytes": 1373651
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/wave_bye/03.png",
+      "blob": "6bf8b865d1ab53a02d152d8d1f455146e9ab1734",
+      "sha256": "12325c8aec2a90adce0f36544692cb513f29dca78e461f93e33fd949f56cf4cd",
+      "bytes": 1374546
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/zai/frames/wave_bye/04.png",
+      "blob": "1aa4cf62a2bafa22ce83e99a97ca112aad2fb5e3",
+      "sha256": "1023410f4e51ee52a052f685109feb779d0d9a1644ca469825501ac0cb97f7c0",
+      "bytes": 1365879
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "characters/身高校正.json",
+      "blob": "23fa3226ad1bdc417cf75eb40dc13e76de4c0148",
+      "sha256": "f12f1fd4b2699ffaf1b6fffa3d40b7a0e873e6a4d685563db74ac06d2d15e987",
+      "bytes": 441
+    },
+    {
+      "source": "voxel-mv",
+      "repo": "xiaosia/voxel-mv",
+      "commit": "0caefec6c40ddca779ed498629069ac51dcb00a5",
+      "path": "THIRD_PARTY_NOTICES.md",
+      "blob": "972eacbc5ae6bee4538133120bbaf5af37eeb760",
+      "sha256": "eac8032d55e72ebea48d4e91e55658e5c969760aeee6a39813b287cba10b7242",
+      "bytes": 2280
+    }
+  ]
+}

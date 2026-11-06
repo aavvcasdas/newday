@@ -24,14 +24,34 @@ test('locked lyrics and timeline agree', () => {
   }
 });
 
-test('every current project character is directed into the MV', () => {
-  const cast = read('data/cast.json').cast;
+test('all 8 upstream AI girls are directed into the MV, no supporting cast', () => {
+  const data = read('data/cast.json');
+  const cast = data.cast;
   const shots = read('data/shots.json').shots;
   const ids = new Set(cast.map(c => c.id));
   const covered = new Set(shots.flatMap(s => s.cast));
   assert.deepEqual([...covered].sort(), [...ids].sort());
   assert.deepEqual([...shots.at(-1).cast].sort(), [...ids].sort());
-  assert.equal(cast.filter(c => c.aiGirl).length, 4);
+  assert.equal(cast.filter(c => c.aiGirl).length, 8);
+  assert.equal(cast.length, 8);
+  assert.equal(data.supportingCount, 0);
+  assert.deepEqual([...ids].sort(), ['claude', 'doubao', 'gemini', 'gpt', 'kimi', 'qwen', 'whale', 'zai']);
+  // every directed performance must exist in the upstream-sprite manifest
+  const sprites = read('data/sprites.json').characters;
+  for (const s of shots) {
+    for (const [id, p] of Object.entries(s.perform || {})) {
+      const ch = sprites[id];
+      assert.ok(ch, `${s.id} perform ${id}`);
+      if (p.art === 'galgame') {
+        assert.ok(ch.galgame.expressions[p.expr], `${s.id} ${id} expr ${p.expr}`);
+        if (p.then) assert.ok(ch.galgame.expressions[p.then], `${s.id} ${id} then ${p.then}`);
+      } else if (ch.kind !== 'static') {
+        for (const a of [p.action, p.then, p.walk ? 'walk_side' : null].filter(Boolean)) {
+          assert.ok(ch.actions[a], `${s.id} ${id} action ${a}`);
+        }
+      }
+    }
+  }
 });
 
 test('shot sets have export palettes', () => {

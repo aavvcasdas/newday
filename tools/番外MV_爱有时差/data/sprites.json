@@ -1,112 +1,761 @@
 {
-  "generatedFrom": "video-fx/src/cast.js + whale_girl.js; assets/ai-girls/doubao/doubao-cutout.png",
-  "sprites": {
+  "version": 2,
+  "targetStandPx": 384,
+  "characters": {
     "whale": {
-      "file": "assets/sprites/whale.png",
-      "width": 519,
-      "height": 624
-    },
-    "whale_worry": {
-      "file": "assets/sprites/whale_worry.png",
-      "width": 586,
-      "height": 629
-    },
-    "whale_think": {
-      "file": "assets/sprites/whale_think.png",
-      "width": 519,
-      "height": 625
-    },
-    "whale_cheer": {
-      "file": "assets/sprites/whale_cheer.png",
-      "width": 519,
-      "height": 624
-    },
-    "whale_walk": [
-      {
-        "file": "assets/sprites/whale_walk_0.png",
-        "width": 523,
-        "height": 623
+      "kind": "whale-dual",
+      "source": "xiaosia/voxel-mv characters/deepseek",
+      "preview": "assets/sprites/galgame/whale_cheerful.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 375.552,
+      "mvScale": 0.978,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/deepseek/walk_side_01.png",
+            "assets/sprites/voxel/deepseek/walk_side_02.png",
+            "assets/sprites/voxel/deepseek/walk_side_03.png",
+            "assets/sprites/voxel/deepseek/walk_side_04.png",
+            "assets/sprites/voxel/deepseek/walk_side_05.png",
+            "assets/sprites/voxel/deepseek/walk_side_06.png",
+            "assets/sprites/voxel/deepseek/walk_side_07.png",
+            "assets/sprites/voxel/deepseek/walk_side_08.png"
+          ]
+        },
+        "pick_up": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/deepseek/pick_up_01.png",
+            "assets/sprites/voxel/deepseek/pick_up_02.png",
+            "assets/sprites/voxel/deepseek/pick_up_03.png",
+            "assets/sprites/voxel/deepseek/pick_up_04.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/deepseek/look_up_01.png",
+            "assets/sprites/voxel/deepseek/look_up_02.png",
+            "assets/sprites/voxel/deepseek/look_up_03.png",
+            "assets/sprites/voxel/deepseek/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/deepseek/reach_out_01.png",
+            "assets/sprites/voxel/deepseek/reach_out_02.png",
+            "assets/sprites/voxel/deepseek/reach_out_03.png",
+            "assets/sprites/voxel/deepseek/reach_out_04.png"
+          ]
+        },
+        "pray": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/deepseek/pray_01.png",
+            "assets/sprites/voxel/deepseek/pray_02.png",
+            "assets/sprites/voxel/deepseek/pray_03.png",
+            "assets/sprites/voxel/deepseek/pray_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/deepseek/hold_look_01.png",
+            "assets/sprites/voxel/deepseek/hold_look_02.png",
+            "assets/sprites/voxel/deepseek/hold_look_03.png",
+            "assets/sprites/voxel/deepseek/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/deepseek/idle_01.png",
+            "assets/sprites/voxel/deepseek/idle_02.png",
+            "assets/sprites/voxel/deepseek/idle_03.png",
+            "assets/sprites/voxel/deepseek/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/deepseek/wave_bye_01.png",
+            "assets/sprites/voxel/deepseek/wave_bye_02.png",
+            "assets/sprites/voxel/deepseek/wave_bye_03.png",
+            "assets/sprites/voxel/deepseek/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/deepseek/laugh_01.png",
+            "assets/sprites/voxel/deepseek/laugh_02.png",
+            "assets/sprites/voxel/deepseek/laugh_03.png",
+            "assets/sprites/voxel/deepseek/laugh_04.png"
+          ]
+        },
+        "stream_heart": {
+          "fps": 5,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/deepseek/stream_heart_01.png",
+            "assets/sprites/voxel/deepseek/stream_heart_02.png",
+            "assets/sprites/voxel/deepseek/stream_heart_03.png",
+            "assets/sprites/voxel/deepseek/stream_heart_04.png"
+          ]
+        }
       },
-      {
-        "file": "assets/sprites/whale_walk_1.png",
-        "width": 524,
-        "height": 621
-      },
-      {
-        "file": "assets/sprites/whale_walk_2.png",
-        "width": 519,
-        "height": 622
-      },
-      {
-        "file": "assets/sprites/whale_walk_3.png",
-        "width": 515,
-        "height": 625
-      },
-      {
-        "file": "assets/sprites/whale_walk_4.png",
-        "width": 523,
-        "height": 623
-      },
-      {
-        "file": "assets/sprites/whale_walk_5.png",
-        "width": 528,
-        "height": 621
-      },
-      {
-        "file": "assets/sprites/whale_walk_6.png",
-        "width": 522,
-        "height": 618
-      },
-      {
-        "file": "assets/sprites/whale_walk_7.png",
-        "width": 512,
-        "height": 622
+      "galgame": {
+        "source": "JAdpp/dsh-whale-galgame assets/default/whale-*.webp",
+        "expressions": {
+          "cheerful": {
+            "file": "assets/sprites/galgame/whale_cheerful.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "shy": {
+            "file": "assets/sprites/galgame/whale_shy.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "serious": {
+            "file": "assets/sprites/galgame/whale_serious.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "confused": {
+            "file": "assets/sprites/galgame/whale_confused.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "angry": {
+            "file": "assets/sprites/galgame/whale_angry.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "frightened": {
+            "file": "assets/sprites/galgame/whale_frightened.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "exasperated": {
+            "file": "assets/sprites/galgame/whale_exasperated.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          },
+          "starry": {
+            "file": "assets/sprites/galgame/whale_starry.png",
+            "width": 500,
+            "height": 900,
+            "footY": 895,
+            "standPx": 889
+          }
+        }
       }
-    ],
+    },
     "claude": {
-      "file": "assets/sprites/claude.png",
-      "width": 350,
-      "height": 555
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/claude",
+      "preview": "assets/sprites/voxel/claude/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 367.104,
+      "mvScale": 0.956,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/claude/walk_side_01.png",
+            "assets/sprites/voxel/claude/walk_side_02.png",
+            "assets/sprites/voxel/claude/walk_side_03.png",
+            "assets/sprites/voxel/claude/walk_side_04.png",
+            "assets/sprites/voxel/claude/walk_side_05.png",
+            "assets/sprites/voxel/claude/walk_side_06.png",
+            "assets/sprites/voxel/claude/walk_side_07.png",
+            "assets/sprites/voxel/claude/walk_side_08.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/claude/look_up_01.png",
+            "assets/sprites/voxel/claude/look_up_02.png",
+            "assets/sprites/voxel/claude/look_up_03.png",
+            "assets/sprites/voxel/claude/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/claude/reach_out_01.png",
+            "assets/sprites/voxel/claude/reach_out_02.png",
+            "assets/sprites/voxel/claude/reach_out_03.png",
+            "assets/sprites/voxel/claude/reach_out_04.png"
+          ]
+        },
+        "pray": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/claude/pray_01.png",
+            "assets/sprites/voxel/claude/pray_02.png",
+            "assets/sprites/voxel/claude/pray_03.png",
+            "assets/sprites/voxel/claude/pray_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/claude/hold_look_01.png",
+            "assets/sprites/voxel/claude/hold_look_02.png",
+            "assets/sprites/voxel/claude/hold_look_03.png",
+            "assets/sprites/voxel/claude/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/claude/idle_01.png",
+            "assets/sprites/voxel/claude/idle_02.png",
+            "assets/sprites/voxel/claude/idle_03.png",
+            "assets/sprites/voxel/claude/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/claude/wave_bye_01.png",
+            "assets/sprites/voxel/claude/wave_bye_02.png",
+            "assets/sprites/voxel/claude/wave_bye_03.png",
+            "assets/sprites/voxel/claude/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/claude/laugh_01.png",
+            "assets/sprites/voxel/claude/laugh_02.png",
+            "assets/sprites/voxel/claude/laugh_03.png",
+            "assets/sprites/voxel/claude/laugh_04.png"
+          ]
+        }
+      }
     },
     "gemini": {
-      "file": "assets/sprites/gemini.png",
-      "width": 437,
-      "height": 623
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/gemini",
+      "preview": "assets/sprites/voxel/gemini/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 384,
+      "mvScale": 1,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gemini/walk_side_01.png",
+            "assets/sprites/voxel/gemini/walk_side_02.png",
+            "assets/sprites/voxel/gemini/walk_side_03.png",
+            "assets/sprites/voxel/gemini/walk_side_04.png",
+            "assets/sprites/voxel/gemini/walk_side_05.png",
+            "assets/sprites/voxel/gemini/walk_side_06.png",
+            "assets/sprites/voxel/gemini/walk_side_07.png",
+            "assets/sprites/voxel/gemini/walk_side_08.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gemini/look_up_01.png",
+            "assets/sprites/voxel/gemini/look_up_02.png",
+            "assets/sprites/voxel/gemini/look_up_03.png",
+            "assets/sprites/voxel/gemini/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gemini/reach_out_01.png",
+            "assets/sprites/voxel/gemini/reach_out_02.png",
+            "assets/sprites/voxel/gemini/reach_out_03.png",
+            "assets/sprites/voxel/gemini/reach_out_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gemini/hold_look_01.png",
+            "assets/sprites/voxel/gemini/hold_look_02.png",
+            "assets/sprites/voxel/gemini/hold_look_03.png",
+            "assets/sprites/voxel/gemini/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gemini/idle_01.png",
+            "assets/sprites/voxel/gemini/idle_02.png",
+            "assets/sprites/voxel/gemini/idle_03.png",
+            "assets/sprites/voxel/gemini/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gemini/wave_bye_01.png",
+            "assets/sprites/voxel/gemini/wave_bye_02.png",
+            "assets/sprites/voxel/gemini/wave_bye_03.png",
+            "assets/sprites/voxel/gemini/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gemini/laugh_01.png",
+            "assets/sprites/voxel/gemini/laugh_02.png",
+            "assets/sprites/voxel/gemini/laugh_03.png",
+            "assets/sprites/voxel/gemini/laugh_04.png"
+          ]
+        }
+      }
     },
-    "researcher": {
-      "file": "assets/sprites/researcher.png",
-      "width": 313,
-      "height": 536
+    "gpt": {
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/gpt",
+      "preview": "assets/sprites/voxel/gpt/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 384,
+      "mvScale": 1,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gpt/walk_side_01.png",
+            "assets/sprites/voxel/gpt/walk_side_02.png",
+            "assets/sprites/voxel/gpt/walk_side_03.png",
+            "assets/sprites/voxel/gpt/walk_side_04.png",
+            "assets/sprites/voxel/gpt/walk_side_05.png",
+            "assets/sprites/voxel/gpt/walk_side_06.png",
+            "assets/sprites/voxel/gpt/walk_side_07.png",
+            "assets/sprites/voxel/gpt/walk_side_08.png"
+          ]
+        },
+        "pick_up": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gpt/pick_up_01.png",
+            "assets/sprites/voxel/gpt/pick_up_02.png",
+            "assets/sprites/voxel/gpt/pick_up_03.png",
+            "assets/sprites/voxel/gpt/pick_up_04.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gpt/look_up_01.png",
+            "assets/sprites/voxel/gpt/look_up_02.png",
+            "assets/sprites/voxel/gpt/look_up_03.png",
+            "assets/sprites/voxel/gpt/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gpt/reach_out_01.png",
+            "assets/sprites/voxel/gpt/reach_out_02.png",
+            "assets/sprites/voxel/gpt/reach_out_03.png",
+            "assets/sprites/voxel/gpt/reach_out_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/gpt/hold_look_01.png",
+            "assets/sprites/voxel/gpt/hold_look_02.png",
+            "assets/sprites/voxel/gpt/hold_look_03.png",
+            "assets/sprites/voxel/gpt/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gpt/idle_01.png",
+            "assets/sprites/voxel/gpt/idle_02.png",
+            "assets/sprites/voxel/gpt/idle_03.png",
+            "assets/sprites/voxel/gpt/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gpt/wave_bye_01.png",
+            "assets/sprites/voxel/gpt/wave_bye_02.png",
+            "assets/sprites/voxel/gpt/wave_bye_03.png",
+            "assets/sprites/voxel/gpt/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/gpt/laugh_01.png",
+            "assets/sprites/voxel/gpt/laugh_02.png",
+            "assets/sprites/voxel/gpt/laugh_03.png",
+            "assets/sprites/voxel/gpt/laugh_04.png"
+          ]
+        }
+      }
     },
-    "clawd": {
-      "file": "assets/sprites/clawd.png",
-      "width": 375,
-      "height": 251
+    "kimi": {
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/kimi",
+      "preview": "assets/sprites/voxel/kimi/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 384,
+      "mvScale": 1,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/kimi/walk_side_01.png",
+            "assets/sprites/voxel/kimi/walk_side_02.png",
+            "assets/sprites/voxel/kimi/walk_side_03.png",
+            "assets/sprites/voxel/kimi/walk_side_04.png",
+            "assets/sprites/voxel/kimi/walk_side_05.png",
+            "assets/sprites/voxel/kimi/walk_side_06.png",
+            "assets/sprites/voxel/kimi/walk_side_07.png",
+            "assets/sprites/voxel/kimi/walk_side_08.png"
+          ]
+        },
+        "sit_idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/kimi/sit_idle_01.png",
+            "assets/sprites/voxel/kimi/sit_idle_02.png",
+            "assets/sprites/voxel/kimi/sit_idle_03.png",
+            "assets/sprites/voxel/kimi/sit_idle_04.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/kimi/look_up_01.png",
+            "assets/sprites/voxel/kimi/look_up_02.png",
+            "assets/sprites/voxel/kimi/look_up_03.png",
+            "assets/sprites/voxel/kimi/look_up_04.png"
+          ]
+        },
+        "pray": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/kimi/pray_01.png",
+            "assets/sprites/voxel/kimi/pray_02.png",
+            "assets/sprites/voxel/kimi/pray_03.png",
+            "assets/sprites/voxel/kimi/pray_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/kimi/hold_look_01.png",
+            "assets/sprites/voxel/kimi/hold_look_02.png",
+            "assets/sprites/voxel/kimi/hold_look_03.png",
+            "assets/sprites/voxel/kimi/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/kimi/idle_01.png",
+            "assets/sprites/voxel/kimi/idle_02.png",
+            "assets/sprites/voxel/kimi/idle_03.png",
+            "assets/sprites/voxel/kimi/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/kimi/wave_bye_01.png",
+            "assets/sprites/voxel/kimi/wave_bye_02.png",
+            "assets/sprites/voxel/kimi/wave_bye_03.png",
+            "assets/sprites/voxel/kimi/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/kimi/laugh_01.png",
+            "assets/sprites/voxel/kimi/laugh_02.png",
+            "assets/sprites/voxel/kimi/laugh_03.png",
+            "assets/sprites/voxel/kimi/laugh_04.png"
+          ]
+        }
+      }
     },
-    "agentReachBot": {
-      "file": "assets/sprites/agentReachBot.png",
-      "width": 226,
-      "height": 269
+    "qwen": {
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/qwen",
+      "preview": "assets/sprites/voxel/qwen/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 388.99199999999996,
+      "mvScale": 1.013,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/qwen/walk_side_01.png",
+            "assets/sprites/voxel/qwen/walk_side_02.png",
+            "assets/sprites/voxel/qwen/walk_side_03.png",
+            "assets/sprites/voxel/qwen/walk_side_04.png",
+            "assets/sprites/voxel/qwen/walk_side_05.png",
+            "assets/sprites/voxel/qwen/walk_side_06.png",
+            "assets/sprites/voxel/qwen/walk_side_07.png",
+            "assets/sprites/voxel/qwen/walk_side_08.png"
+          ]
+        },
+        "pick_up": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/qwen/pick_up_01.png",
+            "assets/sprites/voxel/qwen/pick_up_02.png",
+            "assets/sprites/voxel/qwen/pick_up_03.png",
+            "assets/sprites/voxel/qwen/pick_up_04.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/qwen/look_up_01.png",
+            "assets/sprites/voxel/qwen/look_up_02.png",
+            "assets/sprites/voxel/qwen/look_up_03.png",
+            "assets/sprites/voxel/qwen/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/qwen/reach_out_01.png",
+            "assets/sprites/voxel/qwen/reach_out_02.png",
+            "assets/sprites/voxel/qwen/reach_out_03.png",
+            "assets/sprites/voxel/qwen/reach_out_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/qwen/hold_look_01.png",
+            "assets/sprites/voxel/qwen/hold_look_02.png",
+            "assets/sprites/voxel/qwen/hold_look_03.png",
+            "assets/sprites/voxel/qwen/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/qwen/idle_01.png",
+            "assets/sprites/voxel/qwen/idle_02.png",
+            "assets/sprites/voxel/qwen/idle_03.png",
+            "assets/sprites/voxel/qwen/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/qwen/wave_bye_01.png",
+            "assets/sprites/voxel/qwen/wave_bye_02.png",
+            "assets/sprites/voxel/qwen/wave_bye_03.png",
+            "assets/sprites/voxel/qwen/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/qwen/laugh_01.png",
+            "assets/sprites/voxel/qwen/laugh_02.png",
+            "assets/sprites/voxel/qwen/laugh_03.png",
+            "assets/sprites/voxel/qwen/laugh_04.png"
+          ]
+        }
+      }
     },
-    "bionicPuppy": {
-      "file": "assets/sprites/bionicPuppy.png",
-      "width": 270,
-      "height": 226
-    },
-    "miniWhale": {
-      "file": "assets/sprites/miniWhale.png",
-      "width": 276,
-      "height": 226
-    },
-    "biliTvMascot": {
-      "file": "assets/sprites/biliTvMascot.png",
-      "width": 226,
-      "height": 226
+    "zai": {
+      "kind": "voxel",
+      "source": "xiaosia/voxel-mv characters/zai",
+      "preview": "assets/sprites/voxel/zai/idle_01.png",
+      "boxW": 576,
+      "boxH": 461,
+      "footY": 455,
+      "standPx": 384,
+      "mvScale": 1,
+      "actions": {
+        "walk_side": {
+          "fps": 10,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/zai/walk_side_01.png",
+            "assets/sprites/voxel/zai/walk_side_02.png",
+            "assets/sprites/voxel/zai/walk_side_03.png",
+            "assets/sprites/voxel/zai/walk_side_04.png",
+            "assets/sprites/voxel/zai/walk_side_05.png",
+            "assets/sprites/voxel/zai/walk_side_06.png",
+            "assets/sprites/voxel/zai/walk_side_07.png",
+            "assets/sprites/voxel/zai/walk_side_08.png"
+          ]
+        },
+        "look_up": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/zai/look_up_01.png",
+            "assets/sprites/voxel/zai/look_up_02.png",
+            "assets/sprites/voxel/zai/look_up_03.png",
+            "assets/sprites/voxel/zai/look_up_04.png"
+          ]
+        },
+        "reach_out": {
+          "fps": 6,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/zai/reach_out_01.png",
+            "assets/sprites/voxel/zai/reach_out_02.png",
+            "assets/sprites/voxel/zai/reach_out_03.png",
+            "assets/sprites/voxel/zai/reach_out_04.png"
+          ]
+        },
+        "cry": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/zai/cry_01.png",
+            "assets/sprites/voxel/zai/cry_02.png",
+            "assets/sprites/voxel/zai/cry_03.png",
+            "assets/sprites/voxel/zai/cry_04.png"
+          ]
+        },
+        "hold_look": {
+          "fps": 5,
+          "loop": false,
+          "frames": [
+            "assets/sprites/voxel/zai/hold_look_01.png",
+            "assets/sprites/voxel/zai/hold_look_02.png",
+            "assets/sprites/voxel/zai/hold_look_03.png",
+            "assets/sprites/voxel/zai/hold_look_04.png"
+          ]
+        },
+        "idle": {
+          "fps": 4,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/zai/idle_01.png",
+            "assets/sprites/voxel/zai/idle_02.png",
+            "assets/sprites/voxel/zai/idle_03.png",
+            "assets/sprites/voxel/zai/idle_04.png"
+          ]
+        },
+        "wave_bye": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/zai/wave_bye_01.png",
+            "assets/sprites/voxel/zai/wave_bye_02.png",
+            "assets/sprites/voxel/zai/wave_bye_03.png",
+            "assets/sprites/voxel/zai/wave_bye_04.png"
+          ]
+        },
+        "laugh": {
+          "fps": 6,
+          "loop": true,
+          "frames": [
+            "assets/sprites/voxel/zai/laugh_01.png",
+            "assets/sprites/voxel/zai/laugh_02.png",
+            "assets/sprites/voxel/zai/laugh_03.png",
+            "assets/sprites/voxel/zai/laugh_04.png"
+          ]
+        }
+      }
     },
     "doubao": {
-      "file": "assets/sprites/doubao.png",
-      "width": 328,
-      "height": 1131
+      "kind": "static",
+      "source": "shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg (Day12 cutout)",
+      "preview": "assets/sprites/doubao.png",
+      "sprite": {
+        "file": "assets/sprites/doubao.png",
+        "width": 261,
+        "height": 900,
+        "footY": 892,
+        "standPx": 884
+      }
     }
   }
 }

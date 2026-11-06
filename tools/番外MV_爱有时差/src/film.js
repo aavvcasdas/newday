@@ -61,31 +61,63 @@ export async function createFilm(glCanvas, outCanvas) {
     measureCtx: ctx,
   });
 
+  // Upstream character art (user-directed sources, see NOTICE.md):
+  //   voxel-mv relay-girl frames / galgame whale expressions / ai-girls doubao cutout.
   const loader = new THREE.TextureLoader();
-  const textures = {};
-  const entries = Object.entries(sprites.sprites).filter(([k]) => k !== 'whale_walk');
-  await Promise.all(entries.map(async ([id, meta]) => {
-    const tex = await loader.loadAsync('/' + meta.file);
+  async function loadTex(file) {
+    const tex = await loader.loadAsync('/' + file);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.magFilter = id === 'doubao' ? THREE.LinearFilter : THREE.NearestFilter;
+    tex.magFilter = THREE.LinearFilter;
     tex.minFilter = THREE.LinearMipmapLinearFilter;
     tex.anisotropy = 4;
-    textures[id] = { tex, w: meta.width, h: meta.height };
-  }));
-  const walkFrames = await Promise.all(sprites.sprites.whale_walk.map(async (meta) => {
-    const tex = await loader.loadAsync('/' + meta.file);
-    tex.colorSpace = THREE.SRGBColorSpace;
-    tex.magFilter = THREE.NearestFilter;
-    tex.minFilter = THREE.LinearMipmapLinearFilter;
-    return { tex, w: meta.width, h: meta.height };
+    return tex;
+  }
+  // Only preload actions/expressions actually directed in the shot plan.
+  const needed = {};
+  const neededExpr = new Set();
+  for (const s of shotPlan.shots) {
+    for (const [id, p] of Object.entries(s.perform || {})) {
+      const ch = sprites.characters[id];
+      if (!ch) continue;
+      if (p.art === 'galgame') {
+        neededExpr.add(p.expr);
+        if (p.then) neededExpr.add(p.then);
+      } else if (ch.kind !== 'static') {
+        (needed[id] ||= new Set()).add(p.action || 'idle');
+        if (p.then) needed[id].add(p.then);
+        if (p.walk) needed[id].add('walk_side');
+      }
+    }
+  }
+  const anims = {};   // id -> action -> {fps, loop, texs[]}
+  const exprs = {};   // galgame whale expression -> {tex, meta}
+  const statics = {}; // id -> {tex, meta}
+  await Promise.all(Object.entries(sprites.characters).map(async ([id, ch]) => {
+    if (ch.kind === 'static') {
+      statics[id] = { tex: await loadTex(ch.sprite.file), meta: ch.sprite };
+      return;
+    }
+    anims[id] = {};
+    const acts = new Set([...(needed[id] || []), 'idle']);
+    for (const action of acts) {
+      const a = ch.actions[action];
+      if (!a) throw new Error(`missing action ${id}/${action}`);
+      anims[id][action] = { fps: a.fps, loop: a.loop, texs: await Promise.all(a.frames.map(loadTex)) };
+    }
+    if (ch.galgame) {
+      for (const e of neededExpr) {
+        const meta = ch.galgame.expressions[e];
+        if (!meta) throw new Error(`missing whale expression ${e}`);
+        exprs[e] = { tex: await loadTex(meta.file), meta };
+      }
+    }
   }));
 
   const actors = {};
   const shadowGeo = new THREE.CircleGeometry(0.5, 24);
   for (const c of castData.cast) {
-    const meta = textures[c.id];
     const group = new THREE.Group();
-    const material = new THREE.MeshBasicMaterial({ map: meta.tex, transparent: true, alphaTest: 0.08, side: THREE.DoubleSide });
+    const material = new THREE.MeshBasicMaterial({ transparent: true, alphaTest: 0.08, side: THREE.DoubleSide });
     const plane = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), material);
     plane.castShadow = true;
     group.add(plane);
@@ -95,7 +127,7 @@ export async function createFilm(glCanvas, outCanvas) {
     group.add(shadow);
     group.visible = false;
     engine.scene.add(group);
-    actors[c.id] = { group, plane, shadow, meta, data: c, baseH: 2.25 };
+    actors[c.id] = { group, plane, shadow, data: c };
   }
 
   function energyAt(t) {
@@ -116,6 +148,33 @@ export async function createFilm(glCanvas, outCanvas) {
     return null;
   }
 
+  // Pick the texture + normalized sprite meta for an actor at local shot time.
+  function spriteFor(id, shot, lt) {
+    const ch = sprites.characters[id];
+    const perf = (shot.perform || {})[id] || {};
+    if (perf.art === 'galgame') {
+      let e = perf.expr;
+      if (perf.then && lt >= perf.at) e = perf.then;
+      return { tex: exprs[e].tex, meta: exprs[e].meta, flip: false, dx: 0 };
+    }
+    if (ch.kind === 'static') return { tex: statics[id].tex, meta: statics[id].meta, flip: false, dx: 0 };
+    let aName = perf.action || 'idle';
+    let localT = lt, flip = false, dx = 0;
+    if (perf.walk && lt < perf.walk.dur) {
+      aName = 'walk_side';
+      dx = perf.walk.fromDX * (1 - smooth(lt / perf.walk.dur));
+      flip = perf.walk.fromDX > 0; // walk_side frames face right; flip when moving left
+    } else {
+      if (perf.walk) localT = lt - perf.walk.dur;
+      if (perf.then && localT >= perf.at) { aName = perf.then; localT -= perf.at; }
+    }
+    const anim = anims[id][aName] || anims[id].idle;
+    const n = anim.texs.length;
+    let fi = Math.floor(localT * anim.fps);
+    fi = anim.loop ? ((fi % n) + n) % n : Math.max(0, Math.min(fi, n - 1));
+    return { tex: anim.texs[fi], meta: ch, flip, dx };
+  }
+
   function updateActors(shot, t, energy) {
     const place = engine.placements[shot.set] || {};
     const lt = t - shot.start;
@@ -124,38 +183,31 @@ export async function createFilm(glCanvas, outCanvas) {
       const visible = shot.cast.includes(id);
       a.group.visible = visible;
       if (!visible) continue;
-      let [x, z, h] = place[id] || [0, 0, 2.2];
-      let tilt = 0, moving = false, flip = false;
-      if (shot.index === 0 && id === 'whale') { x = lerp(-3.4, -1.2, smooth(lt / 1.6)); moving = lt < 1.6; }
-      if (shot.index === 2 && id === 'claude') { x = lerp(4.8, 1.2, smooth(lt / 1.4)); moving = lt < 1.4; }
-      if (shot.index === 3 && id === 'whale') { z = lerp(2.2, 1.8, smooth(lt / 1.2)); moving = lt < 1.2; }
-      if (shot.index === 6 && id === 'doubao') { tilt = -0.04 * smooth(lt / 1.2); }
-      if (shot.index === 12 && id === 'whale') { tilt = 0.05 * smooth(lt / 0.8); }
-      if (shot.index === 12 && id === 'claude') { tilt = -0.05 * smooth(lt / 0.8); }
-      if (shot.index === 13 && id === 'whale') { tilt = 0.06 * Math.sin(clamp(lt / dur) * Math.PI); }
-      if (shot.index === 15 && ['whale', 'claude', 'gemini', 'doubao'].includes(id)) { tilt = Math.sin(lt * 0.8 + h) * 0.015; }
-      const breath = id === 'doubao' ? Math.sin(t * 1.3 + h) * 0.008 : Math.sin(t * 1.7 + h * 2) * 0.014;
-      const accent = id === 'doubao' ? 0 : energy * 0.018;
-      a.group.position.set(x, breath, z);
+      const [bx, bz, h, yOff = 0] = place[id] || [0, 0, 2.2];
+      const sp = spriteFor(id, shot, lt);
+      const x = bx + sp.dx, z = bz;
+      let tilt = 0;
+      // S13: the two leads lean toward the gap they cannot close.
+      if (shot.index === 12 && id === 'whale') tilt = 0.05 * smooth(lt / 0.8);
+      if (shot.index === 12 && id === 'claude') tilt = -0.05 * smooth(lt / 0.8);
+      // S16: gentle collective sway while the final frame holds.
+      if (shot.index === 15) tilt = Math.sin(lt * 0.8 + h) * 0.012;
+      const still = sprites.characters[id].kind === 'static' || (shot.perform || {})[id]?.art === 'galgame';
+      const breath = still ? Math.sin(t * 1.3 + h) * 0.01 : 0;
+      a.group.position.set(x, breath + yOff, z);
       a.group.rotation.z = tilt;
-      a.group.scale.set(1 - accent * 0.4, 1 + accent, 1);
+      a.group.scale.set(1, 1, 1);
       // yaw-only billboard keeps feet on the ground plane
       a.group.rotation.y = Math.atan2(engine.camera.position.x - x, engine.camera.position.z - z);
-      let meta = a.meta;
-      if (id === 'whale' && moving) {
-        meta = walkFrames[Math.floor(t * 8) % walkFrames.length];
-        a.plane.material.map = meta.tex;
-      } else if (id === 'whale') {
-        const key = (shot.index === 5 || shot.index === 12) ? 'whale_worry' : shot.index === 1 || shot.index === 13 ? 'whale_think' : 'whale';
-        meta = textures[key];
-        a.plane.material.map = meta.tex;
-      }
-      const height = h;
-      const width = height * meta.w / meta.h;
-      a.plane.scale.set(width, height, 1);
-      a.plane.position.y = height / 2;
-      a.shadow.scale.set(width * 0.9, height * 0.22, 1);
+      const m = sp.meta;
+      const pxW = m.boxW ?? m.width, pxH = m.boxH ?? m.height;
+      const worldH = h * pxH / m.standPx;
+      const worldW = h * pxW / m.standPx;
+      a.plane.material.map = sp.tex;
       a.plane.material.needsUpdate = true;
+      a.plane.scale.set(sp.flip ? -worldW : worldW, worldH, 1);
+      a.plane.position.y = worldH * (m.footY / pxH - 0.5);
+      a.shadow.scale.set(h * 0.55, h * 0.18, 1);
     }
   }
 

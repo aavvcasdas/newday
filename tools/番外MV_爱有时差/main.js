@@ -80,10 +80,10 @@ try {
   });
   const grid = document.getElementById('castGrid');
   for (const c of castData.cast) {
-    const meta = sprites.sprites[c.id];
+    const meta = sprites.characters[c.id];
     const card = document.createElement('div');
-    card.className = 'cast-card' + (c.id === 'doubao' ? ' doubao' : '');
-    card.innerHTML = `<img src="/${meta.file}" alt="${c.name}"><div><h3>${c.name}${c.aiGirl ? ' · AI娘' : ''}</h3><p>${c.role}</p></div>`;
+    card.className = 'cast-card';
+    card.innerHTML = `<img src="/${meta.preview}" alt="${c.name}"><div><h3>${c.name} · AI娘</h3><p>${c.role}</p><p class="cast-src">${c.sourceLabel}</p></div>`;
     grid.appendChild(card);
   }
 } catch (e) {

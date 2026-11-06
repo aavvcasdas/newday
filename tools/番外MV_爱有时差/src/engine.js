@@ -184,7 +184,7 @@ export function createEngine(canvas) {
     const lamps = [-5, -2, 1, 4].map(x => lamp(g, x, -0.7, 0xffd98a, 2.4));
     clockTower(g, -7.5, -5, 0xf1dfc2, 0xc8664f);
     return { water, lamps };
-  }, { whale: [-1.6, 1.0, 2.25], claude: [4.8, 1.0, 2.25], miniWhale: [4.2, 2.6, 0.8] });
+  }, { whale: [-1.6, 1.0, 2.25], claude: [1.2, 1.0, 2.25] });
 
   makeSet('openSea', '#1d2b4c', '#3f5f8f', (g) => {
     island(g, 0x243452);
@@ -193,7 +193,7 @@ export function createEngine(canvas) {
     const sun = box(g, 3.4, 3.4, 0.4, 0xffd08a, 7, 3.5, -12, { emissive: 0xffb26b, ei: 1.2, cast: false });
     for (let i = 0; i < 6; i++) cloud(g, -10 + i * 4, 5 + hash(i) * 1.5, -10 - hash(i + 2) * 3, 0.8, 0x8fa8d0);
     return { water, sun };
-  }, { whale: [-1.2, 2.2, 2.25], gemini: [1.4, 2.2, 2.25], agentReachBot: [4.5, 1.2, 0.9], miniWhale: [-4.5, 3.2, 0.8] });
+  }, { whale: [-1.2, 2.2, 2.25], gemini: [1.4, 2.2, 2.25] });
 
   makeSet('memoryRoom', '#2a2438', '#5a4a63', (g) => {
     island(g, 0x3a3044);
@@ -219,7 +219,7 @@ export function createEngine(canvas) {
     box(tv, 0.9, 0.12, 0.02, 0xc99a6a, 0, 0.18, 0.31);
     box(tv, 0.2, 0.3, 0.02, 0xf1dfc2, -0.25, 0.3, 0.31);
     return { t, frame, tv };
-  }, { whale: [-2.2, 1.8, 2.2], claude: [-0.7, 1.9, 2.2], gemini: [0.9, 1.9, 2.2], doubao: [2.4, 1.8, 2.2], clawd: [-3.8, 0.8, 0.9], bionicPuppy: [3.8, 2.6, 0.8], biliTvMascot: [5, 0.2, 0.9] });
+  }, { kimi: [-4.6, 0.9, 2.2], whale: [-3.0, 1.7, 2.2], claude: [-1.5, 2.1, 2.2], gemini: [0.0, 2.2, 2.2], doubao: [1.5, 2.1, 2.2], qwen: [3.0, 1.7, 2.2], gpt: [4.5, 1.0, 2.2], zai: [5.8, 0.2, 2.2] });
 
   makeSet('rainStop', '#252b3d', '#4a5268', (g) => {
     island(g, 0x2e3448);
@@ -238,7 +238,7 @@ export function createEngine(canvas) {
     const drops = Array.from({ length: 260 }, (_, i) => ({ x: -9 + hash(i) * 18, y: hash(i + 9) * 8, z: -4 + hash(i + 31) * 9 }));
     const stopLamp = lamp(g, 4.5, 0.5, 0xffd98a, 2.8);
     return { b, umbrella, clouds, rain, drops, stopLamp };
-  }, { whale: [-0.7, 1.2, 2.1], doubao: [0.9, 1.2, 2.1], bionicPuppy: [0.1, 1.8, 0.65], gemini: [4.5, 0.5, 2.1] });
+  }, { whale: [-0.9, 1.9, 2.1], doubao: [0.9, 1.9, 2.1], kimi: [0.0, 1.2, 2.1, 0.62], gemini: [4.5, 0.5, 2.1], qwen: [2.6, 1.6, 2.1], zai: [-2.8, 1.5, 2.1] });
 
   makeSet('joyWorkshop', '#2c2a40', '#6a5a6a', (g) => {
     island(g, 0x3a3348);
@@ -255,7 +255,7 @@ export function createEngine(canvas) {
     tree(g, 5.8, -3.5, 0x9ad0a0, 1.3);
     box(g, 12, 3.2, 0.3, 0x4a3f5e, 0, 0, -5, { round: true });
     return { t, frame, bin, lid, cubes, grey };
-  }, { whale: [-2.4, 2, 2.2], claude: [-0.8, 2.1, 2.2], gemini: [0.9, 2.1, 2.2], doubao: [2.5, 2, 2.2], researcher: [-4.6, 0.8, 2.0], clawd: [3.9, 0.8, 0.9] });
+  }, { zai: [-5.6, 0.2, 2.2], kimi: [-4.3, 1.1, 2.2], whale: [-2.8, 2.0, 2.2], claude: [-1.3, 2.3, 2.2], gemini: [0.2, 2.4, 2.2], doubao: [1.7, 2.3, 2.2], qwen: [3.1, 1.9, 2.2], gpt: [4.4, 1.0, 2.2] });
 
   makeSet('fireworkRooftop', '#11182e', '#2c3654', (g) => {
     island(g, 0x232a40);
@@ -272,7 +272,7 @@ export function createEngine(canvas) {
     const fw = instances(g, 240, { emissive: 0xffffff, ei: 1.2 });
     const fwSeed = Array.from({ length: 240 }, (_, i) => ({ a: hash(i) * Math.PI * 2, r: 0.5 + hash(i + 7) * 2.4, burst: Math.floor(i / 60), c: [0xffd98a, 0xf49ab0, 0x7fb3e8, 0xc8a0e8][Math.floor(i / 60)] }));
     return { fw, fwSeed };
-  }, { whale: [-1.4, 1.4, 2.2], claude: [0.2, 1.5, 2.2], gemini: [1.8, 1.4, 2.2], doubao: [3.2, 1.3, 2.2] });
+  }, { zai: [-4.6, 0.8, 2.2], kimi: [-3.2, 1.2, 2.2], whale: [-1.6, 1.4, 2.2], claude: [0.0, 1.5, 2.2], gemini: [1.6, 1.4, 2.2], doubao: [3.0, 1.3, 2.2], gpt: [4.4, 1.0, 2.2], qwen: [5.6, 0.6, 2.2] });
 
   makeSet('timeBridge', '#1c2440', '#4a5268', (g) => {
     island(g, 0x2e3448);
@@ -288,7 +288,7 @@ export function createEngine(canvas) {
     const sun = box(g, 1.6, 1.6, 0.2, 0xffd08a, 7, 5, -8, { emissive: 0xffb26b, ei: 0.9, cast: false });
     const letter = box(g, 0.5, 0.06, 0.35, 0xfff4dc, -2.5, 0.3, 0.8, { emissive: 0xffd98a, ei: 0.25 });
     return { left, right, gap, nightTower, dayTower, moon, sun, letter };
-  }, { whale: [-3.2, 0.9, 2.25], claude: [3.2, 0.9, 2.25], gemini: [5, 1.8, 2.1], doubao: [-5, 1.8, 2.1] });
+  }, { whale: [-3.2, 0.9, 2.25], claude: [3.2, 0.9, 2.25], kimi: [-4.8, 1.6, 2.1], gpt: [4.8, 1.6, 2.1], gemini: [5.0, 1.8, 2.1], doubao: [-5.0, 1.8, 2.1], qwen: [4.2, 2.6, 2.1], zai: [-4.2, 2.6, 2.1] });
 
   makeSet('dawnGarden', '#3a2f4e', '#c89a8a', (g) => {
     island(g, 0x4a3f5e);
@@ -302,7 +302,7 @@ export function createEngine(canvas) {
     lamp(g, -6, 1.5, 0xffd98a, 2.4);
     lamp(g, 6, 1.5, 0xffd98a, 2.4);
     return { floor, sun, lantern, frame };
-  }, { whale: [-1.6, 1.2, 2.25], claude: [-0.2, 1.3, 2.25], gemini: [1.2, 1.3, 2.25], doubao: [2.6, 1.2, 2.25], researcher: [-5.2, 0.2, 1.9], clawd: [-4, 2.4, 0.9], agentReachBot: [4.8, 0.2, 0.9], bionicPuppy: [4, 2.5, 0.8], miniWhale: [-3.2, 3, 0.8], biliTvMascot: [5.6, 2.2, 0.9] });
+  }, { zai: [-4.6, 0.2, 2.2], kimi: [-3.2, 0.8, 2.2], whale: [-1.8, 1.2, 2.25], claude: [-0.4, 1.4, 2.25], gemini: [1.0, 1.4, 2.25], doubao: [2.4, 1.2, 2.25], gpt: [3.8, 0.8, 2.2], qwen: [5.2, 0.2, 2.2] });
 
   function updateWater(water, t, amp = 0.12) {
     if (!water) return;
