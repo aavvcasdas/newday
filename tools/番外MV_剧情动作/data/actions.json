@@ -1,0 +1,299 @@
+{
+  "whale_camera": {
+    "file": "projectassets/ai-girls/actions-v12/whale_camera.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "whale_letter": {
+    "file": "projectassets/ai-girls/actions-v12/whale_letter.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "whale_sparkler": {
+    "file": "projectassets/ai-girls/actions-v12/whale_sparkler.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "gemini_shell": {
+    "file": "projectassets/ai-girls/actions-v12/gemini_shell.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "gpt_letter": {
+    "file": "projectassets/ai-girls/actions-v12/gpt_letter.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "doubao_cup": {
+    "file": "projectassets/ai-girls/actions-v12/doubao_cup.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "qwen_lantern": {
+    "file": "projectassets/ai-girls/actions-v12/qwen_lantern.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "kimi_photo": {
+    "file": "projectassets/ai-girls/actions-v12/kimi_photo.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "zai_read": {
+    "file": "projectassets/ai-girls/actions-v12/zai_read.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "claude_letter": {
+    "file": "projectassets/ai-girls/actions-v12/claude_letter.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  },
+  "gpt_heart": {
+    "file": "projectassets/ai-girls/actions-v12/gpt_heart.png",
+    "cellW": 384,
+    "cellH": 416,
+    "footY": 408,
+    "standPx": 400,
+    "animations": {
+      "action": {
+        "row": 0,
+        "frames": 11,
+        "durationsMs": [
+          350,
+          220,
+          180,
+          180,
+          180,
+          400,
+          350,
+          180,
+          180,
+          180,
+          1000
+        ],
+        "loop": false
+      }
+    }
+  }
+}
