@@ -177,3 +177,17 @@ test('Qwen farewell phase is continuous at the S28-S29 cut',()=>{
  const a={index:28,start:44.6,end:1412/30},b={index:29,start:1412/30,end:1460/30};
  assert.equal(drawGuest(c,'qwen',b.start,a,opt).column,drawGuest(c,'qwen',b.start,b,opt).column);
 });
+
+test('Claude farewell hand and eye region vary in the local action atlas',async()=>{
+ const im=await loadImage(path.join(dir,'claude_bird_wave37_action.png'));
+ const c=createCanvas(384,416).getContext('2d');
+ const pixels=(f,x,y,w,h)=>{c.clearRect(0,0,384,416);c.drawImage(im,f*384,0,384,416,0,0,384,416);return Buffer.from(c.getImageData(x,y,w,h).data)};
+ assert.notDeepEqual(pixels(0,105,175,72,75),pixels(4,105,175,72,75));
+ assert.notDeepEqual(pixels(0,144,127,94,43),pixels(9,144,127,94,43));
+});
+
+test('Claude farewell phase is continuous at the S28-S29 cut',()=>{
+ const c=createCanvas(500,500).getContext('2d'),opt={x:250,y:450,h:190};
+ const a={index:28,start:44.6,end:1412/30},b={index:29,start:1412/30,end:1460/30};
+ assert.equal(drawGuest(c,'claude',b.start,a,opt).column,drawGuest(c,'claude',b.start,b,opt).column);
+});
