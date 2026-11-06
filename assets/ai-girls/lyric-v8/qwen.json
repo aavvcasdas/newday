@@ -1,0 +1,60 @@
+{
+  "cell_width": 384,
+  "cell_height": 416,
+  "columns": 8,
+  "rows": 4,
+  "states": {
+    "wave": {
+      "row": 0,
+      "frames": 6,
+      "durations_ms": [
+        210,
+        180,
+        120,
+        180,
+        240,
+        300
+      ],
+      "loop": true
+    },
+    "offer": {
+      "row": 1,
+      "frames": 6,
+      "durations_ms": [
+        210,
+        160,
+        200,
+        200,
+        200,
+        460
+      ],
+      "loop": false
+    },
+    "dance": {
+      "row": 2,
+      "frames": 6,
+      "durations_ms": [
+        190,
+        170,
+        170,
+        190,
+        170,
+        250
+      ],
+      "loop": true
+    },
+    "comfort": {
+      "row": 3,
+      "frames": 6,
+      "durations_ms": [
+        350,
+        240,
+        200,
+        240,
+        240,
+        350
+      ],
+      "loop": true
+    }
+  }
+}

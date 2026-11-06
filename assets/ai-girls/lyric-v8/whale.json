@@ -1,0 +1,94 @@
+{
+  "cell_width": 384,
+  "cell_height": 416,
+  "columns": 8,
+  "rows": 7,
+  "states": {
+    "idle": {
+      "row": 0,
+      "frames": 6,
+      "durations_ms": [
+        350,
+        140,
+        100,
+        140,
+        260,
+        300
+      ],
+      "loop": true
+    },
+    "wave": {
+      "row": 1,
+      "frames": 6,
+      "durations_ms": [
+        200,
+        180,
+        160,
+        120,
+        220,
+        280
+      ],
+      "loop": true
+    },
+    "offer": {
+      "row": 2,
+      "frames": 6,
+      "durations_ms": [
+        180,
+        160,
+        220,
+        200,
+        120,
+        440
+      ],
+      "loop": false
+    },
+    "comfort": {
+      "row": 3,
+      "frames": 6,
+      "durations_ms": [
+        300,
+        250,
+        120,
+        250,
+        250,
+        320
+      ],
+      "loop": true
+    },
+    "walk": {
+      "row": 4,
+      "frames": 6,
+      "durations_ms": [
+        180,
+        120,
+        180,
+        120,
+        180,
+        220
+      ],
+      "loop": true
+    },
+    "sparkler": {
+      "row": 5,
+      "frames": 4,
+      "durations_ms": [
+        300,
+        260,
+        260,
+        300
+      ],
+      "loop": true
+    },
+    "camera": {
+      "row": 6,
+      "frames": 3,
+      "durations_ms": [
+        300,
+        300,
+        500
+      ],
+      "loop": false
+    }
+  }
+}
