@@ -1030,7 +1030,8 @@ function paintBaseShot(c, t, shot, env) {
       c.stroke();
     }
 
-    // Mint-green umbrella is an environmental object, not a calibrated hand-held prop.
+    // S12 retains the v8 environmental umbrella; in S13/S14 Doubao holds her own.
+    if (id === 'S12_irreplaceable_lock') {
     const umbX = close ? 612 : 636;
     const umbY = close ? 314 : 332;
     const umbR = close ? 176 : 154;
@@ -1057,6 +1058,7 @@ function paintBaseShot(c, t, shot, env) {
       c.beginPath(); c.arc(umbX - umbR + (k + 0.5) * umbR / 3, umbY + 34, umbR / 6, 0, Math.PI); c.stroke();
     }
     c.restore();
+    }
 
     if (!close) {
       guest(c, 'claude', { x: 252, y: 586, h: 205 });
@@ -1080,9 +1082,9 @@ function paintBaseShot(c, t, shot, env) {
       headTilt: crouch * 0.08,
     });
     guest(c, 'doubao', {
-      x: close ? 690 : 716,
+      x: id === 'S12_irreplaceable_lock' ? 716 : (close ? 690 : 700),
       y: 590,
-      h: close ? 306 : 284,
+      h: id === 'S12_irreplaceable_lock' ? 284 : (close ? 280 : 320),
       lean: close ? -0.02 : 0,
     });
 

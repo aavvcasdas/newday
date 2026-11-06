@@ -4,11 +4,11 @@ import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
 import {drawGuest,drawLead} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
-for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think']){
+for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
   const im=await loadImage(path.join(dir,`${name}_action.png`));assert.equal(im.width,384*16);assert.equal(im.height,416);
   const cv=createCanvas(384,416),g=cv.getContext('2d');g.drawImage(im,0,0,384,416,0,0,384,416);const a=Buffer.from(g.getImageData(0,0,384,416).data);
-  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite','qwen_swim_full_retry','gemini_swim_full'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
+  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite','qwen_swim_full_retry','gemini_swim_full','kimi_swim_padded_fixed'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
   assert.notDeepEqual(a,b);
  });
 }
@@ -71,4 +71,24 @@ test('dragon thought contains closed-eye frame',async()=>{
  c.drawImage(im,0,0,384,416,0,0,384,416);const open=Buffer.from(c.getImageData(173,105,59,32).data);
  c.clearRect(0,0,384,416);c.drawImage(im,9*384,0,384,416,0,0,384,416);
  assert.notDeepEqual(open,Buffer.from(c.getImageData(173,105,59,32).data));
+});
+
+test('Kimi swim timing remains continuous across the underwater cut',()=>{
+ const c=createCanvas(1280,720).getContext('2d'),opt={x:200,y:590,h:190};
+ const a={index:25,start:38.8333333333,end:40.6666666667},b={index:26,start:40.6666666667,end:42.7};
+ assert.equal(drawGuest(c,'kimi',b.start,a,opt).column,drawGuest(c,'kimi',b.start,b,opt).column);
+});
+test('umbrella gesture settles through the rain cut',()=>{
+ const c=createCanvas(800,720).getContext('2d'),opt={x:500,y:590,h:320};
+ const a={index:13,start:19.033,end:20.666},b={index:14,start:20.666,end:22.433};
+ assert.equal(drawGuest(c,'doubao',a.end-.01,a,opt).column,15);
+ assert.equal(drawGuest(c,'doubao',b.start,b,opt).column,15);
+});
+
+test('rain hand endpoints are staged within 4 logical pixels at the held key',()=>{
+ // Nominal sprite coordinates; not proof of visible hand contact.
+ const wh=31*7.4,dh=280;
+ const wx=534+(333-192)*wh/416, wy=590-wh+166*wh/416;
+ const dx=690+(77-192)*dh/416, dy=590-dh+214*dh/416;
+ assert.ok(Math.hypot(wx-dx,wy-dy)<4);
 });

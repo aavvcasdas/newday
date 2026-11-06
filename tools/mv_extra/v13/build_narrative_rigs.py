@@ -100,3 +100,7 @@ for f in range(16):
  frame=Image.alpha_composite(frame,hand.rotate(7*(1-u)**2,Image.Resampling.BICUBIC,center=(150,207)))
  atlas.alpha_composite(frame,(W*f,0))
 atlas.save(OUT/'gpt_think_action.png',optimize=True)
+# Padding/outpainting restored both hands and boots before this local kick.
+build('kimi_swim_padded_fixed','kimi_swim_padded_fixed_under',polygon([(279,303),(286,286),(301,273),(318,261),(336,260),(357,270),(371,280),(371,295),(356,307),(338,309),(320,320),(299,322)]),(279,315),lambda u:2.5*math.sin(u*math.pi*2))
+# Canopy and gripping hand stay fixed; only the free inviting arm moves.
+build('doubao_umbrella_padded_fixed','doubao_umbrella_padded_fixed_under',polygon([(76,202),(90,193),(107,193),(126,198),(148,194),(163,185),(177,185),(179,201),(169,211),(151,216),(127,220),(108,227),(86,229),(76,219)]),(168,194),lambda u:4*(1-u)**2)
