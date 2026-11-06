@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "cell_width": 384,
+  "cell_height": 416,
+  "columns": 8,
+  "rows": 7,
+  "states": {
+    "idle": {
+      "row": 0,
+      "label": "待机 · 眨眼与摆尾",
+      "frames": 6,
+      "durations_ms": [
+        280,
+        110,
+        110,
+        140,
+        140,
+        320
+      ]
+    },
+    "waving": {
+      "row": 1,
+      "label": "打招呼 · 挥手",
+      "frames": 4,
+      "durations_ms": [
+        140,
+        140,
+        140,
+        280
+      ]
+    },
+    "jumping": {
+      "row": 2,
+      "label": "跳跃 · 蓄力、腾空、落地",
+      "frames": 5,
+      "durations_ms": [
+        140,
+        140,
+        140,
+        140,
+        280
+      ]
+    },
+    "failed": {
+      "row": 3,
+      "label": "受挫 · 空盆失落",
+      "frames": 8,
+      "durations_ms": [
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        140,
+        240
+      ]
+    },
+    "waiting": {
+      "row": 4,
+      "label": "等待 · 轻眨眼",
+      "frames": 6,
+      "durations_ms": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        260
+      ]
+    },
+    "working": {
+      "row": 5,
+      "label": "忙碌 · 舀饭、送入口中",
+      "frames": 6,
+      "durations_ms": [
+        120,
+        120,
+        120,
+        120,
+        120,
+        220
+      ]
+    },
+    "review": {
+      "row": 6,
+      "label": "检查 · 低头看饭盆",
+      "frames": 6,
+      "durations_ms": [
+        150,
+        150,
+        150,
+        150,
+        150,
+        280
+      ]
+    }
+  }
+}
