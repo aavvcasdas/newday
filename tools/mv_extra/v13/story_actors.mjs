@@ -8,12 +8,12 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella','whale_side_rainwalk','whale_side_crouch']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
  const duration=Math.max(.2,shot.end-shot.start),u=clamp((t-shot.start)/duration);
- const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
+ const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite','whale_side_rainwalk'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
  const heldFinal=(shot.index===32 && ['doubao_memory','gpt_star','gemini_flower','zai_memento','claude_place','qwen_reach'].includes(name)) ||
   (shot.index===31 && ['doubao_memory','gpt_star','gemini_flower'].includes(name)) || (shot.index===7 && name==='doubao_comfort') || (shot.index===14 && ['doubao_umbrella_padded_fixed','doubao_shared_umbrella'].includes(name));
  const f=heldFinal?15:cycle?Math.min(15,Math.floor(((t-shot.start)/1.25%1)*16)):Math.min(15,Math.floor(u*20));
@@ -60,7 +60,10 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(index===32)return drawStoryAction(c,'whale_selfkind_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===14)return drawStoryAction(c,'whale_rain_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===12)return drawStoryAction(c,'whale_wipe_tear',t,shot,{x,y,h,alpha,flipX,noShadow});
- if(index===13)return drawStoryAction(c,'whale_rainwalk',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(index===13){
+  const crouching=t>=20.24;
+  return drawStoryAction(c,crouching?'whale_side_crouch':'whale_side_rainwalk',t,crouching?{...shot,start:20.24,end:20.6666667}:shot,{x,y,h,alpha,flipX,noShadow});
+ }
  const n=index===25||index===26?'whale_swim':index===9?'whale_point':index===29?'whale_bird':null;
  if(!n)return false;
  const lt=Math.max(0,t-shot.start),dur=Math.max(0.2,shot.end-shot.start);

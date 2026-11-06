@@ -1106,6 +1106,7 @@ function paintBaseShot(c, t, shot, env) {
       x: walkIn.x,
       y: 590,
       u: close ? 31 : 28,
+      flipX: id === 'S13_rain_shelter_enter',
       view: walkIn.moving ? 'q' : 'front',
       pose: crouch > 0.35 ? 'heart' : 'wave',
       phase: walkIn.phase,
