@@ -8,14 +8,14 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
  const duration=Math.max(.2,shot.end-shot.start),u=clamp((t-shot.start)/duration);
  const cycle=['doubao_step','claude_firework','gemini_firework','kimi_lantern','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite'].includes(name) || (name==='doubao_lantern' && shot.index>=22);
  const heldFinal=(shot.index===32 && ['doubao_memory','gpt_star','gemini_flower','zai_memento','claude_place','qwen_reach'].includes(name)) ||
-  (shot.index===31 && ['doubao_memory','gpt_star','gemini_flower'].includes(name)) || (shot.index===7 && name==='doubao_comfort') || (shot.index===14 && name==='doubao_umbrella_padded_fixed');
+  (shot.index===31 && ['doubao_memory','gpt_star','gemini_flower'].includes(name)) || (shot.index===7 && name==='doubao_comfort') || (shot.index===14 && ['doubao_umbrella_padded_fixed','doubao_shared_umbrella'].includes(name));
  const f=heldFinal?15:cycle?Math.min(15,Math.floor(((t-shot.start)/1.25%1)*16)):Math.min(15,Math.floor(u*20));
  if(name==='doubao_step')x-=55*u;
  if(!noShadow){c.save();c.globalAlpha*=alpha;c.fillStyle='rgba(18,28,40,.18)';c.beginPath();c.ellipse(x,y+2,h*.23,h*.035,0,0,Math.PI*2);c.fill();c.restore();}
@@ -94,7 +94,7 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(name==='zai'&&[18,31].includes(shot.index))return drawStoryAction(c,'zai_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&[15,16].includes(shot.index))return drawStoryAction(c,'gpt_push_final',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gpt'&&[30,31,32].includes(shot.index))return drawLegacyAction(c,'gpt_heart',t,shot,{x,y,h,alpha,flipX,noShadow});
- if(name==='doubao'&&[13,14].includes(shot.index))return drawStoryAction(c,'doubao_umbrella_padded_fixed',t,shot,{x,y,h,alpha,flipX:false,noShadow});
+ if(name==='doubao'&&[13,14].includes(shot.index))return drawStoryAction(c,'doubao_shared_umbrella',t,shot,{x,y,h,alpha,flipX:false,noShadow});
  if(name==='doubao'&&[6,7].includes(shot.index))return drawStoryAction(c,'doubao_comfort',t,shot,{x,y,h,alpha,flipX:false,noShadow});
  if(name==='gemini'&&shot.index===11){
   const u=clamp((t-shot.start)/(shot.end-shot.start));

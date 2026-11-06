@@ -4,7 +4,7 @@ import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
 import {drawGuest,drawLead} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
-for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold']){
+for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
   const im=await loadImage(path.join(dir,`${name}_action.png`));assert.equal(im.width,384*16);assert.equal(im.height,416);
   const cv=createCanvas(384,416),g=cv.getContext('2d');g.drawImage(im,0,0,384,416,0,0,384,416);const a=Buffer.from(g.getImageData(0,0,384,416).data);
@@ -101,4 +101,13 @@ test('ribbon hold includes a distinct closed-eye frame and advances within S28',
  assert.notDeepEqual(open,Buffer.from(c.getImageData(120,148,114,39).data));
  const shot={index:28,start:44.6,end:47.07},opt={x:200,y:400,h:300};
  assert.notEqual(drawLead(c,28,44.6,shot,opt).column,drawLead(c,28,45.8,shot,opt).column);
+});
+
+
+test('shared umbrella cel retains the arm gesture and has no original canopy',async()=>{
+ const im=await loadImage(path.join(dir,'doubao_shared_umbrella_action.png'));
+ const c=createCanvas(384,416).getContext('2d');c.drawImage(im,0,0,384,416,0,0,384,416);
+ assert.equal(c.getImageData(190,30,1,1).data[3],0,'old canopy should be removed');
+ const shot={index:13,start:19.03,end:20.67},opt={x:300,y:400,h:300};
+ assert.notEqual(drawGuest(c,'doubao',19.03,shot,opt).column,drawGuest(c,'doubao',20.2,shot,opt).column);
 });

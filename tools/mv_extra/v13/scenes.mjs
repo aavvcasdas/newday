@@ -1071,6 +1071,31 @@ function paintBaseShot(c, t, shot, env) {
       guest(c, 'claude', { x: 252, y: 586, h: 205 });
     }
 
+    // A shared mint canopy in scene space: the canopy is behind both actors,
+    // while the matching lower rod remains in Doubao's hand. The left span
+    // reaches the bench; asymmetry expresses the pole held at the right.
+    const sharedUmbrella = id !== 'S12_irreplaceable_lock';
+    const umbHolderX = close ? 684 : 700;
+    const umbHolderH = close ? 280 : 320;
+    const poleX = umbHolderX + 2 * umbHolderH / 416;
+    const roofY = 266;
+    if (sharedUmbrella) {
+      c.save();
+      c.fillStyle = '#91d8b6'; c.strokeStyle = '#527e70'; c.lineWidth = 2;
+      c.beginPath();c.moveTo(poleX-236,roofY+78);
+      c.bezierCurveTo(poleX-195,roofY+17,poleX-102,roofY,poleX,roofY);
+      c.bezierCurveTo(poleX+49,roofY,poleX+81,roofY+25,poleX+108,roofY+78);
+      c.quadraticCurveTo(poleX+74,roofY+62,poleX+40,roofY+72);
+      c.quadraticCurveTo(poleX-6,roofY+53,poleX-54,roofY+72);
+      c.quadraticCurveTo(poleX-145,roofY+52,poleX-236,roofY+78);
+      c.closePath();c.fill();c.stroke();
+      c.strokeStyle='rgba(76,132,111,.65)';c.lineWidth=1.5;
+      for (const ex of [poleX-145,poleX-54,poleX+40]) {
+        c.beginPath();c.moveTo(poleX,roofY+1);c.quadraticCurveTo((poleX+ex)/2,roofY+12,ex,roofY+72);c.stroke();
+      }
+      c.restore();
+    }
+
     const walkIn =
       id === 'S13_rain_shelter_enter'
         ? travelMotion(t, { start: 19.08, end: 20.24, x0: 365, x1: 548, steps: 3 })
@@ -1095,7 +1120,17 @@ function paintBaseShot(c, t, shot, env) {
       lean: close ? -0.02 : 0,
     });
 
+    if (sharedUmbrella) {
+      // Upper rod reconnects the scene-space canopy to the existing grip.
+      // It is drawn over the head like the original source rod.
+      line(c, [[poleX,roofY+2],[poleX,590-umbHolderH+170*umbHolderH/416]], '#527e70', 4);
+      line(c, [[poleX,roofY+2],[poleX,590-umbHolderH+170*umbHolderH/416]], '#a9e7cb', 2);
+      // Do not draw foreground rain through the sheltered region below the roof.
+      c.save();c.beginPath();c.rect(0,0,1280,720);
+      c.rect(poleX-225,roofY+68,320,360);c.clip('evenodd');
+    }
     drawSquareRain(c, t, { count: 72, y0: 40, y1: 635, slant: -12, color: 'rgba(218, 232, 242, 0.36)' });
+    if (sharedUmbrella) c.restore();
     drawVerticalRainStamps(c, cue, bound, t);
     return;
   }
