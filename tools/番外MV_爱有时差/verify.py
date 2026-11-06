@@ -104,10 +104,33 @@ def main() -> int:
         "pets real-frame whale/gpt + ai-girls chibi + Day12-derived Q doubao",
     )
     check(
-        "v4_paper_stage_no_bounce",
+        "v5_paper_stage_no_bounce",
         all(s.get("stage") == "paper-diorama" for s in shots)
         and not any(re.search(r"bounce|hop|sway", s.get("motion", ""), re.I) for s in shots),
         "layered paper diorama; no whole-image bounce direction",
+    )
+    shots_doc = json.loads((DATA / "shots.json").read_text(encoding="utf-8"))
+    policy = shots_doc.get("castPolicy", {})
+    cap = policy.get("maxOnScreen")
+    finale = policy.get("finaleException")
+    over = [f"{s['id']}={len(s.get('cast', []))}" for s in shots
+            if s["id"] != finale and len(set(s.get("cast", []))) > (cap or 2)]
+    check(
+        "v5_on_screen_cap_two",
+        cap == 2 and finale == "S16" and not over
+        and len(set(shots[-1].get("cast", []))) == 8,
+        ";".join(over) or "every shot <=2; S16 finale hold keeps all 8",
+    )
+    wp = chars.get("whale", {}).get("pet", {})
+    wanim = wp.get("animations", {})
+    check(
+        "v5_whale_q_library_real_frames",
+        wp.get("artOrigin") == "ai-derived"
+        and bool(chars.get("whale", {}).get("petUpstream"))
+        and len(wanim) >= 16
+        and wanim.get("idle", {}).get("frames", 0) >= 2
+        and all(wanim.get(k, {}).get("frames", 0) >= 2 for k in ("walk-right", "walk-left", "wave", "typing")),
+        f"{len(wanim)} states; idle/walk/wave/typing are real multi-frame cycles; upstream provenance kept",
     )
     missing_srt = []
     for c in timeline["cues"]:
@@ -159,7 +182,7 @@ def main() -> int:
         "ffmpeg": ff,
         "checks": checks,
         "sampleFrames": extracted,
-        "note": "Machine technical check only; not a human visual/audio approval.",
+        "note": "Machine technical check only; not a human visual/audio approval. The renderer also enforces the <=2 cast cap per frame at draw time (S16 excepted); a full 1346-frame render completing without throwing means every frame passed that gate.",
     }
     report_path = ROOT / "番外MV/验收报告.json"
     report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

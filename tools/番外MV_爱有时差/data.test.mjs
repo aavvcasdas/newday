@@ -36,25 +36,59 @@ test('all 8 upstream AI girls are directed into the MV, no supporting cast', () 
   assert.equal(cast.length, 8);
   assert.equal(data.supportingCount, 0);
   assert.deepEqual([...ids].sort(), ['claude', 'doubao', 'gemini', 'gpt', 'kimi', 'qwen', 'whale', 'zai']);
-  // v4: all-Q routing. whale/gpt have real pet atlases; the other five use
-  // ai-girls chibi cutouts; doubao is a Day12-cutout-derived Q layout.
+  // v5: whale uses the day-series Q library atlas (AI-derived, user-authorized);
+  // gpt keeps the upstream pets atlas. The other five use ai-girls chibi cutouts;
+  // doubao is a Day12-cutout-derived Q layout. Upstream whale provenance is kept.
   const manifest = read('data/sprites.json');
   const sprites = manifest.characters;
   assert.equal(manifest.primaryForm, 'q-chibi-pets');
-  for (const id of ['whale', 'gpt']) {
-    const pet = sprites[id].pet;
-    assert.ok(pet, `${id} pet atlas`);
-    assert.equal(pet.cellW, 192); assert.equal(pet.cellH, 208);
-    for (const st of ['idle', 'running-right', 'running-left', 'waving', 'failed', 'waiting', 'review']) {
-      assert.ok(pet.animations[st], `${id} pet state ${st}`);
-      assert.equal(pet.animations[st].durationsMs.length, pet.animations[st].frames);
-    }
-    assert.equal(pet.directions.length, 16);
+
+  const whalePet = sprites.whale.pet;
+  assert.ok(whalePet, 'whale Q library atlas');
+  assert.equal(whalePet.cellW, 192); assert.equal(whalePet.cellH, 208);
+  assert.equal(whalePet.artOrigin, 'ai-derived');
+  assert.ok(sprites.whale.petUpstream, 'upstream whale atlas provenance retained');
+  for (const st of ['idle', 'walk-right', 'walk-left', 'wave', 'typing', 'point', 'think', 'shock', 'cry', 'cheer', 'confident_hips', 'bow', 'eat', 'sleep', 'handoff', 'peek']) {
+    assert.ok(whalePet.animations[st], `whale Q state ${st}`);
+    assert.equal(whalePet.animations[st].durationsMs.length, whalePet.animations[st].frames);
   }
+  // The Q library has no 16-way look rows; shots must not ask whale for a look.
+  assert.equal(whalePet.directions.length, 0);
+  assert.ok(whalePet.animations.idle.frames >= 2, 'whale idle is a real breathing cycle, not a placeholder');
+  for (const st of ['walk-right', 'walk-left', 'wave', 'typing']) {
+    assert.ok(whalePet.animations[st].frames >= 2, `${st} is a real multi-frame cycle`);
+    assert.equal(whalePet.animations[st].loop, true);
+  }
+
+  const gptPet = sprites.gpt.pet;
+  assert.ok(gptPet, 'gpt upstream pet atlas');
+  assert.equal(gptPet.cellW, 192); assert.equal(gptPet.cellH, 208);
+  for (const st of ['idle', 'running-right', 'running-left', 'waving', 'failed', 'waiting', 'review']) {
+    assert.ok(gptPet.animations[st], `gpt pet state ${st}`);
+    assert.equal(gptPet.animations[st].durationsMs.length, gptPet.animations[st].frames);
+  }
+  assert.equal(gptPet.directions.length, 16);
+
   for (const id of ['claude', 'gemini', 'kimi', 'qwen', 'zai']) assert.ok(sprites[id].chibi, `${id} chibi`);
   assert.ok(sprites.doubao.sprite && sprites.doubao.qLayout, 'doubao derived Q layout');
   assert.ok(shots.every(s => s.stage === 'paper-diorama' && s.motion), 'paper stage + directed motion');
   assert.ok(!shots.some(s => /bounce|hop|sway/i.test(s.motion || '')), 'no whole-image bounce direction');
+});
+
+test('v5 caps on-screen cast at 2, with the finale hold as the only exception', () => {
+  const data = read('data/shots.json');
+  const shots = data.shots;
+  assert.equal(data.castPolicy.maxOnScreen, 2);
+  assert.equal(data.castPolicy.finaleException, 'S16');
+  for (const s of shots) {
+    assert.equal(new Set(s.cast).size, s.cast.length, `${s.id} repeats a character`);
+    assert.equal(s.maxOnScreen, s.cast.length, `${s.id} declared count matches cast`);
+    if (s.id === 'S16') assert.equal(s.cast.length, 8, 'finale keeps the full ensemble');
+    else assert.ok(s.cast.length <= 2, `${s.id} has ${s.cast.length} on screen`);
+  }
+  // Every girl still appears somewhere in the film despite the cap.
+  const ids = new Set(read('data/cast.json').cast.map(c => c.id));
+  assert.deepEqual([...new Set(shots.flatMap(s => s.cast))].sort(), [...ids].sort());
 });
 
 test('shot sets have export palettes', () => {

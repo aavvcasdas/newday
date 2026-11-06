@@ -4,12 +4,18 @@
   "appliesFrom": "Day13",
   "note": "Day12 以后新集通用 Q 版纸艺角色库。format 沿用 tqlearning/ai-girl-chatgpt-pets 的 spritesheet+pet.json 自描述结构（网格/行状态/每帧毫秒/方向行），不是官方协议。",
   "maxOnScreen": 2,
-  "cell": { "w": 192, "h": 208, "columns": 8, "footY": 200, "standPx": 160 },
+  "cell": {
+    "w": 192,
+    "h": 208,
+    "columns": 8,
+    "footY": 200,
+    "standPx": 160
+  },
   "generation": {
     "method": "AI 生图重绘新姿势（用户本轮明确授权 gen_new）",
     "reference": "pets 上游鲸娘 idle 格 → 首张 point.png → 其后各姿势以 point.png 为设计基准",
     "backgroundRemoval": "边界连通 flood-fill 去白底；角色 RGB 不重绘",
-    "normalization": "按 alpha bbox 统一 standPx=160、脚底 footY=200、水平居中于 192 宽格；整格写入，播放期不再逐帧裁切/居中/拉伸",
+    "normalization": "全角色共用一套缩放（基准 referencePose 定标）＋脚底 footY=200＋可见 bbox 中心水平锚点（实测 0 边缘钳制，优于脚底重心）；整格写入，播放期不再逐帧裁切/居中/拉伸",
     "disclosure": "AI 派生美术，非上游原画；不得冒称 ZipZipPipe 原作或官方授权"
   },
   "characters": {
@@ -20,19 +26,234 @@
       "upstreamPinned": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
       "generated": true,
       "states": {
-        "idle": { "cn": "待机", "frames": ["point"], "durationsMs": [320], "loop": true, "kind": "hold", "note": "占位：下一轮补真呼吸/眨眼帧后替换" },
-        "walk-right": { "cn": "向右走", "frames": ["walk_a", "walk_b", "walk_c", "walk_b"], "durationsMs": [140, 120, 140, 120], "loop": true, "kind": "cycle" },
-        "walk-left": { "cn": "向左走", "frames": ["walk_a", "walk_b", "walk_c", "walk_b"], "durationsMs": [140, 120, 140, 120], "loop": true, "kind": "cycle", "mirror": true },
-        "point": { "cn": "指证", "frames": ["point"], "durationsMs": [420], "loop": false, "kind": "gesture" },
-        "think": { "cn": "翻本子思考", "frames": ["think"], "durationsMs": [520], "loop": false, "kind": "gesture" },
-        "shock": { "cn": "震惊", "frames": ["shock"], "durationsMs": [360], "loop": false, "kind": "expression" },
-        "cry": { "cn": "委屈欲哭", "frames": ["cry"], "durationsMs": [520], "loop": false, "kind": "expression" },
-        "cheer": { "cn": "欢呼", "frames": ["cheer"], "durationsMs": [420], "loop": false, "kind": "expression" },
-        "confident_hips": { "cn": "得意", "frames": ["hips"], "durationsMs": [480], "loop": false, "kind": "expression", "note": "生图实为双手置身前得意，非严格叉腰；按得意语义使用，不得声称叉腰动作" },
-        "bow": { "cn": "道歉合十", "frames": ["bow"], "durationsMs": [560], "loop": false, "kind": "gesture", "note": "生图实为闭眼合十小鞠躬，非深鞠躬" }
+        "idle": {
+          "cn": "待机呼吸",
+          "frames": [
+            "idle_a",
+            "idle_b"
+          ],
+          "durationsMs": [
+            1500,
+            260
+          ],
+          "loop": true,
+          "kind": "cycle",
+          "note": "真两帧慢呼吸＋眨眼，替换原 point 占位"
+        },
+        "walk-right": {
+          "cn": "向右走",
+          "frames": [
+            "walk_a",
+            "walk_b",
+            "walk_c",
+            "walk_b"
+          ],
+          "durationsMs": [
+            140,
+            120,
+            140,
+            120
+          ],
+          "loop": true,
+          "kind": "cycle"
+        },
+        "walk-left": {
+          "cn": "向左走",
+          "frames": [
+            "walk_a",
+            "walk_b",
+            "walk_c",
+            "walk_b"
+          ],
+          "durationsMs": [
+            140,
+            120,
+            140,
+            120
+          ],
+          "loop": true,
+          "kind": "cycle",
+          "mirror": true
+        },
+        "point": {
+          "cn": "指证",
+          "frames": [
+            "point"
+          ],
+          "durationsMs": [
+            420
+          ],
+          "loop": false,
+          "kind": "gesture"
+        },
+        "think": {
+          "cn": "翻本子思考",
+          "frames": [
+            "think"
+          ],
+          "durationsMs": [
+            520
+          ],
+          "loop": false,
+          "kind": "gesture"
+        },
+        "shock": {
+          "cn": "震惊",
+          "frames": [
+            "shock"
+          ],
+          "durationsMs": [
+            360
+          ],
+          "loop": false,
+          "kind": "expression"
+        },
+        "cry": {
+          "cn": "委屈欲哭",
+          "frames": [
+            "cry"
+          ],
+          "durationsMs": [
+            520
+          ],
+          "loop": false,
+          "kind": "expression"
+        },
+        "cheer": {
+          "cn": "欢呼",
+          "frames": [
+            "cheer"
+          ],
+          "durationsMs": [
+            420
+          ],
+          "loop": false,
+          "kind": "expression"
+        },
+        "confident_hips": {
+          "cn": "得意",
+          "frames": [
+            "hips"
+          ],
+          "durationsMs": [
+            480
+          ],
+          "loop": false,
+          "kind": "expression",
+          "note": "生图实为双手置身前得意，非严格叉腰；按得意语义使用，不得声称叉腰动作"
+        },
+        "bow": {
+          "cn": "道歉合十",
+          "frames": [
+            "bow"
+          ],
+          "durationsMs": [
+            560
+          ],
+          "loop": false,
+          "kind": "gesture",
+          "note": "生图实为闭眼合十小鞠躬，非深鞠躬"
+        },
+        "wave": {
+          "cn": "打招呼",
+          "frames": [
+            "wave_a",
+            "wave_b",
+            "wave_a",
+            "wave_b"
+          ],
+          "durationsMs": [
+            220,
+            220,
+            220,
+            220
+          ],
+          "loop": true,
+          "kind": "cycle"
+        },
+        "typing": {
+          "cn": "打字",
+          "frames": [
+            "typing_a",
+            "typing_b"
+          ],
+          "durationsMs": [
+            170,
+            150
+          ],
+          "loop": true,
+          "kind": "cycle"
+        },
+        "eat": {
+          "cn": "吃饭",
+          "frames": [
+            "eat"
+          ],
+          "durationsMs": [
+            520
+          ],
+          "loop": false,
+          "kind": "gesture"
+        },
+        "sleep": {
+          "cn": "打瞌睡",
+          "frames": [
+            "sleep"
+          ],
+          "durationsMs": [
+            900
+          ],
+          "loop": false,
+          "kind": "hold",
+          "note": "坐姿，共用缩放下如实更矮"
+        },
+        "handoff": {
+          "cn": "递拼图",
+          "frames": [
+            "handoff"
+          ],
+          "durationsMs": [
+            600
+          ],
+          "loop": false,
+          "kind": "gesture"
+        },
+        "peek": {
+          "cn": "怯生生探看",
+          "frames": [
+            "peek"
+          ],
+          "durationsMs": [
+            520
+          ],
+          "loop": false,
+          "kind": "expression"
+        }
       },
-      "poses": ["bow", "cheer", "cry", "hips", "point", "shock", "think", "walk_a", "walk_b", "walk_c"],
-      "pending": ["wave_a", "wave_b", "eat", "typing_a", "typing_b", "sleep", "idle_a", "idle_b", "handoff", "peek"]
+      "poses": [
+        "bow",
+        "cheer",
+        "cry",
+        "eat",
+        "handoff",
+        "hips",
+        "idle_a",
+        "idle_b",
+        "peek",
+        "point",
+        "shock",
+        "sleep",
+        "think",
+        "typing_a",
+        "typing_b",
+        "walk_a",
+        "walk_b",
+        "walk_c",
+        "wave_a",
+        "wave_b"
+      ],
+      "pending": [],
+      "referencePose": "idle_a"
     },
     "doubao": {
       "name": "豆包",
@@ -41,16 +262,47 @@
       "generated": false,
       "fallbackSprite": "tools/番外MV_爱有时差/assets/sprites/doubao.png",
       "states": {
-        "idle": { "cn": "待机", "frames": [], "durationsMs": [400], "loop": true, "kind": "hold", "note": "静态纸偶；不整图弹跳" }
+        "idle": {
+          "cn": "待机",
+          "frames": [],
+          "durationsMs": [
+            400
+          ],
+          "loop": true,
+          "kind": "hold",
+          "note": "静态纸偶；不整图弹跳"
+        }
       },
       "poses": [],
-      "pending": ["idle", "think", "point", "shock", "cheer", "bow", "walk_a", "walk_b", "walk_c"]
+      "pending": [
+        "idle",
+        "think",
+        "point",
+        "shock",
+        "cheer",
+        "bow",
+        "walk_a",
+        "walk_b",
+        "walk_c"
+      ]
     }
   },
   "guests": {
     "note": "客串 AI 娘每镜最多与本鲸同框 1 位；未生成前不得上场充数",
-    "ids": ["claude", "gemini", "gpt", "kimi", "qwen", "zai"],
+    "ids": [
+      "claude",
+      "gemini",
+      "gpt",
+      "kimi",
+      "qwen",
+      "zai"
+    ],
     "generated": false,
-    "pending": ["idle", "think", "point", "cheer"]
+    "pending": [
+      "idle",
+      "think",
+      "point",
+      "cheer"
+    ]
   }
 }

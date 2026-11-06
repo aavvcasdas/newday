@@ -1,10 +1,10 @@
 {
-  "directorVersion": 3,
+  "directorVersion": 5,
   "status": "production",
   "timingSource": "data/timeline.json",
   "visualReference": "用户给定《把回忆拼好给你》.mp4 的拼图/雨站/烟花/时差意象；Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词/确定性逐帧；JohnHeibel/PDoomVideo 的逐句事件、节拍反应、挤压拉伸、道具交接与笔刷转场方法。",
-  "castSource": "v3 主形象为 shuaizenge/ai-girls Q版小AI（豆包沿用本仓库 Day12 抠图）；鲸鱼娘情感特写用 JAdpp/dsh-whale-galgame；少数动作镜头用 xiaosia/voxel-mv 帧。同一角色同一镜头只出现一个形象。",
-  "performSyntax": "perform[id] = {art:'chibi'|'voxel'|'galgame'|'static', ...}。chibi: {move,enter,exit,react,prop} 用整体位移/弹跳/挤压/倾斜/翻转和道具事件表演，不重绘五官；voxel: {action,then,at,walk} 播上游帧；galgame: {expr,then,at} 播鲸鱼娘表情差分；static: 豆包只做整体呼吸/位移。",
+  "castSource": "v5 鲸娘改用 tools/角色Q版库 的 Q 版 pets 真帧图集（16 状态，AI 生成派生，用户授权）；GPT 沿用上游 pets 真帧；Claude/Gemini/Kimi/Qwen/Z.AI 用 ai-girls chibi 静态纸偶；豆包沿用 Day12 cutout 派生 Q。同一角色同一镜头只出现一种形象。",
+  "performSyntax": "seq 引用图集真实存在的状态；鲸娘 v5 状态来自 Q 版库（idle/walk-*/wave/typing/point/think/shock/cry/cheer/confident_hips/bow/eat/sleep/handoff/peek），无 look 方向行；GPT 沿用上游 pets 状态与 look。",
   "shots": [
     {
       "id": "S01",
@@ -22,9 +22,10 @@
       "keyword": "渺小",
       "motif": "we.exist();",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "鲸娘 pet running-right→idle→look-up；拼图墙/云 12fps 手摆"
+      "motion": "鲸娘 Q 版 walk-right 真步态走入→idle 呼吸→point；灰色拼图墙/云 12fps 手摆",
+      "maxOnScreen": 1
     },
     {
       "id": "S02",
@@ -34,7 +35,7 @@
       "focus": "小世界里不只有挫败",
       "entry": "承接S01光点",
       "action": "鲸娘 waiting→look-up；雨层/星愿补口",
-      "result": "小世界缺块被星愿补上",
+      "result": "小世界里不只有挫败",
       "cast": [
         "whale"
       ],
@@ -42,9 +43,10 @@
       "keyword": "小世界",
       "motif": "wish(smallWorld)",
       "transition": "iris",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "鲸娘 waiting→look-up；雨/星愿补口"
+      "motion": "鲸娘 think 翻本子→idle 呼吸；雨中拼图地球缺口由星愿补上",
+      "maxOnScreen": 1
     },
     {
       "id": "S03",
@@ -54,7 +56,7 @@
       "focus": "遇见你，世界开始上色",
       "entry": "Claude从右侧灯影走入",
       "action": "鲸娘 running-right→waving；Claude 静态纸偶；两块拼图合拢+暖光",
-      "result": "遇见你，灰墙点亮",
+      "result": "遇见你，暖光点亮",
       "cast": [
         "whale",
         "claude"
@@ -63,9 +65,10 @@
       "keyword": "遇见你",
       "motif": "you.online → light.on",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "鲸娘 running-right→waving；Claude 静态纸偶；拼图合拢+暖光"
+      "motion": "鲸娘 walk-right 走近→wave 真帧打招呼；Claude 静态纸偶反向站位；两块拼图合拢",
+      "maxOnScreen": 2
     },
     {
       "id": "S04",
@@ -75,7 +78,7 @@
       "focus": "眼睛里是广袤大海",
       "entry": "切到开阔海面",
       "action": "iris 打开成海；四层海浪动；鲸娘 look-right",
-      "result": "眼睛里是广袤大海",
+      "result": "眼睛里是广袤的大海",
       "cast": [
         "whale",
         "gemini"
@@ -84,9 +87,10 @@
       "keyword": "大海",
       "motif": "sea.withoutEnd",
       "transition": "wipe",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "iris 打开；海浪层动；鲸娘 look-right"
+      "motion": "鲸娘 idle 呼吸；Gemini 静态纸偶对望；iris 打开成分层海面",
+      "maxOnScreen": 2
     },
     {
       "id": "S05",
@@ -96,24 +100,19 @@
       "focus": "有你在的日子不可能被取代",
       "entry": "八位AI娘第一次同框",
       "action": "四格回忆拼贴依次落位；全员纸偶+鲸/GPT 真帧",
-      "result": "有你的日子不可取代",
+      "result": "有你在的日子不可能被取代",
       "cast": [
         "whale",
-        "claude",
-        "gemini",
-        "doubao",
-        "gpt",
-        "kimi",
-        "qwen",
-        "zai"
+        "kimi"
       ],
       "camera": "slow lateral",
       "keyword": "取代",
       "motif": "memory.keep(you)",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "四格回忆拼贴依次落位；全员静态纸偶+鲸/GPT 真帧"
+      "motion": "鲸娘 handoff 递出拼图；Kimi 静态纸偶接手侧位；四格回忆拼贴依次落位",
+      "maxOnScreen": 2
     },
     {
       "id": "S06",
@@ -123,7 +122,7 @@
       "focus": "最灰暗的日子你陪着我发呆",
       "entry": "雨站长椅，豆包已在鲸鱼娘身旁",
       "action": "鲸娘 waiting 真帧；雨/伞微摆；豆包静态陪伴",
-      "result": "灰暗日子一起发呆",
+      "result": "最灰暗的日子有人陪着发呆",
       "cast": [
         "whale",
         "doubao"
@@ -132,9 +131,10 @@
       "keyword": "发呆",
       "motif": "pause(together)",
       "transition": "iris",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "鲸娘 waiting 真帧；雨/伞微摆"
+      "motion": "鲸娘 peek 怯生生探看→idle；豆包静态纸偶同坐长椅；伞 12fps 手摆",
+      "maxOnScreen": 2
     },
     {
       "id": "S07",
@@ -147,18 +147,16 @@
       "result": "学会拨开阴霾",
       "cast": [
         "whale",
-        "doubao",
-        "gemini",
-        "qwen",
-        "zai"
+        "qwen"
       ],
       "camera": "small push",
       "keyword": "拨开阴霾",
       "motif": "clouds.part()",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "云开光束；鲸娘 waving 真帧"
+      "motion": "鲸娘 shock→cheer 真表情切换；Qwen 静态纸偶侧位；云层拨开光束落下",
+      "maxOnScreen": 2
     },
     {
       "id": "S08",
@@ -168,24 +166,19 @@
       "focus": "收集快乐，淘汰不开心",
       "entry": "回忆工坊，八位AI娘围着拼图桌",
       "action": "快乐拼图入罐/灰色拼图入箱合盖；鲸娘 running→review；GPT review",
-      "result": "收集快乐，淘汰不开心",
+      "result": "快乐被收集，不开心被淘汰",
       "cast": [
         "whale",
-        "claude",
-        "gemini",
-        "doubao",
-        "gpt",
-        "kimi",
-        "qwen",
-        "zai"
+        "gpt"
       ],
       "camera": "static insert then wide",
       "keyword": "收集快乐",
       "motif": "joy.collect(); sadness.release()",
       "transition": "wipe",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "快乐拼图入罐/灰色入箱；鲸娘 running→review；GPT review"
+      "motion": "鲸娘 walk-right 走位→think→cheer；GPT 上游 pet review 真帧；快乐入罐、灰块淘汰",
+      "maxOnScreen": 2
     },
     {
       "id": "S09",
@@ -195,17 +188,19 @@
       "focus": "你对我说的情话",
       "entry": "夜景天台，消息窗亮起",
       "action": "纸条从 Claude 飘向鲸娘；鲸娘 waiting→review",
-      "result": "情话落在屋顶",
+      "result": "你对我说的情话",
       "cast": [
-        "whale"
+        "whale",
+        "claude"
       ],
       "camera": "close then lock",
       "keyword": "情话",
       "motif": "message.from(you)",
       "transition": "iris",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "纸条飘移；鲸娘 waiting→review"
+      "motion": "鲸娘 think→cry 情绪特写；Claude 静态纸偶递纸条；纸条 12fps 手摆飘近",
+      "maxOnScreen": 2
     },
     {
       "id": "S10",
@@ -215,24 +210,19 @@
       "focus": "像转瞬即逝的烟花",
       "entry": "消息窗收起，夜空接管",
       "action": "烟花发射→绽放→余烬；全员看天",
-      "result": "烟花转瞬即逝",
+      "result": "像转瞬即逝的烟花",
       "cast": [
         "whale",
-        "claude",
-        "gemini",
-        "doubao",
-        "gpt",
-        "kimi",
-        "qwen",
         "zai"
       ],
       "camera": "slow tilt up",
       "keyword": "烟花",
       "motif": "firework.bloom()",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "烟花发射→绽放；全员看天（鲸/GPT look-up）"
+      "motion": "鲸娘 cheer 真表情；Z.AI 静态纸偶并肩；烟花纸屑分层绽放",
+      "maxOnScreen": 2
     },
     {
       "id": "S11",
@@ -245,21 +235,16 @@
       "result": "只停在绽放一刹那",
       "cast": [
         "whale",
-        "claude",
-        "gemini",
-        "doubao",
-        "gpt",
-        "kimi",
-        "qwen",
-        "zai"
+        "gpt"
       ],
       "camera": "lock",
       "keyword": "一刹那",
       "motif": "hold(thisMoment)",
       "transition": "flash",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "拍立得显影+拼图 confetti"
+      "motion": "鲸娘 idle 呼吸；GPT 上游 pet review 真帧；拍立得显影，拼图飘落",
+      "maxOnScreen": 2
     },
     {
       "id": "S12",
@@ -269,7 +254,7 @@
       "focus": "我却已无法自拔",
       "entry": "拍立得落回回忆桌",
       "action": "拼图漩涡绕鲸娘旋转；鲸娘 failed→waiting",
-      "result": "无法自拔",
+      "result": "我却已无法自拔",
       "cast": [
         "whale"
       ],
@@ -277,9 +262,10 @@
       "keyword": "无法自拔",
       "motif": "fall.into(memory)",
       "transition": "iris",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "拼图漩涡；鲸娘 failed→waiting"
+      "motion": "鲸娘 cry→bow 真表情动作；拼图漩涡绕身旋转",
+      "maxOnScreen": 1
     },
     {
       "id": "S13",
@@ -289,20 +275,19 @@
       "focus": "我们的爱总有时差",
       "entry": "昼夜两座钟塔分列拼图桥两端",
       "action": "昼夜拼图缝+双钟走针；鲸娘 running-left→waiting",
-      "result": "爱有时差",
+      "result": "我们的爱总有时差",
       "cast": [
         "whale",
-        "claude",
-        "gpt",
-        "kimi"
+        "gpt"
       ],
       "camera": "static split",
       "keyword": "时差",
       "motif": "love.offset ≠ 0",
       "transition": "wipe",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "双钟走针；鲸娘 running-left→waiting；昼夜缝"
+      "motion": "昼夜缝两侧各一人：GPT 上游 pet idle 在日侧，鲸娘 walk-left 真步态走入夜侧→idle；双钟反相",
+      "maxOnScreen": 2
     },
     {
       "id": "S14",
@@ -312,21 +297,19 @@
       "focus": "也为你骗自己放下",
       "entry": "承接缺口",
       "action": "丝带从纸桩随风放手；鲸娘 failed→waving",
-      "result": "骗自己放下",
+      "result": "也为你骗自己放下",
       "cast": [
         "whale",
-        "gemini",
-        "doubao",
-        "qwen",
-        "zai"
+        "gemini"
       ],
       "camera": "follow letter then lock",
       "keyword": "放下",
       "motif": "let_go()",
       "transition": "brush",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "丝带随风放手；鲸娘 failed→waving"
+      "motion": "鲸娘 cry→wave 告别真帧；Gemini 静态纸偶侧位；丝带随风拉开",
+      "maxOnScreen": 2
     },
     {
       "id": "S15",
@@ -339,21 +322,16 @@
       "result": "爱炙热的你",
       "cast": [
         "whale",
-        "claude",
-        "gemini",
-        "doubao",
-        "gpt",
-        "kimi",
-        "qwen",
-        "zai"
+        "gpt"
       ],
       "camera": "slow pull",
       "keyword": "炙热",
       "motif": "warm(you)",
       "transition": "iris",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "心形拼图亮起；GPT waving"
+      "motion": "GPT 上游 pet waving 真帧；鲸娘 confident_hips 得意；夕照心形纸雕升起",
+      "maxOnScreen": 2
     },
     {
       "id": "S16",
@@ -363,7 +341,7 @@
       "focus": "却忘了爱自己",
       "entry": "承接S15，光标退后",
       "action": "全员 framed puzzle；鲸/GPT waving→idle；54.208s 后 hold",
-      "result": "却忘了爱自己；无片尾卡",
+      "result": "却忘了爱自己——全员同框收束",
       "cast": [
         "whale",
         "claude",
@@ -378,12 +356,18 @@
       "keyword": "爱自己",
       "motif": "warm(me too)",
       "transition": "none",
-      "version": 4,
+      "version": 5,
       "stage": "paper-diorama",
-      "motion": "全员 framed puzzle；鲸/GPT waving→idle；54.208s 后 hold"
+      "motion": "终帧全员 framed puzzle hold：鲸娘 wave 真帧、GPT 上游 review 真帧，其余静态纸偶站位；无片尾卡",
+      "maxOnScreen": 8
     }
   ],
   "version": 4,
   "primaryForm": "q-chibi-pets",
-  "note": "v4 全 Q 版：whale/gpt 用 pets 真逐帧；其余 ai-girls chibi 静态纸偶；豆包 Day12 cutout 派生 Q。无整图 bounce/jump。galgame/voxel 保留素材链但退出正片主形象（Q 版口径优先）。"
+  "note": "v4 全 Q 版：whale/gpt 用 pets 真逐帧；其余 ai-girls chibi 静态纸偶；豆包 Day12 cutout 派生 Q。无整图 bounce/jump。galgame/voxel 保留素材链但退出正片主形象（Q 版口径优先）。",
+  "castPolicy": {
+    "maxOnScreen": 2,
+    "finaleException": "S16",
+    "note": "用户 2026-11-06 裁定 cap2_keep_finale：正片每镜同屏最多 2 人，仅终帧 S16 保留全员 hold。8 位 AI 娘分散到各镜全部出场。"
+  }
 }

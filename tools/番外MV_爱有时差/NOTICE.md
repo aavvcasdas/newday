@@ -35,3 +35,16 @@
 ## 生成物
 
 成片、分镜、海报、图鉴为确定性渲染产物。自动验收报告只证明技术检查通过，不构成人工艺术/听审批准。角色与品牌权利归原权利人；不得冒称官方合作或统一商用授权。
+
+
+## v5 追加：鲸娘 Q 版动作表情图集（AI 生成派生）
+
+- 入库件：`assets/sprites/pets/whale_q.png`（＋`whale_q_idle.png` 预览），来自本仓库
+  `tools/角色Q版库/pets/whale/spritesheet.png`，由 `prepare_assets.mjs` 复制登记。
+- **性质：AI 生成派生美术**，用户 2026-11-06 明确授权（`gen_new`）后生成，**不是上游原画**，
+  也不是官方委托/授权产物。设计基准为 pets 上游 `assets/deepseek-whale` 的鲸娘形象
+  （ZipZipPipe 女仆二设，创作链「上善无形原鲸鱼娘 → ZipZipPipe 女仆二设」）。
+- 上游原始图集并未丢弃：仍登记在 `data/sprites.json` 的 `characters.whale.petUpstream`，
+  文件 `assets/sprites/pets/whale.png` 保留，署名与许可边界照旧适用。
+- 生成/抠图/归一化披露与完整署名链见 `../角色Q版库/NOTICE.md`。
+- 边界不变：非官方同人、非商用倾向＋署名；不冒称 ZipZipPipe 原作、官方合作或可商用开放授权。

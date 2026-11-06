@@ -35,19 +35,29 @@
 
 ## 当前进度（诚实口径）
 
-本轮受 **单轮 10 张生图上限** 限制，只完成主角鲸娘 10 张姿势：
+主角鲸娘已完成 **20 张姿势 / 16 个状态**（两轮生图，每轮 10 张上限）：
 
-- **真多帧循环**：`walk-right` / `walk-left`（`walk_a/b/c/b` 四格步态，左向为镜像）
-- **单帧表情/动作**：`point` 指证、`think` 思考、`shock` 震惊、`cry` 委屈、`cheer` 欢呼、`confident_hips` 得意、`bow` 道歉
-- `idle` 目前是 `point` 单帧**占位**，已在 `cast.json` 标注，待补真呼吸/眨眼帧后替换
+- **真多帧循环**：`idle` 慢呼吸＋眨眼（2 帧）、`walk-right` / `walk-left`（4 帧步态，左向镜像）、
+  `wave` 打招呼（4 帧）、`typing` 打字（2 帧）
+- **单帧表情/动作**：`point` 指证、`think` 思考、`shock` 震惊、`cry` 委屈、`cheer` 欢呼、
+  `confident_hips` 得意、`bow` 道歉合十、`eat` 吃饭、`sleep` 打瞌睡、`handoff` 递拼图、`peek` 探看
+
+打包期归一化（`build_report.json` 可核查）：
+
+- **全角色共用一套缩放**，以 `referencePose: idle_a` 定标；多帧动作之间不会忽大忽小，坐姿如实更矮。
+- 水平锚点＝可见 bbox 中心。实测 20 姿势：bbox 中心 **0 次边缘钳制**，帧间漂移 idle 2.0px / walk 1.2px / typing 0.0px；
+  脚底重心锚点反而在 `walk_a/b/c`＋`sleep` 上钳制 4 次，故按实测不采用。
+- 整格写入，播放期不再逐帧裁切/居中/拉伸。
 
 已知偏差（不掩饰）：
 
-- `walk_*` 三帧偏正面小碎步，腿部差异较小，不是强侧面大跨步；下一轮应补更明确的侧向步态。
+- `walk_*` 偏正面小碎步，腿部差异较小，不是强侧面大跨步。
 - `confident_hips` 生图为双手置身前得意，不是严格叉腰；语义按「得意」使用。
-- 豆包仍是 Day12 cutout 派生 Q 的**静态纸偶**（`fallbackSprite`），没有图集；客串 AI 娘未生成，**不得上场充数**（加载期报错）。
+- `bow` 实为闭眼合十小鞠躬，不是深鞠躬。
+- 豆包仍是 Day12 cutout 派生 Q 的**静态纸偶**（`fallbackSprite`），没有图集；
+  6 位客串 AI 娘未生成图集，**不得上场充数**（加载期报错）。
 
-`cast.json` 的 `pending` 列出了下一轮要补的姿势：鲸娘 `wave_a/b`、`eat`、`typing_a/b`、`sleep`、`idle_a/b`、`handoff`、`peek`；豆包与 6 位客串的基础动作表情。
+鲸娘 `pending` 已清空；豆包与 6 位客串的基础动作表情仍列在 `cast.json` 的 `pending` 里，待后续轮次补。
 
 ## 用法
 

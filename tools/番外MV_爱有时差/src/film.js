@@ -1,7 +1,8 @@
-// v4 · 把回忆拼好给你 · AI娘全员番外（爱有时差）
+// v5 · 把回忆拼好给你 · AI娘全员番外（爱有时差）
 // Canvas2D layered paper diorama. Pure function of t; no real-time capture.
-// Character motion: whale/gpt use tqlearning/ai-girl-chatgpt-pets real atlases
-// (pet.json durations, full 192×208 cells, common foot baseline). Other girls are
+// Character motion: whale uses the day-series Q library atlas (16 states, AI-derived,
+// user-authorized); gpt keeps the upstream tqlearning/ai-girl-chatgpt-pets atlas
+// (pet.json ms durations, full 192×208 cells, common foot baseline). Other girls are
 // ai-girls Q版 cutouts / Day12 doubao cutout held as paper puppets — life comes
 // from camera, props, light and events, never whole-image bounce.
 import timeline from '../data/timeline.json' with { type: 'json' };
@@ -58,8 +59,15 @@ export async function createFilm(glCanvas, outCanvas) {
   const measure = document.createElement('canvas').getContext('2d');
   const SUB = createDay2Subtitle({ measureCtx: measure, fontOf: (px, w) => `${w} ${px}px "Noto Sans SC"` });
 
+  // v5 同屏人数探针：记录本帧真正画出去的角色，渲染完立刻校验。
+  // 不是只改 shots.json 的声明——画面超员会直接抛错。
+  let frameCast = [];
+  let lastFrameCast = [];
+  const CAP = shotData.castPolicy?.maxOnScreen ?? 2;
+  const FINALE = shotData.castPolicy?.finaleException ?? 'S16';
   function drawActor(c, id, x, y, h, perf = {}, lt = 0, flip = false) {
     const m = sprites.characters[id]; if (!m) return;
+    if (!frameCast.includes(id)) frameCast.push(id);
     c.save(); c.translate(x, y); if (flip) c.scale(-1, 1);
     // paper contact shadow
     c.save(); c.fillStyle = 'rgba(50,40,35,0.22)'; c.beginPath(); c.ellipse(0, 6, h * 0.30, h * 0.07, 0, 0, Math.PI * 2); c.fill(); c.restore();
@@ -93,7 +101,7 @@ export async function createFilm(glCanvas, outCanvas) {
   function group(c, lt, y, h, opts = {}) {
     const xs = [330, 540, 750, 960, 1170, 1380, 1590, 1770];
     ALL.forEach((id, i) => {
-      const perf = id === 'whale' ? { seq: [{ state: 'waving', dur: 1.1 }, { state: 'idle' }] } : id === 'gpt' ? { seq: [{ state: 'review', dur: 1.4 }, { state: 'idle' }] } : {};
+      const perf = id === 'whale' ? { seq: [{ state: 'wave', dur: 1.1 }, { state: 'idle' }] } : id === 'gpt' ? { seq: [{ state: 'think', dur: 1.4 }, { state: 'idle' }] } : {};
       drawActor(c, id, xs[i] + (opts.dx || 0), y + (i % 2 ? 14 : 0), h * (id === 'doubao' ? 0.94 : 1), perf, lt + i * 0.13, i > 4);
     });
   }
@@ -108,7 +116,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0.5, c => { P.hill(c, 760, 30, '#aeb6bd', 3); P.hill(c, 860, 24, '#9aa3ab', 7); });
       layer(0.8, c => { P.paper(c, P.puzzlePath(700, 700, 520, 260, [1, 1, -1, -1]), '#f3e7cf', { shadow: 22, dy: 14 });
         P.paper(c, P.puzzlePath(1230, 720, 200, 180, [-1, 1, 1, -1]), '#d7dbdf', { shadow: 10, dy: 8 }); });
-      layer(1, c => { const k = smooth(0, 1.6, lt); drawActor(c, 'whale', lerp(430, 900, k), 880, 310, { seq: [{ state: 'running-right', dur: 1.6 }, { state: 'idle' }, { look: 0 }], walk: { from: 430, to: 900, dur: 1.6 } }, lt); });
+      layer(1, c => { const k = smooth(0, 1.6, lt); drawActor(c, 'whale', lerp(430, 900, k), 880, 310, { seq: [{ state: 'walk-right', dur: 1.6 }, { state: 'idle', dur: 0.9 }, { state: 'point' }], walk: { from: 430, to: 900, dur: 1.6 } }, lt); });
       layer(1.2, c => { P.paper(c, P.puzzlePath(-80, 820, 360, 300, [1, -1, 1, 1]), '#8f989f', { blur: 3, shadow: 20 }); });
       P.warmLight(ctx, 0.10);
     },
@@ -121,14 +129,14 @@ export async function createFilm(glCanvas, outCanvas) {
         for (let i = 0; i < 10; i++) P.paper(c, P.puzzlePath(cx - 280 + (i % 4) * 150, cy - 260 + Math.floor(i / 4) * 170, 150, 160, [1, -1, 1, -1]), i % 2 ? '#8fb9d8' : '#6f9cc0', { shadow: 4, dy: 3, edge: '#dcebf5' });
         P.paper(c, P.puzzlePath(cx + 60, cy - 120, 150, 160, [-1, 1, -1, 1]), '#5a6878', { shadow: 2, dy: 2 }); c.restore();
         const glow = smooth(1.2, 2.6, lt); if (glow > 0) { P.star(c, cx + 135, cy - 40, 46 * glow, '#ffe9a8', lt * 0.4); P.lightShaft(c, cx + 135, cy - 260, 120, 300, 0.25 * glow); } });
-      layer(1, c => { P.hill(c, 880, 20, '#46536b', 5); drawActor(c, 'whale', 960, 850, 290, { seq: [{ state: 'waiting', dur: 1.4 }, { state: 'idle' }, { look: 0 }] }, lt); });
+      layer(1, c => { P.hill(c, 880, 20, '#46536b', 5); drawActor(c, 'whale', 960, 850, 290, { seq: [{ state: 'think', dur: 1.4 }, { state: 'idle' }] }, lt); });
       layer(1.1, c => P.rain(c, lt, 110, 0.45));
     },
     S03(lt, dur) { // 遇见你：两块拼图合拢，暖光点亮
       setCam(lt, dur, 0.05, 0, 0);
       layer(0, c => { c.fillStyle = '#d8d2c6'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 12; i++) P.paper(c, P.puzzlePath((i % 4) * 500 - 40, Math.floor(i / 4) * 360 - 30, 480, 340, [1, -1, 1, -1]), '#cfc8ba', { shadow: 5, dy: 3, edge: '#efe8da' }); });
       layer(0.7, c => { const k = smooth(0.3, 1.8, lt); P.paper(c, P.puzzlePath(lerp(120, 430, k), 640, 520, 300, [1, 1, -1, -1]), '#f1e3c8'); P.paper(c, P.puzzlePath(lerp(1280, 970, k), 640, 520, 300, [-1, 1, 1, -1]), '#f6ead2'); });
-      layer(1, c => { drawActor(c, 'whale', lerp(560, 800, smooth(0, 1.6, lt)), 880, 320, { seq: [{ state: 'running-right', dur: 1.6 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }], walk: { from: 560, to: 800, dur: 1.6 } }, lt);
+      layer(1, c => { drawActor(c, 'whale', lerp(560, 800, smooth(0, 1.6, lt)), 880, 320, { seq: [{ state: 'walk-right', dur: 1.6 }, { state: 'wave', dur: 0.9 }, { state: 'idle' }], walk: { from: 560, to: 800, dur: 1.6 } }, lt);
         drawActor(c, 'claude', 1120, 880, 330, {}, lt, true); });
       layer(1.1, c => { const g = smooth(1.4, 2.6, lt); if (g > 0) { P.lightShaft(c, 960, 120, 260, 700, 0.3 * g); for (let i = 0; i < 8; i++) { const a = i / 8 * Math.PI * 2 + lt * 0.3; P.star(c, 960 + Math.cos(a) * 220 * g, 520 + Math.sin(a) * 140 * g, 14, '#ffd76a', a); } } });
       P.warmLight(ctx, 0.16 * smooth(1.2, 2.4, lt));
@@ -139,7 +147,7 @@ export async function createFilm(glCanvas, outCanvas) {
       layer(0, c => { c.fillStyle = '#bfe3ef'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1560, 180, 90), '#ffe9a8'); P.cloud(c, 300, 150, 1.6, '#ffffff', { blur: 2 }); P.cloud(c, 1000, 110, 1.3, '#f4fbff', { blur: 2 }); });
       layer(0.4, c => { P.hill(c, 620, 10, '#8fc7d8', 2, { edge: '#e8f6fb' }); });
       layer(0.6, c => { for (let b = 0; b < 4; b++) { const y = 660 + b * 90; P.paper(c, c2 => { c2.moveTo(-100, y); for (let x = -100; x <= W + 100; x += 60) c2.lineTo(x, y + Math.sin(x * 0.02 + lt * 2 + b) * 12); c2.lineTo(W + 100, H + 100); c2.lineTo(-100, H + 100); c2.closePath(); }, ['#7db8cf', '#6aa9c4', '#589ab8', '#4a8caa'][b], { dy: 0, shadow: 8, edge: '#dff2f8' }); } });
-      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'whale', 760, 940, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt); drawActor(c, 'gemini', 1120, 940, 310, {}, lt, true); });
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'whale', 760, 940, 300, { seq: [{ state: 'idle' }] }, lt); drawActor(c, 'gemini', 1120, 940, 310, {}, lt, true); });
       if (open < 1) { ctx.save(); ctx.fillStyle = '#2a3440'; ctx.beginPath(); ctx.rect(0, 0, W, H); ctx.arc(960, 540, lerp(60, 1400, open), 0, Math.PI * 2, true); ctx.fill('evenodd'); ctx.restore(); }
     },
     S05(lt, dur) { // 取代：四格回忆拼贴 + 全员
@@ -152,50 +160,53 @@ export async function createFilm(glCanvas, outCanvas) {
           c.save(); c.globalAlpha = k; c.fillStyle = 'rgba(255,255,255,0.5)'; c.font = '28px sans-serif'; c.fillText(['雨', '晴', '夜', '野'][i], x + 30, y + 50); c.restore(); });
         P.paper(c, P.puzzlePath(1020, 430, 500, 280, [-1, 1, -1, 1]), '#e8d7b8', { shadow: 16, dy: 10 });
       });
-      layer(1, c => group(c, lt, 940, 250));
+      layer(1, c => { drawActor(c, 'whale', 740, 940, 300, { seq: [{ state: 'handoff', dur: 1.6 }, { state: 'idle' }] }, lt);
+        drawActor(c, 'kimi', 1150, 940, 295, {}, lt, true); });
     },
     S06(lt, dur) { // 发呆：雨站长椅伞
       setCam(lt, dur, 0.02, 0, 0);
       layer(0, c => { c.fillStyle = '#6b7686'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#525d6e', 4, { blur: 2 }); P.cloud(c, 300, 130, 2, '#7d8a9c', { blur: 2 }); });
       layer(0.6, c => { P.hill(c, 820, 12, '#5b6675', 6); P.lampPost(c, 1500, 860, 0.8); });
       layer(0.9, c => { P.bench(c, 640, 800, 1.1); P.umbrella(c, 980, 560, 1.2, '#e8b04b', -0.06 + jitter(lt, 3, 0.01)); });
-      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'waiting' }] }, lt); drawActor(c, 'doubao', 1080, 800, 295, {}, lt, true); });
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'idle' }] }, lt); drawActor(c, 'doubao', 1080, 800, 295, {}, lt, true); });
       layer(1.15, c => P.rain(c, lt, 130, 0.5));
     },
-    S07(lt, dur) { // 拨开阴霾：云开光束
+    S07(lt, dur) { // 拨开阴霾：云开光束（v5 ≤2 人）
       setCam(lt, dur, 0.05, 0, -2);
       const part = smooth(0.4, 2.2, lt);
       layer(0, c => { c.fillStyle = lerpColor('#6b7686', '#cfe6f2', part); c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 700, '#7d8a9c', 4, { blur: 2, alpha: 1 - part * 0.4 }); });
       layer(0.4, c => { P.cloud(c, lerp(500, 120, part), 140, 2.4, '#8b98aa', { blur: 2 }); P.cloud(c, lerp(900, 1400, part), 120, 2.6, '#93a0b2', { blur: 2 }); if (part > 0.3) P.paper(c, P.circlePath(960, 160, 80), '#ffe9a8', { alpha: part }); });
       layer(0.8, c => { P.hill(c, 840, 14, '#8fa3b8', 6); P.bench(c, 640, 800, 1.1); P.lampPost(c, 1500, 860, 1 - part); });
-      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'waiting', dur: 1 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'doubao', 1080, 800, 295, {}, lt, true); drawActor(c, 'gemini', 460, 860, 220); drawActor(c, 'qwen', 1360, 860, 220, {}, lt, true); drawActor(c, 'zai', 1560, 860, 220, {}, lt, true); });
+      layer(1, c => { drawActor(c, 'whale', 800, 800, 285, { seq: [{ state: 'shock', dur: 1 }, { state: 'cheer', dur: 0.9 }, { state: 'idle' }] }, lt); drawActor(c, 'qwen', 1120, 800, 295, {}, lt, true); });
       layer(1.1, c => { if (part < 0.8) P.rain(c, lt, 100, 0.4 * (1 - part)); P.lightShaft(c, 960, 160, 320, 700, 0.35 * part); });
     },
     S08(lt, dur) { // 收集快乐 / 淘汰不开心（27s 分事件）
+      // v5 站位：鲸娘右缘≈592 < 罐子左沿 620，不压道具；GPT 右缘≈1159 < 箱左沿 1180。
       setCam(lt, dur, 0.04, 0, 0);
       const toss = smooth(dur * 0.5, dur * 0.62, lt);
       layer(0, c => { c.fillStyle = '#dff0d8'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1620, 160, 90), '#ffd76a'); P.cloud(c, 260, 140, 1.5, '#ffffff', { blur: 2 }); });
       layer(0.5, c => { P.hill(c, 720, 30, '#b9d6a2', 3); P.hill(c, 840, 22, '#a2c48c', 8); });
       layer(0.9, c => { P.jar(c, 620, 700, 1.2, smooth(0.3, dur * 0.5, lt), '快乐'); P.box(c, 1180, 760, 1.2, 1 - toss); });
       layer(0.95, c => { for (let i = 0; i < 10; i++) { const t0 = 0.4 + i * 0.5; const k = smooth(t0, t0 + 1.2, lt); if (k <= 0 || k >= 1) continue; const gray = i % 3 === 2; const tx = gray ? 1270 : 700, ty = gray ? 780 : 720; const x = lerp(300 + hash(i) * 1300, tx, k), y = lerp(200 + hash(i * 3) * 200, ty, k) - Math.sin(k * Math.PI) * 160; P.paper(c, P.puzzlePath(x, y, 70, 60, [1, -1, 1, -1]), gray ? '#9aa3ad' : '#ffd76a', { shadow: 8, dy: 5 }); } });
-      layer(1, c => { drawActor(c, 'whale', lerp(420, 560, smooth(0, 2, lt)), 900, 290, { seq: [{ state: 'running-right', dur: 2 }, { state: 'review', dur: 1.4 }, { state: 'idle' }], walk: { from: 420, to: 560, dur: 2 } }, lt);
+      layer(1, c => { drawActor(c, 'whale', lerp(300, 420, smooth(0, 2, lt)), 900, 300, { seq: [{ state: 'walk-right', dur: 2 }, { state: 'think', dur: 1.4 }, { state: 'cheer' }], walk: { from: 300, to: 420, dur: 2 } }, lt);
         drawActor(c, 'gpt', 1050, 900, 290, { seq: [{ state: 'review', dur: 1.6 }, { state: 'idle' }] }, lt, true);
-        ['claude', 'gemini', 'doubao', 'kimi', 'qwen', 'zai'].forEach((id, i) => drawActor(c, id, 260 + i * 280, 960, 215, {}, lt, i > 2)); });
+      });
       P.warmLight(ctx, 0.16);
     },
-    S09(lt, dur) { // 情话：屋顶纸条
+    S09(lt, dur) { // 情话：屋顶纸条（v5 轨迹抬到头顶以上，纸条下沿≤470 < 角色头顶≈487，不糊脸）
       setCam(lt, dur, 0.06, 0, 0);
       layer(0, c => { c.fillStyle = '#2f3a55'; c.fillRect(-200, -200, W + 400, H + 400); for (let i = 0; i < 60; i++) { c.fillStyle = `rgba(255,246,216,${0.3 + hash(i) * 0.6})`; c.fillRect(hash(i * 3) * W, hash(i * 7) * 420, 3, 3); } P.city(c, 760, '#232c42', 9, { blur: 2 }); });
       layer(0.7, c => { P.hill(c, 860, 8, '#3a4560', 4); P.paper(c, P.rectPath(300, 820, 1320, 40, 8), '#4a5570'); });
-      layer(1, c => { drawActor(c, 'whale', 820, 840, 340, { seq: [{ state: 'waiting', dur: 1 }, { state: 'review', dur: 1.2 }, { state: 'idle' }] }, lt); drawActor(c, 'claude', 1120, 840, 350, {}, lt, true); });
-      layer(1.05, c => { for (let i = 0; i < 5; i++) { const t0 = 0.3 + i * 0.5, k = smooth(t0, t0 + 1.6, lt); if (k <= 0) continue; const x = lerp(1080, 880, k), y = lerp(560, 420, k) - Math.sin(k * Math.PI) * 60 + jitter(lt, i, 2); P.paper(c, P.rectPath(x, y, 120, 70, 8), '#fff6d8', { shadow: 10, dy: 6, alpha: 1 - smooth(0.8, 1, k) }); } });
+      layer(1, c => { drawActor(c, 'whale', 820, 840, 340, { seq: [{ state: 'think', dur: 1 }, { state: 'cry', dur: 1.2 }, { state: 'idle' }] }, lt); drawActor(c, 'claude', 1120, 840, 350, {}, lt, true); });
+      layer(1.05, c => { for (let i = 0; i < 5; i++) { const t0 = 0.3 + i * 0.5, k = smooth(t0, t0 + 1.6, lt); if (k <= 0) continue; const x = lerp(1120, 900, k), y = lerp(400, 270, k) - Math.sin(k * Math.PI) * 40 + jitter(lt, i, 2); P.paper(c, P.rectPath(x, y, 120, 70, 8), '#fff6d8', { shadow: 10, dy: 6, alpha: 1 - smooth(0.8, 1, k) }); } });
     },
     S10(lt, dur) { // 烟花
       setCam(lt, dur, 0.04, 0, -6);
       layer(0, c => { c.fillStyle = '#232c42'; c.fillRect(-200, -200, W + 400, H + 400); P.city(c, 780, '#1a2236', 9, { blur: 2 }); });
       layer(0.5, c => { [[420, 260, 0.2, '#ff9a8a'], [960, 200, 1.1, '#ffd76a'], [1480, 280, 2.0, '#8ad0ff'], [700, 320, 2.9, '#c9a2ff'], [1240, 240, 3.6, '#9affc9']].forEach(([x, y, t0, col]) => P.firework(c, x, y, lt - t0, x, col)); });
       layer(0.8, c => { P.hill(c, 880, 8, '#3a4560', 4); P.paper(c, P.rectPath(260, 840, 1400, 36, 8), '#4a5570'); });
-      layer(1, c => group(c, lt, 860, 265));
+      layer(1, c => { drawActor(c, 'whale', 780, 880, 300, { seq: [{ state: 'cheer', dur: 1.2 }, { state: 'idle' }] }, lt);
+        drawActor(c, 'zai', 1160, 880, 295, {}, lt, true); });
     },
     S11(lt, dur) { // 一刹那：拍立得显影
       setCam(lt, dur, 0.03, 0, 0);
@@ -206,35 +217,35 @@ export async function createFilm(glCanvas, outCanvas) {
           if (dev < 1) { cc.fillStyle = `rgba(240,238,228,${1 - dev})`; cc.fillRect(0, 0, w, h); }
         });
         for (let i = 0; i < 12; i++) { const k = smooth(0.5 + i * 0.15, 2.5, lt); if (k <= 0) continue; P.paper(c, P.puzzlePath(300 + hash(i) * 1300, 100 + k * 700 + hash(i * 3) * 100, 60, 52, [1, -1, 1, -1]), i % 2 ? '#ffd76a' : '#8ad0ff', { alpha: 1 - k * 0.6, shadow: 6, dy: 4 }); } });
-      layer(1.1, c => { drawActor(c, 'whale', 420, 940, 270, { seq: [{ state: 'idle' }, { look: 0 }] }, lt); drawActor(c, 'gpt', 1500, 940, 270, { seq: [{ state: 'review', dur: 1.4 }, { state: 'idle' }] }, lt, true); });
+      layer(1.1, c => { drawActor(c, 'whale', 420, 940, 270, { seq: [{ state: 'idle' }] }, lt); drawActor(c, 'gpt', 1500, 940, 270, { seq: [{ state: 'think', dur: 1.4 }, { state: 'idle' }] }, lt, true); });
     },
     S12(lt, dur) { // 无法自拔：拼图漩涡
       setCam(lt, dur, 0.06, 0, 0);
       layer(0, c => { c.fillStyle = '#3a4560'; c.fillRect(-200, -200, W + 400, H + 400); P.lightShaft(c, 960, 0, 260, 800, 0.2); });
       layer(0.6, c => { for (let i = 0; i < 26; i++) { const a = i / 26 * Math.PI * 2 + lt * 0.5, r = 220 + hash(i) * 320 + Math.sin(lt + i) * 20; const x = 960 + Math.cos(a) * r, y = 520 + Math.sin(a) * r * 0.6; P.paper(c, P.puzzlePath(x, y, 80, 70, [1, -1, 1, -1]), i % 4 ? '#5d6b8a' : '#ffd76a', { shadow: 8, dy: 5, alpha: 0.9 }); } });
-      layer(1, c => { P.hill(c, 900, 10, '#2f3a55', 4); drawActor(c, 'whale', 960, 900, 340, { seq: [{ state: 'failed', dur: 1.4 }, { state: 'waiting' }] }, lt); });
+      layer(1, c => { P.hill(c, 900, 10, '#2f3a55', 4); drawActor(c, 'whale', 960, 900, 340, { seq: [{ state: 'cry', dur: 1.4 }, { state: 'bow' }] }, lt); });
     },
     S13(lt, dur) { // 时差：昼夜缝 + 双钟
       setCam(lt, dur, 0.02, 0, 0);
       layer(0, c => { c.fillStyle = '#cfe6f2'; c.fillRect(-200, -200, W / 2 + 200, H + 400); c.fillStyle = '#2f3a55'; c.fillRect(W / 2, -200, W / 2 + 200, H + 400); P.paper(c, P.circlePath(420, 180, 80), '#ffe9a8'); for (let i = 0; i < 40; i++) { c.fillStyle = 'rgba(255,246,216,0.7)'; c.fillRect(W / 2 + hash(i * 3) * W / 2, hash(i * 7) * 400, 3, 3); } });
       layer(0.5, c => { P.paper(c, P.puzzlePath(W / 2 - 60, 100, 120, 880, [1, -1, 1, -1]), '#e8d7b8', { shadow: 18, dy: 10 }); P.clock(c, 420, 420, 110, lt * 0.4, '#fffdf4'); P.clock(c, 1500, 420, 110, lt * 0.4 + Math.PI, '#fffdf4'); });
       layer(0.8, c => { P.hill(c, 860, 12, '#a2c48c', 3); c.save(); c.beginPath(); c.rect(W / 2, 0, W / 2, H); c.clip(); P.hill(c, 860, 12, '#3a4560', 3); c.restore(); });
-      layer(1, c => { drawActor(c, 'gpt', 620, 880, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt); drawActor(c, 'kimi', 380, 900, 265);
-        drawActor(c, 'whale', 1300, 880, 300, { seq: [{ state: 'running-left', dur: 1.2 }, { state: 'waiting' }], walk: { from: 1450, to: 1300, dur: 1.2 } }, lt); drawActor(c, 'claude', 1560, 900, 275, {}, lt, true); });
+      layer(1, c => { drawActor(c, 'gpt', 560, 880, 300, { seq: [{ state: 'idle' }, { look: 90 }] }, lt);
+        drawActor(c, 'whale', 1340, 880, 300, { seq: [{ state: 'walk-left', dur: 1.2 }, { state: 'idle' }], walk: { from: 1500, to: 1340, dur: 1.2 } }, lt); });
     },
     S14(lt, dur) { // 放下：丝带随风
       setCam(lt, dur, 0.04, 8, 0);
       layer(0, c => { c.fillStyle = '#f4c98a'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(1400, 300, 110), '#ff9a6a'); P.cloud(c, 300, 160, 1.6, '#ffe0b8', { blur: 2 }); });
       layer(0.5, c => { P.hill(c, 720, 30, '#d9a86c', 3); P.hill(c, 840, 22, '#b98a5e', 8); });
       layer(0.9, c => { P.paper(c, P.rectPath(760, 760, 20, 160, 6), '#7a5a3a'); const k = smooth(0.6, 2.8, lt); c.save(); c.strokeStyle = '#e86a5a'; c.lineWidth = 18; c.lineCap = 'round'; c.beginPath(); c.moveTo(770, 780); for (let i = 1; i <= 8; i++) { const x = 770 + i * 60 * k + Math.sin(lt * 3 + i) * 20 * k, y = 780 - i * 30 * k + Math.sin(lt * 2 + i * 0.7) * 24 * k; c.lineTo(x, y); } c.stroke(); c.restore(); });
-      layer(1, c => { drawActor(c, 'whale', 620, 900, 315, { seq: [{ state: 'failed', dur: 1.2 }, { state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'gemini', 1080, 920, 275); drawActor(c, 'doubao', 1300, 920, 275, {}, lt, true); drawActor(c, 'qwen', 1500, 920, 265, {}, lt, true); drawActor(c, 'zai', 1680, 920, 265, {}, lt, true); });
+      layer(1, c => { drawActor(c, 'whale', 700, 900, 315, { seq: [{ state: 'cry', dur: 1.2 }, { state: 'wave', dur: 0.9 }, { state: 'idle' }] }, lt); drawActor(c, 'gemini', 1150, 920, 300, {}, lt, true); });
     },
     S15(lt, dur) { // 炙热：夕照心形
       setCam(lt, dur, 0.05, 0, 0);
       layer(0, c => { c.fillStyle = '#ff9a6a'; c.fillRect(-200, -200, W + 400, H + 400); P.paper(c, P.circlePath(960, 420, 160), '#ffd76a'); P.cloud(c, 260, 180, 1.8, '#ffc9a2', { blur: 2 }); P.cloud(c, 1300, 150, 1.5, '#ffc9a2', { blur: 2 }); });
       layer(0.5, c => { for (let b = 0; b < 3; b++) P.hill(c, 680 + b * 90, 14, ['#e88a5a', '#d97a4a', '#c96a3a'][b], b + 2, { edge: '#ffe0c8' }); });
       layer(0.9, c => { const g = smooth(0.4, 1.8, lt); P.heart(c, 960, 300, 180 * g, '#ff6a5a', { shadow: 20, dy: 10 }); P.lightShaft(c, 960, 420, 300, 500, 0.25 * g); });
-      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'gpt', 820, 940, 320, { seq: [{ state: 'waving', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'whale', 1120, 940, 320, { seq: [{ state: 'idle' }, { look: 270 }] }, lt, true); });
+      layer(1, c => { P.hill(c, 930, 16, '#e9d9b8', 9); drawActor(c, 'gpt', 820, 940, 320, { seq: [{ state: 'wave', dur: 0.8 }, { state: 'idle' }] }, lt); drawActor(c, 'whale', 1120, 940, 320, { seq: [{ state: 'confident_hips', dur: 1.1 }, { state: 'idle' }] }, lt, true); });
       P.warmLight(ctx, 0.22);
     },
     S16(lt, dur) { // 爱自己：全员 framed puzzle hold，无片尾卡
@@ -258,7 +269,13 @@ export async function createFilm(glCanvas, outCanvas) {
     const shot = shotAt(t); let lt = t - shot.start; const dur = shot.end - shot.start;
     ctx.save(); ctx.setTransform(exportW / W, 0, 0, exportH / H, 0, 0);
     ctx.clearRect(0, 0, W, H);
+    frameCast = [];
     (scenes[shot.id] || scenes.S01)(lt, dur);
+    if (shot.id !== FINALE && frameCast.length > CAP) {
+      ctx.restore();
+      throw new Error(`${shot.id} 同屏 ${frameCast.length} 人 > ${CAP}：${frameCast.join(',')}`);
+    }
+    lastFrameCast = frameCast.slice();
     P.finishPaper(ctx);
     ctx.restore();
     return shot;
@@ -276,9 +293,11 @@ export async function createFilm(glCanvas, outCanvas) {
     return { shot: shot.id, t };
   }
   return {
-    duration: timeline.duration, fps: FPS, shots: SHOTS, rendererName: 'Canvas2D paper diorama (v4)',
+    duration: timeline.duration, fps: FPS, shots: SHOTS, rendererName: 'Canvas2D paper diorama (v5 · ≤2 on screen, finale excepted)',
     renderAt,
     renderSceneOnly(t) { renderScene(t); return { canvas: sceneCanvas }; },
+    castAt(t) { renderScene(t); return lastFrameCast.slice(); },
+    castPolicy: { maxOnScreen: CAP, finaleException: FINALE },
     setExportSize(w, h) { exportW = w; exportH = h; sceneCanvas.width = w; sceneCanvas.height = h; },
   };
 }

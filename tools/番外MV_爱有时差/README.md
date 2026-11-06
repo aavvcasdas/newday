@@ -9,14 +9,23 @@
 - `../../番外MV/角色图鉴.png`、`分镜总览.png`、`海报.png`、`分镜/S01..S16_*.png`、`制作说明.md`。
 - `../../番外MV/验收报告.json`：`verify.py` 生成的机器技术验收，不等于人工审看。
 
-## 角色口径（v4，2026-11-06）
+## 角色口径（v5，2026-11-06）
 
 8 位 AI 娘（含当前鲸鱼娘），**无项目配角**。**全 Q 版**；用户指出 v3“人在跳很奇怪”，v4 废弃整图 bounce/hop/sway，改为分层纸艺立体书＋真逐帧宠物动画：
 
-- **鲸鱼娘 / GPT**：`tqlearning/ai-girl-chatgpt-pets` 透明精灵图集（192×208 格，9 状态＋16 方向）。按 `pet.json` 每帧毫秒播放；整格绘制、公共脚底基线，不逐帧裁切/居中/拉伸。走路用 running-left/right 真步态，情绪用 waiting/failed/review/waving，不用 jumping 冒充动态。
+- **鲸鱼娘**：v5 改用本仓库 `tools/角色Q版库/pets/whale` 的 **16 状态 Q 版真帧图集**（AI 生成派生，用户授权 `gen_new`；192×208 格、公共脚底、按 `pet.json` 毫秒）。真多帧循环 `idle`(呼吸眨眼)/`walk-right`/`walk-left`/`wave`/`typing`，另有 point/think/shock/cry/cheer/confident_hips/bow/eat/sleep/handoff/peek。该图集**无 16 向 look 行**，分镜不得对鲸娘用 `look`。上游 pets 图集保留为 `petUpstream`，来源与许可记录不丢。
+- **GPT**：沿用 `tqlearning/ai-girl-chatgpt-pets` 上游图集（9 状态＋16 方向），按 `pet.json` 毫秒整格播放，不用 jumping 冒充动态。
 - **Claude / Gemini / Kimi / Qwen / Z.AI**：`shuaizenge/ai-girls` Q版 chibi 截帧抠图，作为**静态纸偶**；动态来自镜头、道具、光与事件，不整图跳。
 - **豆包**：上游无 Q 版，沿用 Day12 cutout 做**像素保真分段仿射重排**派生 Q（头×1.25、躯干×0.9/0.62、腿×0.82/0.5，重叠接缝）；正常比例 cutout 归档为 `doubao_normal.png`。文档明确这是派生排版，不是上游 chibi。
 - **galgame / voxel-mv**：v3 曾用于情感特写/动作镜头；v4 因“全 Q 版”口径退出正片主形象，素材链与许可记录保留在 `fetch_upstream.mjs` / `prepare_assets.mjs` / `licenses/`，不静默丢弃来源记录。
+
+### 同屏人数（v5 硬约束）
+
+用户本轮裁定 `cap2_keep_finale`：**正片每镜同屏最多 2 人，仅终帧 S16 保留全员 hold**。
+8 位 AI 娘分散到 S03/S04/S05/S06/S07/S08/S09/S10/S11/S13/S14/S15 各镜，仍全部出场。
+`data/shots.json` 的 `castPolicy` 声明上限，`src/film.js` 有**逐帧运行时探针**：
+`drawActor` 记录本帧真正画出去的角色，任一正片镜头超过 2 人**直接抛错**，不是只改声明。
+全片 1346 帧渲染完成未抛错，即每帧都过了该门禁；`verify.py` 另有 `v5_on_screen_cap_two` 交叉检查。
 
 素材许可与署名链见 `NOTICE.md` / `REFERENCES.md`。pets 美术上游未开放授权（MIT 仅文档/json），按用户指示非商用同人使用＋署名，边界见 `licenses/pets-RIGHTS.md`。
 

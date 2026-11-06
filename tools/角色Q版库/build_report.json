@@ -3,15 +3,25 @@
   "ok": true,
   "characters": {
     "whale": {
-      "states": 10,
-      "frames": 16,
+      "states": 16,
+      "frames": 27,
       "cycles": [
+        "idle",
         "walk-right",
-        "walk-left"
+        "walk-left",
+        "wave",
+        "typing"
       ],
+      "normalization": {
+        "referencePose": "idle_a",
+        "sharedScale": 0.184971,
+        "anchor": "bbox-center",
+        "standPxActual": 160,
+        "edgeClampedPoses": []
+      },
       "sheet": "pets/whale/spritesheet.png",
-      "bytes": 463516,
-      "sha256": "ca3c647ca92e1e98a95dc3f00203079c0f7db44e05684e8b8731d2e872396b07"
+      "bytes": 749625,
+      "sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180"
     },
     "doubao": {
       "skipped": true,

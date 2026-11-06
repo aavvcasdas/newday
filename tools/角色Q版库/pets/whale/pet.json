@@ -8,7 +8,7 @@
   "art_origin": "AI 生成重绘（用户授权）；非上游原画，不主张官方授权",
   "grid": {
     "columns": 8,
-    "rows": 10,
+    "rows": 16,
     "cell_width": 192,
     "cell_height": 208
   },
@@ -26,16 +26,18 @@
   "animations": [
     {
       "state": "idle",
-      "cn": "待机",
-      "kind": "hold",
+      "cn": "待机呼吸",
+      "kind": "cycle",
       "row": 0,
-      "frame_count": 1,
+      "frame_count": 2,
       "frame_durations_ms": [
-        320
+        1500,
+        260
       ],
       "loop": true,
       "source_poses": [
-        "point"
+        "idle_a",
+        "idle_b"
       ],
       "mirrored": false
     },
@@ -185,35 +187,132 @@
         "bow"
       ],
       "mirrored": false
+    },
+    {
+      "state": "wave",
+      "cn": "打招呼",
+      "kind": "cycle",
+      "row": 10,
+      "frame_count": 4,
+      "frame_durations_ms": [
+        220,
+        220,
+        220,
+        220
+      ],
+      "loop": true,
+      "source_poses": [
+        "wave_a",
+        "wave_b",
+        "wave_a",
+        "wave_b"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "typing",
+      "cn": "打字",
+      "kind": "cycle",
+      "row": 11,
+      "frame_count": 2,
+      "frame_durations_ms": [
+        170,
+        150
+      ],
+      "loop": true,
+      "source_poses": [
+        "typing_a",
+        "typing_b"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "eat",
+      "cn": "吃饭",
+      "kind": "gesture",
+      "row": 12,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        520
+      ],
+      "loop": false,
+      "source_poses": [
+        "eat"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "sleep",
+      "cn": "打瞌睡",
+      "kind": "hold",
+      "row": 13,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        900
+      ],
+      "loop": false,
+      "source_poses": [
+        "sleep"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "handoff",
+      "cn": "递拼图",
+      "kind": "gesture",
+      "row": 14,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        600
+      ],
+      "loop": false,
+      "source_poses": [
+        "handoff"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "peek",
+      "cn": "怯生生探看",
+      "kind": "expression",
+      "row": 15,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        520
+      ],
+      "loop": false,
+      "source_poses": [
+        "peek"
+      ],
+      "mirrored": false
     }
   ],
   "generated_poses_sha256": {
     "bow": "cd41c9bb2a86956d5687b8c6ba2317a238b77f8ac22b75036a0b485d6cd3d857",
     "cheer": "0a5ccdb6a55bb4b01b0a8bf07d95aa7ef10d31188a5a11b92bf8e8b16ee1417f",
     "cry": "df7fdccff438239804d3697e41bd0cc00382b1472e61fa1f4653aa6babc9faa3",
+    "eat": "45879268b13af6de0d19053af540eb37d3ef9b4cb5ca90c880d7b8c34a5294cc",
+    "handoff": "1a1d012bc837d12b514695b39aa088ef8f796b29695aeaf462167d2faa3fd53f",
     "hips": "c185be420e4509d434daf31aa7dee612e5ac24d68f3b314b8af5cc18d18222f8",
+    "idle_a": "4d7f818f1b7908741d79acb3bbf0dbec73153301fc0b82dc5897c67f3daf4a48",
+    "idle_b": "5a34b56825c47c2d410e160c6f48cbf2bd8b8fb4ef245a38f05261d93c3cc74a",
+    "peek": "3e5cf940f219721b8a90a0d4bd3d17760d6e6d3c5dabadde3fd1a21a02e872ad",
     "point": "0ae85b8e84cca40f795f5eaececcee02a3e880ab2785d205495dc6e2302090c2",
     "shock": "118512bfd6755281840c427b45a6d0d545cb49b8739263a003a17677abc6b313",
+    "sleep": "74cf0f7d20c464f4337f01152eb2c551e80988e45b1e36257dc4973bd42c9b50",
     "think": "0e91b92d607e3f81b3bf74d72cbfac09ee9ebb0ebe53e25d10d5a0a9c2b87db2",
+    "typing_a": "655882cb971600873a51c664cc34e4a6d32f0dc3f1b619dba9afa44d03619809",
+    "typing_b": "9e1a61f48aee11071c9fe96549d808918938955ea70772ec52aa038d9c96714c",
     "walk_a": "6daec5d8681a7e432d2caaf3d11c786f58fc95d7275b9cfbc9b1c7742f7914cc",
     "walk_b": "b2fc3f37ece094ee844361bfb494d11c626ce3ff678751b64b879733a8ded8f4",
-    "walk_c": "41107c02ff710f0755999f238a24463bafcec8ca9179ef0b0170501659cd669c"
+    "walk_c": "41107c02ff710f0755999f238a24463bafcec8ca9179ef0b0170501659cd669c",
+    "wave_a": "fe1746865fa0c24277a304bf1ad6aad5eae05c969dd61c96d33ba216da5ad38f",
+    "wave_b": "330cc7839197b6e8b311de678f6c08c25fdb3174c815f599e10faf673348d421"
   },
-  "pending_poses": [
-    "wave_a",
-    "wave_b",
-    "eat",
-    "typing_a",
-    "typing_b",
-    "sleep",
-    "idle_a",
-    "idle_b",
-    "handoff",
-    "peek"
-  ],
+  "pending_poses": [],
   "integrity": {
-    "spritesheet_sha256": "ca3c647ca92e1e98a95dc3f00203079c0f7db44e05684e8b8731d2e872396b07",
+    "spritesheet_sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180",
     "width": 1536,
-    "height": 2080
+    "height": 3328
   }
 }

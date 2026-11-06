@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "targetStandPx": 384,
   "primaryForm": "q-chibi-pets",
   "characters": {
@@ -135,6 +135,165 @@
         }
       },
       "pet": {
+        "file": "assets/sprites/pets/whale_q.png",
+        "preview": "assets/sprites/pets/whale_q_idle.png",
+        "source": "tools/角色Q版库 pets/whale（AI 生成派生 Q 版动作表情图集，用户授权 gen_new）",
+        "artOrigin": "ai-derived",
+        "cellW": 192,
+        "cellH": 208,
+        "columns": 8,
+        "rows": 16,
+        "footY": 200,
+        "standPx": 160,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 2,
+            "durationsMs": [
+              1500,
+              260
+            ],
+            "loop": true
+          },
+          "walk-right": {
+            "row": 1,
+            "frames": 4,
+            "durationsMs": [
+              140,
+              120,
+              140,
+              120
+            ],
+            "loop": true
+          },
+          "walk-left": {
+            "row": 2,
+            "frames": 4,
+            "durationsMs": [
+              140,
+              120,
+              140,
+              120
+            ],
+            "loop": true
+          },
+          "point": {
+            "row": 3,
+            "frames": 1,
+            "durationsMs": [
+              420
+            ],
+            "loop": false
+          },
+          "think": {
+            "row": 4,
+            "frames": 1,
+            "durationsMs": [
+              520
+            ],
+            "loop": false
+          },
+          "shock": {
+            "row": 5,
+            "frames": 1,
+            "durationsMs": [
+              360
+            ],
+            "loop": false
+          },
+          "cry": {
+            "row": 6,
+            "frames": 1,
+            "durationsMs": [
+              520
+            ],
+            "loop": false
+          },
+          "cheer": {
+            "row": 7,
+            "frames": 1,
+            "durationsMs": [
+              420
+            ],
+            "loop": false
+          },
+          "confident_hips": {
+            "row": 8,
+            "frames": 1,
+            "durationsMs": [
+              480
+            ],
+            "loop": false
+          },
+          "bow": {
+            "row": 9,
+            "frames": 1,
+            "durationsMs": [
+              560
+            ],
+            "loop": false
+          },
+          "wave": {
+            "row": 10,
+            "frames": 4,
+            "durationsMs": [
+              220,
+              220,
+              220,
+              220
+            ],
+            "loop": true
+          },
+          "typing": {
+            "row": 11,
+            "frames": 2,
+            "durationsMs": [
+              170,
+              150
+            ],
+            "loop": true
+          },
+          "eat": {
+            "row": 12,
+            "frames": 1,
+            "durationsMs": [
+              520
+            ],
+            "loop": false
+          },
+          "sleep": {
+            "row": 13,
+            "frames": 1,
+            "durationsMs": [
+              900
+            ],
+            "loop": false
+          },
+          "handoff": {
+            "row": 14,
+            "frames": 1,
+            "durationsMs": [
+              600
+            ],
+            "loop": false
+          },
+          "peek": {
+            "row": 15,
+            "frames": 1,
+            "durationsMs": [
+              520
+            ],
+            "loop": false
+          }
+        },
+        "directions": [],
+        "integrity": {
+          "spritesheet_sha256": "9c99fb30739feb309795fc0c98b79727405ef111adffa30cadef806e09045180",
+          "width": 1536,
+          "height": 3328
+        }
+      },
+      "petUpstream": {
         "file": "assets/sprites/pets/whale.png",
         "preview": "assets/sprites/pets/whale_idle.png",
         "source": "tqlearning/ai-girl-chatgpt-pets assets/deepseek-whale",

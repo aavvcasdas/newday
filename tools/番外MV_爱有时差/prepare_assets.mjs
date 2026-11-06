@@ -38,7 +38,7 @@ const CHIBI_SOURCES = {
   qwen: 'characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png',
   glm: 'characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png',
 };
-const manifest = { version: 4, targetStandPx: TARGET, primaryForm: 'q-chibi-pets', characters: {} };
+const manifest = { version: 5, targetStandPx: TARGET, primaryForm: 'q-chibi-pets', characters: {} };
 const cutoutRecords = [];
 
 // Alpha-only white-background cutout. Flood-fill from the image border through
@@ -192,6 +192,42 @@ for (const [key, petId] of [['whale', 'deepseek-whale'], ['gpt', 'gpt-dragon']])
   };
   manifest.characters[key].preview = idleFile;
   console.log('pet atlas', key, pj.animations.length, 'states', pj.look_directions.samples.length, 'looks');
+}
+
+// v5: the day-series Q library atlas becomes whale's primary MV form.
+// Same cell geometry as upstream (192x208 / footY 200 / standPx 160), so playback
+// rules are identical: whole cells, pet.json毫秒, no per-frame crop/recenter/stretch.
+// Upstream atlas metadata is retained as petUpstream — provenance is not dropped.
+{
+  const libDir = path.join(ROOT, 'tools/角色Q版库/pets/whale');
+  const pj = JSON.parse(fs.readFileSync(path.join(libDir, 'pet.json'), 'utf8'));
+  const file = 'assets/sprites/pets/whale_q.png';
+  fs.copyFileSync(path.join(libDir, 'spritesheet.png'), path.join(HERE, file));
+  const idleFile = 'assets/sprites/pets/whale_q_idle.png';
+  const sheetImg = await loadImage(fs.readFileSync(path.join(HERE, file)));
+  const idleRow = pj.animations.find(a => a.state === 'idle').row;
+  const cell = createCanvas(pj.grid.cell_width, pj.grid.cell_height);
+  cell.getContext('2d').drawImage(sheetImg, 0, idleRow * pj.grid.cell_height,
+    pj.grid.cell_width, pj.grid.cell_height, 0, 0, pj.grid.cell_width, pj.grid.cell_height);
+  fs.writeFileSync(path.join(HERE, idleFile), cell.toBuffer('image/png'));
+  const w = manifest.characters.whale;
+  w.petUpstream = w.pet;
+  w.pet = {
+    file, preview: idleFile,
+    source: 'tools/角色Q版库 pets/whale（AI 生成派生 Q 版动作表情图集，用户授权 gen_new）',
+    artOrigin: 'ai-derived',
+    cellW: pj.grid.cell_width, cellH: pj.grid.cell_height,
+    columns: pj.grid.columns, rows: pj.grid.rows,
+    footY: pj.anchor.foot_y, standPx: pj.anchor.stand_px,
+    animations: Object.fromEntries(pj.animations.map(a => [a.state, {
+      row: a.row, frames: a.frame_count, durationsMs: a.frame_durations_ms, loop: a.loop,
+    }])),
+    // 本图集没有上游的 16 向 look 行；分镜不得对鲸娘使用 look。
+    directions: [],
+    integrity: pj.integrity,
+  };
+  w.preview = idleFile;
+  console.log('Q library atlas whale', pj.animations.length, 'states (upstream kept as petUpstream)');
 }
 
 // Whale galgame expression inserts (JAdpp/dsh-whale-galgame, CC BY-NC-SA 4.0 chain).

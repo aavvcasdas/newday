@@ -81,18 +81,36 @@ function alphaBox(canvas) {
   return { x0, y0, x1, y1, w: x1 - x0 + 1, h: y1 - y0 + 1 };
 }
 
-/** 一次性归一化到公共格：脚底对齐 FOOT、可见身高 STAND、水平居中。 */
-function normalize(canvas, mirror = false) {
-  const box = alphaBox(canvas);
-  const k = STAND / box.h;
+/** 水平锚点＝可见 bbox 中心。
+ *  实测（20 姿势）：bbox 中心 0 次边缘钳制，帧间漂移 idle 2.0px / walk 1.2px / typing 0.0px；
+ *  脚底重心锚点反而在 walk_a/b/c＋sleep 上钳制 4 次（迈步时脚底重心横移会把身体推着走）。
+ *  故按实测选 bbox 中心，不用脚底重心。 */
+function anchorX(box) { return box.x0 + box.w / 2; }
+
+/** 全角色共用一套缩放：以基准站姿定标，其余姿势沿用同一 k。
+ *  这样 idle/wave/typing 多帧之间不会忽大忽小，坐姿也如实更矮。 */
+function sharedScale(boxes, refPose) {
+  const ref = boxes.get(refPose);
+  if (!ref) throw new Error(`基准姿势 ${refPose} 不存在`);
+  let k = STAND / ref.h;
+  for (const [pose, b] of boxes) {
+    k = Math.min(k, (CW - 8) / b.w, (FOOT - 4) / b.h);
+    if (!Number.isFinite(k) || k <= 0) throw new Error(`${pose} 尺寸异常`);
+  }
+  return k;
+}
+
+/** 一次性归一化到公共格：共用缩放 k、脚底对齐 FOOT、脚底重心对齐格中心。 */
+function normalize(canvas, box, k, mirror = false) {
   const dw = box.w * k, dh = box.h * k;
-  if (dw > CW) throw new Error(`姿势过宽 ${dw.toFixed(1)}>${CW}：请重生成更紧凑构图`);
+  const dx = CW / 2 - (anchorX(box) - box.x0) * k;
+  const clamped = Math.min(Math.max(dx, 2), CW - 2 - dw);
   const cell = createCanvas(CW, CH);
   const ctx = cell.getContext('2d');
   ctx.imageSmoothingQuality = 'high';
   if (mirror) { ctx.translate(CW, 0); ctx.scale(-1, 1); }
-  ctx.drawImage(canvas, box.x0, box.y0, box.w, box.h, (CW - dw) / 2, FOOT - dh, dw, dh);
-  return cell;
+  ctx.drawImage(canvas, box.x0, box.y0, box.w, box.h, clamped, FOOT - dh, dw, dh);
+  return { cell, shifted: Math.abs(clamped - dx) > 0.5 };
 }
 
 const report = { schema: 'newday-q-pets/build@1', ok: true, characters: {}, errors: [] };
@@ -106,17 +124,29 @@ for (const [id, ch] of Object.entries(cast.characters)) {
     console.log('skip', id, '(no generated frames yet)');
     continue;
   }
+  // 先把本角色所有姿势抠好量好，再定一个共用缩放，最后逐格写入。
   // 每个姿势只切一次；mirror 状态复用同一源姿势的镜像格。
-  const poseCache = new Map();
-  const loadPose = async (pose, mirror) => {
-    const key = `${pose}${mirror ? ':m' : ''}`;
-    if (poseCache.has(key)) return poseCache.get(key);
+  const raw = new Map(), boxes = new Map();
+  for (const pose of ch.poses) {
     const file = path.join(genDir, `${pose}.png`);
     if (!fs.existsSync(file)) throw new Error(`${id}/${pose} 缺生成图 ${file}`);
     const img = await loadImage(fs.readFileSync(file));
     const c = createCanvas(img.width, img.height);
     c.getContext('2d').drawImage(img, 0, 0);
-    const cell = normalize(cutWhite(c), mirror);
+    const cut = cutWhite(c);
+    const box = alphaBox(cut);
+    raw.set(pose, cut); boxes.set(pose, box);
+  }
+  const refPose = ch.referencePose && boxes.has(ch.referencePose) ? ch.referencePose : ch.poses[0];
+  const K = sharedScale(boxes, refPose);
+  const shiftedPoses = [];
+  const poseCache = new Map();
+  const loadPose = async (pose, mirror) => {
+    const key = `${pose}${mirror ? ':m' : ''}`;
+    if (poseCache.has(key)) return poseCache.get(key);
+    if (!raw.has(pose)) throw new Error(`${id}/${pose} 未登记在 poses`);
+    const { cell, shifted } = normalize(raw.get(pose), boxes.get(pose), K, mirror);
+    if (shifted && !shiftedPoses.includes(pose)) shiftedPoses.push(pose);
     poseCache.set(key, cell);
     return cell;
   };
@@ -171,6 +201,11 @@ for (const [id, ch] of Object.entries(cast.characters)) {
     states: animations.length,
     frames: animations.reduce((a, b) => a + b.frame_count, 0),
     cycles: animations.filter((a) => a.kind === 'cycle').map((a) => a.state),
+    normalization: {
+      referencePose: refPose, sharedScale: Number(K.toFixed(6)),
+      anchor: 'bbox-center', standPxActual: Number((boxes.get(refPose).h * K).toFixed(2)),
+      edgeClampedPoses: shiftedPoses,
+    },
     sheet: `pets/${id}/spritesheet.png`, bytes: sheetBuf.length,
     sha256: pet.integrity.spritesheet_sha256,
   };
