@@ -1,10 +1,11 @@
-// Build MV sprites from the user-specified upstream character art:
-//   xiaosia/voxel-mv        relay girls' animation frames (deepseek/claude/gemini/gpt/kimi/qwen/zai)
-//   JAdpp/dsh-whale-galgame whale-girl expression sprites (galgame inserts)
-//   shuaizenge/ai-girls     doubao fullbody (Day12 cutout of the same upstream file)
-// Voxel frames are normalized per character with upstream 身高校正 mv_scale so
-// eye-to-sole heights match; feet stay anchored at a fixed footY in every frame.
-// Galgame expressions share one union crop so switching expr never jumps.
+// Build MV sprites from the user-specified upstream character art (v3):
+//   shuaizenge/ai-girls     PRIMARY Q版小AI chibi frames (author video截帧, white-bg cutout)
+//                           + doubao fullbody (Day12 cutout of the same upstream file)
+//   JAdpp/dsh-whale-galgame whale-girl expression sprites (emotional inserts)
+//   xiaosia/voxel-mv        relay girls' animation frames, used only in directed action shots
+// Chibi cutouts are alpha-only background removal (flood-fill from the white edge);
+// character RGB is not redrawn. Voxel frames are normalized per character with upstream
+// 身高校正 mv_scale; galgame expressions share one union crop so switching expr never jumps.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -28,7 +29,66 @@ const FOOT_Y = BOX_H - PAD;
 
 const heights = JSON.parse(fs.readFileSync(path.join(UP, 'voxel-mv/characters/身高校正.json'), 'utf8')).mv_scale;
 const VOXEL_IDS = ['deepseek', 'claude', 'gemini', 'gpt', 'kimi', 'qwen', 'zai'];
-const manifest = { version: 2, targetStandPx: TARGET, characters: {} };
+const CHIBI_SOURCES = {
+  deepseek: 'characters/deepseek/chibi/zipzippipe-BV1tE9XBbErS-05s.png',
+  claude: 'characters/claude/chibi/zipzippipe-BV1tE9XBbErS-17s.png',
+  gemini: 'characters/gemini/chibi/zipzippipe-BV1tE9XBbErS-11s.png',
+  gpt: 'characters/gpt/chibi/zipzippipe-BV1tE9XBbErS-23s.png',
+  kimi: 'characters/kimi/chibi/zipzippipe-BV1tE9XBbErS-41s.png',
+  qwen: 'characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png',
+  glm: 'characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png',
+};
+const manifest = { version: 3, targetStandPx: TARGET, primaryForm: 'ai-girls-chibi', characters: {} };
+const cutoutRecords = [];
+
+// Alpha-only white-background cutout. Flood-fill from the image border through
+// near-white pixels; enclosed white clothing/hair is preserved. RGB is untouched.
+async function buildChibi(key, upstreamId) {
+  const rel = CHIBI_SOURCES[upstreamId];
+  const src = path.join(UP, 'ai-girls', rel);
+  const buf = fs.readFileSync(src);
+  const img = await loadImage(buf);
+  const c = createCanvas(img.width, img.height);
+  const ctx = c.getContext('2d');
+  ctx.drawImage(img, 0, 0);
+  const idat = ctx.getImageData(0, 0, img.width, img.height);
+  const d = idat.data, w = img.width, h = img.height;
+  const seen = new Uint8Array(w * h);
+  const q = new Int32Array(w * h);
+  let qs = 0, qe = 0;
+  const isBg = (i) => {
+    const r = d[i], g = d[i + 1], b = d[i + 2];
+    const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    return mx > 232 && mn > 228 && mx - mn < 30;
+  };
+  const push = (x, y) => {
+    if (x < 0 || y < 0 || x >= w || y >= h) return;
+    const p = y * w + x;
+    if (seen[p]) return;
+    const i = p * 4;
+    if (d[i + 3] < 10 || isBg(i)) { seen[p] = 1; q[qe++] = p; }
+  };
+  for (let x = 0; x < w; x++) { push(x, 0); push(x, h - 1); }
+  for (let y = 0; y < h; y++) { push(0, y); push(w - 1, y); }
+  while (qs < qe) {
+    const p = q[qs++], x = p % w, y = (p / w) | 0;
+    push(x - 1, y); push(x + 1, y); push(x, y - 1); push(x, y + 1);
+  }
+  for (let p = 0; p < w * h; p++) if (seen[p]) d[p * 4 + 3] = 0;
+  ctx.putImageData(idat, 0, 0);
+  const file = `assets/sprites/chibi/${key}.png`;
+  fs.mkdirSync(path.dirname(path.join(HERE, file)), { recursive: true });
+  const [meta] = await saveUnion([c], [file], 900, 8);
+  const crypto = await import('node:crypto');
+  const record = {
+    character: key, upstream: `shuaizenge/ai-girls@${rel}`,
+    sourceSha256: crypto.createHash('sha256').update(buf).digest('hex'),
+    method: 'alpha-only edge flood-fill of near-white background; no RGB redraw',
+    sprite: meta.file, spriteSha256: crypto.createHash('sha256').update(fs.readFileSync(path.join(HERE, file))).digest('hex'),
+  };
+  cutoutRecords.push(record);
+  return { ...meta, source: `shuaizenge/ai-girls ${rel}`, provenance: record };
+}
 
 async function buildVoxel(id) {
   const dir = path.join(UP, 'voxel-mv/characters', id);
@@ -98,13 +158,15 @@ async function saveUnion(images, files, heightPx, pad = 10) {
 for (const id of VOXEL_IDS) {
   const v = await buildVoxel(id);
   const key = id === 'deepseek' ? 'whale' : id;
+  const chibi = await buildChibi(key, id === 'zai' ? 'glm' : id);
   manifest.characters[key] = {
-    kind: key === 'whale' ? 'whale-dual' : 'voxel',
-    source: `xiaosia/voxel-mv characters/${id}`,
-    preview: v.actions.idle.frames[0],
+    kind: key === 'whale' ? 'whale-multi' : 'chibi+voxel',
+    source: `shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/${id} (action shots)`,
+    preview: chibi.file,
+    chibi,
     ...v,
   };
-  console.log('voxel', id, '→', key, Object.keys(v.actions).length, 'actions');
+  console.log('chibi+voxel', id, '→', key, Object.keys(v.actions).length, 'actions');
 }
 
 // Whale galgame expression inserts (JAdpp/dsh-whale-galgame, CC BY-NC-SA 4.0 chain).
@@ -115,7 +177,8 @@ const gmetas = await saveUnion(gimgs, gfiles, 900);
 const expressions = {};
 EXPRS.forEach((e, i) => { expressions[e] = gmetas[i]; });
 manifest.characters.whale.galgame = { source: 'JAdpp/dsh-whale-galgame assets/default/whale-*.webp', expressions };
-manifest.characters.whale.preview = expressions.cheerful.file;
+// Primary gallery form stays ai-girls chibi; galgame is reserved for emotional inserts.
+manifest.characters.whale.preview = manifest.characters.whale.chibi.file;
 console.log('galgame whale expressions:', EXPRS.length, 'union crop', gmetas[0].width + 'x' + gmetas[0].height);
 
 // Doubao: Day12 cutout of shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg.
@@ -130,6 +193,7 @@ manifest.characters.doubao = {
 console.log('doubao static sprite', dmeta.width + 'x' + dmeta.height);
 
 fs.writeFileSync(path.join(HERE, 'data/sprites.json'), JSON.stringify(manifest, null, 2) + '\n');
+fs.writeFileSync(path.join(HERE, 'data/chibi_cutouts.json'), JSON.stringify({ version: 3, records: cutoutRecords }, null, 2) + '\n');
 
 // Cast gallery: 8 AI girls, 4 × 2.
 const cast = JSON.parse(fs.readFileSync(path.join(HERE, 'data/cast.json'), 'utf8')).cast;
@@ -140,7 +204,7 @@ s.fillStyle = bg; s.fillRect(0, 0, 1920, 1080);
 s.fillStyle = '#f6ecd8'; s.font = '700 50px "Noto Sans SC"';
 s.fillText('AI娘全员 · 8 位', 64, 84);
 s.fillStyle = '#9fb2cc'; s.font = '24px "Noto Sans SC"';
-s.fillText('形象取自 shuaizenge/ai-girls · JAdpp/dsh-whale-galgame · xiaosia/voxel-mv（用户指定）', 64, 126);
+s.fillText('主形象 shuaizenge/ai-girls Q版小AI · 鲸鱼娘特写 galgame · 动作镜头 voxel-mv · 豆包 Day12 抠图', 64, 126);
 for (let i = 0; i < cast.length; i++) {
   const item = cast[i];
   const x = 64 + (i % 4) * 456, y = 160 + Math.floor(i / 4) * 448, w = 424, h = 424;

@@ -44,7 +44,7 @@
 
     <aside id="castDrawer" class="drawer" hidden>
       <div class="drawer-head"><h2>AI娘全员 · 8 位</h2><button class="icon close" data-close="castDrawer">×</button></div>
-      <p class="drawer-note">8 位 AI 娘（含鲸鱼娘），无项目配角。形象取自 shuaizenge/ai-girls、JAdpp/dsh-whale-galgame、xiaosia/voxel-mv：鲸鱼娘群像用 voxel 帧、情感特写用 galgame 表情；豆包用 ai-girls 全身抠图。</p>
+      <p class="drawer-note">8 位 AI 娘（含鲸鱼娘），无项目配角。v3 主形象为 shuaizenge/ai-girls 的 Q版 chibi 抠图；鲸鱼娘情感特写用 JAdpp/dsh-whale-galgame 差分；动作镜头用 xiaosia/voxel-mv 帧；豆包沿用 Day12 cutout。同一角色同一镜头只出现一种形象。</p>
       <div id="castGrid" class="cast-grid"></div>
       <img class="cast-sheet" src="/cast-gallery.png" alt="全员形象图鉴" />
     </aside>
@@ -55,7 +55,7 @@
         <p><strong>音源：</strong>用户提供的《把回忆拼好给你》.mp4 原速音轨，未变速、未改词、未另配音。</p>
         <p><strong>歌词：</strong>按用户本轮文本逐字锁定；第5句不补参考片里的“里”。第8句按参考片内部换词点拆成两屏。</p>
         <p><strong>对轴：</strong>参考片内嵌歌词_tile_的 6fps OCR 调查 + 人工核对，吸附到 24fps；不是逐字声学对齐。Vosk 对演唱轨失败的结果单独保留，未拿来造词时。</p>
-        <p><strong>画面方法：</strong>xiaosia/voxel-mv 的微缩体素/立牌/柔光方法与上游角色动画帧；Nyankomintsu/world-execute-me-lyric-mv 的对话消息、关键词画面与确定性逐帧方法。角色形象取自用户指定的三个仓库（豆包=ai-girls，鲸鱼娘特写=dsh-whale-galgame，其余=voxel-mv）；未复制参考仓库的歌词或音频。</p>
+        <p><strong>画面方法：</strong>自有微缩体素舞台＋上游真实角色素材；参照 Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词/确定性逐帧，以及 JohnHeibel/PDoomVideo 的整身 bounce/hop/sway、挤压拉伸、笔刷/iris/wipe/flash 转场方法（未复制其代码/素材）。v3 主形象=ai-girls Q版 chibi 抠图，鲸鱼娘情感特写=dsh-whale-galgame，动作镜头=voxel-mv，豆包=Day12 cutout；同一角色同一镜头单形象。</p>
         <p><strong>字幕：</strong>复用项目统一 Day2 加更字幕组件；不做逐字点亮。</p>
         <p><strong>边界：</strong>非官方同人 · AI 生成内容 · 剧情演绎。角色与品牌权利归原权利人；素材许可见 NOTICE。不得冒称官方合作或统一商用授权。</p>
       </div>

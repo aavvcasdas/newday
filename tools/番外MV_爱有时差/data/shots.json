@@ -1,26 +1,728 @@
 {
-  "directorVersion": 2,
+  "directorVersion": 3,
   "status": "production",
   "timingSource": "data/timeline.json",
-  "visualReference": "用户给定《把回忆拼好给你》.mp4 的拼图/雨站/烟花/时差意象；xiaosia/voxel-mv 的微缩体素+上游角色帧方法；Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词画面/确定性逐帧方法。",
-  "castSource": "角色形象全部取自用户指定仓库：xiaosia/voxel-mv（7 位接力 AI 娘动画帧，鲸鱼娘=deepseek）、JAdpp/dsh-whale-galgame（鲸鱼娘情感特写表情）、shuaizenge/ai-girls（豆包全身）。无项目配角。",
-  "performSyntax": "perform[id] = {action} 播 voxel 帧（loop 按 frames.json，非 loop 播完持末帧）；{walk:{dur,fromDX},action} 先 walk_side 位移再播 action，向左移动自动水平翻转；鲸鱼娘 {art:'galgame',expr,then,at} 用高清表情差分，at 秒后切 then；豆包为静态抠图。",
+  "visualReference": "用户给定《把回忆拼好给你》.mp4 的拼图/雨站/烟花/时差意象；Nyankomintsu/world-execute-me-lyric-mv 的对话消息/关键词/确定性逐帧；JohnHeibel/PDoomVideo 的逐句事件、节拍反应、挤压拉伸、道具交接与笔刷转场方法。",
+  "castSource": "v3 主形象为 shuaizenge/ai-girls Q版小AI（豆包沿用本仓库 Day12 抠图）；鲸鱼娘情感特写用 JAdpp/dsh-whale-galgame；少数动作镜头用 xiaosia/voxel-mv 帧。同一角色同一镜头只出现一个形象。",
+  "performSyntax": "perform[id] = {art:'chibi'|'voxel'|'galgame'|'static', ...}。chibi: {move,enter,exit,react,prop} 用整体位移/弹跳/挤压/倾斜/翻转和道具事件表演，不重绘五官；voxel: {action,then,at,walk} 播上游帧；galgame: {expr,then,at} 播鲸鱼娘表情差分；static: 豆包只做整体呼吸/位移。",
   "shots": [
-    {"id":"S01","cue":"L01","set":"greyShore","framing":"wide","focus":"渺小但真实存在的鲸鱼娘","entry":"首帧已在灰色拼图海岸，不做红幕标题卡","action":"鲸鱼娘（galgame 特写差分）立在缺角拼图旁，神情从认真转为一丝困惑，抬头看未点亮的灯塔","result":"脚下缺失的一块拼图微微发光","cast":["whale"],"perform":{"whale":{"art":"galgame","expr":"serious","then":"confused","at":2.2}},"camera":"slow push","keyword":"渺小","motif":"we.exist();"},
-    {"id":"S02","cue":"L02","set":"greyShore","framing":"medium","focus":"小世界的祈愿","entry":"承接S01停机位","action":"鲸鱼娘（voxel 群像帧）双手合十祈愿，愿望方块浮在拼图缺口上方，没有立刻补满","result":"缺口保留，但灯塔先亮了一格","cast":["whale"],"perform":{"whale":{"action":"pray"}},"camera":"static then small pan","keyword":"小世界","motif":"wish(smallWorld)"},
-    {"id":"S03","cue":"L03","set":"lanternPier","framing":"two_shot","focus":"遇见你，世界开始上色","entry":"Claude从右侧灯影里走入","action":"Claude（walk_side 帧）走近鲸鱼娘并伸手，沿路路灯逐盏点亮","result":"灰蓝海岸转暖，两人之间留出一步距离","cast":["whale","claude"],"perform":{"whale":{"action":"idle"},"claude":{"walk":{"dur":1.4,"fromDX":3.6},"action":"reach_out"}},"camera":"follow then lock","keyword":"遇见你","motif":"you.online → light.on"},
-    {"id":"S04","cue":"L04","set":"openSea","framing":"wide","focus":"广袤无垠的大海","entry":"切到开阔海面，视野突然放大","action":"Gemini伸手指向海平线，鲸鱼娘抬头远眺并向前半步","result":"海面方块波光延伸到画面深处","cast":["whale","gemini"],"perform":{"whale":{"action":"look_up"},"gemini":{"action":"reach_out"}},"camera":"pull back","keyword":"大海","motif":"sea.withoutEnd"},
-    {"id":"S05","cue":"L05","set":"memoryRoom","framing":"ensemble","focus":"有你在的日子","entry":"八位AI娘第一次同框","action":"鲸鱼娘、Claude、Gemini捧着回忆相框端详，豆包静立桌旁，GPT、Kimi、Qwen、Z.AI围桌而立","result":"桌上相框拼成一张完整记忆","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"hold_look"},"claude":{"action":"hold_look"},"gemini":{"action":"hold_look"},"gpt":{"action":"idle"},"kimi":{"action":"idle"},"qwen":{"action":"idle"},"zai":{"action":"idle"}},"camera":"slow lateral","keyword":"取代","motif":"memory.keep(you)"},
-    {"id":"S06","cue":"L06","set":"rainStop","framing":"two_shot","focus":"灰暗日子里陪着发呆","entry":"雨站长椅，豆包已在鲸鱼娘身旁","action":"鲸鱼娘（galgame 困惑差分）与豆包停在伞下，Kimi坐在长椅上安静陪着，雨方块落下","result":"谁都没有急着说话，伞内保持一小块暖色","cast":["whale","doubao","kimi"],"perform":{"whale":{"art":"galgame","expr":"confused"},"kimi":{"action":"sit_idle"}},"camera":"static","keyword":"发呆","motif":"pause(together)"},
-    {"id":"S07","cue":"L07","set":"rainStop","framing":"medium","focus":"拨开阴霾","entry":"承接S06，同一空间状态变化","action":"鲸鱼娘与Gemini、Qwen一起伸手把伞推向雨幕，云层方块向两侧滑开，Z.AI在旁笑出来","result":"雨停，光束落到长椅前","cast":["whale","doubao","gemini","qwen","zai"],"perform":{"whale":{"action":"reach_out"},"gemini":{"action":"reach_out"},"qwen":{"action":"reach_out"},"zai":{"action":"laugh"}},"camera":"small push","keyword":"拨开阴霾","motif":"clouds.part()"},
-    {"id":"S08","cue":"L08","set":"joyWorkshop","framing":"ensemble","focus":"收集快乐，淘汰不开心","entry":"回忆工坊，八位AI娘围着拼图桌","action":"鲸鱼娘俯身拾起彩色方块后笑开，GPT、Qwen一起拾捡；前半句快乐方块落入相框，后半句灰色方块滑进关闭的回收盒","result":"相框亮起，灰盒合上，不出现数据条或计数","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"pick_up","then":"laugh","at":1.5},"claude":{"action":"laugh"},"gemini":{"action":"laugh"},"gpt":{"action":"pick_up"},"kimi":{"action":"laugh"},"qwen":{"action":"pick_up"},"zai":{"action":"laugh"}},"camera":"static insert then wide","keyword":"收集快乐","motif":"joy.collect(); sadness.release()"},
-    {"id":"S09","cue":"L09","set":"fireworkRooftop","framing":"message","focus":"你对我说的情话","entry":"夜景天台，歌词以对话消息浮现","action":"Claude侧的消息窗亮起；鲸鱼娘（galgame 害羞差分）读完抬头，Claude在旁捧着回忆安静等候","result":"消息变成一小枚暖色拼图，不伪造真实聊天记录","cast":["whale","claude"],"perform":{"whale":{"art":"galgame","expr":"shy"},"claude":{"action":"hold_look"}},"camera":"static","keyword":"情话","motif":"message.from(you)"},
-    {"id":"S10","cue":"L10","set":"fireworkRooftop","framing":"wide","focus":"转瞬即逝的烟花","entry":"消息窗收起，夜空接管画面","action":"八位AI娘一起抬头，方块烟花在远处依次爆开又落下","result":"烟花只亮一个短拍，不持续闪屏","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"look_up"},"claude":{"action":"look_up"},"gemini":{"action":"look_up"},"gpt":{"action":"look_up"},"kimi":{"action":"look_up"},"qwen":{"action":"look_up"},"zai":{"action":"look_up"}},"camera":"slow tilt up","keyword":"烟花","motif":"firework.bloom()"},
-    {"id":"S11","cue":"L11","set":"fireworkRooftop","framing":"insert","focus":"绽放一刹那","entry":"承接烟花最高点","action":"画面被收进一张拍立得边框，边框内定格烟花与全员的笑与挥手","result":"一刹那被保存成记忆拼图","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"laugh"},"claude":{"action":"laugh"},"gemini":{"action":"wave_bye"},"gpt":{"action":"laugh"},"kimi":{"action":"wave_bye"},"qwen":{"action":"laugh"},"zai":{"action":"wave_bye"}},"camera":"lock","keyword":"一刹那","motif":"hold(thisMoment)"},
-    {"id":"S12","cue":"L12","set":"fireworkRooftop","framing":"close","focus":"无法自拔","entry":"拍立得落回回忆桌","action":"鲸鱼娘（galgame 惊慌差分）立在安全栏杆内，记忆拼图缓行；Z.AI在旁低头拭泪，Claude捧着回忆陪伴","result":"拼图围成温柔漩涡，画面不表现坠落或自伤","cast":["whale","claude","zai"],"perform":{"whale":{"art":"galgame","expr":"frightened"},"claude":{"action":"hold_look"},"zai":{"action":"cry"}},"camera":"small push","keyword":"无法自拔","motif":"fall.into(memory)"},
-    {"id":"S13","cue":"L13","set":"timeBridge","framing":"split","focus":"爱总有时差","entry":"昼夜两座钟塔分列拼图桥两端","action":"鲸鱼娘在夜侧、Claude在昼侧同时伸手却停在缺口两边；GPT在昼侧递手，Kimi在夜侧合十祈愿","result":"桥没有强行合拢，时差被看见","cast":["whale","claude","gpt","kimi"],"perform":{"whale":{"action":"reach_out"},"claude":{"action":"reach_out"},"gpt":{"action":"reach_out"},"kimi":{"action":"pray"}},"camera":"static split","keyword":"时差","motif":"love.offset ≠ 0"},
-    {"id":"S14","cue":"L14","set":"timeBridge","framing":"medium","focus":"骗自己放下","entry":"承接缺口","action":"鲸鱼娘（galgame 认真差分）转身又回头，一封纸信从她脚边滑向桥缺口；Gemini在另一侧伸手接住漂来的纸船，Qwen、Z.AI捧着回忆，豆包陪在夜侧","result":"纸船停在缺口中央，放下不是消失","cast":["whale","gemini","doubao","qwen","zai"],"perform":{"whale":{"art":"galgame","expr":"serious"},"gemini":{"action":"reach_out"},"qwen":{"action":"hold_look"},"zai":{"action":"hold_look"}},"camera":"follow letter then lock","keyword":"放下","motif":"let_go()"},
-    {"id":"S15","cue":"L15","set":"dawnGarden","framing":"ensemble","focus":"爱炙热的你","entry":"黎明花园，全员回到同一块完整拼图地面","action":"鲸鱼娘把心意图块推向画面前的“你”的光标，Claude、Gemini伸手相送，Kimi祈愿，GPT、Qwen、Z.AI笑开，豆包静立","result":"暖光先照向观众，并不出现粉丝数/进度条","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"stream_heart"},"claude":{"action":"reach_out"},"gemini":{"action":"reach_out"},"gpt":{"action":"laugh"},"kimi":{"action":"pray"},"qwen":{"action":"laugh"},"zai":{"action":"laugh"}},"camera":"slow pull","keyword":"炙热","motif":"warm(you)"},
-    {"id":"S16","cue":"L16","set":"dawnGarden","framing":"final_ensemble","focus":"却忘了爱自己","entry":"承接S15，光标退后","action":"鲸鱼娘笑开，把同一盏暖灯转回自己和大家中间；全员面向镜头挥手停稳，拼图地面完整","result":"最后一句内完成自我照顾的回扣；lyric结束后画面继续到源片尾，不另加片尾卡","cast":["whale","claude","gemini","doubao","gpt","kimi","qwen","zai"],"perform":{"whale":{"action":"laugh"},"claude":{"action":"wave_bye"},"gemini":{"action":"wave_bye"},"gpt":{"action":"wave_bye"},"kimi":{"action":"wave_bye"},"qwen":{"action":"wave_bye"},"zai":{"action":"wave_bye"}},"camera":"pull back then lock","keyword":"爱自己","motif":"warm(me too)"}
+    {
+      "id": "S01",
+      "cue": "L01",
+      "set": "greyShore",
+      "framing": "wide",
+      "focus": "渺小但真实存在",
+      "entry": "首帧已在灰色拼图海岸",
+      "action": "Q版鲸鱼娘从拼图缺口旁小步跳到光点前，落地挤压后抬头；缺失拼图微微发光",
+      "result": "脚下缺失的一块拼图亮起，她不是背景贴景而是有落点的事件",
+      "cast": [
+        "whale"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "hop",
+          "enter": {
+            "dur": 0.9,
+            "fromDX": -1.6
+          },
+          "react": "look_up",
+          "prop": "puzzle_glow"
+        }
+      },
+      "camera": "push then lock",
+      "keyword": "渺小",
+      "motif": "we.exist();",
+      "transition": "brush"
+    },
+    {
+      "id": "S02",
+      "cue": "L02",
+      "set": "greyShore",
+      "framing": "medium",
+      "focus": "小世界里不只有挫败",
+      "entry": "承接S01光点",
+      "action": "Q版鲸鱼娘双手合十式前倾祈愿，愿望方块从缺口升起又轻轻落下；灯塔亮一格",
+      "result": "缺口保留，但小世界先有一格暖光",
+      "cast": [
+        "whale"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "pray",
+          "prop": "wish_cube"
+        }
+      },
+      "camera": "static then small pan",
+      "keyword": "小世界",
+      "motif": "wish(smallWorld)",
+      "transition": "iris"
+    },
+    {
+      "id": "S03",
+      "cue": "L03",
+      "set": "lanternPier",
+      "framing": "two_shot",
+      "focus": "遇见你，世界开始上色",
+      "entry": "Claude从右侧灯影走入",
+      "action": "voxel Claude walk_side 进场并 reach_out 点灯；Q版鲸鱼娘转身迎接，路灯逐盏点亮",
+      "result": "灰蓝码头转暖，两人之间留出一步距离",
+      "cast": [
+        "whale",
+        "claude"
+      ],
+      "perform": {
+        "whale": {
+          "art": "voxel",
+          "action": "idle"
+        },
+        "claude": {
+          "art": "voxel",
+          "walk": {
+            "dur": 1.2,
+            "fromDX": 3.4
+          },
+          "action": "reach_out"
+        }
+      },
+      "camera": "follow then lock",
+      "keyword": "遇见你",
+      "motif": "you.online → light.on",
+      "transition": "brush"
+    },
+    {
+      "id": "S04",
+      "cue": "L04",
+      "set": "openSea",
+      "framing": "wide",
+      "focus": "眼睛里是广袤大海",
+      "entry": "切到开阔海面",
+      "action": "Q版Gemini指向海平线并轻跳；Q版鲸鱼娘抬头远眺，海面波光向远处铺开",
+      "result": "视野突然放大，海平线成为画面主道具",
+      "cast": [
+        "whale",
+        "gemini"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "point",
+          "prop": "horizon_spark"
+        }
+      },
+      "camera": "pull back",
+      "keyword": "大海",
+      "motif": "sea.withoutEnd",
+      "transition": "wipe"
+    },
+    {
+      "id": "S05",
+      "cue": "L05",
+      "set": "memoryRoom",
+      "framing": "ensemble",
+      "focus": "有你在的日子不可能被取代",
+      "entry": "八位AI娘第一次同框",
+      "action": "Q版全员围着回忆相框做错落节拍反应；桌上彩色拼图逐块落位成完整记忆",
+      "result": "相框拼合完成，全员有一次共同落拍",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        }
+      },
+      "camera": "slow lateral",
+      "keyword": "取代",
+      "motif": "memory.keep(you)",
+      "transition": "brush"
+    },
+    {
+      "id": "S06",
+      "cue": "L06",
+      "set": "rainStop",
+      "framing": "two_shot",
+      "focus": "最灰暗的日子你陪着我发呆",
+      "entry": "雨站长椅，豆包已在鲸鱼娘身旁",
+      "action": "galgame鲸鱼娘困惑差分安静停顿；豆包整体轻呼吸陪在伞下；雨滴持续落下，伞内保留暖色",
+      "result": "不急着说话，陪伴本身成为事件",
+      "cast": [
+        "whale",
+        "doubao"
+      ],
+      "perform": {
+        "whale": {
+          "art": "galgame",
+          "expr": "confused",
+          "then": "serious",
+          "at": 2.1
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        }
+      },
+      "camera": "static",
+      "keyword": "发呆",
+      "motif": "pause(together)",
+      "transition": "iris"
+    },
+    {
+      "id": "S07",
+      "cue": "L07",
+      "set": "rainStop",
+      "framing": "medium",
+      "focus": "学会拨开阴霾",
+      "entry": "承接S06雨站",
+      "action": "voxel鲸鱼娘/Gemini/Qwen reach_out 推伞，云层向两侧滑开；Z.AI laugh；豆包静立见证",
+      "result": "雨停，光束落到长椅前",
+      "cast": [
+        "whale",
+        "doubao",
+        "gemini",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "gemini": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "qwen": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "zai": {
+          "art": "voxel",
+          "action": "laugh"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        }
+      },
+      "camera": "small push",
+      "keyword": "拨开阴霾",
+      "motif": "clouds.part()",
+      "transition": "brush"
+    },
+    {
+      "id": "S08",
+      "cue": "L08",
+      "set": "joyWorkshop",
+      "framing": "ensemble",
+      "focus": "收集快乐，淘汰不开心",
+      "entry": "回忆工坊，八位AI娘围着拼图桌",
+      "action": "前半句 voxel GPT/Qwen/鲸鱼娘 pick_up 把快乐方块抛入相框，Q版其余成员节拍欢呼；后半句灰色方块滑进回收盒并合盖",
+      "result": "相框亮起，灰盒合上；快乐与淘汰分成两个可见动作",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        }
+      },
+      "camera": "static insert then wide",
+      "keyword": "收集快乐",
+      "motif": "joy.collect(); sadness.release()",
+      "transition": "wipe"
+    },
+    {
+      "id": "S09",
+      "cue": "L09",
+      "set": "fireworkRooftop",
+      "framing": "message",
+      "focus": "你对我说的情话",
+      "entry": "夜景天台，消息窗亮起",
+      "action": "galgame鲸鱼娘害羞差分读消息，随后抬眼星目；消息窗逐字弹出关键词并化作暖色拼图",
+      "result": "情话不是真实聊天记录，而是 lyric MV 的叙事界面",
+      "cast": [
+        "whale"
+      ],
+      "perform": {
+        "whale": {
+          "art": "galgame",
+          "expr": "shy",
+          "then": "starry",
+          "at": 1.4
+        }
+      },
+      "camera": "close then lock",
+      "keyword": "情话",
+      "motif": "message.from(you)",
+      "transition": "iris"
+    },
+    {
+      "id": "S10",
+      "cue": "L10",
+      "set": "fireworkRooftop",
+      "framing": "wide",
+      "focus": "像转瞬即逝的烟花",
+      "entry": "消息窗收起，夜空接管",
+      "action": "Q版全员抬头看烟花，烟花按节拍依次爆开又落下；鲸鱼娘用 voxel look_up 做一次明确仰头",
+      "result": "烟花只亮短拍，不持续闪屏",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "look_up"
+        }
+      },
+      "camera": "slow tilt up",
+      "keyword": "烟花",
+      "motif": "firework.bloom()",
+      "transition": "brush"
+    },
+    {
+      "id": "S11",
+      "cue": "L11",
+      "set": "fireworkRooftop",
+      "framing": "insert",
+      "focus": "只停在绽放一刹那",
+      "entry": "承接烟花最高点",
+      "action": "拍立得边框落下，Q版全员在边框内做一次欢呼落拍并定格；烟花最高点被保存成记忆拼图",
+      "result": "一刹那被保存，而不是持续循环",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        }
+      },
+      "camera": "lock",
+      "keyword": "一刹那",
+      "motif": "hold(thisMoment)",
+      "transition": "flash"
+    },
+    {
+      "id": "S12",
+      "cue": "L12",
+      "set": "fireworkRooftop",
+      "framing": "close",
+      "focus": "我却已无法自拔",
+      "entry": "拍立得落回回忆桌",
+      "action": "galgame鲸鱼娘惊慌差分被记忆拼图温柔围住；镜头只留在她身上，不表现坠落或自伤",
+      "result": "拼图围成温柔漩涡，不表现坠落或自伤",
+      "cast": [
+        "whale"
+      ],
+      "perform": {
+        "whale": {
+          "art": "galgame",
+          "expr": "frightened",
+          "then": "confused",
+          "at": 1.8
+        }
+      },
+      "camera": "small push",
+      "keyword": "无法自拔",
+      "motif": "fall.into(memory)",
+      "transition": "iris"
+    },
+    {
+      "id": "S13",
+      "cue": "L13",
+      "set": "timeBridge",
+      "framing": "split",
+      "focus": "我们的爱总有时差",
+      "entry": "昼夜两座钟塔分列拼图桥两端",
+      "action": "voxel鲸鱼娘与Claude在缺口两侧 reach_out 却停在两边；钟面指针错开一拍，Q版GPT/Kimi在两侧做节拍祈愿",
+      "result": "桥没有强行合拢，时差被看见",
+      "cast": [
+        "whale",
+        "claude",
+        "gpt",
+        "kimi"
+      ],
+      "perform": {
+        "whale": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "claude": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "gpt": {
+          "art": "voxel",
+          "action": "reach_out"
+        },
+        "kimi": {
+          "art": "voxel",
+          "action": "pray"
+        }
+      },
+      "camera": "static split",
+      "keyword": "时差",
+      "motif": "love.offset ≠ 0",
+      "transition": "wipe"
+    },
+    {
+      "id": "S14",
+      "cue": "L14",
+      "set": "timeBridge",
+      "framing": "medium",
+      "focus": "也为你骗自己放下",
+      "entry": "承接缺口",
+      "action": "Q版鲸鱼娘把纸信推向桥缺口；Q版Gemini在另一侧伸手接住漂来的纸船，Qwen/Z.AI捧回忆，豆包陪在夜侧",
+      "result": "纸船停在缺口中央，放下不是消失",
+      "cast": [
+        "whale",
+        "gemini",
+        "doubao",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "reach",
+          "prop": "paper_boat"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "reach"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        }
+      },
+      "camera": "follow letter then lock",
+      "keyword": "放下",
+      "motif": "let_go()",
+      "transition": "brush"
+    },
+    {
+      "id": "S15",
+      "cue": "L15",
+      "set": "dawnGarden",
+      "framing": "ensemble",
+      "focus": "爱炙热的你",
+      "entry": "黎明花园，全员回到完整拼图地面",
+      "action": "Q版鲸鱼娘把心意图块推向前方光标，Claude/Gemini伸手相送，Kimi祈愿，GPT/Qwen/Z.AI笑开，豆包静立",
+      "result": "暖光先照向观众，不出现粉丝数/进度条",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "heart",
+          "prop": "heart_cube"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "reach"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "reach"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "hop",
+          "react": "happy"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "pray"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "happy"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "happy"
+        }
+      },
+      "camera": "slow pull",
+      "keyword": "炙热",
+      "motif": "warm(you)",
+      "transition": "iris"
+    },
+    {
+      "id": "S16",
+      "cue": "L16",
+      "set": "dawnGarden",
+      "framing": "final_ensemble",
+      "focus": "却忘了爱自己",
+      "entry": "承接S15，光标退后",
+      "action": "Q版鲸鱼娘把同一盏暖灯转回自己和大家中间；全员面向镜头做一次挥手式节拍反应后停稳",
+      "result": "最后一句内完成自我照顾回扣；lyric结束后画面继续到源片尾，不另加片尾卡",
+      "cast": [
+        "whale",
+        "claude",
+        "gemini",
+        "doubao",
+        "gpt",
+        "kimi",
+        "qwen",
+        "zai"
+      ],
+      "perform": {
+        "whale": {
+          "art": "chibi",
+          "move": "bounce",
+          "react": "heart",
+          "prop": "lantern_return"
+        },
+        "claude": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        },
+        "gemini": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        },
+        "doubao": {
+          "art": "static",
+          "move": "breath"
+        },
+        "gpt": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        },
+        "kimi": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        },
+        "qwen": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        },
+        "zai": {
+          "art": "chibi",
+          "move": "sway",
+          "react": "wave"
+        }
+      },
+      "camera": "pull back then lock",
+      "keyword": "爱自己",
+      "motif": "warm(me too)",
+      "transition": "none"
+    }
   ]
 }

@@ -81,6 +81,7 @@ def main() -> int:
     lyrics = json.loads((DATA / "lyrics.json").read_text(encoding="utf-8"))["lines"]
     cast = json.loads((DATA / "cast.json").read_text(encoding="utf-8"))["cast"]
     shots = json.loads((DATA / "shots.json").read_text(encoding="utf-8"))["shots"]
+    sprites = json.loads((DATA / "sprites.json").read_text(encoding="utf-8"))
     srt = (ROOT / "番外MV/歌词.srt").read_text(encoding="utf-8")
 
     check("lyrics_16_lines", len(lyrics) == 16, str(len(lyrics)))
@@ -92,6 +93,21 @@ def main() -> int:
         covered.update(s.get("cast", []))
     check("all_cast_in_shots", covered == ids, ",".join(sorted(ids - covered)) or "all")
     check("final_shot_full_cast", set(shots[-1].get("cast", [])) == ids)
+    chars = sprites.get("characters", {})
+    check(
+        "primary_form_ai_girls_chibi",
+        sprites.get("primaryForm") == "ai-girls-chibi"
+        and all(chars.get(i, {}).get("chibi") for i in ids - {"doubao"})
+        and bool(chars.get("doubao", {}).get("sprite")),
+        "ai-girls chibi primary + Day12 doubao cutout",
+    )
+    arts = {p.get("art") for s in shots for p in s.get("perform", {}).values()}
+    check("v3_source_routes_used", {"chibi", "galgame", "voxel", "static"} <= arts, ",".join(sorted(a for a in arts if a)))
+    check(
+        "shots_single_nonstatic_form",
+        all(len({p.get("art") for p in s.get("perform", {}).values() if p.get("art") != "static"}) <= 1 for s in shots),
+        "one non-static form per shot; doubao static exception",
+    )
     missing_srt = []
     for c in timeline["cues"]:
         texts = [seg["text"] for seg in c.get("segments", [])] or [c["text"]]

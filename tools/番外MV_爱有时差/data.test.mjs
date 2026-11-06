@@ -38,20 +38,33 @@ test('all 8 upstream AI girls are directed into the MV, no supporting cast', () 
   assert.deepEqual([...ids].sort(), ['claude', 'doubao', 'gemini', 'gpt', 'kimi', 'qwen', 'whale', 'zai']);
   // every directed performance must exist in the upstream-sprite manifest
   const sprites = read('data/sprites.json').characters;
+  assert.equal(read('data/sprites.json').primaryForm, 'ai-girls-chibi');
+  let chibiShots = 0;
   for (const s of shots) {
-    for (const [id, p] of Object.entries(s.perform || {})) {
+    const arts = new Set();
+    for (const id of s.cast) {
+      const p = (s.perform || {})[id];
+      assert.ok(p, `${s.id} missing perform ${id}`);
       const ch = sprites[id];
       assert.ok(ch, `${s.id} perform ${id}`);
-      if (p.art === 'galgame') {
+      const art = p.art || (ch.kind === 'static' ? 'static' : ch.chibi ? 'chibi' : 'voxel');
+      arts.add(art);
+      if (art === 'chibi') { assert.ok(ch.chibi, `${s.id} ${id} chibi`); chibiShots++; }
+      else if (art === 'static') assert.ok(ch.sprite, `${s.id} ${id} static`);
+      else if (art === 'galgame') {
         assert.ok(ch.galgame.expressions[p.expr], `${s.id} ${id} expr ${p.expr}`);
         if (p.then) assert.ok(ch.galgame.expressions[p.then], `${s.id} ${id} then ${p.then}`);
-      } else if (ch.kind !== 'static') {
+      } else if (art === 'voxel') {
         for (const a of [p.action, p.then, p.walk ? 'walk_side' : null].filter(Boolean)) {
           assert.ok(ch.actions[a], `${s.id} ${id} action ${a}`);
         }
-      }
+      } else assert.fail(`unknown art ${art}`);
     }
+    // One non-static form per shot; doubao may remain the fixed Day12 static cutout.
+    const nonStatic = [...arts].filter(a => a !== 'static');
+    assert.ok(nonStatic.length <= 1, `${s.id} mixes forms: ${nonStatic}`);
   }
+  assert.ok(chibiShots >= 8, 'ai-girls chibi must be the primary form');
 });
 
 test('shot sets have export palettes', () => {

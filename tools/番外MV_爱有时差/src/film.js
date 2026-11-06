@@ -3,6 +3,7 @@
 // (MIT; no silhouettes, lyrics, or audio copied from that project).
 import * as THREE from 'three';
 import { createEngine, W, H } from './engine.js';
+import { drawTransition } from './overlay.js';
 import { createDay2Subtitle } from '/shared/day2_style_sub.mjs';
 import timeline from '../data/timeline.json' with { type: 'json' };
 import shotPlan from '../data/shots.json' with { type: 'json' };
@@ -24,22 +25,22 @@ const SHOTS = shotPlan.shots.map((s, i) => {
 });
 
 const CAM = [
-  { from: [10, 8.5, 16], to: [8.5, 7.4, 14], look: [0, 1.2, 0] },
-  { from: [6.5, 5.2, 11], to: [5.6, 4.8, 10], look: [-0.8, 1.3, 0.6] },
-  { from: [9, 6.2, 14], to: [6.8, 5.2, 11.5], look: [0.4, 1.3, 0.8] },
-  { from: [8, 6.5, 13], to: [11, 8.5, 18], look: [0, 1.0, -1] },
-  { from: [10, 6.8, 14], to: [8.2, 6.0, 12.5], look: [0, 1.2, 0.4] },
-  { from: [7.5, 5.4, 12], to: [7.5, 5.4, 12], look: [0.2, 1.3, 1.0] },
-  { from: [7.5, 5.4, 12], to: [6.2, 4.9, 10.5], look: [0.2, 1.5, 1.0] },
-  { from: [9.5, 6.4, 13.5], to: [8.2, 5.8, 12], look: [0, 1.2, 0.6] },
-  { from: [8, 5.8, 13], to: [8, 5.8, 13], look: [0.4, 1.4, 1.2] },
-  { from: [9, 6.4, 15], to: [8.2, 7.2, 14], look: [0, 2.4, -1] },
-  { from: [7.4, 5.4, 12], to: [7.4, 5.4, 12], look: [0.6, 1.6, 1.0] },
-  { from: [6.4, 4.8, 10.5], to: [5.6, 4.4, 9.4], look: [-0.6, 1.4, 1.2] },
-  { from: [10, 7.2, 16], to: [10, 7.2, 16], look: [0, 1.5, 0.4] },
-  { from: [8.5, 6.0, 13.5], to: [7.2, 5.4, 12], look: [-0.6, 1.2, 0.8] },
-  { from: [11, 7.6, 17], to: [12.5, 8.6, 19], look: [0.4, 1.2, 0.6] },
-  { from: [12.5, 8.6, 19], to: [14, 9.6, 21], look: [0.4, 1.2, 0.4] },
+  { from: [9, 7.2, 15], to: [6.8, 5.6, 12], look: [-0.8, 1.2, 0.8] },
+  { from: [5.2, 4.2, 9.5], to: [4.6, 3.9, 8.8], look: [-1.1, 1.3, 1.0] },
+  { from: [7.5, 5.0, 11.5], to: [5.8, 4.4, 10], look: [0, 1.2, 0.9] },
+  { from: [6.5, 5.0, 11], to: [10, 7.5, 17], look: [0, 1.0, -1] },
+  { from: [0, 6.5, 17], to: [1.5, 6.0, 15.5], look: [0, 1.2, 1.0] },
+  { from: [3.8, 3.2, 8], to: [3.8, 3.2, 8], look: [0, 1.3, 1.9] },
+  { from: [6.0, 4.5, 10.5], to: [4.8, 4.0, 9.2], look: [0.8, 1.4, 1.2] },
+  { from: [0, 6.2, 16.5], to: [1.2, 5.8, 15], look: [0, 1.2, 1.0] },
+  { from: [-0.5, 2.6, 6.5], to: [-1.2, 2.4, 5.8], look: [-2.4, 1.4, 1.3] },
+  { from: [0, 6.8, 17.5], to: [0, 7.6, 16.5], look: [0, 2.6, 0] },
+  { from: [0, 6.0, 15.5], to: [0, 6.0, 15.5], look: [0, 1.5, 1.0] },
+  { from: [-0.8, 2.5, 6.2], to: [-1.4, 2.3, 5.6], look: [-2.4, 1.4, 1.3] },
+  { from: [8.5, 6.0, 14], to: [8.5, 6.0, 14], look: [0, 1.5, 0.8] },
+  { from: [6.0, 4.8, 11], to: [4.8, 4.2, 9.6], look: [-0.5, 1.2, 0.8] },
+  { from: [0, 6.8, 17.5], to: [1.5, 7.4, 19], look: [0, 1.2, 1.0] },
+  { from: [0, 7.4, 19], to: [0, 8.0, 20.5], look: [0, 1.2, 1.0] },
 ];
 
 export async function createFilm(glCanvas, outCanvas) {
@@ -61,8 +62,10 @@ export async function createFilm(glCanvas, outCanvas) {
     measureCtx: ctx,
   });
 
-  // Upstream character art (user-directed sources, see NOTICE.md):
-  //   voxel-mv relay-girl frames / galgame whale expressions / ai-girls doubao cutout.
+  // Upstream character art (user-directed sources, see NOTICE.md), v3:
+  //   ai-girls Q版 chibi cutouts are the primary form; galgame whale expressions
+  //   are emotional inserts; voxel-mv frames appear only in directed action shots;
+  //   doubao remains the Day12 static cutout. One form per character per shot.
   const loader = new THREE.TextureLoader();
   async function loadTex(file) {
     const tex = await loader.loadAsync('/' + file);
@@ -72,8 +75,7 @@ export async function createFilm(glCanvas, outCanvas) {
     tex.anisotropy = 4;
     return tex;
   }
-  // Only preload actions/expressions actually directed in the shot plan.
-  const needed = {};
+  const neededVoxel = {};
   const neededExpr = new Set();
   for (const s of shotPlan.shots) {
     for (const [id, p] of Object.entries(s.perform || {})) {
@@ -82,27 +84,28 @@ export async function createFilm(glCanvas, outCanvas) {
       if (p.art === 'galgame') {
         neededExpr.add(p.expr);
         if (p.then) neededExpr.add(p.then);
-      } else if (ch.kind !== 'static') {
-        (needed[id] ||= new Set()).add(p.action || 'idle');
-        if (p.then) needed[id].add(p.then);
-        if (p.walk) needed[id].add('walk_side');
+      } else if (p.art === 'voxel') {
+        (neededVoxel[id] ||= new Set()).add(p.action || 'idle');
+        if (p.then) neededVoxel[id].add(p.then);
+        if (p.walk) neededVoxel[id].add('walk_side');
       }
     }
   }
   const anims = {};   // id -> action -> {fps, loop, texs[]}
   const exprs = {};   // galgame whale expression -> {tex, meta}
   const statics = {}; // id -> {tex, meta}
+  const chibis = {};  // id -> {tex, meta}
   await Promise.all(Object.entries(sprites.characters).map(async ([id, ch]) => {
-    if (ch.kind === 'static') {
-      statics[id] = { tex: await loadTex(ch.sprite.file), meta: ch.sprite };
-      return;
-    }
-    anims[id] = {};
-    const acts = new Set([...(needed[id] || []), 'idle']);
-    for (const action of acts) {
-      const a = ch.actions[action];
-      if (!a) throw new Error(`missing action ${id}/${action}`);
-      anims[id][action] = { fps: a.fps, loop: a.loop, texs: await Promise.all(a.frames.map(loadTex)) };
+    if (ch.chibi) chibis[id] = { tex: await loadTex(ch.chibi.file), meta: ch.chibi };
+    if (ch.kind === 'static' || ch.sprite) statics[id] = { tex: await loadTex(ch.sprite.file), meta: ch.sprite };
+    if (ch.actions && neededVoxel[id]) {
+      anims[id] = {};
+      const acts = new Set([...neededVoxel[id], 'idle']);
+      for (const action of acts) {
+        const a = ch.actions[action];
+        if (!a) throw new Error(`missing action ${id}/${action}`);
+        anims[id][action] = { fps: a.fps, loop: a.loop, texs: await Promise.all(a.frames.map(loadTex)) };
+      }
     }
     if (ch.galgame) {
       for (const e of neededExpr) {
@@ -148,16 +151,19 @@ export async function createFilm(glCanvas, outCanvas) {
     return null;
   }
 
-  // Pick the texture + normalized sprite meta for an actor at local shot time.
+  // Pick one texture + normalized sprite meta for an actor at local shot time.
+  // v3 never mixes two forms of the same character in one shot.
   function spriteFor(id, shot, lt) {
     const ch = sprites.characters[id];
     const perf = (shot.perform || {})[id] || {};
-    if (perf.art === 'galgame') {
+    const art = perf.art || (ch.kind === 'static' ? 'static' : ch.chibi ? 'chibi' : 'voxel');
+    if (art === 'galgame') {
       let e = perf.expr;
       if (perf.then && lt >= perf.at) e = perf.then;
-      return { tex: exprs[e].tex, meta: exprs[e].meta, flip: false, dx: 0 };
+      return { tex: exprs[e].tex, meta: exprs[e].meta, flip: false, dx: 0, art };
     }
-    if (ch.kind === 'static') return { tex: statics[id].tex, meta: statics[id].meta, flip: false, dx: 0 };
+    if (art === 'static') return { tex: statics[id].tex, meta: statics[id].meta, flip: false, dx: 0, art };
+    if (art === 'chibi') return { tex: chibis[id].tex, meta: chibis[id].meta, flip: false, dx: 0, art };
     let aName = perf.action || 'idle';
     let localT = lt, flip = false, dx = 0;
     if (perf.walk && lt < perf.walk.dur) {
@@ -172,7 +178,7 @@ export async function createFilm(glCanvas, outCanvas) {
     const n = anim.texs.length;
     let fi = Math.floor(localT * anim.fps);
     fi = anim.loop ? ((fi % n) + n) % n : Math.max(0, Math.min(fi, n - 1));
-    return { tex: anim.texs[fi], meta: ch, flip, dx };
+    return { tex: anim.texs[fi], meta: ch, flip, dx, art };
   }
 
   function updateActors(shot, t, energy) {
@@ -183,20 +189,56 @@ export async function createFilm(glCanvas, outCanvas) {
       const visible = shot.cast.includes(id);
       a.group.visible = visible;
       if (!visible) continue;
-      const [bx, bz, h, yOff = 0] = place[id] || [0, 0, 2.2];
+      const [bx0, bz0, h, yOff = 0] = place[id] || [0, 0, 2.2];
+      // Emotional close-ups step in front of the rooftop bench so the skirt/feet
+      // are not hidden by the seat; ensemble shots keep the original blocking.
+      const close = (shot.framing === 'close' || shot.framing === 'message') && id === 'whale';
+      const bx = bx0 + (close ? -0.4 : 0), bz = bz0 + (close ? 1.0 : 0);
       const sp = spriteFor(id, shot, lt);
-      const x = bx + sp.dx, z = bz;
-      let tilt = 0;
-      // S13: the two leads lean toward the gap they cannot close.
-      if (shot.index === 12 && id === 'whale') tilt = 0.05 * smooth(lt / 0.8);
-      if (shot.index === 12 && id === 'claude') tilt = -0.05 * smooth(lt / 0.8);
-      // S16: gentle collective sway while the final frame holds.
-      if (shot.index === 15) tilt = Math.sin(lt * 0.8 + h) * 0.012;
-      const still = sprites.characters[id].kind === 'static' || (shot.perform || {})[id]?.art === 'galgame';
-      const breath = still ? Math.sin(t * 1.3 + h) * 0.01 : 0;
-      a.group.position.set(x, breath + yOff, z);
+      const perf = (shot.perform || {})[id] || {};
+      let dx = sp.dx, dy = 0, tilt = 0, sx = 1, sy = 1;
+      const seed = [...id].reduce((s, c) => s + c.charCodeAt(0), 0) * 0.37;
+      const pulse = onsetPulse(t);
+      if (sp.art === 'chibi') {
+        // PDoom-inspired whole-body performance: beat bounce, hop, squash/stretch,
+        // anticipation/lean. No facial redraw, lip-sync or fake head turn.
+        const move = perf.move || 'sway';
+        if (move === 'bounce') {
+          dy = pulse * 0.16; sy = 1 - pulse * 0.07; sx = 1 + pulse * 0.06;
+          tilt = Math.sin(t * 2 + seed) * 0.02;
+        } else if (move === 'hop') {
+          const hp = Math.max(0, Math.sin(lt * 3.0 + seed));
+          dy = hp * 0.22; sy = 1 - hp * 0.05; sx = 1 + hp * 0.04;
+          tilt = Math.sin(lt * 3 + seed) * 0.03;
+        } else {
+          tilt = Math.sin(t * 1.4 + seed) * 0.05;
+          dx += Math.sin(t * 0.9 + seed) * 0.05;
+          dy = Math.abs(Math.sin(t * 1.4 + seed)) * 0.03;
+        }
+        if (perf.enter && lt < perf.enter.dur) {
+          const k = smooth(lt / perf.enter.dur);
+          dx += perf.enter.fromDX * (1 - k);
+          dy += Math.sin(Math.PI * k) * 0.16;
+        }
+        const react = perf.react;
+        if (react === 'look_up') tilt -= 0.06 * smooth(lt / 0.6);
+        if (react === 'pray') tilt += 0.04 * smooth(lt / 0.6);
+        if (react === 'happy') dy += pulse * 0.08;
+        if (react === 'wave') tilt += Math.sin(lt * 6 + seed) * 0.06 * smooth(lt / 0.4);
+        if (react === 'reach') tilt += (id === 'gemini' ? -0.05 : 0.05) * smooth(lt / 0.6);
+        if (react === 'sad') { tilt += 0.04; dy -= 0.02; }
+        if (react === 'heart') { dy += pulse * 0.1; sx = 1 + pulse * 0.04; }
+      } else if (sp.art === 'static' || sp.art === 'galgame') {
+        dy = Math.sin(t * 1.3 + h) * 0.01;
+      } else {
+        // S13: the two leads lean toward the gap they cannot close.
+        if (shot.index === 12 && id === 'whale') tilt = 0.05 * smooth(lt / 0.8);
+        if (shot.index === 12 && id === 'claude') tilt = -0.05 * smooth(lt / 0.8);
+      }
+      const x = bx + dx, z = bz;
+      a.group.position.set(x, dy + yOff, z);
       a.group.rotation.z = tilt;
-      a.group.scale.set(1, 1, 1);
+      a.group.scale.set(sx, sy, 1);
       // yaw-only billboard keeps feet on the ground plane
       a.group.rotation.y = Math.atan2(engine.camera.position.x - x, engine.camera.position.z - z);
       const m = sp.meta;
@@ -207,7 +249,8 @@ export async function createFilm(glCanvas, outCanvas) {
       a.plane.material.needsUpdate = true;
       a.plane.scale.set(sp.flip ? -worldW : worldW, worldH, 1);
       a.plane.position.y = worldH * (m.footY / pxH - 0.5);
-      a.shadow.scale.set(h * 0.55, h * 0.18, 1);
+      a.shadow.scale.set(h * 0.55 * (1 - dy * 0.4), h * 0.18 * (1 - dy * 0.4), 1);
+      a.shadow.material.opacity = Math.max(0.08, 0.2 - dy * 0.25);
     }
   }
 
@@ -261,7 +304,7 @@ export async function createFilm(glCanvas, outCanvas) {
     ctx.globalAlpha = a;
     const message = shot.framing === 'message';
     if (message) {
-      const x = 1120, y = 170, w = 660, h = 280;
+      const x = 104, y = 170, w = 660, h = 280;
       ctx.fillStyle = 'rgba(18,24,42,0.82)';
       ctx.strokeStyle = 'rgba(246,236,216,0.28)';
       ctx.lineWidth = 2;
@@ -369,6 +412,7 @@ export async function createFilm(glCanvas, outCanvas) {
     drawBackdrop(shot, t);
     ctx.drawImage(engine.renderer.domElement, 0, 0);
     drawPost(shot);
+    drawTransition(ctx, shot, t, W, H);
     drawPolaroid(shot, t);
     drawKeyword(shot, t);
     drawSubtitle(t);

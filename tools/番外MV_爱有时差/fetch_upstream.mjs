@@ -35,6 +35,16 @@ const VOXEL = {
 };
 const FRAME_COUNT = { walk_side: 8, run_side: 8 };
 const GALGAME_WHALE = ['cheerful', 'shy', 'serious', 'confused', 'angry', 'frightened', 'exasperated', 'starry'];
+// v3 primary form: ai-girls author-video chibi frames (Q版小AI), not voxel standees.
+const AI_GIRLS_CHIBI = {
+  deepseek: 'characters/deepseek/chibi/zipzippipe-BV1tE9XBbErS-05s.png',
+  claude: 'characters/claude/chibi/zipzippipe-BV1tE9XBbErS-17s.png',
+  gemini: 'characters/gemini/chibi/zipzippipe-BV1tE9XBbErS-11s.png',
+  gpt: 'characters/gpt/chibi/zipzippipe-BV1tE9XBbErS-23s.png',
+  kimi: 'characters/kimi/chibi/zipzippipe-BV1tE9XBbErS-41s.png',
+  qwen: 'characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png',
+  glm: 'characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png',
+};
 
 function wantedFiles() {
   const files = [];
@@ -52,6 +62,8 @@ function wantedFiles() {
   files.push(['galgame', 'assets/default/README.md'], ['galgame', 'NOTICE.md'], ['galgame', 'THIRD_PARTY_LICENSES.md']);
   files.push(['galgame', 'assets/default/licenses/dsh-deep-whale-LICENSE.txt'], ['galgame', 'assets/default/licenses/dsh-deep-whale-NOTICE.txt']);
   files.push(['ai-girls', 'characters/doubao/generated/doubao-fullbody.jpg'], ['ai-girls', 'characters/doubao/README.md'], ['ai-girls', 'NOTICE.md']);
+  for (const p of Object.values(AI_GIRLS_CHIBI)) files.push(['ai-girls', p]);
+  files.push(['ai-girls', 'README.md'], ['ai-girls', 'catalog.json'], ['ai-girls', 'sources/source-records.json']);
   return files;
 }
 

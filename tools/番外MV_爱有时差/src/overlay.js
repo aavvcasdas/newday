@@ -36,7 +36,7 @@ export function drawKeyword(ctx, shot, t, W, H) {
   ctx.globalAlpha = a;
   const message = shot.framing === 'message';
   if (message) {
-    const x = 1120, y = 170, w = 660, h = 280;
+    const x = 104, y = 170, w = 660, h = 280;
     ctx.fillStyle = 'rgba(18,24,42,0.82)';
     ctx.strokeStyle = 'rgba(246,236,216,0.28)';
     ctx.lineWidth = 2;
@@ -110,5 +110,55 @@ export function drawBadge(ctx, W, H) {
   ctx.fillStyle = 'rgba(246,236,216,0.62)';
   ctx.font = '20px "Noto Sans SC"';
   ctx.fillText('番外 · 把回忆拼好给你', 36, 42);
+  ctx.restore();
+}
+
+// Short deterministic shot transitions. Method reference: PDoomVideo brush wipes /
+// iris / flash and world-execute-me-lyric-mv scene plates; no reference code copied.
+export function drawTransition(ctx, shot, t, W, H) {
+  const kind = shot.transition || 'none';
+  if (kind === 'none' || shot.index === 0) return;
+  const lt = t - shot.start;
+  const D = 0.32;
+  if (lt < 0 || lt > D) return;
+  const p = clamp(lt / D);
+  const e = 1 - Math.pow(1 - p, 3);
+  ctx.save();
+  if (kind === 'flash') {
+    ctx.fillStyle = `rgba(246,236,216,${0.85 * (1 - e)})`;
+    ctx.fillRect(0, 0, W, H);
+  } else if (kind === 'iris') {
+    const r = e * Math.hypot(W, H) * 0.62 + 1;
+    ctx.fillStyle = 'rgba(16,22,38,0.96)';
+    ctx.beginPath();
+    ctx.rect(0, 0, W, H);
+    ctx.arc(W / 2, H / 2, r, 0, Math.PI * 2, true);
+    ctx.fill('evenodd');
+  } else if (kind === 'wipe') {
+    const cols = ['#3a4058', '#5a4a63', '#2c3654'];
+    const n = 4, bw = W / n + 80;
+    for (let i = 0; i < n; i++) {
+      const x = -bw + e * (W + bw * 2) - i * 30;
+      ctx.fillStyle = cols[i % cols.length];
+      ctx.beginPath();
+      ctx.moveTo(x, 0); ctx.lineTo(x + bw, 0); ctx.lineTo(x + bw - 60, H); ctx.lineTo(x - 60, H);
+      ctx.closePath(); ctx.fill();
+    }
+  } else { // brush
+    const cols = [['#5a4a63', '#3a4058'], ['#2c3654', '#5a4a63'], ['#6a5a6a', '#2c3654']];
+    const n = 5, bh = H / n + 40;
+    for (let i = 0; i < n; i++) {
+      const y = i * (H / n) - 20;
+      const x = -W * 0.2 + e * (W * 1.4) + (hash(i * 13) - 0.5) * 80;
+      const [c1, c2] = cols[i % cols.length];
+      ctx.fillStyle = i % 2 ? c1 : c2;
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      for (let k = 0; k <= 8; k++) ctx.lineTo(x + W * 1.2 * k / 8, y + Math.sin(k + i) * 10);
+      ctx.lineTo(x + W * 1.2, y + bh);
+      for (let k = 8; k >= 0; k--) ctx.lineTo(x + W * 1.2 * k / 8, y + bh + Math.cos(k + i) * 10);
+      ctx.closePath(); ctx.fill();
+    }
+  }
   ctx.restore();
 }

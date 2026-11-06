@@ -18,6 +18,33 @@
       "source": "ai-girls",
       "repo": "shuaizenge/ai-girls",
       "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "catalog.json",
+      "blob": "3ddb37ace719340d0e84648136ab4eb143e14a73",
+      "sha256": "45dda1d7241468c850174de7516337c6252f95a628545867390816713eec04a9",
+      "bytes": 52852
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/claude/chibi/zipzippipe-BV1tE9XBbErS-17s.png",
+      "blob": "e38c3a347c8f62fa27a87d9fd4f8e6f9ef86a7db",
+      "sha256": "331eb459d81c0a2f908fccaf8365f137a77098f81f1e145cca5413a1def07c55",
+      "bytes": 1166414
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/deepseek/chibi/zipzippipe-BV1tE9XBbErS-05s.png",
+      "blob": "7a7787255b4c3f8ce73b2cd85ac6412a75c544cb",
+      "sha256": "cbcd4b58b2115b8dbc7ece8271026841928be7ac594705693357ade8e8baacef",
+      "bytes": 712701
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
       "path": "characters/doubao/generated/doubao-fullbody.jpg",
       "blob": "db2ce3b0f1dbf7e9f9943a97c5151664c86260e6",
       "sha256": "5b52f8e147abac0abc8c8f557445237090d6c22b98d1bd9ac99c5469aa03fafa",
@@ -36,10 +63,73 @@
       "source": "ai-girls",
       "repo": "shuaizenge/ai-girls",
       "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/gemini/chibi/zipzippipe-BV1tE9XBbErS-11s.png",
+      "blob": "398b705c9e7dcccbfbbc4e812932009cb2a9b8cd",
+      "sha256": "d496c4edf07b964e18cce99b007c913237c9d44d1c8088fb84ea83e1972d1364",
+      "bytes": 981649
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png",
+      "blob": "2288efd5209461c58d876e69e6a28968e2012ca5",
+      "sha256": "9088698d394f6a358be564300bb29d793c90ed328e91b51af56c453d0db3fea9",
+      "bytes": 828333
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/gpt/chibi/zipzippipe-BV1tE9XBbErS-23s.png",
+      "blob": "b4e83a671bbacbc0b8d111d46f83d85e9e43dadf",
+      "sha256": "90606f78f5c8ee76c3547c0df2999ba145cdb50bef25e7fc6a8a6c3ecc4ee4d5",
+      "bytes": 1108711
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/kimi/chibi/zipzippipe-BV1tE9XBbErS-41s.png",
+      "blob": "b22adc35ad0daf4d7535dae34ad411a29b90f141",
+      "sha256": "bc9d61f6365e97e679dda15c59b9c8d78193b19ef379f6e1efaaad743b6f84f3",
+      "bytes": 1040749
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png",
+      "blob": "bf6e1e8fc074d9bc66d4a3cf6252798744dbec74",
+      "sha256": "4f59aee4d8d4fa341a40b68f33d9593708f7eecfcb19c96ad8aa44d9bb844cb9",
+      "bytes": 997530
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
       "path": "NOTICE.md",
       "blob": "afb165da001b499a3a14da25c9faa06f23ca6a02",
       "sha256": "af6c46f69ec18fc72c7558bd98df9e20eea4f3454f56ef952a63144d385cb0a4",
       "bytes": 4420
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "README.md",
+      "blob": "b296e65965f3b6746c55c33f12ae140218d3b63e",
+      "sha256": "6dcfaf8c285a9774196bf8cafc6e757731a50d632cd37aa3888a7488dc8448a4",
+      "bytes": 8486
+    },
+    {
+      "source": "ai-girls",
+      "repo": "shuaizenge/ai-girls",
+      "commit": "dcd69f5f4f2dff1a9c0031e82deb49e0fe949c76",
+      "path": "sources/source-records.json",
+      "blob": "19fbc35005cb0322ee533d05f49828bcba90ba9a",
+      "sha256": "541ae62ba622a4fe22bdc613cf031c83024feb43fb078c5d53f2dbf60f458af6",
+      "bytes": 6186
     },
     {
       "source": "galgame",

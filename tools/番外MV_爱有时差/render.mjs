@@ -71,6 +71,7 @@ function composite(buf, f) {
   blurCtx.globalCompositeOperation = 'source-over';
   outCtx.drawImage(blurCanvas, 0, 0, W, H);
   overlay.drawVignette(outCtx, W, H);
+  overlay.drawTransition(outCtx, shot, t, W, H);
   overlay.drawPolaroid(outCtx, shot, t, W, H);
   overlay.drawKeyword(outCtx, shot, t, W, H);
   overlay.drawSubtitle(outCtx, SUB, cue, t, W, H);
@@ -130,7 +131,7 @@ try {
       const img = await loadImage(buf);
       const x = (i % cols) * cw, y = Math.floor(i / cols) * (ch + label);
       s.drawImage(img, x, y, cw, ch);
-      s.fillStyle = '#f6ecd8'; s.font = '18px sans-serif';
+      s.fillStyle = '#f6ecd8'; s.font = '18px "Noto Sans SC"';
       s.fillText(`${shots[i].id} · ${shots[i].keyword} · ${times[i].toFixed(2)}s`, x + 10, y + ch + 23);
       console.log('storyboard', shots[i].id, times[i].toFixed(2));
     }

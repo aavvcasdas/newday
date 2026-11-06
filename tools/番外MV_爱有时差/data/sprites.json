@@ -1,11 +1,28 @@
 {
-  "version": 2,
+  "version": 3,
   "targetStandPx": 384,
+  "primaryForm": "ai-girls-chibi",
   "characters": {
     "whale": {
-      "kind": "whale-dual",
-      "source": "xiaosia/voxel-mv characters/deepseek",
-      "preview": "assets/sprites/galgame/whale_cheerful.png",
+      "kind": "whale-multi",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/deepseek (action shots)",
+      "preview": "assets/sprites/chibi/whale.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/whale.png",
+        "width": 500,
+        "height": 900,
+        "footY": 894,
+        "standPx": 887,
+        "source": "shuaizenge/ai-girls characters/deepseek/chibi/zipzippipe-BV1tE9XBbErS-05s.png",
+        "provenance": {
+          "character": "whale",
+          "upstream": "shuaizenge/ai-girls@characters/deepseek/chibi/zipzippipe-BV1tE9XBbErS-05s.png",
+          "sourceSha256": "cbcd4b58b2115b8dbc7ece8271026841928be7ac594705693357ade8e8baacef",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/whale.png",
+          "spriteSha256": "fdcc4432bcea4d2652f08c9bdffe40e792f173176c698250b7e9076d9801fa7e"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -180,9 +197,25 @@
       }
     },
     "claude": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/claude",
-      "preview": "assets/sprites/voxel/claude/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/claude (action shots)",
+      "preview": "assets/sprites/chibi/claude.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/claude.png",
+        "width": 502,
+        "height": 900,
+        "footY": 894,
+        "standPx": 888,
+        "source": "shuaizenge/ai-girls characters/claude/chibi/zipzippipe-BV1tE9XBbErS-17s.png",
+        "provenance": {
+          "character": "claude",
+          "upstream": "shuaizenge/ai-girls@characters/claude/chibi/zipzippipe-BV1tE9XBbErS-17s.png",
+          "sourceSha256": "331eb459d81c0a2f908fccaf8365f137a77098f81f1e145cca5413a1def07c55",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/claude.png",
+          "spriteSha256": "a0f18d2d42e03ea1b1fbb0cad8956dda5b7d1840f1e6b2a01d1e2d2348b7ec58"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -276,9 +309,25 @@
       }
     },
     "gemini": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/gemini",
-      "preview": "assets/sprites/voxel/gemini/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/gemini (action shots)",
+      "preview": "assets/sprites/chibi/gemini.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/gemini.png",
+        "width": 564,
+        "height": 900,
+        "footY": 893,
+        "standPx": 887,
+        "source": "shuaizenge/ai-girls characters/gemini/chibi/zipzippipe-BV1tE9XBbErS-11s.png",
+        "provenance": {
+          "character": "gemini",
+          "upstream": "shuaizenge/ai-girls@characters/gemini/chibi/zipzippipe-BV1tE9XBbErS-11s.png",
+          "sourceSha256": "d496c4edf07b964e18cce99b007c913237c9d44d1c8088fb84ea83e1972d1364",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/gemini.png",
+          "spriteSha256": "03100650b006a67bd8aee159fbb0e3c5243d42f83bd1b3771770b12d4da2eceb"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -362,9 +411,25 @@
       }
     },
     "gpt": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/gpt",
-      "preview": "assets/sprites/voxel/gpt/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/gpt (action shots)",
+      "preview": "assets/sprites/chibi/gpt.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/gpt.png",
+        "width": 539,
+        "height": 900,
+        "footY": 894,
+        "standPx": 887,
+        "source": "shuaizenge/ai-girls characters/gpt/chibi/zipzippipe-BV1tE9XBbErS-23s.png",
+        "provenance": {
+          "character": "gpt",
+          "upstream": "shuaizenge/ai-girls@characters/gpt/chibi/zipzippipe-BV1tE9XBbErS-23s.png",
+          "sourceSha256": "90606f78f5c8ee76c3547c0df2999ba145cdb50bef25e7fc6a8a6c3ecc4ee4d5",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/gpt.png",
+          "spriteSha256": "c352afc0a355086a6522512e63182305bf5099982b984fad6c38eccd72fa28e7"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -458,9 +523,25 @@
       }
     },
     "kimi": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/kimi",
-      "preview": "assets/sprites/voxel/kimi/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/kimi (action shots)",
+      "preview": "assets/sprites/chibi/kimi.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/kimi.png",
+        "width": 504,
+        "height": 900,
+        "footY": 894,
+        "standPx": 889,
+        "source": "shuaizenge/ai-girls characters/kimi/chibi/zipzippipe-BV1tE9XBbErS-41s.png",
+        "provenance": {
+          "character": "kimi",
+          "upstream": "shuaizenge/ai-girls@characters/kimi/chibi/zipzippipe-BV1tE9XBbErS-41s.png",
+          "sourceSha256": "bc9d61f6365e97e679dda15c59b9c8d78193b19ef379f6e1efaaad743b6f84f3",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/kimi.png",
+          "spriteSha256": "23812745183b23c142d057eb219dedda974be15e0813a0915544a7541ad8a30e"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -554,9 +635,25 @@
       }
     },
     "qwen": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/qwen",
-      "preview": "assets/sprites/voxel/qwen/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/qwen (action shots)",
+      "preview": "assets/sprites/chibi/qwen.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/qwen.png",
+        "width": 479,
+        "height": 900,
+        "footY": 894,
+        "standPx": 888,
+        "source": "shuaizenge/ai-girls characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png",
+        "provenance": {
+          "character": "qwen",
+          "upstream": "shuaizenge/ai-girls@characters/qwen/chibi/zipzippipe-BV1tE9XBbErS-53s.png",
+          "sourceSha256": "4f59aee4d8d4fa341a40b68f33d9593708f7eecfcb19c96ad8aa44d9bb844cb9",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/qwen.png",
+          "spriteSha256": "21a79b47572d78780f9a0841a086bfa26eb70052e5f959b72e6d15580335fd47"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
@@ -650,9 +747,25 @@
       }
     },
     "zai": {
-      "kind": "voxel",
-      "source": "xiaosia/voxel-mv characters/zai",
-      "preview": "assets/sprites/voxel/zai/idle_01.png",
+      "kind": "chibi+voxel",
+      "source": "shuaizenge/ai-girls chibi (primary) + xiaosia/voxel-mv characters/zai (action shots)",
+      "preview": "assets/sprites/chibi/zai.png",
+      "chibi": {
+        "file": "assets/sprites/chibi/zai.png",
+        "width": 454,
+        "height": 900,
+        "footY": 894,
+        "standPx": 888,
+        "source": "shuaizenge/ai-girls characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png",
+        "provenance": {
+          "character": "zai",
+          "upstream": "shuaizenge/ai-girls@characters/glm/chibi/zipzippipe-BV1tE9XBbErS-35s.png",
+          "sourceSha256": "9088698d394f6a358be564300bb29d793c90ed328e91b51af56c453d0db3fea9",
+          "method": "alpha-only edge flood-fill of near-white background; no RGB redraw",
+          "sprite": "assets/sprites/chibi/zai.png",
+          "spriteSha256": "f2759f1906774831e20c2193453b7e8a6e844ef689d49865128c7ee8278266ea"
+        }
+      },
       "boxW": 576,
       "boxH": 461,
       "footY": 455,
