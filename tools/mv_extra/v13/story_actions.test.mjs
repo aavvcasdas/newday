@@ -144,3 +144,11 @@ test('memory guest eye blinks differ locally',async()=>{
   assert.notDeepEqual(a,Buffer.from(c.getImageData(x,y,w,h).data));
  }
 });
+
+test('Kimi underwater arm region moves in the S25 stroke cel',async()=>{
+ const im=await loadImage(path.join(dir,'kimi_swim_padded_fixed_stroke35_action.png'));
+ const c=createCanvas(384,416).getContext('2d');c.drawImage(im,0,0,384,416,0,0,384,416);
+ const before=Buffer.from(c.getImageData(0,285,160,90).data);
+ c.clearRect(0,0,384,416);c.drawImage(im,4*384,0,384,416,0,0,384,416);
+ assert.notDeepEqual(before,Buffer.from(c.getImageData(0,285,160,90).data));
+});

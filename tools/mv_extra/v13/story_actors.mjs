@@ -8,7 +8,7 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella','whale_side_rainwalk','whale_side_crouch','whale_rain_reach_blink','kimi_swim_pull','kimi_stargaze_seated_blink','claude_collect_blink']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold','doubao_shared_umbrella','whale_side_rainwalk','whale_side_crouch','whale_rain_reach_blink','kimi_swim_pull','kimi_stargaze_seated_blink','claude_collect_blink','kimi_swim_padded_fixed_stroke35']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
@@ -114,10 +114,10 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(name==='gemini'&&[22,23].includes(shot.index))return drawStoryAction(c,'gemini_firework',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(shot.index===25||shot.index===26){
   // Horizontal cels plus limited leg movement; full-body swim and object contact are unverified.
-  const n=name==='kimi'?(shot.index===26?'kimi_swim_pull':'kimi_swim_padded_fixed'):name==='gemini'?'gemini_swim_full':name==='qwen'?'qwen_swim_full_retry':null;
+  const n=name==='kimi'?(shot.index===26?'kimi_swim_pull':'kimi_swim_padded_fixed_stroke35'):name==='gemini'?'gemini_swim_full':name==='qwen'?'qwen_swim_full_retry':null;
   if(!n)return {row:0,column:0};
   const p=Math.max(0,Math.min(1,(t-shot.start)/(shot.end-shot.start)));
-  const isKimi=n==='kimi_swim_padded_fixed'||n==='kimi_swim_pull';
+  const isKimi=n==='kimi_swim_padded_fixed_stroke35'||n==='kimi_swim_pull';
   const crop=isKimi?[0,120,384,288]:n==='qwen_swim_full_retry'?[0,150,384,266]:[0,185,384,231];
   // Missing-cast wing positions were designed for upright figures; keep the
   // wider swimming silhouettes in frame and orient them toward the centre.
