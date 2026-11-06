@@ -3,4 +3,4 @@ import path from 'node:path';
 import {ROOT} from './actors.mjs';
 import {encodeVideoRange} from './film.mjs';
 import {TOTAL_FRAMES} from './plan.mjs';
-await encodeVideoRange({startFrame:0,endFrame:TOTAL_FRAMES,outPath:path.join(ROOT,'番外MV/把回忆拼好给你/样片/v13_星岛相遇全曲预览_未完成.mp4'),audioMode:'copy_master'});
+await encodeVideoRange({startFrame:0,endFrame:TOTAL_FRAMES,outPath:path.join(ROOT,process.env.MV_DRAFT_OUT || '番外MV/把回忆拼好给你/样片/v13_四格回忆全曲预览_未完成.mp4'),audioMode:'copy_master'});

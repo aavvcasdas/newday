@@ -29,7 +29,7 @@ function whale(c, options = {}) {
   const baseH = options.u != null ? options.u * 7.4 : (options.h ?? 228);
   const h = [1,17].includes(index) ? baseH * 1.2 : baseH;
   const x = options.x ?? 520, y = options.y ?? 605;
-  const f = drawLead(c,index,sceneTime,sceneShot,{x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow}) || drawCharacter(c,'whale',state,localClock(sceneShot,sceneTime,'whale'), {x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow});
+  const f = drawLead(c,index,sceneTime,sceneShot,{x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow,variant:options.variant}) || drawCharacter(c,'whale',state,localClock(sceneShot,sceneTime,'whale'), {x,y,h,alpha:options.alpha ?? 1,flipX:!!options.flipX,noShadow:!!options.noShadow});
   // The picture visibly contains its puzzle piece. Other inherited props are
   // drawn as a stage overlay, not claimed to be calibrated hand contacts.
   const activeProp=options.heldLantern ? 'lantern' : options.heldRibbon ? 'ribbon' : null;
@@ -881,13 +881,13 @@ function paintBaseShot(c, t, shot, env) {
     const oy = 46;
 
     const cells = [
-      // Q1 Top-Left: Rain bench reading with Claude
+      // Q1 Top-Left: Whale looks at a book while Claude reaches for a piece
       (gx, gy) => {
         rect(c, gx - 50, gy - 50, qw + 100, qh + 100, '#6e7f8e');
         drawSquareRain(c, t, { count: 28, x0: gx, x1: gx + qw, y0: gy, y1: gy + qh, slant: -8 });
         rect(c, gx, gy + 228, qw, 90, '#53626f');
         rect(c, gx + 170, gy + 194, 240, 12, '#9c7853', 3);
-        whale(c, { x: gx + 236, y: gy + 244, u: 19, view: 'q', pose: 'wave' });
+        whale(c, { x: gx + 236, y: gy + 244, u: 19, view: 'q', pose: 'wave', variant: 'whale_read' });
         guest(c, 'claude', { x: gx + 365, y: gy + 244, h: 158 });
       },
       // Q2 Top-Right: Sunlit green meadow with Qwen
@@ -895,7 +895,7 @@ function paintBaseShot(c, t, shot, env) {
         rect(c, gx - 50, gy - 50, qw + 100, qh + 100, '#bfe5d8');
         ellipse(c, gx + 500, gy + 66, 34, 34, '#fff2ba');
         poly(c, [[gx - 30, gy + 216], [gx + 320, gy + 188], [gx + qw + 40, gy + 214], [gx + qw + 40, gy + qh + 40], [gx - 30, gy + qh + 40]], '#7eb67d');
-        whale(c, { x: gx + 248, y: gy + 244, u: 19, view: 'front', pose: 'heart' });
+        whale(c, { x: gx + 165, y: gy + 244, u: 19, view: 'front', pose: 'heart', variant: 'whale_gather_retry' });
         guest(c, 'qwen', { x: gx + 390, y: gy + 244, h: 192 });
       },
       // Q3 Bottom-Left: Starry constellation sea with Kimi
@@ -905,8 +905,8 @@ function paintBaseShot(c, t, shot, env) {
         line(c, stars, 'rgba(255, 232, 172, 0.55)', 1.4, [4, 4]);
         stars.forEach(([sx, sy]) => rect(c, sx - 3, sy - 3, 6, 6, '#ffe9a8'));
         rect(c, gx, gy + 224, qw, 90, '#2a4364');
-        whale(c, { x: gx + 248, y: gy + 246, u: 19, view: 'q', pose: 'wave' });
-        guest(c, 'kimi', { x: gx + 382, y: gy + 246, h: 190 });
+        whale(c, { x: gx + 248, y: gy + 246, u: 19, view: 'q', pose: 'wave', variant: 'whale_meet' });
+        guest(c, 'kimi', { x: gx + 445, y: gy + 246, h: 190 });
       },
       // Q4 Bottom-Right: Sunny coast + red diamond kite with Gemini
       (gx, gy) => {
@@ -915,9 +915,10 @@ function paintBaseShot(c, t, shot, env) {
         rect(c, gx, gy + 224, qw, 90, '#e5cfab');
         const kx = gx + 478 + Math.sin(t * 2.4) * 9;
         const ky = gy + 74 + Math.cos(t * 2.1) * 6;
-        line(c, [[gx + 265, gy + 188], [kx, ky]], 'rgba(255, 248, 232, 0.8)', 1.3);
+        // Free trailing string: it is not calibrated to either character's hand.
+        line(c, [[kx - 34, ky + 58], [kx - 18, ky + 34], [kx, ky]], 'rgba(255, 248, 232, 0.8)', 1.3);
         poly(c, [[kx, ky - 18], [kx + 14, ky], [kx, ky + 18], [kx - 14, ky]], '#e05a4f', '#fff3df', 1.2);
-        whale(c, { x: gx + 246, y: gy + 246, u: 19, view: 'front', pose: 'wave', arm: -0.32 });
+        whale(c, { x: gx + 246, y: gy + 246, u: 19, view: 'front', pose: 'wave', arm: -0.32, variant: 'whale_rain_reach' });
         guest(c, 'gemini', { x: gx + 386, y: gy + 246, h: 190 });
       },
     ];

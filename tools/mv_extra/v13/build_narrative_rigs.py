@@ -48,3 +48,7 @@ for f in range(16):
  atlas.alpha_composite(frame,(W*f,0))
 atlas.save(OUT/'gemini_star_toss_action.png',optimize=True)
 print('built narrative rigs')
+# The puzzle stays on the ground; only the reaching hand moves toward it.
+build('claude_collect','claude_collect_under',polygon([(77,332),(91,323),(119,324),(126,338),(123,365),(113,378),(93,380),(75,368),(71,352)]),(113,328),lambda u:10*(1-u)**2)
+# A small book-and-hands tilt, not a simulated page turn.
+build('whale_read','whale_read_under',polygon([(177,255),(187,240),(195,229),(250,227),(273,220),(279,246),(273,275),(261,285),(224,291),(193,288),(177,279)]),(191,268),lambda u:3*(1-u))
