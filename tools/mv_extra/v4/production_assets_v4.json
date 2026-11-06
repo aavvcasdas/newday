@@ -1,0 +1,478 @@
+{
+  "schemaVersion": 4,
+  "repository": "aavvcasdas/ai-yunying",
+  "commit": "d7f1f16b62eed65ba05cac908ec000246c0eae5c",
+  "note": "Pinned Day12 HD Whale Girl poses (zero fatfish) + opsCar Claude Chibi poses + OFL CJK fonts, restored into gitignored tools/mv_extra/cache/.",
+  "fonts": [
+    {
+      "name": "NotoSansSC-Bold.ttf",
+      "gitBlobSha1": "066b8900dc311b9b0f4dd748dfe58043c6fb119a",
+      "sha256": "883e82df40f7cf3219756543f574e0fcbf31c58368260d2f45e2827ab2d7e5b1",
+      "cachePath": "tools/mv_extra/cache/NotoSansSC-Bold.ttf"
+    },
+    {
+      "name": "ZCOOLKuaiLe-Regular.ttf",
+      "gitBlobSha1": "3cf6cd927ee910d46875de173efdaac4330e84ac",
+      "sha256": "812a6fc1fe54b6d73a419245c32dfeba8aa33104d5be90d1cf6af082007cb71d",
+      "cachePath": "tools/mv_extra/cache/ZCOOLKuaiLe-Regular.ttf"
+    }
+  ],
+  "actors": [
+    {
+      "group": "whale",
+      "file": "whale_idle.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_idle.png",
+      "gitBlobSha1": "e3f15d29e01d3e5306e1180faa3630cc71a58fbb",
+      "sha256": "1a492e94e3db609e79391130faed220ba69e6fb9f8ccc15363fe5dfdd83381f6",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_idle.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_wave.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_wave.png",
+      "gitBlobSha1": "31ac9ffd66afd9fabbbc750a33a0241676dcf8aa",
+      "sha256": "72f43b86e795634a2b44280d3d6bd85a7223ac971c32a978ac72c21dd346ecec",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_wave.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_walk_stand.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_stand.png",
+      "gitBlobSha1": "46dd7f594491d18bd46f871f7116a8e434d2e873",
+      "sha256": "59bc486d8c519321877dd1fd2c3a330ae31c08ee426202a2a094ff3dc15b15af",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_walk_stand.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_walk_a.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_a.png",
+      "gitBlobSha1": "f9ce26d3a82874db34ae05feeeccf0c64b2032ee",
+      "sha256": "91ac87b7e2f20373205aa87beb1473e25da2f46b77af7e848a554e914b0903b3",
+      "size": [
+        890,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_walk_a.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_walk_b.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_b.png",
+      "gitBlobSha1": "37f9137b4569c1d63d49405b22f64e85bccf5727",
+      "sha256": "947ba4c4e1014cd545a3e2ccad25eae5b24ca24c38c0f9f3ffd903dc717c9dc5",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_walk_b.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_run_a.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_run_a.png",
+      "gitBlobSha1": "91c699ff16d2f851fb6a9cbb6d21e521c4c0b106",
+      "sha256": "52da3cf61222858259588948bc47c231317b9ff8b60290cfdcb8e7d62f13ef43",
+      "size": [
+        890,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_run_a.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_run_b.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_run_b.png",
+      "gitBlobSha1": "6746765e32242fb1f381003ce40665041f72e0c6",
+      "sha256": "3a9082030775b9caee4f157c420c8965977a6d92070cb163427de01d6ba526c8",
+      "size": [
+        866,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_run_b.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_umbrella_stroll.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_umbrella_stroll.png",
+      "gitBlobSha1": "27a9f441feffb82410bd57825eb766e385907efb",
+      "sha256": "aeccc4562222014d9081561d07e845e44d5efe31f365886caa302265c75b6226",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_umbrella_stroll.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_wake_stretch.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_wake_stretch.png",
+      "gitBlobSha1": "b53859c1a7121a62fc4f31d5e5eef9420c28c0ce",
+      "sha256": "e25f8150cc22edc9f640e9ed9fa53422c31ea5e3a7ad3d8e596ea47739647b45",
+      "size": [
+        903,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_wake_stretch.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_cheer.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_cheer.png",
+      "gitBlobSha1": "3b9bdcf2f539bac52b83f50c3fb6efc1e4e9ea86",
+      "sha256": "c7649a8cac929475a17d6d1a03af4c8bc0c5c2148bbee1f4c694d6a39b4e4087",
+      "size": [
+        927,
+        978
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_cheer.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_jump_joy.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_jump_joy.png",
+      "gitBlobSha1": "ff0bfc1e542ff59cd08e719815c241ebc5828794",
+      "sha256": "ef5e9ff9b92a4d7feb037224ceae54bb05c4a0bd753d3e5c870842b161052c18",
+      "size": [
+        961,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_jump_joy.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_sparkler_firework.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_sparkler_firework.png",
+      "gitBlobSha1": "52a7190f0802da6df3a0de982f7df47006704a42",
+      "sha256": "eea3c3b53b0cd0c4a9ec85fce43790c5ca256edb75c64cc3c537d3667075475a",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_sparkler_firework.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_camera_shutter.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_camera_shutter.png",
+      "gitBlobSha1": "807a5cecc7a31dc55f53921b5ea9817823a1ffe5",
+      "sha256": "765687dda39151f7c24bba9ddfc14e67181fd2ee566b0c611dc529a5e3b15af6",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_camera_shutter.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_rose_bouquet.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_rose_bouquet.png",
+      "gitBlobSha1": "2f69183a2a405d0b804e98b3c7515e41b47ae2a7",
+      "sha256": "76ad366c4a2bb1602cf914d57957e3edbdf16a34316cecdb19c98cb90f624d03",
+      "size": [
+        891,
+        896
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_rose_bouquet.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_tail_wag_dance.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_tail_wag_dance.png",
+      "gitBlobSha1": "1321af362e545faaa73edf64b4d3463c2a29a6be",
+      "sha256": "471d3e3aa2f9a9c2b722748fe5ec7a39017a94715b1760bf77815687a28b3c66",
+      "size": [
+        931,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_tail_wag_dance.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_confident_hips.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_confident_hips.png",
+      "gitBlobSha1": "8321d8fcd91562dac4d58d4923d560d084bd2d20",
+      "sha256": "92f1e92913cc2659dda6cf89f82a1a94f5ab43db4b358e5195487fdde88adfe7",
+      "size": [
+        983,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_confident_hips.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_point.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_point.png",
+      "gitBlobSha1": "b134ea1681ccdd53d85fb2aadc792b49f71ec097",
+      "sha256": "af80f7bf6f56279bd3f32c5f924e596b2ac5b3bf2986af451f13a2656dc77dc4",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_point.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_think.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_think.png",
+      "gitBlobSha1": "6c986c4e93ed1a55cf948bed0407bbe9fc108ec1",
+      "sha256": "52008f7cdcc4529efd526211d829083f776bf626f9fe6fddaec8b0e1ea1301c1",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_think.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_shock.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_shock.png",
+      "gitBlobSha1": "f8b454cc77babf0012feca13d476b8248f750196",
+      "sha256": "6b80f05eaf20172b11d98ce2779288a8b322f85156120cfade49dfc705bfb14d",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_shock.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_shy_fidget.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_shy_fidget.png",
+      "gitBlobSha1": "1f16bfe60c2713b60704119d1e4608c6a4137d1c",
+      "sha256": "183bb56ddd44c9b61ad49828c2cef3e1060b8d151baa44c55d100aa558af4388",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_shy_fidget.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_ciallo_wink.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_ciallo_wink.png",
+      "gitBlobSha1": "f0b703b797fbd9e68b8ff53a6080e0e4cd92722e",
+      "sha256": "4127c64d15a443700178a600c260cfdc859e10a1152caaff9e3ac27784780007",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_ciallo_wink.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_peek_curious.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_peek_curious.png",
+      "gitBlobSha1": "034225142a997e597974c0f4840aef241a0cf4ac",
+      "sha256": "7cae534817934a5152604ef9614091d45023f570858a8ba11cc8876930121bb5",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_peek_curious.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_idol_mic_sing.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_idol_mic_sing.png",
+      "gitBlobSha1": "5f9e97cb039a2e34cfbdb49b46dd16ea064938f2",
+      "sha256": "ccd188b25c9a4891fc688d3538ce6735de16349aacdd515600267c57e850afe4",
+      "size": [
+        992,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_idol_mic_sing.png"
+    },
+    {
+      "group": "whale",
+      "file": "whale_playful_fists.png",
+      "upstreamPath": "tools/day3制作/whale_girl_src/whale_playful_fists.png",
+      "gitBlobSha1": "541f196140219961d7bc3eb8c585ab78dd006542",
+      "sha256": "22499d20d4520f058c72e2e27bbbd0648608a6f035d2278eb07c578dec54f3b4",
+      "size": [
+        926,
+        1024
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/whale/whale_playful_fists.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_cheer.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_cheer.png",
+      "gitBlobSha1": "83b16bff8339847a5a2a8760072ed93b4dc8dacd",
+      "sha256": "f1fcec0d6fea62427338bd8862195918650284a15d2de9a741186cc650a5d3e3",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_cheer.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_curtsy.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_curtsy.png",
+      "gitBlobSha1": "4ec103177c41105bf05606bc6468fb6b02f90e9d",
+      "sha256": "6ebb312a4dce9a85c6e1ed2e51e90095da1d303fedea45d0a37890841e106014",
+      "size": [
+        1230,
+        1278
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_curtsy.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_dance.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_dance.png",
+      "gitBlobSha1": "7075b298a1b5d32e9c03948a49b24413c52ea79d",
+      "sha256": "a0bdfd080dd5b38a6979c3bd7c1ebde770e2512bbb402913d198be8104e9f2e7",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_dance.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_megaphone.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_megaphone.png",
+      "gitBlobSha1": "76168710a9ede953bbe4e560c288aa08f2e209d3",
+      "sha256": "4040c73c5095292349bb865e29357fde99aeb26a829af20b2bd9df4744b52ffe",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_megaphone.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_no_sign.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_no_sign.png",
+      "gitBlobSha1": "db226877425e8f6c635079c5b122c5363ae64e26",
+      "sha256": "761252d4f0788004db3043eedc6c97a1ac10316188fdd62d10bfb924ae00acbc",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_no_sign.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_noodles.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_noodles.png",
+      "gitBlobSha1": "08006f806af885de0896833edbc637e5cb9f21d1",
+      "sha256": "09b6626433fa1960bc039adf0712f79682b612dd603c417e4475cc4ba3ed9336",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_noodles.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_ok_hand.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_ok_hand.png",
+      "gitBlobSha1": "7ca0f22cbd160fc020e1c3f62682f05f98a2d122",
+      "sha256": "8d319681831d5c0c4613b28cccf984b2a0d7e7b5fc32cf557ae87c1d38f525f3",
+      "size": [
+        1230,
+        1278
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_ok_hand.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_panic.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_panic.png",
+      "gitBlobSha1": "33eddfeaaa48d098ed4a860f8c8681fd3a0e9a02",
+      "sha256": "0df4fc634545077895a329f63e651705f1d9b4820e1f830e45a383743b093b3c",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_panic.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_pointing_viewer.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_pointing_viewer.png",
+      "gitBlobSha1": "783b203aeacee573f0b98c1f7e8e982347c1bd46",
+      "sha256": "03e04850d194f272f51030fdbd7653d5ad94ec1d33eff72d2c18399697f38646",
+      "size": [
+        1278,
+        1230
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_pointing_viewer.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_question.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_question.png",
+      "gitBlobSha1": "9c5d965f0819ecf2adc6de2ffcfe8719077bbe43",
+      "sha256": "ffbbcc739407816a2ac832460b8efd2ea63b3274b60be9d2c7db147344c14802",
+      "size": [
+        1230,
+        1278
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_question.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_reading_book.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_reading_book.png",
+      "gitBlobSha1": "ff4c690e1fb872d225e6ba228f479140aa2500bd",
+      "sha256": "d73ecacdf46a7fd9e21ab4e92b53090dfe1011c3ba889c33d17d49a6d28f2de2",
+      "size": [
+        1303,
+        1207
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_reading_book.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_sing.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_sing.png",
+      "gitBlobSha1": "eeef566c5f2b700f0270f9cb0dae6ca1e756ff06",
+      "sha256": "9a074e18947b4c76756a24eebec16ca28f7f5e6171a355c1c7b487763d01cb91",
+      "size": [
+        1230,
+        1278
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_sing.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_tremble.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_tremble.png",
+      "gitBlobSha1": "6401cfd79aef9dc8ac06ceb1708ef46c89896ea0",
+      "sha256": "d1ce6a61a6b78f97118ffc488ccaeb2b37245ee33658b402cd3c24fadd6e61bd",
+      "size": [
+        1278,
+        1230
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_tremble.png"
+    },
+    {
+      "group": "claude_chibi",
+      "file": "pose_wave_hi.png",
+      "upstreamPath": "tools/day3制作/claude_src/chibi/pose_wave_hi.png",
+      "gitBlobSha1": "53c4f1ed7691bd1248b8a1f08b5ebe8be73caebe",
+      "sha256": "48bc2c18db8e3fab9351e62a171f840230573db6650e56bab22d868b1299e430",
+      "size": [
+        1312,
+        1199
+      ],
+      "cachePath": "tools/mv_extra/cache/day12_actors/claude_chibi/pose_wave_hi.png"
+    }
+  ]
+}
