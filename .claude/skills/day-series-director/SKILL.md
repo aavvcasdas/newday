@@ -10,6 +10,19 @@ compatibility: Node.js 22 and Python 3; run npm ci --prefix tools/engine for eng
 
 # Day Series Director
 
+## Day13+ 口径（2026-11-06，优先于本文件其余旧引擎描述）
+
+用户要求日更系列 **Day12 以后** 的分镜与人物统一改纸艺 Q 版，动作参照 pets 项目，且 **同屏最多 2 人**。
+历史 Day0–Day12 不改不重渲。见 `agent.md` 第33条、`tools/角色Q版库/README.md`、`tools/engine/README.md`。
+
+- spec 写 `paperVersion:1`，渲染器 `tools/engine/render_paper_episode.mjs`，契约 `paper_contract.mjs`。
+- **每镜 actors 最多 2 个**；要第三人就拆镜或让角色退场，不得缩小塞满画面。
+- 动作只能引用 `tools/角色Q版库/pets/<id>/pet.json` 里真实存在的状态；未生成必须报错，不许冒充。
+- 有 `walk` 必须配 `walk-*` 真步态；禁止 `idleMotion/livingBody/bodyEvents` 与 bounce/hop/sway。
+- `framing` 要真的改变构图；逐镜构造字段照旧写全（focus/entry/action/trigger/result/reaction/exit/transition/continuity）。
+- 新动作先补 `generations/<id>/<pose>.png` → 登记 `cast.json` → `build_pets.mjs --check` → 出动作目录目检，才能在分镜里引用。
+- 无指定音源只能 planning/measured=false 无声结构样片（`--silent-planning`）。
+
 ## 开始前
 
 1. 读根目录 `agent.md` 覆盖规则和 `AGENTS.md`。需要改剧情才调用 `00_运营总览/skills/剧情生成/SKILL.md`，导演任务不擅改锁字。

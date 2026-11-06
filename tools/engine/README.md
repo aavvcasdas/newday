@@ -3,6 +3,10 @@
 先读 `agent.md`。当前默认是**稳定镜头＋轻呼吸/可关闭待机＋明确语义事件**，不是持续摇相机/摇人物。
 旧Day0–Day10独立renderer不改；不为历史片洗绿或重渲。Day12仍是“回归/@豆包/米饭与大饼”25行稿，非山姆护照稿。
 
+> **Day13 起改走纸艺 Q 版引擎**（`agent.md` 第33条）：新集用 `render_paper_episode.mjs` ＋ `paperVersion:1` spec，
+> 人物全 Q 版 pets 真帧、**同屏最多 2 人**。本文件其余章节描述的旧引擎与 Day0–Day12 历史集保持不变、不重渲。
+> 见下方「Day13+ 纸艺 Q 版引擎」。
+
 ## 当前实现
 
 | 模块 | 职责 |
@@ -81,3 +85,60 @@ python3 tools/gate.py --day 12 --stage script
 
 本轮样片实检补充：directorVersion=1开场演员不再被旧opener覆盖；显式道具特写可actors=[]，其他镜头仍不可空演员；可声明foregroundTable承托（y+58<=600），并做输出空间安全区检查。道具stateChanges按line+delay或at作明确状态切换，C07同落点正反切镜，不伪称手掌翻纸。folded_page显式空sub不再回填默认旧梗。
 本轮Node回归30项、Python44项（含编码集成测试）通过；不代表有声final通过。
+
+
+## Day13+ 纸艺 Q 版引擎
+
+用户 2026-11-06 拍板：日更系列 **Day12 以后** 的分镜与人物统一改成纸艺 Q 版，动作参照
+`tqlearning/ai-girl-chatgpt-pets`，并且 **同屏最多 2 人**（人物太多占画面）。历史集不改不重渲。
+
+| 模块 | 职责 |
+|---|---|
+| `paper_stage.mjs` | 纸艺立体书画法：纸边/刀口/纸厚投影、分层视差、暖光、道具 12fps 手摆、海底书桌/岸/夕照场景与桌/碗/纸/名牌/植物道具 |
+| `pets_actor.mjs` | pets 格式图集播放：累计毫秒选帧、非循环停末帧、公共脚底整格绘制；缺图集角色只能静态纸偶，客串未生成则报错 |
+| `paper_contract.mjs` | 硬门禁：`MAX_ON_SCREEN=2`、状态必须真实存在、走位必须配 `walk-*` 步态、拒绝 `idleMotion/livingBody/bodyEvents` 与 bounce/hop/sway、逐镜构造字段、相邻镜对比 |
+| `render_paper_episode.mjs` | 逐帧渲染＋ffmpeg；`framing` 真的改变构图（wide/two_shot/medium/close/insert）；字幕/角标固定屏幕坐标不随推近缩放 |
+| `paper_contract.test.mjs` | 10 项回归：人数上限、选帧、状态序列、图集一致性、未生成状态拒绝、走位步态、样例过契约、Day12 拒绝、景别差异、确定性 |
+
+角色库在 `tools/角色Q版库/`（`cast.json` ＋ `generations/` ＋ `build_pets.mjs` ＋ `pets/<id>/`）。
+
+```bash
+node tools/角色Q版库/build_pets.mjs --check
+node --test tools/engine/paper_contract.test.mjs
+
+# 新集脚手架：N>=13 自动产出纸艺 spec + 分镜模板 + gate_config
+python3 tools/init_episode.py --day 13 --title '本集标题'
+
+# 无音源：只出动作目录/分镜/无声结构样片（画面自带 measured=false）
+node tools/day13制作/render_day13.mjs --script Day13/Day13配音台词.txt \
+  --catalog tools/day13制作/动作目录.png --storyboard tools/day13制作/分镜 \
+  --silent-planning --out Day13/样片/Day13_无声结构样片.mp4
+
+# 有实测轴：spec 须 status=ready，音源 SHA256 必须与实测轴匹配
+node tools/day13制作/render_day13.mjs --voice <wav> --alignment <voice_alignment.json> \
+  --subtitle-file <subtitle_timing.json> --out Day13/成片/Day13_配音对齐版.mp4
+```
+
+spec 关键字段：
+
+```js
+{
+  day: 13, paperVersion: 1, status: 'planning', measured: false, maxOnScreen: 2,
+  sourceScriptSha256: '<当前台词SHA256>',
+  shots: [{
+    id: 'C01', fromLine: 1, toLine: 2, framing: 'two_shot', set: 'sea_room',
+    direction: { kind, focus, entry, action, trigger, wordLine, wordChar,
+                 result, reaction, exit, transition, holdSeconds, settleSeconds,
+                 continuity: { in, out } },
+    actors: [                       // 最多 2 个
+      { id: 'whale', x: 620, y: 920, h: 400,
+        states: [{ state: 'walk-right', dur: 1.2 }, { state: 'point' }],
+        walk: { from: 320, to: 620, dur: 1.2 } },
+    ],
+    props: [{ kind: 'desk', x: 640, y: 720, w: 660 }],
+  }],
+}
+```
+
+边界：结构检查/图集校验/全片解码都不等于视觉与听审验收；无实测轴不得当正式字幕依据；
+BGM 规则（第22条）、Day2 字幕、常驻角标、尾部 0.24s、无片尾卡继续有效。

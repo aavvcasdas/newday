@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "schema": "newday-q-pets/cast@1",
+  "appliesFrom": "Day13",
+  "note": "Day12 以后新集通用 Q 版纸艺角色库。format 沿用 tqlearning/ai-girl-chatgpt-pets 的 spritesheet+pet.json 自描述结构（网格/行状态/每帧毫秒/方向行），不是官方协议。",
+  "maxOnScreen": 2,
+  "cell": { "w": 192, "h": 208, "columns": 8, "footY": 200, "standPx": 160 },
+  "generation": {
+    "method": "AI 生图重绘新姿势（用户本轮明确授权 gen_new）",
+    "reference": "pets 上游鲸娘 idle 格 → 首张 point.png → 其后各姿势以 point.png 为设计基准",
+    "backgroundRemoval": "边界连通 flood-fill 去白底；角色 RGB 不重绘",
+    "normalization": "按 alpha bbox 统一 standPx=160、脚底 footY=200、水平居中于 192 宽格；整格写入，播放期不再逐帧裁切/居中/拉伸",
+    "disclosure": "AI 派生美术，非上游原画；不得冒称 ZipZipPipe 原作或官方授权"
+  },
+  "characters": {
+    "whale": {
+      "name": "本鲸",
+      "role": "protagonist",
+      "designSource": "tqlearning/ai-girl-chatgpt-pets assets/deepseek-whale（ZipZipPipe 女仆鲸娘二设）",
+      "upstreamPinned": "3afe14603b40e24c75e87e097cbfee1bfc10290d",
+      "generated": true,
+      "states": {
+        "idle": { "cn": "待机", "frames": ["point"], "durationsMs": [320], "loop": true, "kind": "hold", "note": "占位：下一轮补真呼吸/眨眼帧后替换" },
+        "walk-right": { "cn": "向右走", "frames": ["walk_a", "walk_b", "walk_c", "walk_b"], "durationsMs": [140, 120, 140, 120], "loop": true, "kind": "cycle" },
+        "walk-left": { "cn": "向左走", "frames": ["walk_a", "walk_b", "walk_c", "walk_b"], "durationsMs": [140, 120, 140, 120], "loop": true, "kind": "cycle", "mirror": true },
+        "point": { "cn": "指证", "frames": ["point"], "durationsMs": [420], "loop": false, "kind": "gesture" },
+        "think": { "cn": "翻本子思考", "frames": ["think"], "durationsMs": [520], "loop": false, "kind": "gesture" },
+        "shock": { "cn": "震惊", "frames": ["shock"], "durationsMs": [360], "loop": false, "kind": "expression" },
+        "cry": { "cn": "委屈欲哭", "frames": ["cry"], "durationsMs": [520], "loop": false, "kind": "expression" },
+        "cheer": { "cn": "欢呼", "frames": ["cheer"], "durationsMs": [420], "loop": false, "kind": "expression" },
+        "confident_hips": { "cn": "得意", "frames": ["hips"], "durationsMs": [480], "loop": false, "kind": "expression", "note": "生图实为双手置身前得意，非严格叉腰；按得意语义使用，不得声称叉腰动作" },
+        "bow": { "cn": "道歉合十", "frames": ["bow"], "durationsMs": [560], "loop": false, "kind": "gesture", "note": "生图实为闭眼合十小鞠躬，非深鞠躬" }
+      },
+      "poses": ["bow", "cheer", "cry", "hips", "point", "shock", "think", "walk_a", "walk_b", "walk_c"],
+      "pending": ["wave_a", "wave_b", "eat", "typing_a", "typing_b", "sleep", "idle_a", "idle_b", "handoff", "peek"]
+    },
+    "doubao": {
+      "name": "豆包",
+      "role": "supporting",
+      "designSource": "shuaizenge/ai-girls characters/doubao（Day12 cutout 派生 Q）",
+      "generated": false,
+      "fallbackSprite": "tools/番外MV_爱有时差/assets/sprites/doubao.png",
+      "states": {
+        "idle": { "cn": "待机", "frames": [], "durationsMs": [400], "loop": true, "kind": "hold", "note": "静态纸偶；不整图弹跳" }
+      },
+      "poses": [],
+      "pending": ["idle", "think", "point", "shock", "cheer", "bow", "walk_a", "walk_b", "walk_c"]
+    }
+  },
+  "guests": {
+    "note": "客串 AI 娘每镜最多与本鲸同框 1 位；未生成前不得上场充数",
+    "ids": ["claude", "gemini", "gpt", "kimi", "qwen", "zai"],
+    "generated": false,
+    "pending": ["idle", "think", "point", "cheer"]
+  }
+}

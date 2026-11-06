@@ -1,6 +1,6 @@
 # 本仓库创作入口
 
-先读根目录 `agent.md` 的“现行覆盖规则”，其中第29–31条是 Day12 与人格移植的本轮口径。
+先读根目录 `agent.md` 的“现行覆盖规则”，其中第29–31条是 Day12 与人格移植的本轮口径，**第33条是 Day13 起纸艺 Q 版＋同屏最多2人的当前口径**。
 
 写/修 Day 连载、求职梗、人设或剧情衔接时，读取 `00_运营总览/skills/剧情生成/SKILL.md` 及其 persona/beats/research 引用。
 主角仍是大肥鱼/鲸鱼娘，外形和关系不变，魔丸只是移植人格。不得再写“你不是大肥鱼”。
@@ -42,3 +42,12 @@ Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分
 ## 2026-11-06 番外MV v4 全 Q 版纸艺＋真逐帧（当前口径）
 
 用户否定 v3“人在跳很奇怪”，要求研究 `tqlearning/ai-girl-chatgpt-pets` 让个别人物有动画、MV 人物改 Q 版，背景/细节参照 `Win-Hao/music-mv`。当前执行：废弃 Three voxel 舞台与整图 bounce/hop/sway；`src/paper.js`+`src/film.js` Canvas2D 分层纸艺立体书（纸边/刀口/纸厚、6–8 层景深、暖光、12fps 道具手摆、慢推 5%）。鲸鱼娘/GPT 用 pets 真逐帧（整格 192×208、pet.json 毫秒、公共脚底、不 jumping）；Claude/Gemini/Kimi/Qwen/Z.AI 用 ai-girls chibi 静态纸偶（镜头/道具/事件做动态）；豆包上游无 Q，用 Day12 cutout 像素保真分段仿射派生 Q（头×1.25/躯干×0.9,0.62/腿×0.82,0.5），正常件归档，文档注明派生非上游。galgame/voxel 因全 Q 口径退出正片主形象，素材链/许可保留不静默丢。`data/shots.json` version=4 stage=paper-diorama；`sprites.json` primaryForm=q-chibi-pets。歌词 16 行/音轨 copy/Day2 字幕/常驻标注/终帧全员 hold 无片尾卡不变。改完须 npm test＋storyboard 目检＋全渲＋verify.py＋smoke，并推送 `arena/e9e1d8ec-newday`。
+
+
+## 2026-11-06 Day13+ 纸艺 Q 版化与同屏≤2人（当前口径）
+
+用户本轮要求：把日更系列的分镜与人物改成番外MV v4 的纸艺 Q 版风格，参照 `tqlearning/ai-girl-chatgpt-pets` 给主角与配角**多做动画/动作/表情/细节**，并明确 **同屏最多 2 个角色**（此前人物太多占画面）。ask_user 裁定：`anim_source=gen_new`（**允许生图模型新画 Q 版动作表情**，须标注 AI 派生）；范围＝「day12 以后的，在项目的 md 写以及改通用的生成模板和 agent.md」。因此**只改新集入口，不逐集重渲历史片**，番外MV v4 保持现状、≤2人新规不回溯适用。
+
+落地入口：规则 `agent.md` 第33条；口径文档 `00_运营总览/画面风格_Q版纸艺_2026-11-06.md`；角色库 `tools/角色Q版库/`（`cast.json`、`generations/`、`build_pets.mjs`、`pets/<id>/`、`NOTICE.md`）；通用脚手架 `tools/init_episode.py`（**day≥13 自动产出 `paperVersion:1` spec＋`DayN分镜_纸艺Q版.md`＋纸艺 gate_config**，day≤12 行为不变）；引擎 `tools/engine/{paper_stage,pets_actor,paper_contract,render_paper_episode}.mjs`；回归 `tools/engine/paper_contract.test.mjs`。
+
+硬边界：`MAX_ON_SCREEN=2` 超员抛错；动作只能引用图集真实存在的状态；走位须配 `walk-*` 真步态；拒绝 `idleMotion/livingBody/bodyEvents` 与 bounce/hop/sway；未生成图集的客串不得上场充数；无实测轴只能 `--silent-planning` 出 `measured=false` 无声结构样片，画面自带标识。本轮受单轮 10 张生图上限限制，只完成鲸娘 10 姿势（walk 为真 4 帧循环，idle 仍是 point 占位），豆包与 6 位客串的图集为 pending，见 `cast.json` 与库 README，不得声称全员动作已接入。Day0–Day12 旧 renderer、锁稿与成片不改不重渲；BGM 第22条、Day2 字幕、常驻角标、尾部0.24s、无片尾卡继续有效。改完须跑 `node --test tools/engine/*.test.mjs` 并推送 `arena/e9e1d8ec-newday`。

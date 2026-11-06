@@ -1,0 +1,219 @@
+{
+  "schema": "newday-q-pets/pet@1",
+  "format_reference": "tqlearning/ai-girl-chatgpt-pets FORMAT.md（自描述结构参照，非官方协议）",
+  "id": "whale",
+  "name": "本鲸",
+  "role": "protagonist",
+  "design_source": "tqlearning/ai-girl-chatgpt-pets assets/deepseek-whale（ZipZipPipe 女仆鲸娘二设）",
+  "art_origin": "AI 生成重绘（用户授权）；非上游原画，不主张官方授权",
+  "grid": {
+    "columns": 8,
+    "rows": 10,
+    "cell_width": 192,
+    "cell_height": 208
+  },
+  "anchor": {
+    "foot_y": 200,
+    "stand_px": 160,
+    "center_x": 96
+  },
+  "playback_rules": [
+    "整格绘制，禁止逐帧 autocrop / recenter / stretch",
+    "行内未使用格保持全透明",
+    "公共脚底 foot_y，切换状态不跳位",
+    "禁止整图 bounce/hop/sway 冒充动画"
+  ],
+  "animations": [
+    {
+      "state": "idle",
+      "cn": "待机",
+      "kind": "hold",
+      "row": 0,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        320
+      ],
+      "loop": true,
+      "source_poses": [
+        "point"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "walk-right",
+      "cn": "向右走",
+      "kind": "cycle",
+      "row": 1,
+      "frame_count": 4,
+      "frame_durations_ms": [
+        140,
+        120,
+        140,
+        120
+      ],
+      "loop": true,
+      "source_poses": [
+        "walk_a",
+        "walk_b",
+        "walk_c",
+        "walk_b"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "walk-left",
+      "cn": "向左走",
+      "kind": "cycle",
+      "row": 2,
+      "frame_count": 4,
+      "frame_durations_ms": [
+        140,
+        120,
+        140,
+        120
+      ],
+      "loop": true,
+      "source_poses": [
+        "walk_a",
+        "walk_b",
+        "walk_c",
+        "walk_b"
+      ],
+      "mirrored": true
+    },
+    {
+      "state": "point",
+      "cn": "指证",
+      "kind": "gesture",
+      "row": 3,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        420
+      ],
+      "loop": false,
+      "source_poses": [
+        "point"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "think",
+      "cn": "翻本子思考",
+      "kind": "gesture",
+      "row": 4,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        520
+      ],
+      "loop": false,
+      "source_poses": [
+        "think"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "shock",
+      "cn": "震惊",
+      "kind": "expression",
+      "row": 5,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        360
+      ],
+      "loop": false,
+      "source_poses": [
+        "shock"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "cry",
+      "cn": "委屈欲哭",
+      "kind": "expression",
+      "row": 6,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        520
+      ],
+      "loop": false,
+      "source_poses": [
+        "cry"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "cheer",
+      "cn": "欢呼",
+      "kind": "expression",
+      "row": 7,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        420
+      ],
+      "loop": false,
+      "source_poses": [
+        "cheer"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "confident_hips",
+      "cn": "得意",
+      "kind": "expression",
+      "row": 8,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        480
+      ],
+      "loop": false,
+      "source_poses": [
+        "hips"
+      ],
+      "mirrored": false
+    },
+    {
+      "state": "bow",
+      "cn": "道歉合十",
+      "kind": "gesture",
+      "row": 9,
+      "frame_count": 1,
+      "frame_durations_ms": [
+        560
+      ],
+      "loop": false,
+      "source_poses": [
+        "bow"
+      ],
+      "mirrored": false
+    }
+  ],
+  "generated_poses_sha256": {
+    "bow": "cd41c9bb2a86956d5687b8c6ba2317a238b77f8ac22b75036a0b485d6cd3d857",
+    "cheer": "0a5ccdb6a55bb4b01b0a8bf07d95aa7ef10d31188a5a11b92bf8e8b16ee1417f",
+    "cry": "df7fdccff438239804d3697e41bd0cc00382b1472e61fa1f4653aa6babc9faa3",
+    "hips": "c185be420e4509d434daf31aa7dee612e5ac24d68f3b314b8af5cc18d18222f8",
+    "point": "0ae85b8e84cca40f795f5eaececcee02a3e880ab2785d205495dc6e2302090c2",
+    "shock": "118512bfd6755281840c427b45a6d0d545cb49b8739263a003a17677abc6b313",
+    "think": "0e91b92d607e3f81b3bf74d72cbfac09ee9ebb0ebe53e25d10d5a0a9c2b87db2",
+    "walk_a": "6daec5d8681a7e432d2caaf3d11c786f58fc95d7275b9cfbc9b1c7742f7914cc",
+    "walk_b": "b2fc3f37ece094ee844361bfb494d11c626ce3ff678751b64b879733a8ded8f4",
+    "walk_c": "41107c02ff710f0755999f238a24463bafcec8ca9179ef0b0170501659cd669c"
+  },
+  "pending_poses": [
+    "wave_a",
+    "wave_b",
+    "eat",
+    "typing_a",
+    "typing_b",
+    "sleep",
+    "idle_a",
+    "idle_b",
+    "handoff",
+    "peek"
+  ],
+  "integrity": {
+    "spritesheet_sha256": "ca3c647ca92e1e98a95dc3f00203079c0f7db44e05684e8b8731d2e872396b07",
+    "width": 1536,
+    "height": 2080
+  }
+}

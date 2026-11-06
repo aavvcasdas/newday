@@ -1,0 +1,24 @@
+{
+  "schema": "newday-q-pets/build@1",
+  "ok": true,
+  "characters": {
+    "whale": {
+      "states": 10,
+      "frames": 16,
+      "cycles": [
+        "walk-right",
+        "walk-left"
+      ],
+      "sheet": "pets/whale/spritesheet.png",
+      "bytes": 463516,
+      "sha256": "ca3c647ca92e1e98a95dc3f00203079c0f7db44e05684e8b8731d2e872396b07"
+    },
+    "doubao": {
+      "skipped": true,
+      "reason": "尚无已生成帧；静态纸偶走 fallbackSprite，不冒充图集"
+    }
+  },
+  "errors": [],
+  "maxOnScreen": 2,
+  "appliesFrom": "Day13"
+}

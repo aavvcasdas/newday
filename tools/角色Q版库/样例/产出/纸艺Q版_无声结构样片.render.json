@@ -1,0 +1,20 @@
+{
+  "schema": "newday-q-pets/render@1",
+  "day": 13,
+  "out": "/home/user/newday/tools/角色Q版库/样例/产出/纸艺Q版_无声结构样片.mp4",
+  "frames": 750,
+  "fps": 30,
+  "width": 1920,
+  "height": 1080,
+  "duration": 25.016119402985073,
+  "measured": false,
+  "silentPlanning": true,
+  "maxOnScreen": 2,
+  "castUsed": [
+    "doubao",
+    "whale"
+  ],
+  "sha256": "91099761d5aac51a5b7158f9cb0faa201c74563fbfa2a2ad6b69cc25926e5345",
+  "bytes": 8329206,
+  "note": "无声结构样片，估时轴 measured=false，不是正式字幕依据"
+}
