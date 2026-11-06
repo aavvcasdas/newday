@@ -1694,7 +1694,7 @@ function paintBaseShot(c, t, shot, env) {
         view: 'front',
         pose: 'heart',
         headTilt: 0.04,
-        heldRibbon: { t, length: 92, color: '#e26254' },
+        // Ribbon is drawn within the S28 holding cel, anchored at the fingers.
       });
     } else {
       // S29: Continuity wide cut — hand released cleanly, coral-red silk ribbon sails into dusk sky!

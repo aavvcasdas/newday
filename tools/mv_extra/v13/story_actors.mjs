@@ -8,7 +8,7 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear','qwen_water_full','gpt_think','kimi_swim_padded_fixed','doubao_umbrella_padded_fixed','whale_ribbon_hold']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
@@ -53,6 +53,7 @@ export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(variant)return drawStoryAction(c,variant,t,shot,{x,y,h,alpha,flipX,noShadow});
  if([2,3,6,27].includes(index))return drawStoryAction(c,'whale_walk_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===7)return drawStoryAction(c,'whale_meet',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(index===28)return drawStoryAction(c,'whale_ribbon_hold',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===24)return drawStoryAction(c,'whale_camera',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===20)return drawLegacyAction(c,'whale_letter',t,shot,{x,y,h,alpha,flipX,noShadow});
  if([1,17,31].includes(index))return drawStoryAction(c,'whale_gather_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
