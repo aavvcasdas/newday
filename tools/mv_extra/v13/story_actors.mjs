@@ -8,7 +8,7 @@ const bird=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/bird
 const story={};
 for(const n of ['kimi_underwater_final','gemini_swim','whale_sit_final_retry','whale_selfkind_retry']) story[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_cel.png`));
 const actions={};
-for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
+for(const n of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','whale_sit_blink','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear']) actions[n]=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13',`${n}_action.png`));
 const lantern=await loadImage(path.join(ROOT,'assets/ai-girls/lyric-action-v13/doubao_lantern_prop.png'));
 const clamp=x=>Math.max(0,Math.min(1,x));
 function drawStoryAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false}){
@@ -43,14 +43,14 @@ function drawLegacyAction(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
 }
 export function drawLead(c,index,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=false,variant=null}){
  if(variant)return drawStoryAction(c,variant,t,shot,{x,y,h,alpha,flipX,noShadow});
- if([2,3,6].includes(index))return drawStoryAction(c,'whale_walk_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if([2,3,6,27].includes(index))return drawStoryAction(c,'whale_walk_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===7)return drawStoryAction(c,'whale_meet',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===24)return drawStoryAction(c,'whale_camera',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===20)return drawLegacyAction(c,'whale_letter',t,shot,{x,y,h,alpha,flipX,noShadow});
  if([1,17,31].includes(index))return drawStoryAction(c,'whale_gather_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===32)return drawStoryAction(c,'whale_selfkind_retry',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===14)return drawStoryAction(c,'whale_rain_reach',t,shot,{x,y,h,alpha,flipX,noShadow});
- if(index===12)return drawStoryAction(c,'whale_sit_blink',t,shot,{x,y,h,alpha,flipX,noShadow});
+ if(index===12)return drawStoryAction(c,'whale_wipe_tear',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(index===13)return drawStoryAction(c,'whale_rainwalk',t,shot,{x,y,h,alpha,flipX,noShadow});
  const n=index===25||index===26?'whale_swim':index===9?'whale_point':index===29?'whale_bird':null;
  if(!n)return false;
@@ -97,15 +97,14 @@ export function drawGuest(c,name,t,shot,{x,y,h,alpha=1,flipX=false,noShadow=fals
  if(name==='claude'&&[22,23].includes(shot.index))return drawStoryAction(c,'claude_firework',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(name==='gemini'&&[22,23].includes(shot.index))return drawStoryAction(c,'gemini_firework',t,shot,{x,y,h,alpha,flipX,noShadow});
  if(shot.index===25||shot.index===26){
-  // Avoid land-only tea cups / lanterns underwater. These swimming cels travel
-  // through the scene but are not yet articulated limb animation.
-  const n=name==='kimi'?'kimi_underwater_final':name==='gemini'?'gemini_swim':null;
+  // Horizontal cels plus limited leg movement; full-body swim and object contact are unverified.
+  const n=name==='kimi'?'kimi_underwater_final':name==='gemini'?'gemini_swim_full':name==='qwen'?'qwen_swim_full_retry':null;
   if(!n)return {row:0,column:0};
   const p=Math.max(0,Math.min(1,(t-shot.start)/(shot.end-shot.start)));
-  const im=story[n], crop=n==='kimi_underwater_final'?[0,120,384,288]:[0,70,384,336];
+  const crop=n==='kimi_underwater_final'?[0,120,384,288]:n==='qwen_swim_full_retry'?[0,150,384,266]:[0,185,384,231];
   // Missing-cast wing positions were designed for upright figures; keep the
   // wider swimming silhouettes in frame and orient them toward the centre.
-  const w=h*crop[2]/crop[3], swimX=n==='kimi_underwater_final'?210+50*p:1030-45*p;
+  const w=h*crop[2]/crop[3], swimX=n==='kimi_underwater_final'?210+50*p:(n==='qwen_swim_full_retry'?1080:1030)-45*p;
   c.save();c.globalAlpha*=alpha;c.translate(swimX,y+Math.sin(t*3)*7);if(n==='kimi_underwater_final')c.scale(-1,1);
   const frame=Math.min(15,Math.floor(((t-shot.start)/1.25%1)*16));
   c.drawImage(actions[n],frame*384+crop[0],crop[1],crop[2],crop[3],-w/2,-h,w,h);

@@ -4,11 +4,11 @@ import path from 'node:path';
 import {ROOT,loadImage,createCanvas} from './actors.mjs';
 import {drawGuest,drawLead} from './story_actors.mjs';
 const dir=path.join(ROOT,'assets/ai-girls/lyric-action-v13');
-for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera']){
+for(const name of ['kimi_underwater_final','claude_place','zai_reach','whale_gather_retry','gpt_push_final','doubao_step','qwen_reach','gemini_swim','doubao_lantern','kimi_lantern','claude_firework','gemini_firework','whale_rain_reach','whale_walk_retry','kimi_walk_story','doubao_comfort','doubao_memory','gpt_star','gemini_flower','zai_memento','whale_meet','whale_selfkind_retry','gpt_sweep','gemini_star_toss','claude_collect','whale_read','whale_rainwalk','gemini_kite','kimi_stargaze_seated','zai_clock','whale_camera','qwen_swim_full_retry','gemini_swim_full','whale_wipe_tear']){
  test(`${name} action contains distinct fixed-size frames`,async()=>{
   const im=await loadImage(path.join(dir,`${name}_action.png`));assert.equal(im.width,384*16);assert.equal(im.height,416);
   const cv=createCanvas(384,416),g=cv.getContext('2d');g.drawImage(im,0,0,384,416,0,0,384,416);const a=Buffer.from(g.getImageData(0,0,384,416).data);
-  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
+  const n=['kimi_underwater_final','doubao_step','gemini_swim','kimi_lantern','claude_firework','gemini_firework','whale_walk_retry','kimi_walk_story','gpt_sweep','whale_rainwalk','gemini_kite','qwen_swim_full_retry','gemini_swim_full'].includes(name)?4:15;g.clearRect(0,0,384,416);g.drawImage(im,n*384,0,384,416,0,0,384,416);const b=Buffer.from(g.getImageData(0,0,384,416).data);
   assert.notDeepEqual(a,b);
  });
 }
@@ -39,7 +39,7 @@ test('self embrace includes an actual closed-eye frame',async()=>{
  assert.notDeepEqual(open,closed);
 });
 
-test('rain shelter walking uses a different cel from the seated blink',()=>{
+test('rain shelter walking uses a different cel from the seated tear gesture',()=>{
  const c=createCanvas(400,450).getContext('2d'), opt={x:200,y:420,h:300};
  const seated={index:12,start:0,end:2},walking={index:13,start:2,end:4};
  assert.equal(drawLead(c,12,1.05,seated,opt).column,10);
@@ -51,4 +51,17 @@ test('sad seated lead has a localized closed-eye frame',async()=>{
  c.drawImage(im,0,0,384,416,0,0,384,416);const open=Buffer.from(c.getImageData(120,145,126,42).data);
  c.clearRect(0,0,384,416);c.drawImage(im,9*384,0,384,416,0,0,384,416);const closed=Buffer.from(c.getImageData(120,145,126,42).data);
  assert.notDeepEqual(open,closed);
+});
+
+test('underwater Qwen is drawn instead of silently omitted',()=>{
+ const c=createCanvas(1280,720).getContext('2d'),shot={index:25,start:0,end:2};
+ const first=drawGuest(c,'qwen',0,shot,{x:800,y:590,h:190});
+ const later=drawGuest(c,'qwen',0.3,shot,{x:800,y:590,h:190});
+ assert.notEqual(first.column,later.column);
+ assert.ok(c.getImageData(850,400,350,200).data.some((v,i)=>i%4===3&&v));
+});
+
+test('time-zone crossing advances the lead walk cel',()=>{
+ const c=createCanvas(500,500).getContext('2d'),shot={index:27,start:0,end:2},opt={x:250,y:450,h:250,flipX:true};
+ assert.notEqual(drawLead(c,27,0,shot,opt).column,drawLead(c,27,.35,shot,opt).column);
 });

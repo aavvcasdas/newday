@@ -71,3 +71,9 @@ build('zai_clock','zai_clock_under',polygon([(150,230),(164,220),(187,218),(205,
 build('whale_camera','whale_camera_under',polygon([(118,208),(131,200),(175,199),(196,200),(212,210),(214,242),(201,257),(173,260),(140,257),(121,246)]),(165,230),lambda u:5*(1-u)**2)
 # Experimental umbrella pose: the moving free arm is separate from the held rod.
 build('doubao_rain_umbrella','doubao_rain_umbrella_under',polygon([(84,155),(109,148),(132,153),(166,150),(190,154),(193,172),(177,186),(152,188),(128,190),(107,199),(86,197),(79,180)]),(183,162),lambda u:12*(1-u)**2)
+# Horizontal swim cels use a cropped 384x266 viewing window at draw time.
+# Only one leg pivots, not a full simulated swim stroke.
+build('qwen_swim_full_retry','qwen_swim_full_retry_under',polygon([(276,262),(284,240),(281,224),(285,211),(306,208),(328,216),(335,227),(327,243),(313,262),(303,281),(290,287)]),(286,274),lambda u:3*math.sin(u*math.pi*2))
+build('gemini_swim_full','gemini_swim_full_under',polygon([(244,307),(258,297),(272,287),(284,277),(296,278),(309,282),(322,291),(322,306),(314,316),(295,319),(273,321),(257,322)]),(249,315),lambda u:4*math.sin(u*math.pi*2))
+# Hand stays at the cheek at the end; the start is only a local gesture.
+build('whale_wipe_tear','whale_wipe_tear_under',polygon([(139,190),(145,174),(152,167),(162,170),(174,185),(173,203),(165,216),(154,222),(143,215),(137,204)]),(151,212),lambda u:8*(1-u)**2)
