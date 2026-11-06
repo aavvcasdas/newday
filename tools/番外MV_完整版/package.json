@@ -1,0 +1,19 @@
+{
+  "name": "newday-day12-paper-mv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Non-official AI-generated ensemble lyric MV for the newday project",
+  "scripts": {
+    "dev": "node server.mjs",
+    "stills": "node check_stills.mjs",
+    "render": "node render.mjs",
+    "verify": "python3 verify.py"
+  },
+  "dependencies": {
+    "@napi-rs/canvas": "1.1.0",
+    "@sparticuz/chromium": "153.0.0",
+    "playwright-core": "1.64.1",
+    "three": "0.160.1"
+  }
+}

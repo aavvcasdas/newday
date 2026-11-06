@@ -1,0 +1,225 @@
+{
+  "characters": {
+    "whale": {
+      "preview": "projectassets/ai-girls/full-v9/whale.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/whale.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          },
+          "wave": {
+            "row": 1,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "尾尖"
+    },
+    "claude": {
+      "preview": "projectassets/ai-girls/full-v9/claude.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/claude.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "抬手"
+    },
+    "gemini": {
+      "preview": "projectassets/ai-girls/full-v9/gemini.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/gemini.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "抬手"
+    },
+    "doubao": {
+      "preview": "projectassets/ai-girls/full-v9/doubao.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/doubao.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "抬手"
+    },
+    "gpt": {
+      "preview": "projectassets/ai-girls/full-v9/gpt.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/gpt.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "尾尖"
+    },
+    "kimi": {
+      "preview": "projectassets/ai-girls/full-v9/kimi.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/kimi.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "抬手"
+    },
+    "qwen": {
+      "preview": "projectassets/ai-girls/full-v9/qwen.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/qwen.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "抬手"
+    },
+    "zai": {
+      "preview": "projectassets/ai-girls/full-v9/zai.png",
+      "pet": {
+        "file": "projectassets/ai-girls/full-v9/zai.png",
+        "cellW": 384,
+        "cellH": 416,
+        "footY": 408,
+        "standPx": 400,
+        "animations": {
+          "idle": {
+            "row": 0,
+            "frames": 6,
+            "durationsMs": [
+              800,
+              180,
+              150,
+              180,
+              1150,
+              140
+            ],
+            "loop": true
+          }
+        }
+      },
+      "motion": "书和手"
+    }
+  }
+}

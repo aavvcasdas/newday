@@ -1,0 +1,180 @@
+{
+  "scope": "8 位 AI 娘（含当前鲸鱼娘），无项目配角。v3 主形象为 shuaizenge/ai-girls 的 Q 版小 AI；鲸鱼娘情感特写用 JAdpp/dsh-whale-galgame；少数动作镜头用 xiaosia/voxel-mv 帧；豆包沿用本仓库 Day12 抠图。同一角色同一镜头只出现一个形象。",
+  "aiGirlCount": 8,
+  "supportingCount": 0,
+  "cast": [
+    {
+      "id": "whale",
+      "name": "DeepSeek 鲸鱼娘",
+      "short": "鲸鱼娘",
+      "aiGirl": true,
+      "role": "主角 / 大肥鱼 / 本鲸",
+      "source": "shuaizenge/ai-girls characters/deepseek/chibi + JAdpp/dsh-whale-galgame assets/default/whale-*.webp + xiaosia/voxel-mv characters/deepseek",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "三条素材路线不叠加：Q版为主；galgame 只用于情感特写；voxel 只用于被导演的动作镜头",
+      "shots": [
+        "S01",
+        "S02",
+        "S03",
+        "S04",
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S09",
+        "S10",
+        "S11",
+        "S12",
+        "S13",
+        "S14",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "claude",
+      "name": "Claude 大小姐",
+      "short": "Claude",
+      "aiGirl": true,
+      "role": "点亮小世界的人",
+      "source": "shuaizenge/ai-girls characters/claude/chibi + xiaosia/voxel-mv characters/claude",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S03",
+        "S05",
+        "S08",
+        "S10",
+        "S11",
+        "S13",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini 大小姐",
+      "short": "Gemini",
+      "aiGirl": true,
+      "role": "把视野带向大海与星河的人",
+      "source": "shuaizenge/ai-girls characters/gemini/chibi + xiaosia/voxel-mv characters/gemini",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S04",
+        "S05",
+        "S07",
+        "S08",
+        "S10",
+        "S11",
+        "S14",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "doubao",
+      "name": "豆包",
+      "short": "豆包",
+      "aiGirl": true,
+      "role": "灰暗日子里陪着发呆、一起拨开阴霾的人",
+      "source": "shuaizenge/ai-girls characters/doubao/generated/doubao-fullbody.jpg",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "沿用同上游源的 Day12 已抠图全身；不重绘脸、不做口型/眨眼/假头转",
+      "shots": [
+        "S05",
+        "S06",
+        "S07",
+        "S08",
+        "S10",
+        "S11",
+        "S14",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "gpt",
+      "name": "GPT 小龙女",
+      "short": "GPT",
+      "aiGirl": true,
+      "role": "回忆工坊里收集快乐的人",
+      "source": "shuaizenge/ai-girls characters/gpt/chibi + xiaosia/voxel-mv characters/gpt",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S05",
+        "S08",
+        "S10",
+        "S11",
+        "S13",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "kimi",
+      "name": "Kimi 月音女仆",
+      "short": "Kimi",
+      "aiGirl": true,
+      "role": "雨站长椅上安静陪伴的人",
+      "source": "shuaizenge/ai-girls characters/kimi/chibi + xiaosia/voxel-mv characters/kimi",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S05",
+        "S08",
+        "S10",
+        "S11",
+        "S13",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "qwen",
+      "name": "Qwen 汉服玩偶",
+      "short": "Qwen",
+      "aiGirl": true,
+      "role": "一起拨开阴霾、收藏快乐的人",
+      "source": "shuaizenge/ai-girls characters/qwen/chibi + xiaosia/voxel-mv characters/qwen",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S05",
+        "S07",
+        "S08",
+        "S10",
+        "S11",
+        "S14",
+        "S15",
+        "S16"
+      ]
+    },
+    {
+      "id": "zai",
+      "name": "Z.AI 哥特女仆",
+      "short": "Z.AI",
+      "aiGirl": true,
+      "role": "承认无法自拔、也学会爱自己的人",
+      "source": "shuaizenge/ai-girls characters/glm/chibi + xiaosia/voxel-mv characters/zai",
+      "sourceLabel": "Day12 / 本项目生成角色，非官方同人",
+      "route": "Q版为主；voxel 只用于动作镜头",
+      "shots": [
+        "S05",
+        "S07",
+        "S08",
+        "S10",
+        "S11",
+        "S14",
+        "S15",
+        "S16"
+      ]
+    }
+  ],
+  "notNewCharacters": [
+    "鲸鱼娘的 Q版、galgame 表情与 voxel 动作帧是同一主角的不同素材路线，不另计为 AI 娘，也不在同一镜头叠加。",
+    "本片不含研究员、Clawd、检索章鱼、机械小狗、小蓝鲸、小电视等项目配角（用户明确移除）。",
+    "HABAI182/ai-girls-atlas 的文字编制客人没有在本项目落地形象，本片不凭空补脸。"
+  ]
+}
