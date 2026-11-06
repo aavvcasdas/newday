@@ -13,6 +13,10 @@ SPECS={
  'doubao_step':('doubao_step_leg_under',[(228,295),(252,290),(310,320),(310,380),(275,380),(242,355)],(238,301),'step'),
  'qwen_reach':('qwen_reach_hands_under',[(135,215),(220,215),(231,292),(212,305),(151,302),(135,285)],(182,225),'lower'),
  'gemini_swim':('gemini_swim_arms_under',[(74,240),(205,226),(217,292),(200,310),(83,302)],(197,245),'swimarms'),
+ 'whale_rain_reach':('whale_rain_reach_under',[(247,201),(270,185),(289,180),(299,155),(337,153),(338,185),(315,199),(284,224),(260,230)],(253,215),'rainreach'),
+ 'whale_walk_retry':('whale_walk_retry_under',[(151,302),(166,304),(170,319),(157,344),(161,384),(125,393),(113,370),(122,343),(138,317)],(157,309),'walk'),
+ 'kimi_walk_story':('kimi_walk_story_under',[(194,294),(221,295),(226,316),(243,330),(245,378),(214,380),(209,350),(196,335)],(200,306),'walk'),
+ 'doubao_comfort':('doubao_comfort_under',[(80,175),(106,161),(129,168),(171,160),(189,163),(190,186),(165,193),(126,198),(81,202)],(177,173),'comfort'),
 }
 for name,(under_name,polygon,pivot,kind) in SPECS.items():
  base,apply=normalized(name); under=apply(cutout(fit_raw(under_name)))
@@ -28,6 +32,12 @@ for name,(under_name,polygon,pivot,kind) in SPECS.items():
    angle=18*(1-u)**2; moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   elif kind=='step':
    angle=15*math.sin(u*math.pi*2); moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
+  elif kind=='rainreach':
+   angle=-28*(1-u)**2; moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
+  elif kind=='walk':
+   angle=7*math.sin(u*math.pi*2); moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
+  elif kind=='comfort':
+   angle=12+14*(1-u)**2; moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   elif kind=='swimarms':
    angle=7*math.sin(u*math.pi*2); moved=part.rotate(angle,Image.Resampling.BICUBIC,center=pivot)
   else:

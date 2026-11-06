@@ -553,7 +553,7 @@ function paintBaseShot(c, t, shot, env) {
 
     whale(c, {
       x: stepM.x,
-      y: 516,
+      y: rowY,
       u: 29,
       view: stepM.moving ? 'front' : id === 'S01_intro_puzzle' ? 'front' : 'q',
       pose: 'wave',
@@ -561,6 +561,12 @@ function paintBaseShot(c, t, shot, env) {
       stride: stepM.stride,
       breath: Math.sin(t * 2.3) * 0.4,
     });
+    // Keep companions on the same puzzle surface and within its camera,
+    // instead of compositing them onto unrelated floor-level wing slots.
+    if (id === 'S02_tiny_step' || isWide) {
+      guest(c, 'kimi', {x: 405, y: rowY, h: 178});
+      guest(c, 'claude', {x: 870, y: rowY, h: 178});
+    }
     c.restore();
 
     if (isWide) drawCropMarks(c, { color: 'rgba(84, 68, 48, 0.28)', target: true });
@@ -1054,7 +1060,7 @@ function paintBaseShot(c, t, shot, env) {
       headTilt: crouch * 0.08,
     });
     guest(c, 'doubao', {
-      x: close ? 706 : 716,
+      x: close ? 690 : 716,
       y: 590,
       h: close ? 306 : 284,
       lean: close ? -0.02 : 0,
