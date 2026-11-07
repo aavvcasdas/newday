@@ -1,0 +1,1 @@
+{"name":"dayu-lyric-mv-remotion","version":"1.0.0","private":true,"type":"module","scripts":{"render":"node render.mjs"},"dependencies":{"@remotion/bundler":"4.0.436","@remotion/renderer":"4.0.436","@sparticuz/chromium":"153.0.0","react":"19.2.0","react-dom":"19.2.0","remotion":"4.0.436"}}
