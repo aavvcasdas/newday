@@ -444,22 +444,22 @@ export function evaluateCharacterMotion(plan, t, {
   let walkGait = null;
   let footContacts = [];
   let trackVx = 0;
-  let walkArcPx = 0;
+  let lastMovingVx = 0;
+  let walkSegStartT = shotStart;
   if (Array.isArray(plan.track) && plan.track.length >= 2) {
     const normTrack = plan.track.map((row) => (Array.isArray(row[1]) ? row : [row[0], [row[1], row[2]], row[3]]));
     const pos = kf(t, normTrack);
     const prevPos = kf(Math.max(0, t - 1 / 30), normTrack);
-    const t0 = normTrack[0][0];
-    if (t > t0) {
-      const steps = 20;
-      const span = t - t0;
-      let prevPt = kf(t0, normTrack);
-      for (let s = 1; s <= steps; s++) {
-        const curPt = kf(t0 + (span * s) / steps, normTrack);
-        if (Array.isArray(curPt) && Array.isArray(prevPt)) {
-          walkArcPx += Math.hypot(curPt[0] - prevPt[0], (curPt[1] - prevPt[1]) * 0.5);
+    for (let i = 0; i < normTrack.length - 1; i++) {
+      const [t0, p0] = normTrack[i];
+      const [t1, p1] = normTrack[i + 1];
+      const dtSeg = Math.max(0.001, t1 - t0);
+      const segVx = ((p1?.[0] ?? 0) - (p0?.[0] ?? 0)) / dtSeg;
+      if (t >= t0 && Math.abs(segVx) > 6) {
+        lastMovingVx = segVx;
+        if (t <= t1 + 0.001) {
+          walkSegStartT = t0;
         }
-        prevPt = curPt;
       }
     }
     if (Array.isArray(pos)) {
@@ -547,13 +547,50 @@ export function evaluateCharacterMotion(plan, t, {
   }
 
   // 3b. 16 帧动作图集序列 (atlas / atlases) + 带预备/回弹与透明交叉淡入淡出的平滑切换
+  const isPetRigAtlas = (name) => Boolean(name && (name.endsWith('_2leg') || name.endsWith('_pet') || name.endsWith('_bench')));
+
+  const WALK_TO_IDLE_ATLAS_MAP = {
+    whale_walk_happy_2leg: 'whale_idle_happy_pet',
+    whale_walk_sad_2leg: 'whale_idle_sad_pet',
+    whale_walk_side_2leg: 'whale_idle_side_pet',
+    doubao_walk_side_2leg: 'doubao_idle_side_pet',
+    gpt_push_walk_2leg: 'gpt_push_idle_pet',
+    gemini_walk_2leg: 'gemini_idle_pet',
+  };
+
+  // 双腿迈步与同体待机图集的原图朝向（对标 ai-girl-chatgpt-pets：按行进方向自动正对前方，停步后保持朝向不乱弹）
+  const PET_RIG_DEFAULT_FACING = {
+    whale_walk_side_2leg: 'left',
+    whale_idle_side_pet: 'left',
+    whale_seat_side_bench: 'left',
+    doubao_walk_side_2leg: 'left',
+    doubao_idle_side_pet: 'left',
+    whale_walk_happy_2leg: 'right',
+    whale_idle_happy_pet: 'right',
+    whale_walk_sad_2leg: 'right',
+    whale_idle_sad_pet: 'right',
+    gpt_push_walk_2leg: 'right',
+    gpt_push_idle_pet: 'right',
+    gemini_walk_2leg: 'right',
+    gemini_idle_pet: 'right',
+  };
+
   const atlasCols = plan.atlasCols || 16;
   let activeAtlasSpec = plan.atlas
-    ? { at: shotStart, atlas: plan.atlas, cycle: plan.atlasCycle || 1.25, loop: plan.atlasLoop !== false, flip: plan.flip, emote: plan.emote }
+    ? {
+      at: shotStart,
+      atlas: plan.atlas,
+      cycle: plan.atlasCycle,
+      loop: plan.atlasLoop !== false,
+      flip: plan.flip,
+      emote: plan.emote,
+      treadmillSpeed: plan.treadmillSpeed,
+      forceWalk: plan.forceWalk,
+      phaseOffset: plan.phaseOffset,
+    }
     : null;
   let prevAtlasSpec = null;
   let atlasBlend = 1;
-  const atlasTransDur = plan.atlasTransition ?? 0.26;
   const atlasTimeline = (plan.atlases || [])
     .map((item) => ({
       ...item,
@@ -564,17 +601,14 @@ export function evaluateCharacterMotion(plan, t, {
   for (const item of atlasTimeline) {
     if (t >= item.at) {
       const age = t - item.at;
-      if (activeAtlasSpec && activeAtlasSpec.atlas !== item.atlas && atlasTransDur > 0 && age >= 0 && age < atlasTransDur) {
-        const q = ease(age / atlasTransDur);
+      const bothOrEitherPetRig = isPetRigAtlas(activeAtlasSpec?.atlas) || isPetRigAtlas(item.atlas);
+      // 对标 ai-girl-chatgpt-pets：同体 idle <-> walk 切换零跨步弹跳、零重影叠化！
+      const effTransDur = plan.atlasTransition != null ? plan.atlasTransition : (bothOrEitherPetRig ? 0 : 0.18);
+      if (activeAtlasSpec && activeAtlasSpec.atlas !== item.atlas && effTransDur > 0 && age >= 0 && age < effTransDur) {
+        const q = ease(age / effTransDur);
         prevAtlasSpec = activeAtlasSpec;
         activeAtlasSpec = item;
         atlasBlend = q;
-        const arc = Math.sin(Math.PI * q);
-        transitionPulse = {
-          dy: q < 0.34 ? 3.8 * (q / 0.34) : -6.2 * arc,
-          lean: (transitionPulse.lean || 0) + 0.026 * arc,
-          squash: q < 0.34 ? 0.052 * (q / 0.34) : -0.044 * arc,
-        };
       } else {
         prevAtlasSpec = activeAtlasSpec;
         activeAtlasSpec = item;
@@ -583,51 +617,53 @@ export function evaluateCharacterMotion(plan, t, {
     }
   }
 
-  // 双腿迈步图集的原图朝向（用于未显式声明 flip 时按位移方向自动正对行进前方，杜绝倒走）
-  const TWO_LEG_RIG_DEFAULT_FACING = {
-    whale_walk_side_2leg: 'left',
-    doubao_walk_side_2leg: 'left',
-    whale_walk_happy_2leg: 'right',
-    whale_walk_sad_2leg: 'right',
-    gpt_push_walk_2leg: 'right',
-    gemini_walk_2leg: 'right',
+  const resolveEffectiveAtlasName = (spec) => {
+    if (!spec?.atlas) return null;
+    if (spec.atlas.endsWith('_2leg')) {
+      const tmSpeed = spec.treadmillSpeed ?? plan.treadmillSpeed ?? 0;
+      const isLocomoting = walkingActive || tmSpeed > 0 || spec.forceWalk === true;
+      if (!isLocomoting && WALK_TO_IDLE_ATLAS_MAP[spec.atlas]) {
+        return WALK_TO_IDLE_ATLAS_MAP[spec.atlas];
+      }
+    }
+    return spec.atlas;
   };
 
-  const computeAtlasFrame = (spec) => {
-    if (!spec?.atlas) return 0;
-    const rel = Math.max(0, t - (spec.at ?? shotStart));
-    const isTwoLegWalk = spec.atlas.endsWith('_2leg') || (spec.strideCyclePx ?? 0) > 0;
+  const computeAtlasFrame = (spec, resolvedAtlasName = null) => {
+    const atlasName = resolvedAtlasName || resolveEffectiveAtlasName(spec);
+    if (!atlasName) return 0;
+    const isTwoLegWalk = atlasName.endsWith('_2leg') || (spec?.strideCyclePx ?? 0) > 0;
     if (isTwoLegWalk) {
-      const heightScale = (plan.height || 304) / 304;
-      const strideCyclePx = Math.max(60, (spec.strideCyclePx || 146) * heightScale);
-      const treadmillSpeed = spec.treadmillSpeed ?? plan.treadmillSpeed ?? 0;
-      const treadmillArc = treadmillSpeed > 0 ? treadmillSpeed * rel : 0;
-      const minCadenceArc = (walkingActive || treadmillSpeed > 0)
-        ? rel * (spec.minWalkSpeedPx || 128) * heightScale
-        : 0;
-      const totalArc = Math.max(walkArcPx + treadmillArc, minCadenceArc);
-      const prog = (((totalArc / strideCyclePx) + (spec.phaseOffset || 0)) % 1 + 1) % 1;
+      // 对标 ai-girl-chatgpt-pets pet.json (8帧×120ms ≈ 0.96s/双步周期)：匀速稳定屈膝节拍，绝不忽快忽慢卡帧
+      const walkOriginT = Math.max(spec?.at ?? shotStart, walkSegStartT);
+      const relWalk = Math.max(0, t - walkOriginT);
+      const speedBoost = Math.abs(trackVx) > 165 ? 0.82 : 1.0;
+      const cyc = Math.max(0.48, (spec?.cycle || 0.96) * speedBoost);
+      const prog = (((relWalk / cyc) + (spec?.phaseOffset || 0)) % 1 + 1) % 1;
       return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
     }
-    const cyc = Math.max(0.25, spec.cycle || 1.25);
-    const prog = spec.loop === false ? Math.min(0.999, rel / cyc) : ((rel / cyc) % 1 + 1) % 1;
+    const rel = Math.max(0, t - (spec?.at ?? shotStart));
+    const cyc = Math.max(0.25, spec?.cycle || (atlasName.endsWith('_pet') ? 1.35 : 1.25));
+    const prog = spec?.loop === false ? Math.min(0.999, rel / cyc) : ((rel / cyc) % 1 + 1) % 1;
     return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
   };
 
+  const atlas = resolveEffectiveAtlasName(activeAtlasSpec);
+  const refVx = Math.abs(trackVx) > 6 ? trackVx : lastMovingVx;
   if (activeAtlasSpec?.flip != null) {
     autoFlip = activeAtlasSpec.flip;
-  } else if (activeAtlasSpec?.atlas && TWO_LEG_RIG_DEFAULT_FACING[activeAtlasSpec.atlas] && Math.abs(trackVx) > 6) {
-    const baseFacing = TWO_LEG_RIG_DEFAULT_FACING[activeAtlasSpec.atlas];
-    autoFlip = baseFacing === 'left' ? trackVx > 0 : trackVx < 0;
+  } else if (atlas && PET_RIG_DEFAULT_FACING[atlas] && Math.abs(refVx) > 6) {
+    const baseFacing = PET_RIG_DEFAULT_FACING[atlas];
+    autoFlip = baseFacing === 'left' ? refVx > 0 : refVx < 0;
   }
-  const atlas = activeAtlasSpec?.atlas || null;
-  const atlasFrame = computeAtlasFrame(activeAtlasSpec);
-  const prevAtlas = atlasBlend < 0.999 && prevAtlasSpec?.atlas ? prevAtlasSpec.atlas : null;
-  const prevAtlasFrame = prevAtlas ? computeAtlasFrame(prevAtlasSpec) : 0;
+  const atlasFrame = computeAtlasFrame(activeAtlasSpec, atlas);
+  const prevAtlas = atlasBlend < 0.999 && prevAtlasSpec?.atlas ? resolveEffectiveAtlasName(prevAtlasSpec) : null;
+  const prevAtlasFrame = prevAtlas ? computeAtlasFrame(prevAtlasSpec, prevAtlas) : 0;
   const isTwoLegRig = Boolean(atlas && atlas.endsWith('_2leg'));
+  const isPetRig = isPetRigAtlas(atlas);
   if (isTwoLegRig && (walkingActive || (activeAtlasSpec?.treadmillSpeed ?? plan.treadmillSpeed ?? 0) > 0)) {
     walkingActive = true;
-    if (atlasFrame === 3 || atlasFrame === 4 || atlasFrame === 11 || atlasFrame === 12) {
+    if (atlasFrame === 2 || atlasFrame === 3 || atlasFrame === 10 || atlasFrame === 11) {
       footContacts.push({ x, y: baseGroundY, strength: 0.82, phase: atlasFrame / atlasCols });
     }
   }
@@ -733,12 +769,12 @@ export function evaluateCharacterMotion(plan, t, {
   const rootDy = (anim.root?.dy || 0) * 0.36;
   const rootRot = anim.root?.rot || 0;
 
-  const rigMotionDamp = isTwoLegRig ? 0.14 : 1;
+  const rigMotionDamp = isPetRig ? 0.04 : (isTwoLegRig ? 0.14 : 1);
   const dx = living.dx * rigMotionDamp + (moveResult?.dx || 0) * rigMotionDamp + eventDx + enterOffsetX + rootDx;
   const dy = living.dy * rigMotionDamp + ((moveResult?.dy || 0) + (walkGait?.dy || 0)) * rigMotionDamp + transitionPulse.dy + eventDy + rootDy;
-  const lean = (plan.lean ?? 0) + living.lean * rigMotionDamp + ((moveResult?.lean || 0) + (walkGait?.lean || 0)) * (isTwoLegRig ? 0.25 : 1) + transitionPulse.lean + eventLean + rootRot;
+  const lean = (plan.lean ?? 0) + living.lean * rigMotionDamp + ((moveResult?.lean || 0) + (walkGait?.lean || 0)) * (isPetRig ? 0.08 : (isTwoLegRig ? 0.25 : 1)) + transitionPulse.lean + eventLean + rootRot;
   const squash = clamp(
-    (living.squash + (moveResult?.squash || 0) + (walkGait?.squash || 0)) * rigMotionDamp + transitionPulse.squash + eventSquash + mood.squash,
+    (living.squash + (moveResult?.squash || 0) + (walkGait?.squash || 0)) * rigMotionDamp + transitionPulse.squash + eventSquash + mood.squash * (isPetRig ? 0.2 : 1),
     -0.24,
     0.26
   );

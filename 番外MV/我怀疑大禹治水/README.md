@@ -22,16 +22,18 @@
 | 7 | `21.22 – 24.82` | `23.40s` (`f702`) | 孔融让梨就是 / 让我离职 | 「让梨（ràng lí）」谐音老板劝退「让离（离职）」：豆包迈步上前递出大金梨，咔嚓裂开秒变盖红章的 **「离职书」** + 打包纸箱，主角一把推回并护住蓝色工牌 |
 | 8 | `24.82 – 29.33` | `27.57s` (`f827`) | 孟母三迁我月薪 / 也是三千 | 「三迁（sān qiān）」同音打工人自嘲梗「月薪三千」：主角侧面双腿交替走过 **「一迁 / 二迁 / 三迁」** 三处屋舍，落座路灯木长椅看身旁扁扁的 **「月薪三千」** 袋与三枚薄铜钱，配热茶释然一笑 |
 
-### 双腿剪刀步态行走升级说明
+### 对标 `ai-girl-chatgpt-pets` 双关节屈膝步态与同体状态机升级说明
 
-- 新增程序化双腿交替行走图集构建器 `tools/remotion-engine/walk_rig_builder.mjs`（运行时自动缓存至 `/tmp/newday_walk_rigs_v4`，不污染 Git 大文件），基于仓库干净单腿底图分层合成远近双腿 180° 反相剪刀摆动（`±24°..29°` 跨步角 + 摆动相抬脚 + 支撑相骨盆逆运动学贴地防滑）：`whale_walk_side_2leg`、`whale_walk_happy_2leg`、`whale_walk_sad_2leg`、`doubao_walk_side_2leg`、`gpt_push_walk_2leg`、`gemini_walk_2leg` 以及长椅坐姿 `whale_seat_side_bench`。
-- `tools/engine/character_motion.mjs` 新增按真实累积行进距离 `walkArcPx` 驱动迈步帧与自动前进朝向对齐，彻底消除「坐姿悬空平移」「单腿微颤滑冰」与「到位后原地踏步」。
+- 参考 `tqlearning/ai-girl-chatgpt-pets`（`FORMAT.md` / `pet.json` 第 `0..2` 行 `idle`、`running-right`、`running-left`）的步态生物力学规范，彻底重构 `tools/remotion-engine/walk_rig_builder.mjs`（运行时自动缓存至 `/tmp/newday_walk_rigs_pet_v1`，零上游 PNG/GIF 入库）：
+  1. **大腿+小腿双关节屈膝提踵（`thigh` + `shin/shoe` 膝关节圆融铰接）**：摆动腿在推进与通过相位自然向后屈膝 `38°..58°` 提踵抬腿，支撑腿微屈膝平稳过渡踩地，彻底告别直棒腿僵硬摆动。
+  2. **头顶稳如水平线（波动 `<= ±2px`）**：消除夸张骨盆弹跳与 `transitionPulse` 过渡上跳（`-6.2px`），头部与上身在迈步全程平稳推进。
+  3. **100% 同体同比例 `walk <-> idle` 状态机（零切图跳变）**：为每套行走图集生成同体待机图集（`whale_idle_side_pet`、`whale_idle_happy_pet`、`whale_idle_sad_pet`、`doubao_idle_side_pet`、`gpt_push_idle_pet`、`gemini_idle_pet`），单镜内全程保持统一体型比例与朝向，彻底消除跨立绘切图闪烁与四腿重影。
 
 ### 成片媒体核验参数
 
 - **分辨率 / 帧率 / 帧数**：`1920×1080`、`30fps`、总帧数 `880` 帧、精确时长 `29.333333s`
 - **音轨**：源媒体 `我怀疑大禹治水治没了我的薪水.mp3` 的 `44100 Hz` 立体声 AAC 音轨 `-c:a copy` 无损直拷（`635` packets），未改速、无片尾卡
-- **文件大小与校验值**：`10,464,230` 字节，SHA256：`afe58e6adee39273b9c51bb0718ed27dcb770cbe80ae2417d4a3282b4c305fd8`
+- **文件大小与校验值**：`9,031,635` 字节，SHA256：`dd4633222a8cb14bc10b6329558f7d7a8632ade450574e64ea42d6e2e6def272`
 - **合规与红线**：右上角全程常驻 `非官方同人 / AI生成`，新生图 `0` 张，道具与背景零阿拉伯数字，`auditRemotionPropsActivity` 全片静态幻灯片区间为 `0`
 
 ### 一键复现命令（仓库根目录）

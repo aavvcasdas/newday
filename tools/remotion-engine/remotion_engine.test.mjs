@@ -35,11 +35,13 @@ test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 �
   const sunAfter = evaluateRemotionFrameState(props, 6.9);
   assert.ok(sunAfter.setState.reactive.dawn < sunBefore.setState.reactive.dawn - 0.5);
 
-  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 1.90s 后 0.1s 内处于双图集平滑过渡态，且切换为真双腿迈步追赶）
-  const pivotBlend = evaluateRemotionFrameState(props, 2.0);
-  assert.equal(pivotBlend.actors[0].atlas, 'whale_walk_side_2leg');
-  assert.equal(pivotBlend.actors[0].prevAtlas, 'whale_point');
-  assert.ok(pivotBlend.actors[0].atlasBlend > 0 && pivotBlend.actors[0].atlasBlend < 1);
+  // 对标 ai-girl-chatgpt-pets 同体状态机检验：反转点 1.90s 由同体待机 whale_idle_side_pet 切入屈膝追赶 whale_walk_side_2leg，零上跳、零鬼影重影！
+  const beforePivot = evaluateRemotionFrameState(props, 1.80);
+  const afterPivot = evaluateRemotionFrameState(props, 2.00);
+  assert.equal(beforePivot.actors[0].atlas, 'whale_idle_side_pet');
+  assert.equal(afterPivot.actors[0].atlas, 'whale_walk_side_2leg');
+  assert.equal(afterPivot.actors[0].prevAtlas, null, '同体 pet 步态切换不应产生四条腿重影交叉淡化');
+  assert.ok(Math.abs(afterPivot.actors[0].y - beforePivot.actors[0].y) < 1.0, '同体待机<->行走切换时脚底高度须零弹跳');
 
   // 帧级音画同步回归校验：每镜区间与歌词卡拉OK起唱帧严丝合缝，且第 6 镜「对象」为真实美少女伴侣角色而非折纸鹤
   const expectedStarts = [0.0, 4.18, 7.45, 11.10, 14.07, 17.75, 21.22, 24.82];
@@ -168,10 +170,17 @@ test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积�
       const actor = st.actors[w.actorIdx];
       assert.ok(actor.atlas?.endsWith('_2leg'), `${w.label} 在 t=${t.toFixed(2)} 应使用 *_2leg 双腿行走图集，实际为 ${actor.atlas}`);
       assert.equal(actor.walking, true, `${w.label} 在 t=${t.toFixed(2)} walking 应为 true`);
+      assert.ok(Math.abs(actor.dy) < 1.0, `${w.label} 在 t=${t.toFixed(2)} 不应发生上下乱跳 (dy=${actor.dy})`);
       framesSeen.add(actor.atlasFrame);
     }
     assert.ok(framesSeen.size >= 8, `${w.label} 行走期间应遍历至少 8 个不同双腿迈步相位帧，实际 ${framesSeen.size}`);
   }
+
+  // 停步后须无缝落定到 100% 同体 *_pet 待机图集（杜绝原地踏步或跨立绘突变）
+  assert.equal(evaluateRemotionFrameState(props, 3.80).actors[0].atlas, 'whale_idle_side_pet');
+  assert.equal(evaluateRemotionFrameState(props, 7.00).actors[0].atlas, 'whale_idle_sad_pet');
+  assert.equal(evaluateRemotionFrameState(props, 20.10).actors[1].atlas, 'gemini_idle_pet');
+  assert.equal(evaluateRemotionFrameState(props, 23.80).actors[1].atlas, 'doubao_idle_side_pet');
 
   // 镜5「偷光积蓄」道具组件源码校验：已由金币替换为青花瓷碗白米饭团与晶莹米粒
   const propsLayerSrc = fs.readFileSync(new URL('./components/InteractivePropsLayer.jsx', import.meta.url), 'utf8');

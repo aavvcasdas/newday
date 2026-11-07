@@ -11,7 +11,52 @@ const { createCanvas, loadImage } = ENGINE_REQUIRE('@napi-rs/canvas');
 export const CELL_W = 384;
 export const CELL_H = 416;
 export const WALK_FRAMES = 16;
-export const DEFAULT_WALK_CACHE_DIR = '/tmp/newday_walk_rigs_v4';
+export const DEFAULT_WALK_CACHE_DIR = '/tmp/newday_walk_rigs_pet_v1';
+
+// 对标 tqlearning/ai-girl-chatgpt-pets 第 1/2 行 (running-right / running-left) 的 8 关键帧双关节屈膝步态表：
+// 每格含：[大腿角 thighDeg, 膝关节向后屈曲角 kneeBendDeg, 躯干微起伏 bodyDyPx, 尾部/发梢摆角 tailDeg]
+// 约定（面向右侧 running-right 时）：
+//   thighDeg < 0 为大腿向前迈出，thighDeg > 0 为大腿向后蹬伸；
+//   kneeBendDeg >= 0 恒为小腿绕膝盖向后折叠（符合人体真实膝关节生理，绝不反向折腿）；
+//   头部与上身垂直起伏严格控制在 [-2.2px, +2.2px]（约身高 0.7%），消除“人在跳”的弹跳感。
+const PET_8FRAME_GAIT = [
+  // f0: Contact R — 右腿前伸触地，左腿在后微屈膝
+  { near: [-27, 7], far: [19, 34], dy: 1.4, tail: 3.5 },
+  // f1: Down R    — 右脚踩实承重，左小腿向后勾起抬离地面
+  { near: [-10, 10], far: [6, 56], dy: 2.2, tail: 2.0 },
+  // f2: Pass L    — 右脚在地面向后推，左大腿高抬前摆、小腿屈膝收于裙下越过支撑腿
+  { near: [8, 4], far: [-33, 52], dy: -0.8, tail: -2.5 },
+  // f3: Reach L   — 右腿在后蹬地向后勾起，左腿向前伸直准备落脚
+  { near: [22, 44], far: [-31, 16], dy: -1.8, tail: -4.0 },
+  // f4: Contact L — 左腿前伸触地，右腿在后微屈膝（与 f0 反相）
+  { near: [19, 34], far: [-27, 7], dy: 1.4, tail: -3.5 },
+  // f5: Down L    — 左脚踩实承重，右小腿向后勾起抬离地面（与 f1 反相）
+  { near: [6, 56], far: [-10, 10], dy: 2.2, tail: -2.0 },
+  // f6: Pass R    — 左脚在地面向后推，右大腿高抬前摆、小腿屈膝前越（与 f2 反相）
+  { near: [-33, 52], far: [8, 4], dy: -0.8, tail: 2.5 },
+  // f7: Reach R   — 左腿在后蹬地向后勾起，右腿向前伸直准备落脚（与 f3 反相）
+  { near: [-31, 16], far: [22, 44], dy: -1.8, tail: 4.0 },
+];
+
+function samplePetGait(u01) {
+  const pos = (((u01 % 1) + 1) % 1) * PET_8FRAME_GAIT.length;
+  const idx0 = Math.floor(pos) % PET_8FRAME_GAIT.length;
+  const idx1 = (idx0 + 1) % PET_8FRAME_GAIT.length;
+  const frac = pos - Math.floor(pos);
+  // Smooth cosine blend between adjacent pet keyframes
+  const w = 0.5 - 0.5 * Math.cos(Math.PI * frac);
+  const a = PET_8FRAME_GAIT[idx0];
+  const b = PET_8FRAME_GAIT[idx1];
+  const mix = (x, y) => x + (y - x) * w;
+  return {
+    nearThigh: mix(a.near[0], b.near[0]),
+    nearKnee: mix(a.near[1], b.near[1]),
+    farThigh: mix(a.far[0], b.far[0]),
+    farKnee: mix(a.far[1], b.far[1]),
+    dy: mix(a.dy, b.dy),
+    tail: mix(a.tail, b.tail),
+  };
+}
 
 function pointInPoly(x, y, poly) {
   let inside = false;
@@ -140,105 +185,127 @@ function tintCanvas(srcCanvas, rMul, gMul, bMul) {
   return out;
 }
 
-function makeNeutralLeg(legLayer, {
+/**
+ * 将单条干净直立腿拆分为【大腿 thigh】+【小腿与鞋 shin】两段关节，并在膝盖处补齐圆润衔接球，
+ * 使膝关节在 0°..60° 向后折叠时完全无裂口、无折角锯齿。
+ */
+function buildTwoJointLegSegments(rawLegLayer, {
   srcHipX,
   srcHipY,
   neutralRotDeg = 0,
-  dstHipX = srcHipX,
-  dstHipY = srcHipY,
-  thighCapColor = '#F7DBD0',
-  thighCapRx = 16,
-  thighCapRy = 18,
+  dstHipX,
+  dstHipY,
+  kneeLen = 46,
+  hipCapColor = '#F7DBD0',
+  hipCapRx = 14,
+  hipCapRy = 15,
+  kneeCapColor = '#F7DBD0',
+  kneeCapR = 10.5,
 }) {
-  const c = createCanvas(CELL_W, CELL_H);
-  const g = c.getContext('2d');
-  if (thighCapColor) {
-    g.fillStyle = thighCapColor;
-    g.beginPath();
-    g.ellipse(dstHipX, dstHipY + 4, thighCapRx, thighCapRy, 0, 0, Math.PI * 2);
-    g.fill();
+  const neutral = createCanvas(CELL_W, CELL_H);
+  const ng = neutral.getContext('2d');
+  if (hipCapColor) {
+    ng.fillStyle = hipCapColor;
+    ng.beginPath();
+    ng.ellipse(dstHipX, dstHipY + 4, hipCapRx, hipCapRy, 0, 0, Math.PI * 2);
+    ng.fill();
   }
-  g.save();
-  g.translate(dstHipX, dstHipY);
-  g.rotate((neutralRotDeg * Math.PI) / 180);
-  g.drawImage(legLayer, -srcHipX, -srcHipY);
-  g.restore();
-  return c;
+  ng.save();
+  ng.translate(dstHipX, dstHipY);
+  ng.rotate((neutralRotDeg * Math.PI) / 180);
+  ng.drawImage(rawLegLayer, -srcHipX, -srcHipY);
+  ng.restore();
+
+  const kneeY = dstHipY + kneeLen;
+
+  const thigh = createCanvas(CELL_W, CELL_H);
+  const tg = thigh.getContext('2d');
+  tg.drawImage(neutral, 0, 0, CELL_W, kneeY + 4, 0, 0, CELL_W, kneeY + 4);
+  if (kneeCapColor) {
+    tg.fillStyle = kneeCapColor;
+    tg.beginPath();
+    tg.arc(dstHipX, kneeY, kneeCapR, 0, Math.PI * 2);
+    tg.fill();
+  }
+
+  const shin = createCanvas(CELL_W, CELL_H);
+  const sg = shin.getContext('2d');
+  if (kneeCapColor) {
+    sg.fillStyle = kneeCapColor;
+    sg.beginPath();
+    sg.arc(dstHipX, kneeY, kneeCapR * 0.94, 0, Math.PI * 2);
+    sg.fill();
+  }
+  sg.drawImage(neutral, 0, kneeY - 3, CELL_W, CELL_H - (kneeY - 3), 0, kneeY - 3, CELL_W, CELL_H - (kneeY - 3));
+
+  return { thigh, shin, hipX: dstHipX, hipY: dstHipY, kneeLen };
 }
 
-function drawPivoted(ctx, layer, pivotX, pivotY, angleDeg, dx = 0, dy = 0, scaleX = 1, scaleY = 1) {
+/**
+ * 绘制双关节腿（髋 -> 大腿旋转 -> 膝 -> 小腿向后屈膝旋转）
+ * facingRight = true：原图朝右（大腿前抬为负角，小腿向后折叠为正角）
+ * facingRight = false：原图朝左（大腿前抬为正角，小腿向后折叠为负角）
+ */
+function drawTwoJointLeg(ctx, segLeg, thighDegRight, kneeBendDegRight, facingRight = true, dyOffset = 0) {
+  const sign = facingRight ? 1 : -1;
+  const thighRad = ((sign * thighDegRight) * Math.PI) / 180;
+  const kneeRad = ((sign * kneeBendDegRight) * Math.PI) / 180;
+  const { thigh, shin, hipX, hipY, kneeLen } = segLeg;
+  const kneeY = hipY + kneeLen;
+
+  ctx.save();
+  ctx.translate(hipX, hipY + dyOffset);
+  ctx.rotate(thighRad);
+  ctx.drawImage(thigh, -hipX, -hipY);
+
+  // Move down along thigh bone to knee joint, then bend shin backward
+  ctx.translate(0, kneeLen);
+  ctx.rotate(kneeRad);
+  ctx.drawImage(shin, -hipX, -kneeY);
+  ctx.restore();
+}
+
+function drawPivoted(ctx, layer, pivotX, pivotY, angleDeg, dx = 0, dy = 0) {
   ctx.save();
   ctx.translate(pivotX + dx, pivotY + dy);
   ctx.rotate((angleDeg * Math.PI) / 180);
-  ctx.scale(scaleX, scaleY);
   ctx.drawImage(layer, -pivotX, -pivotY);
   ctx.restore();
 }
 
-function renderScissorWalkStrip({
+/**
+ * 渲染对标 ai-girl-chatgpt-pets 的 16 帧双关节屈膝行走图集（头部平稳，膝盖自然弯曲抬腿迈步）
+ */
+function renderPetStyleWalkStrip({
   upperBody,
-  legNear,
-  legFar,
-  hipNear,
-  hipFar,
-  facingSign = 1,
-  strideDeg = 27,
-  swingLiftPx = 11,
-  legLengthPx = 104,
-  bodyPitchDeg = 1.8,
+  legNearSeg,
+  legFarSeg,
+  facingRight = true,
   underSkirtBackdrop = null,
   frontCapLayer = null,
-  armFrontLayer = null,
-  armFrontPivot = null,
-  armSwingDeg = 0,
+  strideScale = 1.0,
 }) {
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
+  const sign = facingRight ? 1 : -1;
 
   for (let f = 0; f < WALK_FRAMES; f++) {
-    const theta = (2 * Math.PI * f) / WALK_FRAMES;
-    const s = Math.sin(theta);
-    const c = Math.cos(theta);
-
-    const degNear = facingSign * strideDeg * s;
-    const degFar = -facingSign * strideDeg * s;
-
-    const swingNear = Math.max(0, c);
-    const swingFar = Math.max(0, -c);
-    const liftNear = -swingLiftPx * Math.pow(swingNear, 1.15);
-    const liftFar = -swingLiftPx * Math.pow(swingFar, 1.15);
-
-    const stanceRad = (strideDeg * Math.abs(s) * Math.PI) / 180;
-    const hipDropY = legLengthPx * (1 - Math.cos(stanceRad)) * 0.72;
-    const pitch = facingSign * (1.2 + bodyPitchDeg * Math.sin(2 * theta));
-
+    const g = samplePetGait(f / WALK_FRAMES);
     const cell = createCanvas(CELL_W, CELL_H);
     const cg = cell.getContext('2d');
 
     if (underSkirtBackdrop) {
-      drawPivoted(cg, underSkirtBackdrop, CELL_W * 0.5, 250, pitch * 0.35, 0, hipDropY);
+      drawPivoted(cg, underSkirtBackdrop, CELL_W * 0.5, 240, sign * 0.4 * Math.sin((4 * Math.PI * f) / WALK_FRAMES), 0, g.dy);
     }
 
-    // 1. Far leg behind
-    drawPivoted(cg, legFar, hipFar[0], hipFar[1], degFar, 0, hipDropY + liftFar);
-    // 2. Near leg in front
-    drawPivoted(cg, legNear, hipNear[0], hipNear[1], degNear, 0, hipDropY + liftNear);
-    // 3. Upper body / skirt hem on top of hip joints
-    drawPivoted(cg, upperBody, CELL_W * 0.5, 250, pitch * 0.35, 0, hipDropY);
-    // 4. Optional front waist cap & counter-swinging arm
+    // 1. 远端腿（位于后层，带柔和阴影色阶）
+    drawTwoJointLeg(cg, legFarSeg, g.farThigh * strideScale, g.farKnee * strideScale, facingRight, g.dy);
+    // 2. 近端腿（位于前层）
+    drawTwoJointLeg(cg, legNearSeg, g.nearThigh * strideScale, g.nearKnee * strideScale, facingRight, g.dy);
+    // 3. 上半身与裙摆（平稳移动，头部起伏 <= 2.2px，完全不晃不跳）
+    drawPivoted(cg, upperBody, CELL_W * 0.5, 240, -sign * 0.6, 0, g.dy);
     if (frontCapLayer) {
-      drawPivoted(cg, frontCapLayer, CELL_W * 0.5, 250, pitch * 0.35, 0, hipDropY);
-    }
-    if (armFrontLayer && armFrontPivot) {
-      drawPivoted(
-        cg,
-        armFrontLayer,
-        armFrontPivot[0],
-        armFrontPivot[1],
-        -facingSign * armSwingDeg * s,
-        0,
-        hipDropY,
-      );
+      drawPivoted(cg, frontCapLayer, CELL_W * 0.5, 240, -sign * 0.6, 0, g.dy);
     }
 
     sg.drawImage(cell, f * CELL_W, 0);
@@ -246,7 +313,100 @@ function renderScissorWalkStrip({
   return strip;
 }
 
-async function buildWhaleSideWalk() {
+/**
+ * 渲染与行走图集 100% 同体同比例的待机图集（对标 ai-girl-chatgpt-pets 第 0 行 idle：双脚并拢踩地 + 轻柔呼吸，零切图跳变！）
+ */
+function renderPetStyleIdleStrip({
+  upperBody,
+  legNearSeg,
+  legFarSeg,
+  facingRight = true,
+  underSkirtBackdrop = null,
+  frontCapLayer = null,
+  blinkUpperBody = null,
+}) {
+  const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
+  const sg = strip.getContext('2d');
+
+  for (let f = 0; f < WALK_FRAMES; f++) {
+    const theta = (2 * Math.PI * f) / WALK_FRAMES;
+    const breathDy = Math.sin(theta) * 1.2;
+    const isBlink = blinkUpperBody && (f === 11 || f === 12);
+    const bodyToDraw = isBlink ? blinkUpperBody : upperBody;
+
+    const cell = createCanvas(CELL_W, CELL_H);
+    const cg = cell.getContext('2d');
+
+    if (underSkirtBackdrop) {
+      cg.drawImage(underSkirtBackdrop, 0, breathDy);
+    }
+    // 待机双脚自然微开稳踩地面，膝盖不乱弹（对标 ai-girl-chatgpt-pets idle 自然站姿）
+    drawTwoJointLeg(cg, legFarSeg, -6, 2, facingRight, 0);
+    drawTwoJointLeg(cg, legNearSeg, 6, 2, facingRight, 0);
+    cg.drawImage(bodyToDraw, 0, breathDy);
+    if (frontCapLayer) {
+      cg.drawImage(frontCapLayer, 0, breathDy);
+    }
+
+    sg.drawImage(cell, f * CELL_W, 0);
+  }
+  return strip;
+}
+
+async function prepareWhale34Parts({ sadFace = false } = {}) {
+  const cleanUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_walk_retry_under.png'));
+  const cleanUnder = fitAndCutoutSolid(cleanUnderRaw);
+
+  const legPoly = [
+    [148, 312], [195, 310], [209, 352], [235, 378],
+    [235, 410], [184, 410], [172, 374], [156, 340],
+  ];
+  const rawLeg = extractPolyLayer(cleanUnder, legPoly, {
+    filterPixel: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
+  });
+
+  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
+    srcHipX: 181,
+    srcHipY: 312,
+    neutralRotDeg: 18,
+    dstHipX: 185,
+    dstHipY: 300,
+    kneeLen: 45,
+    hipCapColor: '#F7DBD0',
+    kneeCapColor: '#F7DBD0',
+    kneeCapR: 7.0,
+  });
+  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.84, 0.85, 0.92), {
+    srcHipX: 181,
+    srcHipY: 312,
+    neutralRotDeg: 18,
+    dstHipX: 165,
+    dstHipY: 300,
+    kneeLen: 45,
+    hipCapColor: '#D0B6B2',
+    kneeCapColor: '#D0B6B2',
+    kneeCapR: 7.0,
+  });
+
+  const cleanBody = erasePolyInPlace(cleanUnder, legPoly, {
+    shouldErase: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
+  });
+
+  let upperBody = cleanBody;
+  if (sadFace) {
+    const sadRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_rainwalk.png'));
+    const sad = fitAndCutoutSolid(sadRaw);
+    upperBody = createCanvas(CELL_W, CELL_H);
+    const ug = upperBody.getContext('2d');
+    ug.drawImage(cleanBody, 0, 0);
+    ug.clearRect(0, 0, CELL_W, 195);
+    ug.drawImage(sad, 0, 0, CELL_W, 196, 0, 0, CELL_W, 196);
+  }
+
+  return { upperBody, legNearSeg, legFarSeg };
+}
+
+async function prepareWhaleSideParts() {
   const baseRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk.png'));
   const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk_leg_under.png'));
   const base = fitAndCutoutSolid(baseRaw);
@@ -257,28 +417,29 @@ async function buildWhaleSideWalk() {
     [120, 410], [80, 410], [52, 392], [52, 366], [90, 358], [104, 340], [112, 312],
   ];
   const rawFrontLeg = extractPolyLayer(base, frontLegPoly);
-  const legNear = makeNeutralLeg(rawFrontLeg, {
+  const legNearSeg = buildTwoJointLegSegments(rawFrontLeg, {
     srcHipX: 138,
     srcHipY: 302,
     neutralRotDeg: -22,
-    dstHipX: 152,
-    dstHipY: 296,
-    thighCapColor: '#F7DBD0',
-    thighCapRx: 17,
-    thighCapRy: 18,
+    dstHipX: 150,
+    dstHipY: 298,
+    kneeLen: 46,
+    hipCapColor: '#F7DBD0',
+    kneeCapColor: '#F7DBD0',
+    kneeCapR: 11,
   });
-  const legFar = makeNeutralLeg(tintCanvas(rawFrontLeg, 0.83, 0.84, 0.91), {
+  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawFrontLeg, 0.84, 0.85, 0.92), {
     srcHipX: 138,
     srcHipY: 302,
     neutralRotDeg: -22,
-    dstHipX: 164,
-    dstHipY: 296,
-    thighCapColor: '#D0B6B2',
-    thighCapRx: 17,
-    thighCapRy: 18,
+    dstHipX: 162,
+    dstHipY: 298,
+    kneeLen: 46,
+    hipCapColor: '#D0B6B2',
+    kneeCapColor: '#D0B6B2',
+    kneeCapR: 11,
   });
 
-  // Erase remaining back leg on `under` while protecting medium-blue whale tail (b > 92 && b > r + 16)
   const backLegErasePoly = [
     [126, 308], [193, 315], [206, 338], [218, 358], [232, 378],
     [232, 414], [132, 414], [126, 345],
@@ -290,306 +451,138 @@ async function buildWhaleSideWalk() {
     },
   });
 
-  return renderScissorWalkStrip({
-    upperBody,
-    legNear,
-    legFar,
-    hipNear: [152, 296],
-    hipFar: [164, 296],
-    facingSign: 1,
-    strideDeg: 29,
-    swingLiftPx: 12,
-    legLengthPx: 106,
-    bodyPitchDeg: 1.9,
-  });
+  return { upperBody, legNearSeg, legFarSeg };
 }
 
-async function buildWhaleHappyWalk() {
-  const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_walk_retry_under.png'));
-  const under = fitAndCutoutSolid(underRaw);
-
-  const legPoly = [
-    [148, 312], [195, 310], [209, 352], [235, 378],
-    [235, 410], [184, 410], [172, 374], [156, 340],
-  ];
-  const rawLeg = extractPolyLayer(under, legPoly, {
-    filterPixel: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
-  });
-
-  const legNear = makeNeutralLeg(rawLeg, {
-    srcHipX: 174,
-    srcHipY: 312,
-    neutralRotDeg: 14,
-    dstHipX: 182,
-    dstHipY: 300,
-    thighCapColor: '#F7DBD0',
-    thighCapRx: 17,
-    thighCapRy: 18,
-  });
-  const legFar = makeNeutralLeg(tintCanvas(rawLeg, 0.83, 0.84, 0.91), {
-    srcHipX: 174,
-    srcHipY: 312,
-    neutralRotDeg: 14,
-    dstHipX: 168,
-    dstHipY: 300,
-    thighCapColor: '#D0B6B2',
-    thighCapRx: 17,
-    thighCapRy: 18,
-  });
-
-  const upperBody = erasePolyInPlace(under, legPoly, {
-    shouldErase: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
-  });
-
-  return renderScissorWalkStrip({
-    upperBody,
-    legNear,
-    legFar,
-    hipNear: [182, 300],
-    hipFar: [168, 300],
-    facingSign: -1,
-    strideDeg: 27,
-    swingLiftPx: 11,
-    legLengthPx: 104,
-    bodyPitchDeg: 1.7,
-  });
-}
-
-async function buildWhaleSadWalk() {
-  const sadRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_rainwalk.png'));
-  const cleanUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_walk_retry_under.png'));
-  const sad = fitAndCutoutSolid(sadRaw);
-  const cleanUnder = fitAndCutoutSolid(cleanUnderRaw);
-
-  const legPoly = [
-    [148, 312], [195, 310], [209, 352], [235, 378],
-    [235, 410], [184, 410], [172, 374], [156, 340],
-  ];
-  const rawLeg = extractPolyLayer(cleanUnder, legPoly, {
-    filterPixel: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
-  });
-
-  const legNear = makeNeutralLeg(rawLeg, {
-    srcHipX: 174,
-    srcHipY: 312,
-    neutralRotDeg: 14,
-    dstHipX: 182,
-    dstHipY: 300,
-    thighCapColor: '#F7DBD0',
-    thighCapRx: 17,
-    thighCapRy: 18,
-  });
-  const legFar = makeNeutralLeg(tintCanvas(rawLeg, 0.83, 0.84, 0.91), {
-    srcHipX: 174,
-    srcHipY: 312,
-    neutralRotDeg: 14,
-    dstHipX: 168,
-    dstHipY: 300,
-    thighCapColor: '#D0B6B2',
-    thighCapRx: 17,
-    thighCapRy: 18,
-  });
-
-  const cleanLowerSkirtAndTail = erasePolyInPlace(cleanUnder, legPoly, {
-    shouldErase: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
-  });
-
-  // Combine sad teary head (y <= 195, aligned to 0.5px at neck collar!) with clean body, skirt & tail
-  const upperBody = createCanvas(CELL_W, CELL_H);
-  const ug = upperBody.getContext('2d');
-  ug.drawImage(cleanLowerSkirtAndTail, 0, 0);
-  ug.clearRect(0, 0, CELL_W, 195);
-  ug.drawImage(sad, 0, 0, CELL_W, 196, 0, 0, CELL_W, 196);
-
-  return renderScissorWalkStrip({
-    upperBody,
-    legNear,
-    legFar,
-    hipNear: [182, 300],
-    hipFar: [168, 300],
-    facingSign: -1,
-    strideDeg: 25,
-    swingLiftPx: 10,
-    legLengthPx: 104,
-    bodyPitchDeg: 1.6,
-  });
-}
-
-async function buildDoubaoSideWalk() {
+async function prepareDoubaoSideParts() {
   const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/doubao_step_leg_under.png'));
   const under = fitAndCutoutSolid(underRaw, { dyOffset: 48 });
 
-  // Remove small umbrella canopy + tip completely while preserving hands (hands start at x >= 143, y = 230..248)
   erasePolyInPlace(under, [[0, 0], [145, 0], [145, CELL_H], [0, CELL_H]], {
     shouldErase: (x, y, r, g, b) => {
-      if (x >= 139 && y >= 228 && y <= 248 && r > 170) return false; // protect warm skin fingertips
+      if (x >= 139 && y >= 228 && y <= 248 && r > 170) return false;
       return true;
     },
   });
 
-  const legPoly = [
-    [172, 314], [222, 314], [224, 412], [162, 412],
-  ];
+  const legPoly = [[172, 314], [222, 314], [224, 412], [162, 412]];
   const rawLeg = extractPolyLayer(under, legPoly);
-  const legNear = makeNeutralLeg(rawLeg, {
+  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
     srcHipX: 198,
     srcHipY: 316,
     neutralRotDeg: 0,
-    dstHipX: 197,
+    dstHipX: 196,
     dstHipY: 318,
-    thighCapColor: null,
+    kneeLen: 40,
+    hipCapColor: null,
+    kneeCapColor: '#232629',
+    kneeCapR: 9.5,
   });
-  const legFar = makeNeutralLeg(tintCanvas(rawLeg, 0.78, 0.80, 0.86), {
+  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.78, 0.80, 0.86), {
     srcHipX: 198,
     srcHipY: 316,
     neutralRotDeg: 0,
-    dstHipX: 201,
+    dstHipX: 202,
     dstHipY: 318,
-    thighCapColor: null,
+    kneeLen: 40,
+    hipCapColor: null,
+    kneeCapColor: '#1B1D20',
+    kneeCapR: 9.5,
   });
 
-  const upperBody = erasePolyInPlace(under, [
-    [160, 326], [226, 326], [226, 414], [160, 414],
-  ]);
-
-  return renderScissorWalkStrip({
-    upperBody,
-    legNear,
-    legFar,
-    hipNear: [197, 318],
-    hipFar: [201, 318],
-    facingSign: 1,
-    strideDeg: 27,
-    swingLiftPx: 11,
-    legLengthPx: 90,
-    bodyPitchDeg: 1.6,
-  });
+  const upperBody = erasePolyInPlace(under, [[160, 326], [226, 326], [226, 414], [160, 414]]);
+  return { upperBody, legNearSeg, legFarSeg };
 }
 
-async function buildGptPushWalk() {
+async function prepareGptPushParts() {
   const sheet = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/gpt_push_final_action.png'));
   const base = createCanvas(CELL_W, CELL_H);
   base.getContext('2d').drawImage(sheet, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
 
-  const frontLegPoly = [
-    [122, 298], [156, 306], [166, 355], [168, 408], [116, 408], [120, 350],
-  ];
+  const frontLegPoly = [[122, 298], [156, 306], [166, 355], [168, 408], [116, 408], [120, 350]];
   const rawLeg = extractPolyLayer(base, frontLegPoly);
-  const legNear = makeNeutralLeg(rawLeg, {
+  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
     srcHipX: 140,
     srcHipY: 306,
     neutralRotDeg: 0,
-    dstHipX: 148,
+    dstHipX: 146,
     dstHipY: 304,
-    thighCapColor: '#F9E2DA',
-    thighCapRx: 14,
-    thighCapRy: 15,
+    kneeLen: 44,
+    hipCapColor: '#F9E2DA',
+    kneeCapColor: '#F9E2DA',
+    kneeCapR: 10,
   });
-  const legFar = makeNeutralLeg(tintCanvas(rawLeg, 0.82, 0.82, 0.90), {
+  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.82, 0.82, 0.90), {
     srcHipX: 140,
     srcHipY: 306,
     neutralRotDeg: 0,
-    dstHipX: 162,
+    dstHipX: 160,
     dstHipY: 304,
-    thighCapColor: '#D5BDBA',
-    thighCapRx: 14,
-    thighCapRy: 15,
+    kneeLen: 44,
+    hipCapColor: '#D5BDBA',
+    kneeCapColor: '#D5BDBA',
+    kneeCapR: 10,
   });
 
-  // Preserve full flowing white gown silhouette, erasing only the front leg + back shoe tip
   const underSkirtBackdrop = createCanvas(CELL_W, CELL_H);
   const bg = underSkirtBackdrop.getContext('2d');
   bg.drawImage(base, 0, 0);
   erasePolyInPlace(underSkirtBackdrop, frontLegPoly);
   erasePolyInPlace(underSkirtBackdrop, [[174, 380], [206, 380], [206, 410], [174, 410]]);
-  // Smooth inner-gown lining behind the slit so no gap ever appears between stepping legs
   bg.fillStyle = '#E8E2F2';
   bg.beginPath();
   bg.moveTo(124, 302);
-  bg.lineTo(164, 306);
-  bg.lineTo(170, 392);
-  bg.lineTo(118, 392);
+  bg.lineTo(166, 306);
+  bg.lineTo(172, 392);
+  bg.lineTo(116, 392);
   bg.closePath();
   bg.fill();
 
-  const frontCapLayer = extractPolyLayer(base, [
-    [0, 0], [CELL_W, 0], [CELL_W, 314], [0, 314],
-  ]);
+  const frontCapLayer = extractPolyLayer(base, [[0, 0], [CELL_W, 0], [CELL_W, 314], [0, 314]]);
   const emptyUpper = createCanvas(CELL_W, CELL_H);
-
-  return renderScissorWalkStrip({
-    upperBody: emptyUpper,
-    underSkirtBackdrop,
-    frontCapLayer,
-    legNear,
-    legFar,
-    hipNear: [148, 304],
-    hipFar: [162, 304],
-    facingSign: -1,
-    strideDeg: 24,
-    swingLiftPx: 11,
-    legLengthPx: 98,
-    bodyPitchDeg: 2.0,
-  });
+  return { upperBody: emptyUpper, underSkirtBackdrop, frontCapLayer, legNearSeg, legFarSeg };
 }
 
-async function buildGeminiWalk() {
+async function prepareGeminiParts() {
   const v10 = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/animated-v10/gemini.png'));
   const base = createCanvas(CELL_W, CELL_H);
   base.getContext('2d').drawImage(v10, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
 
   const legUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/dance-v11/source/gemini_legunder.png'));
-  // Seed interior pocket under skirt (184, 360) & (184, 395) so checkerboard between hair curls is 100% removed
-  const upperBody = fitAndCutoutSolid(legUnderRaw, {
+  const upperRaw = fitAndCutoutSolid(legUnderRaw, {
     checker: true,
     extraSeeds: [[184, 350], [184, 385], [165, 365], [202, 365]],
   });
 
   const rawLeftLeg = extractPolyLayer(base, [[150, 308], [184, 308], [184, 412], [150, 412]]);
-  const legNear = makeNeutralLeg(rawLeftLeg, {
+  const legNearSeg = buildTwoJointLegSegments(rawLeftLeg, {
     srcHipX: 168,
     srcHipY: 312,
     neutralRotDeg: 0,
-    dstHipX: 178,
+    dstHipX: 186,
     dstHipY: 310,
-    thighCapColor: '#FCE6DF',
-    thighCapRx: 14,
-    thighCapRy: 15,
+    kneeLen: 44,
+    hipCapColor: '#FCE6DF',
+    kneeCapColor: '#F5F7FF',
+    kneeCapR: 9.5,
   });
-  const legFar = makeNeutralLeg(tintCanvas(rawLeftLeg, 0.84, 0.85, 0.92), {
+  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeftLeg, 0.84, 0.85, 0.92), {
     srcHipX: 168,
     srcHipY: 312,
     neutralRotDeg: 0,
-    dstHipX: 190,
+    dstHipX: 174,
     dstHipY: 310,
-    thighCapColor: '#D8C2C2',
-    thighCapRx: 14,
-    thighCapRy: 15,
+    kneeLen: 44,
+    hipCapColor: '#D8C2C2',
+    kneeCapColor: '#DCE1F2',
+    kneeCapR: 9.5,
   });
 
-  // Separate hair backdrop (y > 316 outside skirt) behind legs, and bodice+skirt+head in front of hips!
-  const hairBack = extractPolyLayer(upperBody, [
-    [0, 290], [142, 290], [152, 416], [0, 416],
-  ]);
-  const hairBackR = extractPolyLayer(upperBody, [
-    [224, 290], [CELL_W, 290], [CELL_W, 416], [214, 416],
-  ]);
+  const hairBack = extractPolyLayer(upperRaw, [[0, 290], [142, 290], [152, 416], [0, 416]]);
+  const hairBackR = extractPolyLayer(upperRaw, [[224, 290], [CELL_W, 290], [CELL_W, 416], [214, 416]]);
   const hairBackdrop = createCanvas(CELL_W, CELL_H);
   hairBackdrop.getContext('2d').drawImage(hairBack, 0, 0);
   hairBackdrop.getContext('2d').drawImage(hairBackR, 0, 0);
-
-  const frontSkirtAndHead = createCanvas(CELL_W, CELL_H);
-  frontSkirtAndHead.getContext('2d').drawImage(upperBody, 0, 0);
-  erasePolyInPlace(frontSkirtAndHead, [[0, 326], [145, 326], [145, 416], [0, 416]]);
-  erasePolyInPlace(frontSkirtAndHead, [[222, 326], [CELL_W, 326], [CELL_W, 416], [222, 416]]);
-  // Wipe any enclosed checkerboard pocket inside the central leg opening below skirt hem (y >= 324)
-  erasePolyInPlace(frontSkirtAndHead, [[140, 324], [226, 324], [226, 416], [140, 416]], {
-    shouldErase: (x, y, r, g, b) => {
-      if (x >= 156 && x <= 210 && y >= 332) return true;
-      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
-      return r > 188 && g > 188 && b > 188 && (mx - mn) < 22;
-    },
-  });
   erasePolyInPlace(hairBackdrop, [[0, 290], [CELL_W, 290], [CELL_W, 416], [0, 416]], {
     shouldErase: (x, y, r, g, b) => {
       const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
@@ -597,46 +590,50 @@ async function buildGeminiWalk() {
     },
   });
 
-  return renderScissorWalkStrip({
-    upperBody: frontSkirtAndHead,
-    underSkirtBackdrop: hairBackdrop,
-    legNear,
-    legFar,
-    hipNear: [178, 310],
-    hipFar: [190, 310],
-    facingSign: -1, // walks rightward in Shot 6
-    strideDeg: 24,
-    swingLiftPx: 12,
-    legLengthPx: 96,
-    bodyPitchDeg: 1.6,
+  const frontSkirtAndHead = createCanvas(CELL_W, CELL_H);
+  frontSkirtAndHead.getContext('2d').drawImage(upperRaw, 0, 0);
+  erasePolyInPlace(frontSkirtAndHead, [[0, 326], [145, 326], [145, 416], [0, 416]]);
+  erasePolyInPlace(frontSkirtAndHead, [[222, 326], [CELL_W, 326], [CELL_W, 416], [222, 416]]);
+  erasePolyInPlace(frontSkirtAndHead, [[140, 324], [226, 324], [226, 416], [140, 416]], {
+    shouldErase: (x, y, r, g, b) => {
+      if (x >= 156 && x <= 210 && y >= 332) return true;
+      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+      return r > 188 && g > 188 && b > 188 && (mx - mn) < 22;
+    },
   });
+
+  return { upperBody: frontSkirtAndHead, underSkirtBackdrop: hairBackdrop, legNearSeg, legFarSeg };
 }
 
 async function buildWhaleBenchSit() {
   const raw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_seat_side_v35.png'));
   const base = fitAndCutoutSolid(raw);
-
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
   for (let f = 0; f < WALK_FRAMES; f++) {
     const theta = (2 * Math.PI * f) / WALK_FRAMES;
-    const breathY = Math.sin(theta) * 2.0;
     const cell = createCanvas(CELL_W, CELL_H);
     const cg = cell.getContext('2d');
-    drawPivoted(cg, base, 155, 295, Math.sin(theta) * 1.1, 0, breathY);
+    cg.drawImage(base, 0, Math.sin(theta) * 1.4);
     sg.drawImage(cell, f * CELL_W, 0);
   }
   return strip;
 }
 
 export const WALK_RIG_BUILDERS = {
-  whale_walk_side_2leg: buildWhaleSideWalk,
-  whale_walk_happy_2leg: buildWhaleHappyWalk,
-  whale_walk_sad_2leg: buildWhaleSadWalk,
+  whale_walk_happy_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhale34Parts({ sadFace: false })), facingRight: true }),
+  whale_idle_happy_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhale34Parts({ sadFace: false })), facingRight: true }),
+  whale_walk_sad_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhale34Parts({ sadFace: true })), facingRight: true }),
+  whale_idle_sad_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhale34Parts({ sadFace: true })), facingRight: true }),
+  whale_walk_side_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhaleSideParts()), facingRight: false }),
+  whale_idle_side_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhaleSideParts()), facingRight: false }),
   whale_seat_side_bench: buildWhaleBenchSit,
-  doubao_walk_side_2leg: buildDoubaoSideWalk,
-  gpt_push_walk_2leg: buildGptPushWalk,
-  gemini_walk_2leg: buildGeminiWalk,
+  doubao_walk_side_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareDoubaoSideParts()), facingRight: false }),
+  doubao_idle_side_pet: async () => renderPetStyleIdleStrip({ ...(await prepareDoubaoSideParts()), facingRight: false }),
+  gpt_push_walk_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareGptPushParts()), facingRight: true, strideScale: 0.88 }),
+  gpt_push_idle_pet: async () => renderPetStyleIdleStrip({ ...(await prepareGptPushParts()), facingRight: true }),
+  gemini_walk_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareGeminiParts()), facingRight: true, strideScale: 0.90 }),
+  gemini_idle_pet: async () => renderPetStyleIdleStrip({ ...(await prepareGeminiParts()), facingRight: true }),
 };
 
 export async function ensureWalkRigAtlases(outDir = DEFAULT_WALK_CACHE_DIR, { force = false } = {}) {
