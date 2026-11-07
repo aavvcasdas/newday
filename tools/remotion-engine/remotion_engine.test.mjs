@@ -1,10 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
+import fs from 'node:fs';
 import mvSpec from '../mv_dayu/mv.spec.mjs';
 import { adaptMvToRemotionProps } from './mv_adapter.mjs';
 import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { auditRemotionPropsActivity } from './render_cli.mjs';
+import { ensureWalkRigAtlases, WALK_RIG_BUILDERS } from './walk_rig_builder.mjs';
 import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.mjs';
 
 test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 帧图集平滑过渡与零静态幻灯片区间', () => {
@@ -33,9 +35,9 @@ test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 �
   const sunAfter = evaluateRemotionFrameState(props, 6.9);
   assert.ok(sunAfter.setState.reactive.dawn < sunBefore.setState.reactive.dawn - 0.5);
 
-  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 1.90s 后 0.1s 内处于双图集平滑过渡态）
+  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 1.90s 后 0.1s 内处于双图集平滑过渡态，且切换为真双腿迈步追赶）
   const pivotBlend = evaluateRemotionFrameState(props, 2.0);
-  assert.equal(pivotBlend.actors[0].atlas, 'whale_rain_reach_blink_action');
+  assert.equal(pivotBlend.actors[0].atlas, 'whale_walk_side_2leg');
   assert.equal(pivotBlend.actors[0].prevAtlas, 'whale_point');
   assert.ok(pivotBlend.actors[0].atlasBlend > 0 && pivotBlend.actors[0].atlasBlend < 1);
 
@@ -141,3 +143,39 @@ test('Remotion 通用引擎无缝评估 Day 系列单集 (episode -> inputProps 
   const activity = auditRemotionPropsActivity(props);
   assert.equal(activity.passed, true);
 });
+
+test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积蓄校验', async () => {
+  const built = await ensureWalkRigAtlases();
+  for (const key of Object.keys(WALK_RIG_BUILDERS)) {
+    assert.ok(built[key] && fs.existsSync(built[key]), `缺少程序化步态图集: ${key}`);
+    assert.ok(fs.statSync(built[key]).size > 20_000, `步态图集体积异常: ${key}`);
+  }
+
+  const props = adaptMvToRemotionProps({ spec: mvSpec });
+
+  // 镜1、镜3(推山)、镜6(栈桥散步与追船)、镜7(豆包递梨)、镜8(三迁街巷) 位移期间须遍历多个不同迈步帧，绝不锁死单帧滑步
+  const walkWindows = [
+    { label: '镜1主角追薪水', actorIdx: 0, start: 1.95, end: 3.35 },
+    { label: '镜3龙女迈步推靠山', actorIdx: 1, start: 8.85, end: 10.65 },
+    { label: '镜6女朋友散步登船', actorIdx: 1, start: 17.80, end: 19.30 },
+    { label: '镜7豆包迈步递梨', actorIdx: 1, start: 21.30, end: 22.80 },
+    { label: '镜8主角三迁街巷行走', actorIdx: 0, start: 25.00, end: 27.30 },
+  ];
+  for (const w of walkWindows) {
+    const framesSeen = new Set();
+    for (let t = w.start; t <= w.end; t += 0.08) {
+      const st = evaluateRemotionFrameState(props, t);
+      const actor = st.actors[w.actorIdx];
+      assert.ok(actor.atlas?.endsWith('_2leg'), `${w.label} 在 t=${t.toFixed(2)} 应使用 *_2leg 双腿行走图集，实际为 ${actor.atlas}`);
+      assert.equal(actor.walking, true, `${w.label} 在 t=${t.toFixed(2)} walking 应为 true`);
+      framesSeen.add(actor.atlasFrame);
+    }
+    assert.ok(framesSeen.size >= 8, `${w.label} 行走期间应遍历至少 8 个不同双腿迈步相位帧，实际 ${framesSeen.size}`);
+  }
+
+  // 镜5「偷光积蓄」道具组件源码校验：已由金币替换为青花瓷碗白米饭团与晶莹米粒
+  const propsLayerSrc = fs.readFileSync(new URL('./components/InteractivePropsLayer.jsx', import.meta.url), 'utf8');
+  assert.ok(propsLayerSrc.includes('riceScoopOffsets') && propsLayerSrc.includes('白米饭'), '第5镜 savings_jar_beam 应渲染白米饭积蓄而非金币');
+  assert.ok(!propsLayerSrc.includes('6 枚金币沿弧线被隔壁墙洞吸光'), '第5镜旧版金币吸光逻辑不应残留');
+});
+

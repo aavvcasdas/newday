@@ -383,56 +383,149 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'savings_jar_beam': {
-      // 梗5：凿壁偷光 -> 偷光了我的「积蓄」（贴有「积蓄」红签的玻璃存钱罐，金币被隔壁凿穿的墙洞吸得一干二净！）
-      const jarX = mech.x ?? 640;
-      const jarY = mech.y ?? 472;
+      // 梗5：凿壁偷光 -> 偷光了我的「积蓄」（青花大瓷碗里满满一碗热气腾腾的白米饭「积蓄」，被隔壁凿穿的墙洞连饭团带米粒吸得一粒不剩！）
+      const jarX = mech.x ?? 648;
+      const jarY = mech.y ?? 478;
       const holeX = mech.holeX ?? 1020;
       const holeY = mech.holeY ?? 292;
       const stealStart = mech.stealAt ?? 15.85;
-      const tokenOffsets = [
-        [-16, -16],
-        [14, -15],
-        [-2, -28],
-        [-15, -36],
-        [13, -38],
-        [0, -48],
+      const drainU = ease(seg(t, stealStart, stealStart + 1.28));
+      const moundScaleY = Math.max(0, 1 - drainU);
+      const riceScoopOffsets = [
+        [-22, -78],
+        [18, -82],
+        [-4, -96],
+        [-28, -68],
+        [24, -70],
+        [0, -84],
+        [-12, -66],
+        [10, -64],
       ];
       return (
         <g key={`mech-${idx}`}>
           {/* 凿壁金光光柱 */}
           <polygon
-            points={`${holeX},${holeY - 16} ${holeX},${holeY + 16} ${jarX + 42},${jarY - 6} ${jarX - 42},${jarY - 82}`}
-            fill={t >= stealStart ? 'rgba(255, 212, 92, 0.34)' : 'rgba(255, 240, 170, 0.22)'}
+            points={`${holeX},${holeY - 16} ${holeX},${holeY + 16} ${jarX + 54},${jarY - 46} ${jarX - 54},${jarY - 106}`}
+            fill={t >= stealStart ? 'rgba(255, 212, 92, 0.34)' : 'rgba(255, 240, 170, 0.20)'}
           />
-          {/* 储蓄玻璃罐 */}
+
+          {/* 碗内雪白饱满的白米饭山（随被吸走逐帧瘪下去直至空碗！） */}
           <g transform={`translate(${jarX}, ${jarY})`}>
-            <rect x={-40} y={-92} width={80} height={92} rx={16} fill="rgba(186, 236, 255, 0.28)" stroke="#9CE3F8" strokeWidth={3.2} />
-            <rect x={-28} y={-104} width={56} height={14} rx={4} fill="#B88B58" stroke="#5A3F24" strokeWidth={2.4} />
+            {/* 竹筷（插在米饭上，米饭被偷光后孤零零横在空碗边） */}
+            <g transform={`translate(${lerp(24, 10, drainU).toFixed(1)}, ${lerp(-88, -64, drainU).toFixed(1)}) rotate(${lerp(28, 8, drainU).toFixed(1)})`}>
+              <line x1={-46} y1={-4} x2={44} y2={4} stroke="#C98A4B" strokeWidth={4.2} strokeLinecap="round" />
+              <line x1={-44} y1={3} x2={45} y2={-3} stroke="#B07237" strokeWidth={4.2} strokeLinecap="round" />
+            </g>
+
+            {moundScaleY > 0.03 && (
+              <g transform={`translate(0, -58) scale(${(0.92 + 0.08 * moundScaleY).toFixed(3)}, ${moundScaleY.toFixed(3)})`}>
+                {/* 白米饭蓬松圆顶 */}
+                <path
+                  d="M -52 0 C -55 -28 -34 -54 0 -56 C 34 -54 55 -28 52 0 Z"
+                  fill="#FFFFFF"
+                  stroke="#BCCCDC"
+                  strokeWidth={2.8}
+                />
+                <path
+                  d="M -42 -4 C -36 -26 -18 -44 6 -46 C -10 -38 -22 -20 -26 -2 Z"
+                  fill="#F1F5F9"
+                  opacity={0.75}
+                />
+                {/* 饱满白米粒纹理 */}
+                {[
+                  [-24, -16, -18], [-8, -28, 12], [12, -24, -14], [26, -14, 22],
+                  [-14, -10, 8], [6, -12, -10], [0, -38, 6], [-20, -30, -24], [18, -34, 18],
+                ].map(([gx, gy, rot], gi) => (
+                  <ellipse
+                    key={`grain-${gi}`}
+                    cx={gx}
+                    cy={gy}
+                    rx={6.2}
+                    ry={3.1}
+                    transform={`rotate(${rot} ${gx} ${gy})`}
+                    fill="#FFFFFF"
+                    stroke="#CBD5E1"
+                    strokeWidth={1.4}
+                  />
+                ))}
+                {/* 热米饭袅袅热气 */}
+                {drainU < 0.45 && [-18, 6, 22].map((sx, si) => {
+                  const floatY = ((t * 24 + si * 11) % 24);
+                  return (
+                    <path
+                      key={`steam-${si}`}
+                      d={`M ${sx} ${-58 - floatY} Q ${sx - 5} ${-68 - floatY} ${sx + 2} ${-78 - floatY}`}
+                      fill="none"
+                      stroke="#FFFFFF"
+                      strokeWidth={2.4}
+                      strokeLinecap="round"
+                      opacity={(1 - floatY / 24) * 0.65}
+                    />
+                  );
+                })}
+              </g>
+            )}
+
+            {/* 青花大瓷饭碗（碗身遮住米饭底座，形成严丝合缝的盛饭视觉） */}
+            <ellipse cx={0} cy={-58} rx={55} ry={10} fill="#E2E8F0" stroke="#364FC7" strokeWidth={2.6} />
+            <path
+              d="M -56 -58 Q -52 -8 0 -8 Q 52 -8 56 -58 Z"
+              fill="#F8FAFC"
+              stroke="#2B44B8"
+              strokeWidth={3.2}
+              strokeLinejoin="round"
+            />
+            {/* 青花瓷碗口回纹装饰带 */}
+            <path
+              d="M -53 -49 Q 0 -42 53 -49"
+              fill="none"
+              stroke="#3B5BDB"
+              strokeWidth={3.2}
+              strokeDasharray="7 4"
+            />
+            <path
+              d="M -46 -22 Q 0 -16 46 -22"
+              fill="none"
+              stroke="#748FFC"
+              strokeWidth={2}
+            />
+            {/* 瓷碗碗足 */}
+            <rect x={-24} y={-10} width={48} height={10} rx={3.5} fill="#E2E8F0" stroke="#2B44B8" strokeWidth={2.6} />
+
+            {/* 碗身醒目红底金字「积蓄」封签 */}
+            <g transform="translate(0, -32)">
+              <rect x={-29} y={-14} width={58} height={28} rx={5} fill="#D94336" stroke="#FFE299" strokeWidth={2} />
+              <text x={0} y={6} textAnchor="middle" fontSize={18} fontWeight="900" fill="#FFF6D6" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                积蓄
+              </text>
+            </g>
           </g>
-          {/* 6 枚金币沿弧线被隔壁墙洞吸光！ */}
-          {tokenOffsets.map(([ox, oy], ti) => {
-            const u = seg(t, stealStart + ti * 0.13, stealStart + ti * 0.13 + 0.78);
+
+          {/* 8 团雪白米饭与散落白米粒沿弧线被隔壁墙洞吸得一干二净！ */}
+          {riceScoopOffsets.map(([ox, oy], ti) => {
+            const u = seg(t, stealStart + ti * 0.12, stealStart + ti * 0.12 + 0.78);
+            if (u <= 0.005 || u >= 0.995) return null;
             const q = ease(u);
             const startX = jarX + ox;
             const startY = jarY + oy;
             const tx = lerp(startX, holeX, q);
-            const ty = lerp(startY, holeY, q) - Math.sin(q * Math.PI) * (66 + ti * 9);
-            const sc = q > 0.85 ? 1 - (q - 0.85) / 0.15 : 1;
+            const ty = lerp(startY, holeY, q) - Math.sin(q * Math.PI) * (58 + (ti % 4) * 11);
+            const sc = q > 0.84 ? 1 - (q - 0.84) / 0.16 : (0.75 + 0.25 * Math.min(1, q * 5));
+            const spin = q * (ti % 2 === 0 ? 42 : -38);
             return (
-              <g key={`tok-${ti}`} transform={`translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) scale(${sc.toFixed(3)})`}>
-                <circle cx={0} cy={0} r={11} fill="#FFD43B" stroke="#B07914" strokeWidth={2.4} />
-                <circle cx={-3} cy={-3} r={3.5} fill="#FFF9DB" />
+              <g key={`rice-${ti}`} transform={`translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) rotate(${spin.toFixed(1)}) scale(${sc.toFixed(3)})`}>
+                {/* 蓬松雪白米饭团 */}
+                <circle cx={-6} cy={2} r={9.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
+                <circle cx={6} cy={2} r={9.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
+                <circle cx={0} cy={-5} r={10.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
+                <circle cx={0} cy={0} r={8.5} fill="#FFFDF9" />
+                {/* 伴飞晶莹白米粒 */}
+                <ellipse cx={-17} cy={-6} rx={5.2} ry={2.6} transform="rotate(-24 -17 -6)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
+                <ellipse cx={16} cy={-8} rx={5.2} ry={2.6} transform="rotate(28 16 -8)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
+                <ellipse cx={2} cy={14} rx={5.0} ry={2.5} transform="rotate(12 2 14)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
               </g>
             );
           })}
-          {/* 红底金字「积蓄」封条 */}
-          <g transform={`translate(${jarX}, ${jarY - 46}) rotate(-4)`}>
-            <rect x={-27} y={-15} width={54} height={30} rx={5} fill="#D94336" stroke="#FFE299" strokeWidth={2} />
-            <text x={0} y={7} textAnchor="middle" fontSize={19} fontWeight="900" fill="#FFF6D6" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
-              积蓄
-            </text>
-          </g>
-          <path d={`M ${jarX - 28} ${jarY - 78} L ${jarX - 28} ${jarY - 18}`} stroke="#FFFFFF" strokeWidth={3.5} strokeLinecap="round" opacity={0.55} />
         </g>
       );
     }
@@ -450,8 +543,9 @@ function renderMechanism(mech, t, idx) {
         const breakAt = mech.breakAt ?? 19.00;
         const breakU = clamp((t - breakAt) / 1.55);
         if (breakU >= 0.99) return null;
-        const hx = lerp(mech.x ?? 432, 565, easeOut(clamp(breakU * 1.4)));
-        const hy = (mech.y ?? 318) + Math.sin(t * 5.4) * 5;
+        const baseHeartPos = evalTrack2D(t, mech.heartTrack, mech.x ?? 432, mech.y ?? 318);
+        const hx = lerp(baseHeartPos[0], baseHeartPos[0] + 115, easeOut(clamp(breakU * 1.4)));
+        const hy = (baseHeartPos[1] ?? 318) + Math.sin(t * 5.4) * 5;
         const pulse = breakU <= 0.005 ? 1 + Math.sin(t * 8.5) * 0.08 : 1;
         const split = easeOut(clamp(breakU * 1.8)) * 28;
         const fade = 1 - clamp((breakU - 0.78) / 0.22);

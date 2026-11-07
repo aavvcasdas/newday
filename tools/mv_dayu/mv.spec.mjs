@@ -6,11 +6,11 @@
 //       2. 4.18.. 7.45 (pivot  5.42): 后羿射日 / 射没了我的周日
 //       3. 7.45..11.10 (pivot  8.85): 愚公移山 / 移走了我的靠山
 //       4. 11.10..14.07 (pivot 13.05): 女娲造人 / 给我造的小人
-//       5. 14.07..17.75 (pivot 15.85): 我怀疑凿壁偷光 / 偷光了我的积蓄
+//       5. 14.07..17.75 (pivot 15.85): 我怀疑凿壁偷光 / 偷光了我的积蓄（青花大瓷碗白米饭「积蓄」被吸得一粒不剩！）
 //       6. 17.75..21.22 (pivot 19.00): 草船丞相 / 抢走了我的对象（「对象」= 活生生的女朋友角色 Gemini，被手摇羽扇的草船丞相接上船载走！）
 //       7. 21.22..24.82 (pivot 23.40): 孔融让梨就是 / 让我离职
 //       8. 24.82..29.333333 (pivot 27.57): 孟母三迁我月薪 / 也是三千
-//   - 8 镜切换 8 座不同动态视差舞台，复用仓库既有 16 帧角色动作图集 + 程序化世界机关，新生图 0 张
+//   - 全片位移角色均采用真双腿交替剪刀步态图集 (*_2leg，位移距离同步步频 + 支撑脚贴地防滑)，杜绝坐姿平移与单腿微颤
 
 export default {
   compositionId: 'DayuLyricMV',
@@ -110,7 +110,7 @@ export default {
       framing: 'wide',
       cameraIntent: {
         type: 'pan',
-        reason: '随拉闸开洪推进并跟摇追踪被大水卷走的「薪水」工资袋',
+        reason: '随主角迈步拉闸开洪推进，并跟摇追踪主角迈步追赶被大水卷走的「薪水」工资袋',
         at: 1.05,
         duration: 2.8,
         to: { cx: 685, cy: 382, z: 1.12 },
@@ -119,28 +119,28 @@ export default {
         {
           characterId: 'whale',
           height: 306,
-          move: 'bounce',
+          move: 'sway',
           track: [
-            [0.0, 305, 600],
-            [1.15, 435, 600],
-            [1.90, 445, 600],
-            [3.25, 525, 600],
-            [4.18, 535, 600],
+            [0.0, 245, 600],
+            [1.25, 482, 600],
+            [1.90, 482, 600],
+            [3.48, 738, 600],
+            [4.18, 738, 600],
           ],
           atlases: [
-            { at: 0.0, atlas: 'whale_walk_retry_action', cycle: 1.05, flip: false },
-            { at: 1.15, atlas: 'whale_point', cycle: 1.15, flip: false },
-            { at: 1.90, atlas: 'whale_rain_reach_blink_action', cycle: 1.05, flip: false, emote: 'exclaim' },
-            { at: 3.15, atlas: 'whale_wipe_tear_action', cycle: 1.1, flip: false, emote: 'sweat' },
+            { at: 0.0, atlas: 'whale_walk_happy_2leg', flip: false },
+            { at: 1.25, atlas: 'whale_point', cycle: 1.15, flip: false },
+            { at: 1.90, atlas: 'whale_walk_side_2leg', flip: true, emote: 'exclaim' },
+            { at: 3.48, atlas: 'whale_selfkind_retry_action', cycle: 1.15, flip: false, emote: 'sweat' },
           ],
         },
         {
           characterId: 'qwen',
-          height: 284,
+          height: 288,
           move: 'sway',
-          x: 205,
+          x: 202,
           y: 600,
-          atlas: 'qwen_reach_action',
+          atlas: 'qwen_bird_wave36_action',
           atlasCycle: 1.35,
           flip: false,
         },
@@ -177,23 +177,26 @@ export default {
           height: 306,
           move: 'sway',
           track: [
-            [4.18, 435, 600],
-            [5.42, 445, 600],
-            [6.45, 515, 600],
-            [7.45, 515, 600],
+            [4.18, 312, 600],
+            [5.35, 496, 600],
+            [5.42, 496, 600],
+            [6.68, 592, 600],
+            [7.45, 592, 600],
           ],
           atlases: [
-            { at: 4.18, atlas: 'whale_read_action', cycle: 1.25, flip: false },
-            { at: 5.42, atlas: 'whale_rain_reach_blink_action', cycle: 1.1, flip: false, emote: 'exclaim' },
+            { at: 4.18, atlas: 'whale_walk_happy_2leg', flip: false },
+            { at: 5.34, atlas: 'whale_meet_action', cycle: 1.2, flip: false },
+            { at: 5.42, atlas: 'whale_walk_sad_2leg', flip: false, emote: 'exclaim' },
+            { at: 6.68, atlas: 'whale_point', cycle: 1.1, flip: false, emote: 'sweat' },
           ],
         },
         {
           characterId: 'zai',
-          height: 286,
-          move: 'bounce',
-          x: 945,
+          height: 288,
+          move: 'sway',
+          x: 952,
           y: 600,
-          atlas: 'zai_clock_action',
+          atlas: 'zai_memento_action',
           atlasCycle: 1.25,
           flip: false,
         },
@@ -217,7 +220,7 @@ export default {
       framing: 'wide',
       cameraIntent: {
         type: 'pull',
-        reason: '拉开展现刻着「靠山」的大山被整座推走、主角失去后台悬空落坐小靠垫',
+        reason: '拉开展现刻着「靠山」的大山被迈步发力的龙女整座推走、主角退步跌坐小靠垫',
         at: 8.75,
         duration: 1.85,
         to: { cx: 635, cy: 376, z: 1.05 },
@@ -228,17 +231,18 @@ export default {
           height: 304,
           move: 'sway',
           track: [
-            [7.45, 455, 600],
-            [8.85, 455, 600],
-            [9.55, 388, 600],
-            [11.10, 388, 600],
+            [7.45, 452, 600],
+            [8.85, 452, 600],
+            [9.48, 358, 600],
+            [11.10, 358, 600],
           ],
           atlases: [
-            { at: 7.45, atlas: 'whale_sit_blink_action', cycle: 1.25, flip: false },
-            { at: 8.85, atlas: 'whale_selfkind_retry_action', cycle: 1.15, flip: false, emote: 'question' },
+            { at: 7.45, atlas: 'whale_meet_action', cycle: 1.25, flip: false },
+            { at: 8.85, atlas: 'whale_walk_sad_2leg', flip: true, emote: 'question' },
+            { at: 9.48, atlas: 'whale_sit_blink_action', cycle: 1.2, flip: false },
           ],
           bodyEvents: [
-            { at: 8.88, duration: 0.48, dx: -18, dy: 9, lean: -0.1, squash: 0.07 },
+            { at: 9.42, duration: 0.36, dx: 0, dy: 8, lean: -0.06, squash: 0.07 },
           ],
         },
         {
@@ -246,14 +250,16 @@ export default {
           height: 316,
           move: 'push_heavy',
           track: [
-            [7.45, 548, 600],
+            [7.45, 544, 600],
             [8.78, 556, 600],
-            [10.65, 885, 600],
+            [10.82, 896, 600],
             [11.10, 902, 600],
           ],
-          atlas: 'gpt_push_final_action',
-          atlasCycle: 1.05,
-          flip: false,
+          atlases: [
+            { at: 7.45, atlas: 'gpt_push_final_action', cycle: 1.05, flip: false },
+            { at: 8.78, atlas: 'gpt_push_walk_2leg', flip: false },
+            { at: 10.82, atlas: 'gpt_push_final_action', cycle: 1.05, flip: false },
+          ],
         },
       ],
       mechanisms: [
@@ -264,7 +270,7 @@ export default {
           track: [
             [7.45, 658, 600],
             [8.78, 666, 600],
-            [10.65, 1015, 600],
+            [10.82, 1022, 600],
             [11.10, 1032, 600],
           ],
         },
@@ -295,7 +301,7 @@ export default {
           characterId: 'claude',
           height: 288,
           move: 'work',
-          x: 278,
+          x: 268,
           y: 600,
           atlas: 'claude_collect_action',
           atlasCycle: 1.2,
@@ -304,15 +310,15 @@ export default {
         {
           characterId: 'whale',
           height: 306,
-          move: 'bounce',
+          move: 'sway',
           track: [
-            [11.10, 488, 600],
-            [13.05, 498, 600],
-            [13.68, 548, 600],
-            [14.07, 548, 600],
+            [11.10, 372, 600],
+            [12.55, 522, 600],
+            [14.07, 522, 600],
           ],
           atlases: [
-            { at: 11.10, atlas: 'whale_point', cycle: 1.15, flip: false },
+            { at: 11.10, atlas: 'whale_walk_happy_2leg', flip: false },
+            { at: 12.55, atlas: 'whale_point', cycle: 1.15, flip: false },
             { at: 13.05, atlas: 'whale_bird', cycle: 0.95, flip: true, emote: 'sweat' },
           ],
         },
@@ -327,7 +333,7 @@ export default {
       transitions: { type: 'iris', duration: 0.30, focus: [640, 380] },
     },
 
-    // 镜 5 (14.07–17.75s | pivot 15.85s)：我怀疑凿壁偷光 -> 偷光了我的积蓄
+    // 镜 5 (14.07–17.75s | pivot 15.85s)：我怀疑凿壁偷光 -> 偷光了我的积蓄（白米饭积蓄！）
     {
       id: 'S05_CHISEL_SAVINGS',
       start: 14.07,
@@ -336,7 +342,7 @@ export default {
       framing: 'two_shot',
       cameraIntent: {
         type: 'pan',
-        reason: '跟随砖墙凿孔金光射入「积蓄」存钱罐并将金币吸得一干二净',
+        reason: '跟随砖墙凿孔金光射入青花大瓷碗「积蓄」白米饭并将整碗米饭吸得一粒不剩',
         at: 14.95,
         duration: 2.15,
         to: { cx: 680, cy: 384, z: 1.15 },
@@ -346,7 +352,7 @@ export default {
           characterId: 'kimi',
           height: 292,
           move: 'sway',
-          x: 245,
+          x: 232,
           y: 600,
           atlas: 'kimi_lantern_action',
           atlasCycle: 1.3,
@@ -357,19 +363,22 @@ export default {
           height: 306,
           move: 'sway',
           track: [
-            [14.07, 445, 600],
-            [15.85, 455, 600],
-            [16.85, 515, 600],
-            [17.75, 515, 600],
+            [14.07, 342, 600],
+            [15.42, 468, 600],
+            [15.85, 468, 600],
+            [16.92, 504, 600],
+            [17.75, 504, 600],
           ],
           atlases: [
-            { at: 14.07, atlas: 'whale_read_action', cycle: 1.25, flip: false },
-            { at: 15.85, atlas: 'whale_wipe_tear_action', cycle: 1.1, flip: false, emote: 'exclaim' },
+            { at: 14.07, atlas: 'whale_walk_side_2leg', flip: true },
+            { at: 15.42, atlas: 'whale_meet_action', cycle: 1.2, flip: false },
+            { at: 15.85, atlas: 'whale_walk_sad_2leg', flip: false, emote: 'exclaim' },
+            { at: 16.92, atlas: 'whale_selfkind_retry_action', cycle: 1.15, flip: false, emote: 'sweat' },
           ],
         },
       ],
       mechanisms: [
-        { kind: 'savings_jar_beam', x: 642, y: 476, holeX: 1020, holeY: 292, stealAt: 15.85 },
+        { kind: 'savings_jar_beam', x: 682, y: 478, holeX: 1020, holeY: 292, stealAt: 15.85 },
       ],
       stageTriggers: [
         { kind: 'open_gate', at: 14.65, duration: 0.65, from: 0.0, to: 1.0 },
@@ -379,7 +388,7 @@ export default {
     },
 
     // 镜 6 (17.75–21.22s | pivot 19.00s)：草船丞相 -> 抢走了我的对象
-    // 核心梗点：「对象」= 女朋友角色（活生生的美少女角色 Gemini！），手摇羽扇的草船丞相靠岸把女朋友接上草船甲板载走，情侣粉红爱心当场裂成两半！
+    // 核心梗点：前半句主角与女朋友 Gemini 双双迈步在江畔栈桥甜蜜散步，19.00s 手摇羽扇的草船丞相靠岸把女朋友接上草船甲板载走，主角迈开双腿追到桥头挽留！
     {
       id: 'S06_STRAW_BOAT_GIRLFRIEND',
       start: 17.75,
@@ -388,43 +397,42 @@ export default {
       framing: 'wide',
       cameraIntent: {
         type: 'pan',
-        reason: '随手摇羽扇的草船丞相靠岸把主角的女朋友（对象）接上船向江面跟摇',
+        reason: '随手摇羽扇的草船丞相靠岸把主角散步中的女朋友（对象）接上船向江面跟摇',
         at: 18.85,
         duration: 2.05,
         to: { cx: 685, cy: 382, z: 1.11 },
       },
       actors: [
         {
-          // 主角本鲸：前半句在码头与女朋友甜蜜牵丝带约会，19.00s 女朋友被草船丞相抢走后追到桥头尔康手挽留！
           characterId: 'whale',
           height: 304,
           move: 'sway',
           track: [
-            [17.75, 362, 592],
-            [19.00, 372, 592],
-            [20.15, 522, 592],
-            [21.22, 534, 592],
+            [17.75, 282, 592],
+            [18.92, 408, 592],
+            [19.00, 408, 592],
+            [20.55, 612, 592],
+            [21.22, 612, 592],
           ],
           atlases: [
-            { at: 17.75, atlas: 'whale_ribbon_hold_action', cycle: 1.2, flip: false },
-            { at: 19.00, atlas: 'whale_walk_retry_action', cycle: 0.95, flip: false, emote: 'exclaim' },
-            { at: 19.95, atlas: 'whale_rain_reach_blink_action', cycle: 1.1, flip: false, emote: 'sweat' },
+            { at: 17.75, atlas: 'whale_walk_happy_2leg', flip: false },
+            { at: 19.00, atlas: 'whale_walk_side_2leg', flip: true, emote: 'exclaim' },
+            { at: 20.55, atlas: 'whale_point', cycle: 1.1, flip: false, emote: 'sweat' },
           ],
         },
         {
-          // 「我的对象」（活生生的女朋友角色 Gemini！）：17.75..19.00s 捧花站在主角身旁，19.00s 登上草船前甲板随草船丞相乘船远去！
           characterId: 'gemini',
           height: 286,
-          move: 'bounce',
+          move: 'sway',
           track: [
-            [17.75, 498, 592],
-            [18.92, 512, 592],
-            [19.28, 662, 558],
+            [17.75, 418, 592],
+            [18.92, 542, 592],
+            [19.42, 668, 558],
             [21.22, 988, 558],
           ],
           atlases: [
-            { at: 17.75, atlas: 'gemini_flower_action', cycle: 1.2, flip: true },
-            { at: 19.00, atlas: 'gemini_star_toss_action', cycle: 1.15, flip: true },
+            { at: 17.75, atlas: 'gemini_walk_2leg', flip: false },
+            { at: 19.42, atlas: 'gemini_star_toss_action', cycle: 1.15, flip: true },
           ],
         },
       ],
@@ -443,8 +451,11 @@ export default {
           kind: 'straw_boat_minister',
           layer: 'front',
           renderPass: 'heart',
-          x: 432,
-          y: 318,
+          heartTrack: [
+            [17.75, 352, 312],
+            [18.92, 476, 312],
+            [21.22, 476, 312],
+          ],
           breakAt: 19.00,
         },
       ],
@@ -464,7 +475,7 @@ export default {
       framing: 'two_shot',
       cameraIntent: {
         type: 'push',
-        reason: '聚焦大金梨在桌面裂开变成盖章「离职书」与离职纸箱，主角一把推回并护住工牌',
+        reason: '双方迈步走到桌前递梨，大金梨裂开变成盖章「离职书」与离职纸箱，主角一把推回并护住工牌',
         at: 23.05,
         duration: 1.5,
         to: { cx: 650, cy: 390, z: 1.16 },
@@ -475,13 +486,15 @@ export default {
           height: 306,
           move: 'sway',
           track: [
-            [21.22, 448, 600],
-            [23.40, 468, 600],
+            [21.22, 322, 600],
+            [22.65, 472, 600],
+            [23.40, 472, 600],
             [24.15, 496, 600],
             [24.82, 496, 600],
           ],
           atlases: [
-            { at: 21.22, atlas: 'whale_meet_action', cycle: 1.2, flip: false },
+            { at: 21.22, atlas: 'whale_walk_happy_2leg', flip: false },
+            { at: 22.65, atlas: 'whale_meet_action', cycle: 1.2, flip: false },
             { at: 23.40, atlas: 'whale_point', cycle: 1.05, flip: false, emote: 'question' },
             { at: 24.15, atlas: 'whale_selfkind_retry_action', cycle: 1.15, flip: false },
           ],
@@ -491,14 +504,14 @@ export default {
           height: 298,
           move: 'sway',
           track: [
-            [21.22, 885, 600],
-            [22.85, 825, 600],
-            [24.10, 848, 600],
-            [24.82, 848, 600],
+            [21.22, 1018, 600],
+            [22.92, 826, 600],
+            [24.82, 826, 600],
           ],
-          atlas: 'doubao_comfort_action',
-          atlasCycle: 1.25,
-          flip: false,
+          atlases: [
+            { at: 21.22, atlas: 'doubao_walk_side_2leg', flip: false },
+            { at: 22.92, atlas: 'doubao_comfort_action', cycle: 1.25, flip: false },
+          ],
         },
       ],
       mechanisms: [
@@ -521,7 +534,7 @@ export default {
       transitions: { type: 'whip_right', duration: 0.28 },
     },
 
-    // 镜 8 (24.82–29.333333s | pivot 27.57s)：孟母三迁我月薪 -> 也是三千
+    // 镜 8 (24.82–29.333333s | pivot 27.57s)：孟母三迁我月薪 / 也是三千
     {
       id: 'S08_THREE_MOVES',
       start: 24.82,
@@ -530,7 +543,7 @@ export default {
       framing: 'wide',
       cameraIntent: {
         type: 'follow',
-        reason: '伴随「一迁/二迁/三迁」三栋屋舍滚过视差街巷，最后对着扁扁「月薪三千」袋与热茶温柔自嘲收尾',
+        reason: '主角迈开双腿走过「一迁/二迁/三迁」三栋视差街屋，最后坐上路灯长椅对着「月薪三千」袋与热茶温柔收尾',
         at: 25.0,
         duration: 2.65,
         to: { cx: 660, cy: 386, z: 1.12 },
@@ -539,21 +552,21 @@ export default {
         {
           characterId: 'whale',
           height: 304,
-          move: 'bounce',
+          move: 'sway',
           track: [
-            [24.82, 335, 600],
-            [27.57, 592, 600],
-            [29.333333, 592, 600],
+            [24.82, 295, 600],
+            [27.45, 636, 600],
+            [29.333333, 636, 600],
           ],
           atlases: [
-            { at: 24.82, atlas: 'whale_walk_retry_action', cycle: 0.98, flip: false },
-            { at: 27.57, atlas: 'whale_read_action', cycle: 1.2, flip: false, emote: 'sparkle' },
+            { at: 24.82, atlas: 'whale_walk_side_2leg', flip: true, treadmillSpeed: 135 },
+            { at: 27.45, atlas: 'whale_seat_side_bench', cycle: 1.5, flip: true, emote: 'sparkle' },
           ],
         },
       ],
       mechanisms: [
         { kind: 'scrolling_houses', layer: 'back', start: 24.82, end: 27.57, fromOffset: 130, toOffset: -420 },
-        { kind: 'steaming_teacup', x: 808, y: 542, enterAt: 27.45 },
+        { kind: 'steaming_teacup', x: 842, y: 542, enterAt: 27.45 },
       ],
       stageTriggers: [
         { kind: 'pulse_lamp', at: 27.55, duration: 0.9, amount: 0.22 },

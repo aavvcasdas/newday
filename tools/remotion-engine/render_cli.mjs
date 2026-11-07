@@ -16,6 +16,7 @@ import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { auditTimelineActivity, semanticStateAt } from '../engine/timeline_core.mjs';
 import { POSES } from '../day3制作/whale_girl_src/whale_poses.mjs';
 import { IMAGE_ACTORS } from '../engine/performance_v2.mjs';
+import { ensureWalkRigAtlases, WALK_RIG_BUILDERS, DEFAULT_WALK_CACHE_DIR } from './walk_rig_builder.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = path.resolve(HERE, '../..');
@@ -32,7 +33,7 @@ async function loadModuleSpec(specPath) {
   return spec;
 }
 
-function startLocalAssetServer(rootDir) {
+function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
   const mimeMap = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
@@ -49,11 +50,22 @@ function startLocalAssetServer(rootDir) {
   };
   const server = http.createServer((req, res) => {
     const cleanUrl = decodeURIComponent((req.url || '/').split('?')[0]);
-    const filePath = path.resolve(rootDir, '.' + cleanUrl);
-    if (!filePath.startsWith(rootDir) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
-      res.writeHead(404);
-      res.end('Not found');
-      return;
+    let filePath;
+    if (cleanUrl.startsWith('/__walk_rigs__/')) {
+      const relRig = cleanUrl.slice('/__walk_rigs__/'.length);
+      filePath = path.resolve(walkRigDir, relRig);
+      if (!filePath.startsWith(path.resolve(walkRigDir)) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
+    } else {
+      filePath = path.resolve(rootDir, '.' + cleanUrl);
+      if (!filePath.startsWith(rootDir) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
     }
     const ext = path.extname(filePath).toLowerCase();
     res.writeHead(200, {
@@ -115,6 +127,13 @@ function buildAssetUrlMap(baseUrl) {
       map[`atlas:${base}`] = url;
       if (!map[base]) map[base] = url;
     }
+  }
+
+  // 注册程序化双腿交替行走与长椅坐姿 16 帧图集 (/__walk_rigs__/*.png)
+  for (const rigName of Object.keys(WALK_RIG_BUILDERS)) {
+    const url = `${baseUrl}/__walk_rigs__/${encodeURIComponent(rigName)}.png`;
+    map[`atlas:${rigName}`] = url;
+    map[rigName] = url;
   }
 
   return map;
@@ -317,7 +336,8 @@ export async function main(argv = process.argv.slice(2)) {
   const browserExecutable = await prepareHeadlessChromium();
   const chromiumOptions = { gl: 'angle', disableWebSecurity: true };
 
-  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT);
+  await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
+  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR);
   try {
     const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl);
     const serveUrl = await bundle({ entryPoint: path.join(HERE, 'entry.jsx') });
