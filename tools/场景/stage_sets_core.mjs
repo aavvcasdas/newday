@@ -1,7 +1,17 @@
 // stage_sets_core.mjs — 纯函数多舞台场景注册表与世界空间锚点求解器（零 Node/Canvas 依赖，浏览器与 Node 通用）
-import { clamp, hash } from '../engine/timeline_core.mjs';
+import { clamp, hash, lerp } from '../engine/timeline_core.mjs';
 
 export const WORLD_BOUNDS = Object.freeze({ x0: -260, x1: 1540, y0: -140, y1: 780, width: 1800, height: 920 });
+
+function lerpHex(c0, c1, u) {
+  const q = clamp(u);
+  const p0 = parseInt(c0.replace('#', ''), 16);
+  const p1 = parseInt(c1.replace('#', ''), 16);
+  const r = Math.round(lerp((p0 >> 16) & 255, (p1 >> 16) & 255, q));
+  const g = Math.round(lerp((p0 >> 8) & 255, (p1 >> 8) & 255, q));
+  const b = Math.round(lerp(p0 & 255, p1 & 255, q));
+  return `#${((1 << 24) | (r << 16) | (g << 8) | b).toString(16).slice(1)}`;
+}
 
 function makeParticles(count, t, { kind = 'dust', x0 = -120, x1 = 1400, y0 = 40, y1 = 590, speed = 18, sway = 14, seed = 1 } = {}) {
   const spanY = Math.max(40, y1 - y0);
@@ -15,6 +25,10 @@ function makeParticles(count, t, { kind = 'dust', x0 = -120, x1 = 1400, y0 = 40,
       const y = y0 + (((h2 * spanY) + t * (260 + h3 * 90) * speed * 0.05) % spanY);
       const x = x0 + (((h1 * spanX) - t * 48) % spanX + spanX) % spanX;
       items.push({ x, y, r: 1.4, len: 18 + h3 * 12, alpha: 0.22 + h3 * 0.2, kind });
+    } else if (kind === 'petals') {
+      const y = y0 + (((h2 * spanY) + t * (34 + h3 * 22)) % spanY);
+      const x = x0 + (((h1 * spanX) + Math.sin(t * 1.4 + i) * 28 - t * 24) % spanX + spanX) % spanX;
+      items.push({ x, y, r: 3.4 + h3 * 2.6, rot: (t * 65 + i * 37) % 360, alpha: 0.55 + h3 * 0.3, kind });
     } else if (kind === 'bubbles') {
       const y = y1 - (((h2 * spanY) + t * (speed + h3 * 14)) % spanY);
       const x = x0 + h1 * spanX + Math.sin(t * (1.1 + h3) + i) * sway;
@@ -113,21 +127,29 @@ export const BUILTIN_STAGE_SETS = Object.freeze({
     build(t, st) {
       const lampLit = clamp(st.lampLit ?? 1);
       const doorOpen = clamp(st.doorOpen ?? 0);
+      const brickOpen = st.brickWall ? clamp(st.gateOpen ?? doorOpen) : 0;
       return {
+        palette: st.brickWall
+          ? { skyTop: '#101829', skyBot: '#1A2740', wall: '#2B3348', wallTrim: '#4A556E', floor: '#231E26', floorLine: '#473D4A', accent: '#FFD982', warm: '#FFE599' }
+          : undefined,
         anchors: {
           groundY: 600,
           desk: { x: 640, y: 552, topY: 472, w: 460, h: 80, shake: st.deskShake || 0 },
           lamp: { x: 520, y: 150, coneW: 320, lit: lampLit },
-          board: { x: 820, y: 248, w: 310, h: 176, pins: Math.max(2, st.pinnedCount || 2) },
+          board: st.brickWall ? null : { x: 820, y: 248, w: 310, h: 176, pins: Math.max(2, st.pinnedCount || 2) },
+          brickHole: st.brickWall ? { x: 1020, y: 292, open: brickOpen } : null,
           window: { x: 185, y: 242, r: 72, ripple: 0 },
-          door: { x: 1120, y: 600, topY: 168, w: 136, h: 432, open: doorOpen },
+          door: st.brickWall ? null : { x: 1120, y: 600, topY: 168, w: 136, h: 432, open: doorOpen },
           stageLeft: { x: 390, y: 600 },
           stageCenter: { x: 640, y: 600 },
           stageRight: { x: 890, y: 600 },
         },
         lightSources: [
-          { x: 520, y: 150, targetX: 620, targetY: 560, radius: 330, color: '#FFE09E', intensity: 0.34 * lampLit },
+          { x: 520, y: 150, targetX: 620, targetY: 560, radius: 300, color: '#FFE09E', intensity: (st.brickWall ? 0.16 : 0.34) * lampLit },
           { x: 185, y: 242, targetX: 250, targetY: 600, radius: 190, color: '#78CEE0', intensity: 0.14 },
+          ...(brickOpen > 0.02
+            ? [{ x: 1020, y: 292, targetX: 640, targetY: 520, radius: 340, color: '#FFE48F', intensity: 0.52 * brickOpen }]
+            : []),
         ],
       };
     },
@@ -396,6 +418,128 @@ export const BUILTIN_STAGE_SETS = Object.freeze({
       };
     },
   },
+
+  seaside_deck: {
+    id: 'seaside_deck',
+    family: 'exterior_coast',
+    surface: 'sandy_deck',
+    label: '晴海周日木栈台',
+    palette: { skyTop: '#78C8F6', skyBot: '#FFF1C6', wall: '#3CA4CE', wallTrim: '#E2B87E', floor: '#EBD3A8', floorLine: '#C9A874', accent: '#FFD45E', warm: '#FFEAA0' },
+    groundY: 600,
+    weather: 'dust',
+    build(t, st) {
+      const dawn = clamp(st.dawn ?? 1);
+      const lampLit = clamp(st.lampLit ?? 1);
+      const sunY = lerp(410, 148, dawn);
+      return {
+        palette: {
+          skyTop: lerpHex('#232A4E', '#78C8F6', dawn),
+          skyBot: lerpHex('#6A5379', '#FFF1C6', dawn),
+          wall: lerpHex('#244A6E', '#3CA4CE', dawn),
+          wallTrim: '#D6AA72',
+          floor: lerpHex('#7A6D6B', '#EBD3A8', dawn),
+          floorLine: lerpHex('#564C4D', '#C9A874', dawn),
+          accent: '#FFD45E',
+          warm: '#FFEAA0',
+        },
+        anchors: {
+          groundY: 600,
+          sun: { x: 985, y: sunY, r: 54, glow: dawn },
+          parasol: { x: 255, y: 600, topY: 280 },
+          dawn,
+          stageLeft: { x: 390, y: 600 },
+          stageCenter: { x: 640, y: 600 },
+          stageRight: { x: 900, y: 600 },
+        },
+        lightSources: [
+          { x: 985, y: sunY, targetX: 640, targetY: 600, radius: 480, color: '#FFE899', intensity: (0.12 + 0.34 * dawn) * (0.4 + 0.6 * lampLit) },
+        ],
+      };
+    },
+  },
+
+  misty_pier: {
+    id: 'misty_pier',
+    family: 'exterior_water',
+    surface: 'wet_stone',
+    label: '烟波渡口与芦苇木栈',
+    palette: { skyTop: '#CAE6E3', skyBot: '#EEF7F5', wall: '#7FA9A8', wallTrim: '#6E533E', floor: '#8A6B52', floorLine: '#5D4432', accent: '#58B4B0', warm: '#FFF2CC' },
+    groundY: 600,
+    weather: 'dust',
+    build(t, st) {
+      const gateOpen = clamp(st.gateOpen ?? 0.5);
+      const lampLit = clamp(st.lampLit ?? 0.85);
+      return {
+        anchors: {
+          groundY: 600,
+          pier: { x0: -140, x1: 660, y: 584 },
+          reeds: { x: 180, y: 585 },
+          lamp: { x: 615, y: 390, coneW: 180, lit: lampLit },
+          gate: { x: 940, y: 565, open: gateOpen },
+          stageLeft: { x: 340, y: 600 },
+          stageCenter: { x: 520, y: 600 },
+          stageRight: { x: 860, y: 600 },
+        },
+        lightSources: [
+          { x: 615, y: 360, targetX: 540, targetY: 600, radius: 240, color: '#FFF0C2', intensity: 0.28 * lampLit },
+        ],
+      };
+    },
+  },
+
+  pear_orchard: {
+    id: 'pear_orchard',
+    family: 'courtyard',
+    surface: 'courtyard_stone',
+    label: '梨园庭院办公台',
+    palette: { skyTop: '#E4F3D8', skyBot: '#FAF6E4', wall: '#EFE7D6', wallTrim: '#7D9B6A', floor: '#D6C8B0', floorLine: '#A8987E', accent: '#F2CA52', warm: '#FFF0B8' },
+    groundY: 600,
+    weather: 'petals',
+    build(t, st) {
+      const lampLit = clamp(st.lampLit ?? 0.9);
+      return {
+        anchors: {
+          groundY: 600,
+          tree: { x: 310, y: 600, canopyY: 185 },
+          desk: { x: 655, y: 556, topY: 486, w: 330, h: 70, shake: st.deskShake || 0 },
+          lamp: { x: 660, y: 120, coneW: 320, lit: lampLit },
+          stageLeft: { x: 430, y: 600 },
+          stageCenter: { x: 655, y: 600 },
+          stageRight: { x: 875, y: 600 },
+        },
+        lightSources: [
+          { x: 640, y: 80, targetX: 655, targetY: 600, radius: 380, color: '#FFF3C4', intensity: 0.28 * lampLit },
+        ],
+      };
+    },
+  },
+
+  twilight_street: {
+    id: 'twilight_street',
+    family: 'street',
+    surface: 'street_pavement',
+    label: '暮色三迁暖灯街巷',
+    palette: { skyTop: '#3E4772', skyBot: '#F2BE96', wall: '#5D5D82', wallTrim: '#8E7A8C', floor: '#5A5566', floorLine: '#7C7487', accent: '#FFD485', warm: '#FFE6AD' },
+    groundY: 600,
+    weather: 'dust',
+    build(t, st) {
+      const lampLit = clamp(st.lampLit ?? 0.95);
+      return {
+        anchors: {
+          groundY: 600,
+          lamp: { x: 760, y: 178, postX: 760, coneW: 310, lit: lampLit },
+          bench: { x: 690, y: 566, w: 190, h: 34 },
+          stageLeft: { x: 380, y: 600 },
+          stageCenter: { x: 640, y: 600 },
+          stageRight: { x: 880, y: 600 },
+        },
+        lightSources: [
+          { x: 760, y: 178, targetX: 710, targetY: 600, radius: 320, color: '#FFE29E', intensity: 0.42 * lampLit },
+          { x: 260, y: 195, targetX: 280, targetY: 600, radius: 230, color: '#FFD699', intensity: 0.24 * lampLit },
+        ],
+      };
+    },
+  },
 });
 
 export const STAGE_SET_NAMES = Object.freeze(Object.keys(BUILTIN_STAGE_SETS));
@@ -442,9 +586,9 @@ export function resolveStageSet(setSpec = 'underwater_study', t = 0, interaction
 
   const mergedState = { ...normalized, ...interactionState };
   const built = def.build(t, mergedState);
-  const palette = { ...def.palette, ...(normalized.palette || {}) };
+  const palette = { ...def.palette, ...(built.palette || {}), ...(normalized.palette || {}) };
   const weatherKind = normalized.weather ?? def.weather ?? 'dust';
-  const weatherCount = weatherKind === 'rain' ? 38 : weatherKind === 'bubbles' ? 16 : weatherKind === 'steam' ? 10 : 12;
+  const weatherCount = weatherKind === 'rain' ? 38 : weatherKind === 'petals' ? 20 : weatherKind === 'bubbles' ? 16 : weatherKind === 'steam' ? 10 : 12;
   const particles = weatherKind === 'none'
     ? []
     : makeParticles(weatherCount, t, {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { AbsoluteFill, Audio, useCurrentFrame, useVideoConfig } from 'remotion';
+import React, { useEffect, useState } from 'react';
+import { AbsoluteFill, Audio, continueRender, delayRender, useCurrentFrame, useVideoConfig } from 'remotion';
 import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { WorldCamera } from './components/WorldCamera.jsx';
 import { StageSetView } from './components/StageSetView.jsx';
@@ -15,13 +15,36 @@ export function UniversalComposition(props) {
   const { fps, width, height } = useVideoConfig();
   const t = frame / fps;
 
+  const [fontHandle] = useState(() => (props.fontUrl && typeof FontFace !== 'undefined' ? delayRender('load-cjk-font') : null));
+
+  useEffect(() => {
+    if (!fontHandle) return;
+    let done = false;
+    const finish = () => {
+      if (!done) {
+        done = true;
+        continueRender(fontHandle);
+      }
+    };
+    const face = new FontFace('NewdayNoto', `url(${props.fontUrl})`);
+    face
+      .load()
+      .then((loaded) => {
+        document.fonts.add(loaded);
+        finish();
+      })
+      .catch(() => {
+        finish();
+      });
+  }, [fontHandle, props.fontUrl]);
+
   const state = evaluateRemotionFrameState(props, t);
   const outputScale = width / (props.logicalWidth || 1280);
   const deskShake = state.setState.reactive?.deskShake || 0;
 
   return (
-    <AbsoluteFill style={{ backgroundColor: '#071526' }}>
-      {props.audioUrl ? <Audio src={props.audioUrl} /> : null}
+    <AbsoluteFill style={{ backgroundColor: '#071526', fontFamily: 'NewdayNoto, Noto Sans CJK SC, sans-serif' }}>
+      {props.audioUrl && !props.externalAudioMux ? <Audio src={props.audioUrl} /> : null}
 
       <WorldCamera
         camera={state.camera}
@@ -38,6 +61,17 @@ export function UniversalComposition(props) {
           t={t}
         />
 
+        <InteractivePropsLayer
+          layer="back"
+          shot={state.shot}
+          worldState={state.worldState}
+          actors={state.actors}
+          events={props.events || []}
+          cues={props.cues || []}
+          t={t}
+          fps={fps}
+        />
+
         {state.actors.map((actor, idx) => (
           <RiggedCharacter
             key={`actor-${idx}`}
@@ -49,6 +83,7 @@ export function UniversalComposition(props) {
         ))}
 
         <InteractivePropsLayer
+          layer="front"
           shot={state.shot}
           worldState={state.worldState}
           actors={state.actors}
@@ -73,6 +108,7 @@ export function UniversalComposition(props) {
         cues={props.cues || []}
         speaker={props.speaker || '本鲸'}
         opener={props.opener || null}
+        complianceBadge={props.complianceBadge || null}
         planningPreview={Boolean(props.planningPreview)}
         t={t}
       />

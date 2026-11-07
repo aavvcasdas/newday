@@ -444,8 +444,9 @@ export function evaluateCharacterMotion(plan, t, {
   let walkGait = null;
   let footContacts = [];
   if (Array.isArray(plan.track) && plan.track.length >= 2) {
-    const pos = kf(t, plan.track);
-    const prevPos = kf(Math.max(0, t - 1 / 30), plan.track);
+    const normTrack = plan.track.map((row) => (Array.isArray(row[1]) ? row : [row[0], [row[1], row[2]], row[3]]));
+    const pos = kf(t, normTrack);
+    const prevPos = kf(Math.max(0, t - 1 / 30), normTrack);
     if (Array.isArray(pos)) {
       x = pos[0];
       if (Number.isFinite(pos[1])) y = pos[1];
@@ -454,6 +455,9 @@ export function evaluateCharacterMotion(plan, t, {
         walkingActive = true;
         if (autoFlip == null) autoFlip = vx < 0;
         walkGait = evaluateMoveStyle(Math.abs(vx) > 210 ? 'run' : 'walk', t, seed, { beatGrid });
+        if (walkGait.footPhase != null && (walkGait.footPhase < 0.14 || Math.abs(walkGait.footPhase - 0.5) < 0.08)) {
+          footContacts.push({ x, y: baseGroundY, strength: 0.72, phase: walkGait.footPhase });
+        }
       }
     }
   } else if (plan.walk) {
@@ -526,6 +530,59 @@ export function evaluateCharacterMotion(plan, t, {
       }
     }
   }
+
+  // 3b. 16 帧动作图集序列 (atlas / atlases) + 带预备/回弹与透明交叉淡入淡出的平滑切换
+  const atlasCols = plan.atlasCols || 16;
+  let activeAtlasSpec = plan.atlas
+    ? { at: shotStart, atlas: plan.atlas, cycle: plan.atlasCycle || 1.25, loop: plan.atlasLoop !== false, flip: plan.flip, emote: plan.emote }
+    : null;
+  let prevAtlasSpec = null;
+  let atlasBlend = 1;
+  const atlasTransDur = plan.atlasTransition ?? 0.26;
+  const atlasTimeline = (plan.atlases || [])
+    .map((item) => ({
+      ...item,
+      at: item.at != null ? item.at : (item.line != null ? (cues[item.line - 1]?.start ?? shotStart) : shotStart),
+    }))
+    .sort((a, b) => a.at - b.at);
+
+  for (const item of atlasTimeline) {
+    if (t >= item.at) {
+      const age = t - item.at;
+      if (activeAtlasSpec && activeAtlasSpec.atlas !== item.atlas && atlasTransDur > 0 && age >= 0 && age < atlasTransDur) {
+        const q = ease(age / atlasTransDur);
+        prevAtlasSpec = activeAtlasSpec;
+        activeAtlasSpec = item;
+        atlasBlend = q;
+        const arc = Math.sin(Math.PI * q);
+        transitionPulse = {
+          dy: q < 0.34 ? 3.8 * (q / 0.34) : -6.2 * arc,
+          lean: (transitionPulse.lean || 0) + 0.026 * arc,
+          squash: q < 0.34 ? 0.052 * (q / 0.34) : -0.044 * arc,
+        };
+      } else {
+        prevAtlasSpec = activeAtlasSpec;
+        activeAtlasSpec = item;
+        atlasBlend = 1;
+      }
+    }
+  }
+
+  const computeAtlasFrame = (spec) => {
+    if (!spec?.atlas) return 0;
+    const rel = Math.max(0, t - (spec.at ?? shotStart));
+    const cyc = Math.max(0.25, spec.cycle || 1.25);
+    const prog = spec.loop === false ? Math.min(0.999, rel / cyc) : ((rel / cyc) % 1 + 1) % 1;
+    return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
+  };
+
+  if (activeAtlasSpec?.flip != null) {
+    autoFlip = activeAtlasSpec.flip;
+  }
+  const atlas = activeAtlasSpec?.atlas || null;
+  const atlasFrame = computeAtlasFrame(activeAtlasSpec);
+  const prevAtlas = atlasBlend < 0.999 && prevAtlasSpec?.atlas ? prevAtlasSpec.atlas : null;
+  const prevAtlasFrame = prevAtlas ? computeAtlasFrame(prevAtlasSpec) : 0;
 
   // 4. 命名动作（RIG_ACTIONS / 28 个 LEGACY_ACTIONS）
   const activeActionName = (() => {
@@ -648,12 +705,18 @@ export function evaluateCharacterMotion(plan, t, {
     height: plan.height,
     opacity,
     imageScale: plan.imageScale ?? 1,
+    atlas,
+    atlasFrame,
+    prevAtlas,
+    prevAtlasFrame,
+    atlasBlend,
+    atlasCols,
     pose,
     prevPose,
     poseBlend,
     action: activeActionName,
     move: plan.move || (walkingActive ? 'walk' : 'idle'),
-    emote: plan.emote || actionResult?.emote || mood.emote || null,
+    emote: activeAtlasSpec?.emote || plan.emote || actionResult?.emote || mood.emote || null,
     mood,
     name: plan.name,
     x: x + dx,

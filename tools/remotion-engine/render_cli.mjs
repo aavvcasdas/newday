@@ -2,10 +2,12 @@
 // render_cli.mjs — 通用数据驱动 Remotion 渲染与校验 CLI（同时支持 Day 系列单集与音乐 MV）
 // 用法：
 //   Day 系列：node tools/remotion-engine/render_cli.mjs --mode episode --spec <episode.spec.mjs> --alignment <json> --subtitle-file <json> [--voice <wav>] [--dry-run|--bundle-check|--out <mp4>]
-//   音乐 MV ：node tools/remotion-engine/render_cli.mjs --mode mv --spec <mv.spec.mjs> [--lyrics <json>] [--audio <mp3/wav>] [--dry-run|--bundle-check|--out <mp4>]
+//   音乐 MV ：node tools/remotion-engine/render_cli.mjs --mode mv --spec <mv.spec.mjs> [--lyrics <json>] [--audio <mp3/wav>] [--mux-audio <source>] [--still-frames f1,f2 --out-dir <dir>] [--out <mp4>]
 
+import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import http from 'node:http';
+import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.mjs';
@@ -37,9 +39,13 @@ function startLocalAssetServer(rootDir) {
     '.jpeg': 'image/jpeg',
     '.webp': 'image/webp',
     '.svg': 'image/svg+xml',
+    '.ttf': 'font/ttf',
+    '.otf': 'font/otf',
+    '.woff2': 'font/woff2',
     '.mp3': 'audio/mpeg',
     '.wav': 'audio/wav',
     '.m4a': 'audio/mp4',
+    '.mp4': 'video/mp4',
   };
   const server = http.createServer((req, res) => {
     const cleanUrl = decodeURIComponent((req.url || '/').split('?')[0]);
@@ -97,7 +103,67 @@ function buildAssetUrlMap(baseUrl) {
       map[actorId] = map[`actor:${actorId}`];
     }
   }
+
+  // 注册 16 帧动作图集目录 (assets/ai-girls/lyric-action-v13/*.png)
+  const atlasDir = path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13');
+  if (fs.existsSync(atlasDir)) {
+    for (const entry of fs.readdirSync(atlasDir)) {
+      if (!entry.endsWith('.png')) continue;
+      const base = entry.slice(0, -4);
+      const rel = `assets/ai-girls/lyric-action-v13/${entry}`;
+      const url = `${baseUrl}/${encodeURI(rel)}`;
+      map[`atlas:${base}`] = url;
+      if (!map[base]) map[base] = url;
+    }
+  }
+
   return map;
+}
+
+function resolveFontUrl(baseUrl) {
+  if (!baseUrl) return null;
+  const candidates = [
+    'video-fx/assets/fonts/NotoSansSC-Bold.ttf',
+    'tools/mv_extra/cache/NotoSansSC-Bold.ttf',
+  ];
+  for (const rel of candidates) {
+    if (fs.existsSync(path.join(REPO_ROOT, rel))) {
+      return `${baseUrl}/${encodeURI(rel)}`;
+    }
+  }
+  return null;
+}
+
+function resolveBundledFfmpeg() {
+  const candidates = [
+    path.join(HERE, 'node_modules/@remotion/compositor-linux-x64-gnu/ffmpeg'),
+    path.join(HERE, 'node_modules/@remotion/compositor-linux-arm64-gnu/ffmpeg'),
+    path.join(HERE, 'node_modules/@remotion/compositor-darwin-arm64/ffmpeg'),
+    path.join(HERE, 'node_modules/@remotion/compositor-darwin-x64/ffmpeg'),
+    'ffmpeg',
+  ];
+  for (const c of candidates) {
+    if (c === 'ffmpeg' || fs.existsSync(c)) return c;
+  }
+  return 'ffmpeg';
+}
+
+async function prepareHeadlessChromium() {
+  if (process.env.REMOTION_BROWSER_EXECUTABLE) {
+    return process.env.REMOTION_BROWSER_EXECUTABLE;
+  }
+  const chromiumMod = await import('@sparticuz/chromium');
+  const chromium = chromiumMod.default || chromiumMod;
+  const inflate = chromiumMod.inflate || chromium.inflate;
+  const al2023Br = path.join(HERE, 'node_modules/@sparticuz/chromium/bin/al2023.tar.br');
+  if (typeof inflate === 'function' && fs.existsSync(al2023Br)) {
+    const libRoot = await inflate(al2023Br);
+    const libDir = `${libRoot}/lib`;
+    if (!(process.env.LD_LIBRARY_PATH || '').includes(libDir)) {
+      process.env.LD_LIBRARY_PATH = `${libDir}${process.env.LD_LIBRARY_PATH ? ':' + process.env.LD_LIBRARY_PATH : ''}`;
+    }
+  }
+  return chromium.executablePath();
 }
 
 export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '') {
@@ -106,6 +172,8 @@ export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2
   if (!specPath) throw new Error('缺少 --spec <spec.mjs>');
   const spec = await loadModuleSpec(specPath);
   const assetUrlMap = baseUrl ? buildAssetUrlMap(baseUrl) : {};
+  const fontUrl = resolveFontUrl(baseUrl);
+  const muxAudio = argOf(argv, '--mux-audio');
 
   if (mode === 'episode') {
     const alignmentPath = argOf(argv, '--alignment');
@@ -124,7 +192,9 @@ export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2
       autoStageProgression: argv.includes('--auto-sets') ? true : undefined,
     });
     props.assetUrlMap = assetUrlMap;
-    if (voicePath && baseUrl) {
+    props.fontUrl = fontUrl;
+    props.externalAudioMux = Boolean(muxAudio);
+    if (voicePath && baseUrl && !muxAudio) {
       const relVoice = path.relative(REPO_ROOT, path.resolve(voicePath));
       if (!relVoice.startsWith('..')) props.audioUrl = `${baseUrl}/${encodeURI(relVoice)}`;
     }
@@ -141,7 +211,9 @@ export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2
     repoRoot: REPO_ROOT,
     assetUrlMap,
   });
-  if (props.audioSrc && baseUrl) {
+  props.fontUrl = fontUrl;
+  props.externalAudioMux = Boolean(muxAudio);
+  if (props.audioSrc && baseUrl && !muxAudio) {
     const relAudio = path.relative(REPO_ROOT, props.audioSrc);
     if (!relAudio.startsWith('..')) props.audioUrl = `${baseUrl}/${encodeURI(relAudio)}`;
   }
@@ -169,9 +241,20 @@ export function auditRemotionPropsActivity(props) {
           st.setState.reactive.doorOpen,
           st.setState.reactive.gateOpen,
           st.setState.reactive.lampLit,
+          st.setState.reactive.dawn,
           st.setState.reactive.deskShake,
         ],
-        actors: st.actors.map((a) => [a.x, a.y, a.lean, a.sx, a.sy, a.lift, a.anim?.bones?.tail?.rot || 0, a.anim?.bones?.armR?.rot || 0]),
+        actors: st.actors.map((a) => [
+          a.x,
+          a.y,
+          a.lean,
+          a.sx,
+          a.sy,
+          a.lift,
+          a.atlasFrame || 0,
+          a.anim?.bones?.tail?.rot || 0,
+          a.anim?.bones?.armR?.rot || 0,
+        ]),
         boundProps: st.worldState.boundProps.map((p) => [p.x, p.y, p.rotation]),
         semanticProps,
       };
@@ -179,7 +262,6 @@ export function auditRemotionPropsActivity(props) {
     { duration: props.duration, fps: 10, windowSec: 0.5, minActiveDelta: 0.02, maxStaticSpanSec: 1.0 }
   );
 
-  // 显式声明 idleException 的无人桌面特写镜头（actors.length === 0）按剧本节奏允许纸面停留阅读
   const filteredStretches = audit.staticStretches.filter((stretch) => {
     const mid = (stretch.start + stretch.end) * 0.5;
     const st = evaluateRemotionFrameState(props, mid);
@@ -224,15 +306,16 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   const outPath = argOf(argv, '--out');
-  if (!outPath) {
-    throw new Error('正式渲染请指定 --out <output.mp4|png>，或使用 --dry-run / --bundle-check 仅验证底层');
+  const stillFramesArg = argOf(argv, '--still-frames');
+  const outDirArg = argOf(argv, '--out-dir');
+  if (!outPath && !(stillFramesArg && outDirArg)) {
+    throw new Error('正式渲染请指定 --out <output.mp4|png>（或 --still-frames f1,f2 --out-dir <dir>）');
   }
 
   const { bundle } = await import('@remotion/bundler');
   const { renderMedia, renderStill, selectComposition } = await import('@remotion/renderer');
-  const chromiumMod = await import('@sparticuz/chromium');
-  const chromium = chromiumMod.default || chromiumMod;
-  const browserExecutable = process.env.REMOTION_BROWSER_EXECUTABLE || (await chromium.executablePath());
+  const browserExecutable = await prepareHeadlessChromium();
+  const chromiumOptions = { gl: 'angle', disableWebSecurity: true };
 
   const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT);
   try {
@@ -243,35 +326,94 @@ export async function main(argv = process.argv.slice(2)) {
       id: 'UniversalStage',
       inputProps: liveProps,
       browserExecutable,
-      chromiumOptions: { disableWebSecurity: true },
+      chromiumOptions,
     });
 
+    if (stillFramesArg && outDirArg) {
+      const targetDir = path.resolve(outDirArg);
+      fs.mkdirSync(targetDir, { recursive: true });
+      const frames = stillFramesArg.split(',').map((s) => Number(s.trim())).filter(Number.isFinite);
+      for (const frame of frames) {
+        const dest = path.join(targetDir, `frame_${String(frame).padStart(4, '0')}.png`);
+        await renderStill({
+          composition,
+          serveUrl,
+          output: dest,
+          frame,
+          imageFormat: 'png',
+          inputProps: liveProps,
+          browserExecutable,
+          chromiumOptions,
+        });
+      }
+      console.log('REMOTION_STILLS_OK', targetDir, frames.length);
+      return { outDir: targetDir, frames };
+    }
+
     fs.mkdirSync(path.dirname(path.resolve(outPath)), { recursive: true });
-    const stillFrame = argOf(argv, '--still-frame');
+    const stillFrame = argOf(argv, '--still-frame') ?? argOf(argv, '--frame');
     if (stillFrame != null) {
       await renderStill({
         composition,
         serveUrl,
         output: path.resolve(outPath),
         frame: Number(stillFrame),
+        imageFormat: 'png',
         inputProps: liveProps,
         browserExecutable,
-        chromiumOptions: { disableWebSecurity: true },
+        chromiumOptions,
       });
-    } else {
-      await renderMedia({
-        composition,
-        serveUrl,
-        codec: 'h264',
-        outputLocation: path.resolve(outPath),
-        inputProps: liveProps,
-        browserExecutable,
-        concurrency: 4,
-        chromiumOptions: { disableWebSecurity: true },
-      });
+      console.log('REMOTION_STILL_OK', outPath);
+      return { outPath, frame: Number(stillFrame) };
     }
-    console.log('REMOTION_RENDER_OK', outPath);
-    return { outPath, frames: composition.durationInFrames };
+
+    const muxAudio = argOf(argv, '--mux-audio');
+    const resolvedOut = path.resolve(outPath);
+    const videoOnlyOut = muxAudio
+      ? path.join(os.tmpdir(), `remotion_video_${process.pid}_${Date.now()}.mp4`)
+      : resolvedOut;
+
+    await renderMedia({
+      composition,
+      serveUrl,
+      codec: 'h264',
+      crf: Number(argOf(argv, '--crf') || 22),
+      pixelFormat: 'yuv420p',
+      outputLocation: videoOnlyOut,
+      inputProps: liveProps,
+      browserExecutable,
+      concurrency: Math.max(1, Math.min(os.cpus().length, Number(argOf(argv, '--concurrency') || 2))),
+      chromiumOptions,
+      onProgress: ({ progress: ratio }) => {
+        const pct = Math.round(ratio * 100);
+        if (pct % 10 === 0) process.stdout.write(`\r[Remotion] ${pct}% `);
+      },
+    });
+    process.stdout.write('\n');
+
+    if (muxAudio) {
+      const ffmpegBin = resolveBundledFfmpeg();
+      const absAudio = path.resolve(REPO_ROOT, muxAudio);
+      execFileSync(
+        ffmpegBin,
+        [
+          '-y',
+          '-i', videoOnlyOut,
+          '-i', absAudio,
+          '-map', '0:v:0',
+          '-map', '1:a:0',
+          '-c:v', 'copy',
+          '-c:a', 'copy',
+          '-movflags', '+faststart',
+          resolvedOut,
+        ],
+        { stdio: 'inherit' }
+      );
+      fs.rmSync(videoOnlyOut, { force: true });
+    }
+
+    console.log('REMOTION_RENDER_OK', resolvedOut);
+    return { outPath: resolvedOut, frames: composition.durationInFrames };
   } finally {
     server.close();
   }

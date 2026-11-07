@@ -7,28 +7,37 @@ import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { auditRemotionPropsActivity } from './render_cli.mjs';
 import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.mjs';
 
-test('mv_dayu 声明式多舞台规格: 7 套差异化动态场景、全链路骨骼步态与零静态幻灯片区间', () => {
+test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 帧图集平滑过渡与零静态幻灯片区间', () => {
   const props = adaptMvToRemotionProps({ spec: mvSpec });
   assert.equal(props.mode, 'lyric-mv');
-  assert.equal(props.shots.length, 7);
+  assert.equal(props.shots.length, 8);
+  assert.equal(props.durationInFrames, 880);
+  assert.equal(props.complianceBadge, '非官方同人 / AI生成');
 
   const uniqueSets = new Set(props.shots.map((s) => s.setSpec.id));
-  assert.ok(uniqueSets.size >= 6, '大禹 MV 应切换至少 6 套不同舞台背景而非锁死单一背景');
+  assert.equal(uniqueSets.size, 8, '大禹 MV 8 镜应切换 8 套不同舞台背景而非锁死单一背景');
 
   // 纯 t 确定性检验：打乱时间采样顺序必须返回完全一致的帧状态（支持 Remotion 并发分片渲染）
-  const sampleA1 = evaluateRemotionFrameState(props, 6.25);
+  const sampleA1 = evaluateRemotionFrameState(props, 7.4);
   const sampleOther = evaluateRemotionFrameState(props, 19.8);
-  const sampleA2 = evaluateRemotionFrameState(props, 6.25);
+  const sampleA2 = evaluateRemotionFrameState(props, 7.4);
   assert.deepEqual(sampleA1, sampleA2);
   assert.notEqual(sampleA1.setState.id, sampleOther.setState.id);
 
-  // 环境交互检验：开闸触发器应驱动水闸开启度上升
+  // 环境交互检验：开闸触发器应驱动水闸开启度上升；后羿射日触发器应令昼夜光照下降
   const gateBefore = evaluateRemotionFrameState(props, 0.3);
-  const gateAfter = evaluateRemotionFrameState(props, 2.2);
-  assert.ok(gateAfter.setState.reactive.gateOpen > gateBefore.setState.reactive.gateOpen + 0.4);
+  const gateAfter = evaluateRemotionFrameState(props, 2.6);
+  assert.ok(gateAfter.setState.reactive.gateOpen > gateBefore.setState.reactive.gateOpen + 0.5);
 
-  // 手持道具与人物骨骼联动检验
-  assert.ok(sampleA1.worldState.boundProps.length >= 1, '角色应通过 handAt 携带并挥动道具');
+  const sunBefore = evaluateRemotionFrameState(props, 6.1);
+  const sunAfter = evaluateRemotionFrameState(props, 8.5);
+  assert.ok(sunAfter.setState.reactive.dawn < sunBefore.setState.reactive.dawn - 0.5);
+
+  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 3.85s 后 0.1s 内处于双图集平滑过渡态）
+  const pivotBlend = evaluateRemotionFrameState(props, 3.95);
+  assert.equal(pivotBlend.actors[0].atlas, 'whale_side_crouch_action');
+  assert.equal(pivotBlend.actors[0].prevAtlas, 'whale_point');
+  assert.ok(pivotBlend.actors[0].atlasBlend > 0 && pivotBlend.actors[0].atlasBlend < 1);
 
   // 反 PPT 静态检测：全片无 >=1.0s 的冻结区间
   const activity = auditRemotionPropsActivity(props);
