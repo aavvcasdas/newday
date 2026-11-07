@@ -1,6 +1,8 @@
 // Explicit semantic object tracks; all times supplied by acoustic-word bindings, never ambient oscillation.
-import { drawText, smooth, mix } from './room_base.mjs';
+import { drawText } from './room_base.mjs';
 import { getProp } from './prop_registry.mjs';
+import { semanticStateAt } from './timeline_core.mjs';
+export { semanticStateAt };
 
 export function validateSemanticTracks(tracks, where = 'semanticTracks') {
   if (!Array.isArray(tracks)) throw new Error(`${where}须为数组`);
@@ -16,30 +18,6 @@ export function validateSemanticTracks(tracks, where = 'semanticTracks') {
     for (const m of t.marks || []) if (!Number.isFinite(m.at) || !['strike', 'circle', 'cross'].includes(m.type)) throw new Error(`${where}划线/圈记配置无效`);
     for (const m of t.moves || []) if (![m.at, m.duration, m.x, m.y ?? t.y].every(Number.isFinite) || m.duration <= 0) throw new Error(`${where}移动参数无效`);
   }
-}
-export function semanticStateAt(track, time) {
-  if (time < track.from || time >= track.to) return null;
-  let state = { ...(track.state || {}) }, x = track.x, y = track.y;
-  for (const s of track.states || []) if (time >= s.at) state = { ...state, ...s.state };
-  for (const move of track.moves || []) {
-    if (time < move.at) break;
-    const p = smooth((time - move.at) / move.duration);
-    x = mix(x, move.x, p); y = mix(y, move.y ?? y, p);
-  }
-  let scaleX = 1, scale=1, opacity=1;
-  if(track.enter){const q=Math.max(0,Math.min(1,(time-track.from)/(track.enter.duration||.45)));const ease=1-(1-q)**3;
-    x+=(track.enter.dx||0)*(1-ease);y+=(track.enter.dy||0)*(1-ease);opacity=Math.min(1,q*3);
-    if(track.enter.overshoot)scale=1+.035*Math.sin(Math.PI*q)*Math.sin(2*Math.PI*q);
-  }
-  for(const move of track.moves||[]){const age=time-move.at-move.duration;if(age>=0&&age<.12)y-=Math.sin(Math.PI*age/.12)*1.5;}
-  for(const em of track.emphasis||[]){const age=time-em.at;if(age>=0&&age<em.duration)scale*=1+.035*Math.sin(Math.PI*age/em.duration);}
-
-  for (const flip of track.flips || []) {
-    const age = time - flip.at;
-    if (age >= 0 && age < flip.duration) scaleX = Math.max(.045, Math.abs(Math.cos(Math.PI * age / flip.duration)));
-  }
-  return { id: track.id, kind: track.kind, x, y, w: track.w, h: track.h, state, scaleX, scale, opacity,
-    marks: (track.marks || []).filter((m) => time >= m.at).map((m) => ({ ...m, progress: smooth((time - m.at) / (m.duration || .16)) })) };
 }
 function box(g, x, y, w, h, fill, stroke) {
   g.beginPath();g.roundRect(x, y, w, h, 8);g.fillStyle = fill;g.fill();g.lineWidth = 2;g.strokeStyle = stroke;g.stroke();

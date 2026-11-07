@@ -47,12 +47,15 @@ test('拒绝多次主运镜、重复字段、未知景别和无效duration/坐�
   ]) assert.throws(() => validateCameraPlan(shot));
 });
 
-test('长时间采样无横移、轻呼吸有界、骨骼待机不量化跳变', () => {
+test('长时间采样双脚不打滑、呼吸与次级骨骼连续运动且无量化跳变', () => {
   for (let t = 0; t < 50; t += 0.031) {
     const body = livingBody(t, 0.4);
-    assert.equal(body.dx, 0);
-    assert.ok(Math.abs(body.dy) <= 1.2 && Math.abs(body.lean) <= 0.008 && Math.abs(body.squash) <= 0.08);
-    assert.deepEqual(lifeAnim(t), { bones: {} });
+    assert.equal(body.dx, 0, '站立待机双脚水平锚定不打滑');
+    assert.ok(Math.abs(body.dy) <= 3.0 && Math.abs(body.lean) <= 0.02 && Math.abs(body.squash) <= 0.08);
+    const s0 = lifeAnim(t, 0.4);
+    const s1 = lifeAnim(t + 0.001, 0.4);
+    assert.ok(Math.abs(s0.bones.tail.rot - s1.bones.tail.rot) < 0.001, '次级骨骼连续可微，无跳变');
+    assert.deepEqual(lifeAnim(t, 0.4, 0), { bones: {} });
     assert.deepEqual(livingBody(t, 0.4, 0), { dx: 0, dy: 0, lean: 0, squash: 0 });
   }
 });
@@ -138,7 +141,7 @@ test('无词级时间只能作规划；正式结果/交互检查不能按句首�
   assert.ok(events.every((e) => e.measured === false));
 });
 
-test('视觉姿态不再只限8种，接触校准仍只有8种，28旧动作不假装已接入', () => {
+test('视觉姿态不再只限8种，接触校准仍只有8种，28旧动作与骨骼动作已真实接入且拒绝未知动作', () => {
   assert.ok(VISUAL_POSES.length > CALIBRATED_POSES.length);
   assert.equal(CALIBRATED_POSES.length, 8);
   const visual = clone(); visual.shots[3].actors[0].pose = 'wave';
@@ -146,8 +149,12 @@ test('视觉姿态不再只限8种，接触校准仍只有8种，28旧动作不�
   const contact = clone(); contact.shots[5].actors[0].pose = 'wave';
   contact.shots[5].interactions = [{ verb: 'drop_bonk', propId: 'folded_page', actor: 0, wordLine: 15, wordChar: '划', land: [640, 500] }];
   assert.throws(() => validate(contact), /需要校准/);
-  const fake = clone(); fake.shots[3].actors[0].action = 'jump_joy';
-  assert.throws(() => validate(fake), /尚未接入/);
+  const wired = clone(); wired.shots[3].actors[0].action = 'jump_joy';
+  assert.doesNotThrow(() => validate(wired));
+  const jumped = resolveActor(wired.shots[3].actors[0], 0.85, 10, cues);
+  assert.ok(jumped.lift > 0.2 && jumped.y < 590, 'jump_joy 真实产生起跳升空与骨骼动画');
+  const unknown = clone(); unknown.shots[3].actors[0].action = 'nonexistent_fake_action';
+  assert.throws(() => validate(unknown), /未注册角色动作/);
 });
 
 test('视觉加载路径可绘制非接触姿态，但不能取得伪造的手掌锚点（合成单测，不是素材验收）', async () => {

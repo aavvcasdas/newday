@@ -1,83 +1,75 @@
-# 通用单集生产引擎
+# 通用动态分镜与双向交互引擎 (`tools/engine/`)
 
-先读 `agent.md`。当前默认是**稳定镜头＋轻呼吸/可关闭待机＋明确语义事件**，不是持续摇相机/摇人物。
-旧Day0–Day10独立renderer不改；不为历史片洗绿或重渲。Day12仍是“回归/@豆包/米饭与大饼”25行稿，非山姆护照稿。
+先读根目录 `agent.md` 与 `AGENTS.md`。本目录是 **Day 正传系列** 与 **番外歌词 MV** 共享的底层纯函数时间轴、骨骼动作、多舞台场景与双向世界交互引擎，同时驱动 **2D Canvas 渲染后端** (`render_episode.mjs`) 与 **通用动态 Remotion 渲染引擎** (`tools/remotion-engine/`)。
 
-## 当前实现
+旧 Day0–Day10 独立 renderer 保持历史归档不改；本轮只做底层重构与契约升级，不批量重渲既有成片。
+
+## 核心架构模块（参考 `paint-mv-skills` 与 `music-mv` 重构）
 
 | 模块 | 职责 |
 |---|---|
-| `camera_plan.mjs` | 七种景别、固定默认、最多一次显式push（推/拉/平移）；小数坐标、不取整、不叠正弦；完成后锁终点 |
-| `render_episode.mjs` | Canvas逐帧绘制、ffmpeg编码；不使用zoompan。已删两层慢晃；开场也不自动三段推拉。待机不再每0.2秒重置全身骨骼，显式走位保留连续步态 |
-| `schema_validator.mjs` | 注册姿态、接触资格、道具边界、单一主运镜、覆盖、词点和当前台词哈希校验 |
-| `director_contract.mjs` | directorVersion=1逐镜字段/事件/连续性/结果停留；允许稳定反应镜和道具特写，不为密度硬塞无关接触 |
-| `check_storyboard.mjs` | 仅规划结构检查；不造时间轴。输出measured=false/productionReady=false、缺失素材和阻塞项 |
-| `actor_contacts.mjs`（在互动元素） | 视觉姿态与接触校准分开；只加载本集需要的素材；缺图报错，不换脸、不回退假图 |
-| `room_base.mjs / scene_compositor.mjs` | 海底空间、原生1920×1080/30fps、逻辑1280×720；字幕/角标在固定屏幕坐标 |
-| `prop_registry.mjs / interaction_stage.mjs` | 已注册道具及现有交互实现，不把计划中的翻纸/按纸说成已完成动画 |
-| `opener_director.mjs` | 仍提供横幅/铭牌/印章等；其旧openerCamera仅供历史显式调用，不是当前renderer默认相机 |
+| `timeline_core.mjs` | 纯 `t` 确定性数学底座（`hash`/`noise1d`/`wob`，严禁 `Math.random()`）、`backOut`/`elasticOut`/`springDamper`/`anticipationEnvelope` 预备过冲回弹曲线、`kf()` 多关键帧插值、`resolveMood()` 情绪平滑过渡、`createBeatGrid()` BPM 节拍脉冲、`resolveTransitionState()` 动机转场与 `auditTimelineActivity()` 反 PPT 静态检测 |
+| `character_motion.mjs` | 统一角色运动与手部正向运动学求解器：完整打通 14 套 `RIG_ACTIONS` + 28 套 `LEGACY_ACTIONS`（含语义别名）+ 17 种 `MOVE_STYLE_NAMES` 节拍律动/步态；站立待机锁死水平脚底不打滑（`dx === 0`），同时保持连续呼吸起伏与 7 根次级骨骼（`spine`/`head`/`armL`/`armR`/`hairL`/`hairR`/`tail`）自然微动（`idleMotion: 0` 可严格归零）；提供世界空间 `handAt(actor, 'left'\|'right')` 手部挂点 |
+| `../场景/stage_sets_core.mjs` & `stage_sets.mjs` | 告别单一死板海底墙背景：内置 12 套超宽视差舞台（`1800×920` 世界坐标，支持 `underwater_study`、`porthole_observatory`、`screening_desk`、`corridor_hatch`、`pantry_hearth`、`abyss_metaphor`、`split_stage`、`river_gate`、`terracotta_courtyard`、`mountain_pass`、`rain_street`、`sunset_ridge`），支持 `defineStageSet()` 自定义扩展与 `autoStageProgression` 自动跨镜换景，`sea_stage.mjs` 12 项像素回归测试完整保留 |
+| `../互动元素/world_interactions.mjs` | 人物 ↔ 背景 ↔ 道具双向空间交互总线：角色走过门区自动推门漏光、脚步触地激起水波涟漪/尘土、跳跃高度衰减地面阴影、舞台光源实时投射角色边缘受光（`rimLight`）、`stageTriggers` 场景机关（开门/开闸/拍桌震动/敲窗涟漪/钉板贴条/点灯/晨昏推进）、以及基于 `handAt()` 的手持道具跟随、抛放到桌面（`placeToAnchor`）与双人弧线交接（`transfer`） |
+| `../互动元素/actor_contacts.mjs` | 升级至 10 骨骼网格蒙皮（`spine`/`head`/`armL`/`armR`/`legL`/`legR`/`hairL`/`hairR`/`tail`），面部椭圆区域刚性锁死 `head` 守护五官不拉伸变形，0.005 rad 量化精灵缓存消除跳变，姿态切换支持预备弹跳与平滑叠化 |
+| `scene_compositor.mjs` | 动态多舞台五层合成器（L0 超宽视差舞台 → L1 体积光锥与后景 → L2 地面接触阴影/涟漪 + 骨骼角色 → L3 前景交互道具/冲击波 → L4 屏幕安全区 HUD 字幕） |
+| `performance_v2.mjs` | 固定立绘全身表演层，完整映射仓库已入库 `assets/ai-girls/` 7 位角色抠图（`doubao`/`claude`/`gemini`/`gpt`/`kimi`/`qwen`/`zai`），严禁程序画假眼皮或篡改固定 PNG 五官 |
+| `remotion_episode_adapter.mjs` | Day 系列分镜无损转译为通用 Remotion `UniversalComposition` `inputProps`，零硬编码桥接 `tools/remotion-engine/` |
+| `render_episode.mjs` | 统一单集入口：支持默认 Canvas+FFmpeg 渲染、`--export-remotion-props <json>` 导出动态 Remotion 输入、以及 `--backend remotion` 直接调用通用 Remotion 引擎渲染 |
+| `camera_plan.mjs` / `schema_validator.mjs` / `director_contract.mjs` | 七种景别与单一动机主运镜、多舞台/动作/手持道具/机关触发器强校验、词级时间绑定与连续性契约 |
 
-## 环境与检查
-
-```bash
-npm ci --prefix tools/engine
-node --test tools/engine/*.test.mjs
-node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
-python3 -m unittest discover -s tools/tests -v
-python3 tools/gate.py --day 12 --stage script
-```
-
-`@napi-rs/canvas`版本和锁文件在本目录，`node_modules`不入库。脚本门禁发现Day12+有spec时会追加导演结构检查并记录spec哈希；需要先装依赖。
-这些检查不要求音源/位图，但**不代表**媒体门禁、动态观影或手掌素材校准通过。合成图只用于单测接口，不当角色素材或交付预览。
-
-## 稳定镜头与待机
+## 声明式分镜新能力示例
 
 ```js
 {
-  framing: 'medium_left', // wide / two_shot / medium_left/right / close_left/right / insert_center
-  camera: { cx: 470 },    // 可选，覆盖固定预设；不是另一层运动
-  push: { line: 3, duration: 0.6, z: 1.4 }, // 可选，一次运动，按实际cue绑定起点，结束后保持
-  actors: [{ pose: 'think', x: 470, y: 600, idleMotion: 0 }]
+  id: 'corridor_handoff',
+  fromLine: 4,
+  toLine: 6,
+  set: 'corridor_hatch',                 // 12 套内置动态舞台之一，或 { id, palette, weather }
+  framing: 'two_shot',
+  transition: { type: 'door_wipe', duration: 0.45 },
+  actors: [
+    {
+      name: '本鲸',
+      pose: 'point',
+      action: 'give',                    // 40+ 已打通 RIG_ACTIONS / LEGACY_ACTIONS
+      move: 'walk',                      // 17 种节拍律动与步态风格
+      walk: { from: 380, to: 560, startLine: 4, duration: 1.4 },
+      heldProp: {
+        propId: 'folded_page',
+        hand: 'right',
+        transfer: { line: 5, char: '递', toActor: '豆包', toHand: 'left', duration: 0.48 }
+      }
+    },
+    { name: '豆包', assetId: 'doubao', x: 800, y: 600, facing: -1, action: 'cheer', move: 'groove' }
+  ],
+  stageTriggers: [
+    { kind: 'open_door', line: 4, char: '推', duration: 0.6, to: 0.92 },
+    { kind: 'slam_desk', line: 6, char: '拍', intensity: 1.0 }
+  ]
 }
 ```
 
-- 不写push就是固定。旧`pushes`最多一项兼容，不得与push并存，禁止多次主运镜叠加。
-- `livingBody`默认dx=0，dy不超过±1.2逻辑像素、lean不超过±0.008、squash不超过±0.08；`idleMotion:0`全部为零。
-- `lifeAnim`待机返回空骨骼，不按离散节拍抖头/身体/头发/尾巴；`plan.anim`显式动画不被覆盖，walk仍会移动角色并驱动步态。
-- 相机移动与呼吸不算剧情事件，不能用“半秒必须位移两像素”来验收人物表演。
+## 环境安装与验证命令
 
-## 姿态、动作、接触不是一回事
+```bash
+npm ci --prefix tools/engine
+npm ci --prefix tools/remotion-engine
 
-- `tools/day3制作/whale_girl_src/whale_poses.mjs`登记41种既有视觉姿态。新引擎可加载注册图作视觉表演，但当前轻量工作区未同步位图；要真正渲染必须恢复原获准素材，不能随意生图。
-- 手/头/指尖接触仍只允许 `CALIBRATION` 的8种姿态：idle/point/shock/confident_hips/think/eat/playful_fists/fatfish_working。
-- 使用未校准视觉姿态参与drop_bonk/slap_deflect/tug_grab/knock_bowl/unroll_scroll/handoff会在校验期失败；姿态时间线也检查，不只看起始姿态。
-- `video-fx`与`legacy_actions.mjs`的28个旧语义动作是另一套执行系统。**本轮没有把28动作全部接入**；向统一spec写`actor.action`会明确拒绝，不静默冒充已支持。更多姿态不是更多接触能力。
+# 运行全部底层引擎 + 场景 + Remotion 桥接单测（60 项）
+NODE_PATH=$PWD/tools/engine/node_modules node --test \
+  tools/engine/*.test.mjs \
+  tools/remotion-engine/*.test.mjs \
+  tools/场景/sea_stage.test.mjs
 
-## 导演规范与九镜入口
+# Day12 分镜结构检查、Python 测试套件与画面红线扫描
+node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
+python3 -m unittest discover -s tools/tests -v
+python3 tools/剧本/画面红线体检.py
+python3 tools/gate.py --day 12 --stage script
+```
 
-新spec显式写 `directorVersion:1`。先写音画双栏，再写direction：focus/entry/action/trigger/wordLine/wordChar/result/resultLine/resultChar/settleSeconds/holdSeconds/reaction/exit/transition/continuity.in,out。
-每镜有可见事件（调度/道具/反应/接触），连续镜头景别、中心、人物排列不能全部相同。接触类必须有interactions；道具类要有显式入场/交互。文字字段不是视觉合格证明。
-普通结果留至少0.35秒，末镜至少0.6秒；Day12规划0.4/0.75秒。正式绑定词级时间后才验证实际驻留，缺词时不把句首回退伪装成实测。停留可在句内完成，不擅改音源或0.24秒既有尾部口径。
-
-当前导演Skill：`.claude/skills/day-series-director/SKILL.md`。
-当前实例：`Day12/Day12分镜_导演版.md`、`tools/day12制作/episode.spec.mjs`。
-当前spec为`status=planning/measured=false`，生产renderer会拒绝planning。C05拉纸、C07翻纸、C08按纸/推纸/圈记仍待素材/接触或连续性切镜审核；不是全片已实现。
-旧无directorVersion的spec保留旧密度检查以免静默放宽历史记录；旧文件没有被批量改写，但使用修复后的统一renderer会采用稳定的默认相机。
-
-## 后续制作（本轮未执行）
-
-1. 指定音源到位：原文件不改，记录SHA256；ASR词级时间＋RMS、字幕对齐，不用SRT/字数伪造词轴。
-2. 依据真实词时重排动作/停留；校准所需姿态与手掌/纸边接触。完成资产/接触审核与实测绑定前不移除planning；审核后须显式status=ready、measured=true，renderer仍核验实际输入而不只相信标志。
-3. 优先C01开场、C03错误、C07纠偏、C09结尾四段有声试剪，抽接触前/当/后与反应/停留结束帧并看连续动作。
-4. 方向确认后推广整集；全片解码/原速音轨/字幕/遮挡与四阶段门禁；BGM按既有混音流程另验。
-
-正式命令仍为 `node tools/engine/render_episode.mjs --spec <spec> --voice <wav> --alignment <实测json> --subtitle-file <实测字幕json> --out <mp4>`。
-没有上述输入时，输出导演计划和阻塞清单，不给假成片，不自动导出9:16，不自动发布平台内容。
-
-## 已实际生成的无声规划样片
-
-用户要求先看样片时，使用独立 `createPlanningPreview`，仅接受planning/measured=false且不含音源SHA/伪词级轴的输入；正式CLI的ready/指定音源/实测门禁不放宽。
-实际实例与复现见 `Day12/样片/README.md`：33.43秒四段节选、1080p/30fps，全1003帧解码、自检与编码后抽帧；不是有声全片。
-
-本轮样片实检补充：directorVersion=1开场演员不再被旧opener覆盖；显式道具特写可actors=[]，其他镜头仍不可空演员；可声明foregroundTable承托（y+58<=600），并做输出空间安全区检查。道具stateChanges按line+delay或at作明确状态切换，C07同落点正反切镜，不伪称手掌翻纸。folded_page显式空sub不再回填默认旧梗。
-本轮Node回归30项、Python44项（含编码集成测试）通过；不代表有声final通过。
+正式成片渲染仍严格执行音频 SHA256、实测词级对齐轴与媒体四道门禁：
+- Canvas 后端：`node tools/engine/render_episode.mjs --spec <spec> --voice <wav> --alignment <json> --subtitle-file <json> --out <mp4>`
+- Remotion 后端：`node tools/engine/render_episode.mjs --backend remotion --spec <spec> --voice <wav> --alignment <json> --subtitle-file <json> --out <mp4>`

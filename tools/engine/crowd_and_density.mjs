@@ -47,19 +47,25 @@ export function assertOpenerUncrowded(spec) {
 
 export function actorHasMotion(actor) {
   if (!actor || typeof actor !== 'object') return false;
-  if (actor.walk && (actor.walk.from != null) && (actor.walk.to != null)) return true;
+  if (actor.walk && ((actor.walk.from != null || actor.walk.fromAnchor != null) && (actor.walk.to != null || actor.walk.toAnchor != null))) return true;
+  if (Array.isArray(actor.track) && actor.track.length >= 2) return true;
   if ((actor.poses || []).length || (actor.poseChanges || []).length) return true;
+  if (actor.action != null || (actor.actions || []).length) return true;
+  if (actor.move && actor.move !== 'idle' && actor.move !== 'breathe') return true;
   return false;
 }
 
-/** 每镜：至少一个词点锁定接触 + 一次姿态变化或步态。反应镜也不退回站桩。 */
+/** 每镜：至少一个词点锁定接触/环境机关/手持交互/语义道具 + 一次姿态变化或步态。反应镜也不退回站桩。 */
 export function assertShotDensity(shot, where) {
   const actors = shot?.actors || shot?.actorsPlan || [];
   if (!actors.some(actorHasMotion)) {
     throw new Error(`${where} 缺少姿态变化或步态走位：禁止整镜站桩念稿`);
   }
   const interactions = shot?.interactions || [];
-  if (!interactions.length) {
+  const stageTriggers = shot?.stageTriggers || [];
+  const semanticTracks = shot?.semanticTracks || [];
+  const hasHeldProp = actors.some((a) => Boolean(a?.heldProp));
+  if (!interactions.length && !stageTriggers.length && !semanticTracks.length && !hasHeldProp) {
     throw new Error(`${where} 缺少词点互动：每镜至少一个接触事件（准备→接触→结果→反应）`);
   }
   interactions.forEach((it, j) => {

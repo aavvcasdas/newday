@@ -108,12 +108,15 @@ test('镜号/词点事件由实测轴帧号生成', () => {
   assert.equal(events[0].word_id, 'L01:诶');
 });
 
-test('默认镜头稳定；人物只有轻微呼吸；显式动作才产生大位移', () => {
+test('默认镜头稳定；人物具备连续呼吸与次级骨骼生命感；显式动作产生大位移', () => {
   const a = livingBody(0.2, 0.4);
   const b = livingBody(0.7, 0.4);
   assert.equal(a.dx, 0);
-  assert.ok(Math.hypot(a.dx - b.dx, a.dy - b.dy) < 2);
-  assert.deepEqual(lifeAnim(0.1), lifeAnim(0.5), '待机不切离散全身骨骼');
+  assert.ok(Math.hypot(a.dx - b.dx, a.dy - b.dy) > 0.2 && Math.hypot(a.dx - b.dx, a.dy - b.dy) < 5);
+  const skA = lifeAnim(0.1);
+  const skB = lifeAnim(0.5);
+  assert.notDeepEqual(skA, skB, '次级骨骼随时间连续呼吸摆动，不再冻结为空对象');
+  assert.deepEqual(lifeAnim(0.1, 0, 0), { bones: {} }, 'idleMotion=0 时严格锁定空骨骼');
   const base = { z: 1.08, cx: 640, cy: 378 };
   assert.deepEqual(ambientCamera(1, base), ambientCamera(2.2, base));
   assert.deepEqual(base, { z: 1.08, cx: 640, cy: 378 });
@@ -122,7 +125,7 @@ test('默认镜头稳定；人物只有轻微呼吸；显式动作才产生大�
   assert.deepEqual(stood, later);
   const walked = resolveActor({ pose: 'point', x: 500, y: 600, idleMotion: 0, walk: { from: 300, to: 500, start: 0, duration: 2 } }, 1, 1, []);
   assert.equal(walked.x, 400);
-  assert.equal(walked.y, 600);
+  assert.ok(walked.y <= 600 && walked.walking === true);
 });
 
 test('竖屏布局：双画幅尺寸与安全区正确', () => {

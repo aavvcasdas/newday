@@ -81,12 +81,47 @@ const extra = {
       drawText(ctx, st.text || '空的', 0, 8, 13, '#32445D');
     },
   },
+  // 提灯（晨昏/雨夜手持或挂梁照明，原点为提手下方灯心）
+  lantern: {
+    id: 'lantern', extent: { bottom: 30 },
+    draw(ctx, t, st = {}) {
+      const glow = 0.88 + 0.12 * Math.sin(t * 4.2);
+      ctx.save();
+      ctx.fillStyle = `rgba(255,222,140,${(0.28 * glow).toFixed(3)})`;
+      ctx.beginPath(); ctx.arc(0, 4, 34, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#FFE39C';
+      ctx.strokeStyle = '#5D402C';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.roundRect(-14, -14, 28, 34, 8); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-8, -14); ctx.quadraticCurveTo(0, -26, 8, -14); ctx.stroke();
+      if (st.label) drawText(ctx, st.label, 0, 4, 12, '#6B4226');
+      ctx.restore();
+    },
+  },
+  // 治水木尺/水拍（手持工具）
+  paddle: {
+    id: 'paddle', extent: { bottom: 38 },
+    draw(ctx, _t, st = {}) {
+      ctx.save();
+      ctx.fillStyle = '#B98552';
+      ctx.strokeStyle = '#4A3423';
+      ctx.lineWidth = 2.4;
+      ctx.beginPath(); ctx.roundRect(-7, -36, 14, 46, 5); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.roundRect(-16, 4, 32, 30, 8); ctx.fill(); ctx.stroke();
+      if (st.label) drawText(ctx, st.label, 0, 20, 11, '#3E2A1B');
+      ctx.restore();
+    },
+  },
 };
 
 export const PROP_REGISTRY = {
   ...Object.fromEntries(Object.entries(PROP_LIBRARY).map(([k, v]) => [k, withExtent(v, v.extent?.bottom ?? 40)])),
   ...Object.fromEntries(Object.entries(DAY10_PROPS).map(([k, v]) => [k, withExtent(v, k === 'rice_jar_guard' ? 42 : 66)])),
   ...extra,
+  scroll: extra.folded_page,
+  badge: extra.name_plate,
+  clipboard: extra.notice_board,
+  mug: extra.empty_bowl,
 };
 
 export function getProp(id) {

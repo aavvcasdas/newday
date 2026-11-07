@@ -20,7 +20,7 @@ export function validateDirection(shot, { cues, final = false, requireWordTimes 
   if (!Number.isFinite(d.settleSeconds) || d.settleSeconds < 0) throw new Error(`${shot.id} 须声明结果成形耗时 settleSeconds`);
   if (d.kind === 'contact' && !(shot.interactions || []).length) throw new Error(`${shot.id} 接触事件不能只有文字，须 interactions`);
   // 不强迫反应/道具特写再塞一套人物晃动或接触；但不能只填“有事件”。
-  if (d.kind === 'staging' && !(shot.actors || shot.actorsPlan || []).some((a) => a.walk || a.poses?.length || a.poseChanges?.length)) throw new Error(`${shot.id} 调度镜须显式走位/姿态变化`);
+  if (d.kind === 'staging' && !(shot.actors || shot.actorsPlan || []).some((a) => a.walk || a.track?.length >= 2 || a.poses?.length || a.poseChanges?.length || a.action || a.actions?.length || (a.move && a.move !== 'idle' && a.move !== 'breathe'))) throw new Error(`${shot.id} 调度镜须显式走位/姿态变化`);
   if (d.kind === 'prop' && !(shot.semanticTracks || []).length && !(shot.interactions || []).length && !(shot.companionProps || []).some((p) => p.fromLine || Number.isFinite(p.enterAt))) throw new Error(`${shot.id} 道具镜须有显式入场或交互`);
   if (cues) {
     const trigger = cues[d.wordLine - 1].chars_timed?.find((c) => c.ch === d.wordChar);
@@ -40,5 +40,6 @@ export function validateDirection(shot, { cues, final = false, requireWordTimes 
 }
 export function validateShotContrast(previous, shot) {
   const actors = (s) => JSON.stringify((s.actors || s.actorsPlan || []).map((a) => [a.x, a.y, !!a.flip]));
-  if (previous.framing === shot.framing && JSON.stringify(cameraFor({ ...previous, push: null, pushes: undefined }, 0)) === JSON.stringify(cameraFor({ ...shot, push: null, pushes: undefined }, 0)) && actors(previous) === actors(shot)) throw new Error(`${shot.id} 连续镜头景别/中心/人物排列全相同，不能靠改镜号冒充切镜`);
+  const setOf = (s) => JSON.stringify(s.set || s.stageSet || 'underwater_study');
+  if (setOf(previous) === setOf(shot) && previous.framing === shot.framing && JSON.stringify(cameraFor({ ...previous, push: null, pushes: undefined }, 0)) === JSON.stringify(cameraFor({ ...shot, push: null, pushes: undefined }, 0)) && actors(previous) === actors(shot)) throw new Error(`${shot.id} 连续镜头景别/中心/人物排列全相同，不能靠改镜号冒充切镜`);
 }

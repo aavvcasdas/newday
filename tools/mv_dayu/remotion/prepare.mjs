@@ -1,3 +1,4 @@
+// 兼容旧手工静态缓存脚本（新版 tools/remotion-engine/render_cli.mjs 会自动启动本地 HTTP 资产服务直接读取 assets/ai-girls/，无需预先拷贝）
 import fs from 'node:fs';
 import path from 'node:path';
 const base=path.resolve('tools/mv_dayu/remotion');

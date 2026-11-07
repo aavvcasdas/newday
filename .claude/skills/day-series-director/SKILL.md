@@ -16,13 +16,15 @@ compatibility: Node.js 22 and Python 3; run npm ci --prefix tools/engine for eng
 2. 读当集文案/TXT、当前 `episode.spec.mjs`、最近验收与用户纠正。Day12使用回归/@豆包/米饭大饼稿，不换回山姆护照旧稿。
 3. 用户要先看样片但缺指定音源时，可以走独立 `createPlanningPreview`/`tools/day12制作/render_sample.mjs` 无声入口，保持planning/measured=false，持续标识无声/规划/节选；不得把spec改成ready或捏造词轴来绕过生产门禁。先恢复并核验原素材，不能用占位脸。
 4. 有指定音源则读哈希、实测 `voice_alignment.json`、字幕轴；没有则 `measured=false`、`status=planning`，不造正式cue或拿SRT猜词时。
-5. 读 `tools/engine/README.md`、`camera_plan.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
-6. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准接触姿态、另一套28个历史语义动作。先看素材可用性；不把姿态换名说成动作已实现，不随意解禁侧脸/闭眼/接触。
+5. 读 `tools/engine/README.md`、`tools/remotion-engine/README.md`、`camera_plan.mjs`、`character_motion.mjs`、`stage_sets_core.mjs`、`world_interactions.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
+6. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准手掌接触姿态（`CALIBRATION`）、以及 `character_motion.mjs` 已统一打通的 14 套 `RIG_ACTIONS` + 28 套 `LEGACY_ACTIONS` + 17 种 `move` 节拍步态。需要精确手掌接触动词（`drop_bonk`/`handoff` 等）时仍须使用已校准姿态，或使用 `actor.heldProp`（基于正向运动学 `handAt` 手部挂点与弧线 `transfer`/`placeToAnchor`）；严禁篡改固定 PNG 五官或画肤色假眼皮。
 
 ## 核心规则
 
 - 默认镜头固定；使用framing七种预设。每镜最多一个显式push，可推/拉/平移，结束后锁住，不叠全局正弦。开场也不隐式强制三段推拉。
-- 角色只保留极轻连续呼吸；可用 `idleMotion:0` 完全关闭。呼吸、尾摆、整体弹跳和相机移动都不算事件。不能靠测试要求“位移越大越好”。
+- 舞台背景不再锁死单一海底墙：每镜可通过 `set` / `stageSet` 显式选用 `tools/场景/stage_sets_core.mjs` 的 12 套超宽动态舞台（如 `underwater_study`、`porthole_observatory`、`screening_desk`、`corridor_hatch`、`pantry_hearth`、`split_stage` 等），或在 spec 顶层开启 `autoStageProgression: true` 按剧情自动换景，并配合 `transition` 动机转场。
+- 强化人物↔背景↔道具双向交互：通过 `stageTriggers`（`open_door`、`open_gate`、`slam_desk`、`window_ripple`、`pin_note`、`toggle_lamp`、`dawn_shift`）、`actor.heldProp`（`transfer` 交接 / `placeToAnchor` 落桌）以及角色走位自动门光/地面阴影/脚步涟漪，让动作真正改变环境状态。
+- 角色站立待机锁死水平脚底不打滑（`dx=0`），同时保持连续呼吸与次级骨骼（发丝/尾巴/脊柱/双臂）生机微动；显式动作通过 `action`/`move`/`walk`/`poses` 驱动，可用 `idleMotion:0` 完全关闭待机（无人桌面特写须声明 `idleException`）。呼吸与相机移动本身仍不冒充剧情主事件。
 - 每镜必须有可见事件：走入/交接/错误道具/判断反应/纠偏/结果。允许稳定的反应近景和道具特写，不为满足密度硬加敲碗或接触。
 - 动作按准备→接触/触发→结果→反应→停留。词点对应台词动词/重音；一个主视觉，其余延迟出现。
 - 通过景别拆信息：wide建立空间，two_shot建立关系，medium演动作，close演判断，insert看纸/岗位/名牌。相邻镜头不能景别、中心、人物排列全部相同。不是每句强切，不设每镜三秒/图片占比等新配额。

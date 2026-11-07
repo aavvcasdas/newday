@@ -1,18 +1,21 @@
-// schema_validator.mjs — episode.spec.mjs 声明式配置强校验
-// 在渲染前拦截：缺失交互、同姿罚站、越界坐标、未知道具/动词、违规文案。
+// schema_validator.mjs — episode.spec.mjs 声明式配置强校验（支持动态背景集、角色动作库与双向舞台机关）
+// 在渲染前拦截：缺失交互、同姿罚站、越界坐标、未知道具/动词/背景/动作、违规文案。
 import { CALIBRATION, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
 import { PROP_REGISTRY, propBottom } from './prop_registry.mjs';
 import { validateOpenerActors } from './opener_director.mjs';
 import { validateCameraPlan } from './camera_plan.mjs';
-import { IMAGE_ACTORS,validatePerformanceShot } from './performance_v2.mjs';
+import { IMAGE_ACTORS, validatePerformanceShot } from './performance_v2.mjs';
 import { validateSemanticTracks } from './semantic_tracks.mjs';
 import { validateDirection, validateShotContrast } from './director_contract.mjs';
 import { createHash } from 'node:crypto';
 import { assertOpenerUncrowded, assertShotDensity } from './crowd_and_density.mjs';
+import { isKnownCharacterAction, isKnownMoveStyle } from './character_motion.mjs';
+import { isKnownStageSet } from '../场景/stage_sets.mjs';
+import { STAGE_TRIGGER_KINDS } from '../互动元素/world_interactions.mjs';
 
 export const CALIBRATED_POSES = Object.freeze(Object.keys(CALIBRATION));
 export { assertOpenerUncrowded, assertShotDensity, frame0StaticProps } from './crowd_and_density.mjs';
-// 引擎层动词（sink_drop/mark_strike/handoff）不进入共享 cue_props_engine，避免改历史导出。
+
 const VERBS = new Set(['drop_bonk', 'slap_deflect', 'tug_grab', 'knock_bowl', 'unroll_scroll', 'sink_drop', 'mark_strike', 'handoff']);
 const NEEDS_AT = new Set(['tug_grab', 'knock_bowl', 'mark_strike', 'handoff', 'unroll_scroll']);
 const ARABIC = /\d/;
@@ -33,11 +36,34 @@ export function validateActor(actor, where) {
   for (const pose of posesOf(actor)) {
     if (actor.assetId ? !IMAGE_ACTORS[actor.assetId] : !VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
   }
-  if (actor.action != null) throw new Error(`${where} action 尚未接入统一引擎；28个旧动作不能冒充可执行的姿态`);
+  if (actor.action != null && !isKnownCharacterAction(actor.action)) {
+    throw new Error(`${where} 使用未注册角色动作 ${actor.action}`);
+  }
+  for (const item of actor.actions || []) {
+    const actName = item?.action || item?.id;
+    if (!isKnownCharacterAction(actName)) throw new Error(`${where} actions 包含未注册角色动作 ${actName}`);
+  }
+  if (actor.move != null && !isKnownMoveStyle(actor.move)) {
+    throw new Error(`${where} 使用未注册律动风格 ${actor.move}`);
+  }
+  if (actor.heldProp != null) {
+    const pid = typeof actor.heldProp === 'string' ? actor.heldProp : (actor.heldProp?.propId || actor.heldProp?.kind);
+    if (!pid || !PROP_REGISTRY[pid]) throw new Error(`${where} heldProp 引用未知道具 ${pid}`);
+  }
   if (actor.idleMotion != null && (!Number.isFinite(actor.idleMotion) || actor.idleMotion < 0 || actor.idleMotion > 1)) throw new Error(`${where} idleMotion 必须在0..1`);
-  if (actor.walk && (![actor.walk.from, actor.walk.to, actor.walk.duration ?? 1].every(Number.isFinite) || (actor.walk.duration ?? 1) <= 0)) throw new Error(`${where} walk 位置须为有限数、duration须为正数`);
-  if (!Number.isFinite(actor.x) || !Number.isFinite(actor.y)) throw new Error(`${where} 角色坐标 x/y 必须为有限数`);
-  if (actor.y > 640 || actor.y < 420) throw new Error(`${where} 角色脚位 y=${actor.y} 越界（应在 420..640）`);
+  if (actor.walk) {
+    const hasFrom = Number.isFinite(actor.walk.from) || typeof actor.walk.fromAnchor === 'string';
+    const hasTo = Number.isFinite(actor.walk.to) || typeof actor.walk.toAnchor === 'string';
+    if (!hasFrom || !hasTo || !Number.isFinite(actor.walk.duration ?? 1) || (actor.walk.duration ?? 1) <= 0) {
+      throw new Error(`${where} walk 位置须为有限数或锚点、duration须为正数`);
+    }
+  }
+  const effectiveX = actor.x ?? actor.walk?.from;
+  const effectiveY = actor.y ?? 600;
+  if ((effectiveX == null && !actor.walk?.fromAnchor && !actor.anchor) || (effectiveX != null && !Number.isFinite(effectiveX)) || !Number.isFinite(effectiveY)) {
+    throw new Error(`${where} 角色坐标 x/y 必须为有限数`);
+  }
+  if (effectiveY > 640 || effectiveY < 420) throw new Error(`${where} 角色脚位 y=${effectiveY} 越界（应在 420..640）`);
 }
 
 function validatePropRef(ref, where) {
@@ -53,6 +79,17 @@ function validatePropRef(ref, where) {
   if (!Number.isFinite(ref.x) || !Number.isFinite(ref.y)) throw new Error(`${where} 道具坐标必须为有限数`);
   const bottom = propBottom(ref.propId, ref.y, scale);
   if (bottom > 600) throw new Error(`${where} 道具 ${ref.propId} 下沿 ${bottom.toFixed(1)} 越界（必须 <= 600）`);
+}
+
+function validateStageTriggers(triggers, where) {
+  for (const [idx, trig] of (triggers || []).entries()) {
+    if (!trig || !STAGE_TRIGGER_KINDS.includes(trig.kind)) {
+      throw new Error(`${where}.stageTriggers[${idx}] 未知舞台机关类型 ${trig?.kind}`);
+    }
+    if (trig.duration != null && (!Number.isFinite(trig.duration) || trig.duration <= 0)) {
+      throw new Error(`${where}.stageTriggers[${idx}] duration 须为正数`);
+    }
+  }
 }
 
 /**
@@ -72,6 +109,9 @@ export function validateSpec(spec, opts = {}) {
   }
   if (!spec || typeof spec !== 'object') throw new Error('spec 必须为对象');
   if (!Number.isInteger(spec.day) || spec.day < 1) throw new Error('spec.day 必须为正整数');
+  if (spec.defaultSet && !isKnownStageSet(spec.defaultSet)) {
+    throw new Error(`spec.defaultSet 引用未知舞台背景 ${JSON.stringify(spec.defaultSet)}`);
+  }
   const opener = spec.opener;
   if (!opener) throw new Error('spec.opener 缺失：新集必须声明开场钩子');
   checkHookText('opener.headlinePrefix', opener.headlinePrefix || '');
@@ -96,8 +136,12 @@ export function validateSpec(spec, opts = {}) {
     ids.add(shot.id);
     if (!Number.isInteger(shot.fromLine) || !Number.isInteger(shot.toLine) || shot.fromLine > shot.toLine) throw new Error(`${where} fromLine/toLine 无效`);
     if (cueCount != null && (shot.fromLine < 1 || shot.toLine > cueCount)) throw new Error(`${where} 行号超出台词范围`);
+    if ((shot.set || shot.stageSet) && !isKnownStageSet(shot.set || shot.stageSet)) {
+      throw new Error(`${where} 使用未注册舞台场景 ${JSON.stringify(shot.set || shot.stageSet)}`);
+    }
+    if (shot.stageTriggers) validateStageTriggers(shot.stageTriggers, where);
     validateCameraPlan(shot);
-    if(spec.performanceVersion===2)validatePerformanceShot(shot);
+    if (spec.performanceVersion === 2) validatePerformanceShot(shot);
     if (shot.semanticTracks) validateSemanticTracks(shot.semanticTracks, where);
     if (spec.directorVersion === 1) {
       validateDirection(shot, { cues: opts.cues, final: i === spec.shots.length - 1, requireWordTimes: opts.requireWordTimes });
@@ -110,8 +154,8 @@ export function validateSpec(spec, opts = {}) {
     const actors = shot.actors || shot.actorsPlan;
     if (!Array.isArray(actors) || (!actors.length && !(spec.directorVersion === 1 && shot.direction?.kind === 'prop'))) throw new Error(`${where} 缺少 actors 声明（仅导演道具特写可显式actors=[]）`);
     actors.forEach((a, j) => validateActor(a, `${where}.actors[${j}]`));
-    if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle'))) {
-      throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态`);
+    if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle') && !a.action && !a.move)) {
+      throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态或动作`);
     }
     for (const [j, it] of (shot.interactions || []).entries()) {
       const contacts = new Set(['drop_bonk', 'slap_deflect', 'tug_grab', 'knock_bowl', 'unroll_scroll', 'handoff']);
