@@ -405,3 +405,6 @@ The user has now requested a focused rerender of exactly two videos: `mv_chaoxi_
 
 ### Day13 配音与字幕确认（最新）
 用户提供 `鲸鱼MV画面_克隆配音_最终版.wav`，确认从 Day13 字幕及配音文本删掉“站着可不算演完了”，保留“得让她们动起来”。以 `Day13/Day13配音台词_用户版.txt` 为准，重测 Vosk 与 RMS；人物复用 v13 已有动作图集、背景以代码按段更新，不重做 MV。配音识别仍有错字，非音素级对齐，动图接触与人耳听审需单独核对。用户工作目录旧未提交内容安全保存在 `stash@{0}`，未覆盖。
+
+### Day13 主角回归 Day12
+用户明确要求当前主角回 Day12 鲸鱼娘、动作互换并走动，允许使用 `tqlearning/ai-girl-chatgpt-pets`。Day13 v2 使用 Day12 已有的六个姿态切换，舞台及雨景位移用用户指定 Pet 的八帧跑步，画面/风格切换、雨景思考站姿代替坐下和手伞接触仍待动态审；人物美术权利需核实。字幕、背景、配角和 AAC 配音+BGM 保持，保留旧片；细节及 SHA 见 Day13 README。

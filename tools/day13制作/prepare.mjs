@@ -4,3 +4,7 @@ const names=['whale_read_action','whale_gather_retry_action','whale_walk_retry_a
 for(const name of names)fs.copyFileSync(path.resolve('assets/ai-girls/lyric-action-v13',name+'.png'),path.join(pub,name+'.png'));
 fs.copyFileSync(path.resolve('video-fx/assets/fonts/NotoSansSC-Bold.ttf'),path.join(pub,'font.ttf'));
 fs.copyFileSync(path.resolve('tools/day13制作/subtitle_timing.json'),path.join(base,'day13-subs.json'));console.log('Existing v13 atlases, font and measured subtitles staged.');
+
+// Day12 locked lead PNGs, restored/verified using the Day12 asset manifest.
+for (const n of ['whale_fatfish_working','whale_point','whale_shock','whale_think','whale_confident_hips','whale_playful_fists']) fs.copyFileSync(path.resolve('tools/day3制作/whale_girl_src',n+'.png'),path.join(pub,'day12-'+n+'.png'));
+fs.copyFileSync(path.resolve('assets/ai-girls/reference-pet/whale.png'),path.join(pub,'day13-pet-whale.png'));
