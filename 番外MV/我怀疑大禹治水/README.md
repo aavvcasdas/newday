@@ -47,3 +47,7 @@ cp video-fx/assets/fonts/NotoSansSC-Bold.ttf tools/mv_extra/cache/NotoSansSC-Bol
 # 安装 imageio-ffmpeg 后
 FFMPEG=$(python3 -c 'import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())') node --expose-gc tools/mv_dayu/render.mjs
 ```
+
+## 参考 Pet 跑步重做（内部待审）
+
+独立版本使用用户指定的 Pet 原始八帧跑步，旧版保留；八句梗与暂定音频时间依据见 `分镜/Pet重做与歌词时间.md`。原画面字幕、用户先前文字的第六句不同，试作暂按源画面和网络文本写“曹冲称象”，并未人耳确认。第三方角色图像许可尚未确认，公开发布及再分发前须核权，见 `assets/ai-girls/reference-pet/README.md`。
