@@ -77,6 +77,128 @@ export function isKnownMoveStyle(style) {
   return typeof style === 'string' && MOVE_STYLE_NAMES.includes(style);
 }
 
+// ---------------------------------------------------------------------------
+// 通用双骨骼连续蒙皮步态与同体待机注册表（MV 与 Day 系列通用模板共享，零 Node/Canvas 依赖）
+// ---------------------------------------------------------------------------
+export const WALK_RIG_ATLAS_NAMES = Object.freeze([
+  'whale_walk_side_2leg',
+  'whale_idle_side_pet',
+  'whale_seat_side_bench',
+  'whale_walk_happy_2leg',
+  'whale_idle_happy_pet',
+  'whale_walk_sad_2leg',
+  'whale_idle_sad_pet',
+  'doubao_walk_side_2leg',
+  'doubao_idle_side_pet',
+  'gpt_push_walk_2leg',
+  'gpt_push_idle_pet',
+  'gpt_walk_2leg',
+  'gpt_idle_pet',
+  'gemini_walk_2leg',
+  'gemini_idle_pet',
+  'claude_walk_2leg',
+  'claude_idle_pet',
+  'kimi_walk_2leg',
+  'kimi_idle_pet',
+  'qwen_walk_2leg',
+  'qwen_idle_pet',
+  'zai_walk_2leg',
+  'zai_idle_pet',
+]);
+
+export const WALK_TO_IDLE_ATLAS_MAP = Object.freeze({
+  whale_walk_side_2leg: 'whale_idle_side_pet',
+  whale_walk_happy_2leg: 'whale_idle_happy_pet',
+  whale_walk_sad_2leg: 'whale_idle_sad_pet',
+  doubao_walk_side_2leg: 'doubao_idle_side_pet',
+  gpt_push_walk_2leg: 'gpt_push_idle_pet',
+  gpt_walk_2leg: 'gpt_idle_pet',
+  gemini_walk_2leg: 'gemini_idle_pet',
+  claude_walk_2leg: 'claude_idle_pet',
+  kimi_walk_2leg: 'kimi_idle_pet',
+  qwen_walk_2leg: 'qwen_idle_pet',
+  zai_walk_2leg: 'zai_idle_pet',
+});
+
+export const PET_RIG_DEFAULT_FACING = Object.freeze({
+  whale_walk_side_2leg: 'left',
+  whale_idle_side_pet: 'left',
+  whale_seat_side_bench: 'left',
+  doubao_walk_side_2leg: 'left',
+  doubao_idle_side_pet: 'left',
+  whale_walk_happy_2leg: 'right',
+  whale_idle_happy_pet: 'right',
+  whale_walk_sad_2leg: 'right',
+  whale_idle_sad_pet: 'right',
+  gpt_push_walk_2leg: 'right',
+  gpt_push_idle_pet: 'right',
+  gpt_walk_2leg: 'right',
+  gpt_idle_pet: 'right',
+  gemini_walk_2leg: 'right',
+  gemini_idle_pet: 'right',
+  claude_walk_2leg: 'right',
+  claude_idle_pet: 'right',
+  kimi_walk_2leg: 'right',
+  kimi_idle_pet: 'right',
+  qwen_walk_2leg: 'right',
+  qwen_idle_pet: 'right',
+  zai_walk_2leg: 'right',
+  zai_idle_pet: 'right',
+});
+
+export const LOCOMOTION_PRESETS = Object.freeze([
+  'walk',
+  'side_walk',
+  'happy_walk',
+  'sad_walk',
+  'push_walk',
+  'idle',
+  'sit_bench',
+]);
+
+export const CHARACTER_LOCOMOTION_RIGS = Object.freeze({
+  whale: {
+    walk: 'whale_walk_side_2leg',
+    side_walk: 'whale_walk_side_2leg',
+    happy_walk: 'whale_walk_happy_2leg',
+    sad_walk: 'whale_walk_sad_2leg',
+    idle: 'whale_idle_side_pet',
+    sit_bench: 'whale_seat_side_bench',
+  },
+  doubao: {
+    walk: 'doubao_walk_side_2leg',
+    side_walk: 'doubao_walk_side_2leg',
+    idle: 'doubao_idle_side_pet',
+  },
+  gpt: {
+    walk: 'gpt_walk_2leg',
+    side_walk: 'gpt_walk_2leg',
+    push_walk: 'gpt_push_walk_2leg',
+    idle: 'gpt_idle_pet',
+  },
+  gemini: { walk: 'gemini_walk_2leg', side_walk: 'gemini_walk_2leg', idle: 'gemini_idle_pet' },
+  claude: { walk: 'claude_walk_2leg', side_walk: 'claude_walk_2leg', idle: 'claude_idle_pet' },
+  kimi: { walk: 'kimi_walk_2leg', side_walk: 'kimi_walk_2leg', idle: 'kimi_idle_pet' },
+  qwen: { walk: 'qwen_walk_2leg', side_walk: 'qwen_walk_2leg', idle: 'qwen_idle_pet' },
+  zai: { walk: 'zai_walk_2leg', side_walk: 'zai_walk_2leg', idle: 'zai_idle_pet' },
+});
+
+export function isKnownLocomotionPreset(preset) {
+  return typeof preset === 'string' && LOCOMOTION_PRESETS.includes(preset);
+}
+
+export function isKnownAtlasRig(name) {
+  if (typeof name !== 'string' || !name.trim()) return false;
+  if (WALK_RIG_ATLAS_NAMES.includes(name)) return true;
+  // 兼容 assets/ai-girls/lyric-action-v13/*.png 的 16 帧表演图集命名
+  return /^[a-z0-9_]+_(action|walk|idle|bench|pet|2leg)$/i.test(name);
+}
+
+export function resolveLocomotionAtlas(characterId = 'whale', preset = 'walk') {
+  const table = CHARACTER_LOCOMOTION_RIGS[characterId] || CHARACTER_LOCOMOTION_RIGS.whale;
+  return table[preset] || table.walk || 'whale_walk_side_2leg';
+}
+
 /**
  * 合并两套骨骼增量（线性叠加 rot / dx / dy，乘性叠加 s）
  */
@@ -226,50 +348,50 @@ export function evaluateMoveStyle(style = 'idle', t = 0, seed = 0, { beatGrid = 
     case 'walk':
     case 'stroll': {
       const mul = style === 'stroll' ? 0.68 : 1;
-      const wPh = t * rate * (style === 'stroll' ? 5.2 : 6.8) + seed * 3.1;
-      const swing = Math.sign(Math.sin(wPh)) * Math.pow(Math.abs(Math.sin(wPh)), 0.72);
+      const wPh = t * rate * (style === 'stroll' ? 5.2 : 6.6) + seed * 3.1;
+      const swing = Math.sign(Math.sin(wPh)) * Math.pow(Math.abs(Math.sin(wPh)), 0.8);
       const bob = Math.abs(Math.cos(wPh));
       return {
         dx: 0,
-        dy: -8.5 * mul * bob,
-        lean: 0.024 * mul * swing,
-        squash: -0.022 * mul * bob + 0.018 * mul * (1 - bob),
-        lift: 0.16 * mul * bob,
+        dy: -2.4 * mul * bob,
+        lean: 0.018 * mul * swing,
+        squash: -0.012 * mul * bob + 0.01 * mul * (1 - bob),
+        lift: 0.08 * mul * bob,
         bones: {
-          legL: { rot: 0.34 * mul * swing, dy: -Math.max(0, swing) * 11 * mul },
-          legR: { rot: -0.34 * mul * swing, dy: -Math.max(0, -swing) * 11 * mul },
-          armL: { rot: -0.26 * mul * swing },
-          armR: { rot: 0.26 * mul * swing },
-          spine: { rot: 0.025 * mul * swing },
-          head: { rot: -0.018 * mul * swing, dy: -2 * bob },
-          hairL: { rot: 0.08 * Math.sin(wPh - 0.6) },
-          hairR: { rot: 0.08 * Math.sin(wPh - 0.8) },
-          tail: { rot: 0.2 * Math.sin(wPh - 0.5) },
+          legL: { rot: 0.26 * mul * swing, dy: -Math.max(0, swing) * 7 * mul },
+          legR: { rot: -0.26 * mul * swing, dy: -Math.max(0, -swing) * 7 * mul },
+          armL: { rot: -0.20 * mul * swing },
+          armR: { rot: 0.20 * mul * swing },
+          spine: { rot: 0.018 * mul * swing },
+          head: { rot: -0.012 * mul * swing, dy: -1.0 * bob },
+          hairL: { rot: 0.06 * Math.sin(wPh - 0.6) },
+          hairR: { rot: 0.06 * Math.sin(wPh - 0.8) },
+          tail: { rot: 0.16 * Math.sin(wPh - 0.5) },
         },
         footPhase: ((wPh / Math.PI) % 1 + 1) % 1,
       };
     }
 
     case 'run': {
-      const rPh = t * rate * 10.2 + seed * 2.1;
+      const rPh = t * rate * 9.4 + seed * 2.1;
       const swing = Math.sin(rPh);
       const bob = Math.abs(Math.cos(rPh));
       return {
         dx: 0,
-        dy: -15 * bob,
-        lean: 0.085 + 0.025 * swing,
-        squash: -0.04 * bob + 0.03 * (1 - bob),
-        lift: 0.34 * bob,
+        dy: -4.8 * bob,
+        lean: 0.065 + 0.02 * swing,
+        squash: -0.022 * bob + 0.018 * (1 - bob),
+        lift: 0.18 * bob,
         bones: {
-          legL: { rot: 0.52 * swing, dy: -Math.max(0, swing) * 16 },
-          legR: { rot: -0.52 * swing, dy: -Math.max(0, -swing) * 16 },
-          armL: { rot: -0.46 * swing - 0.1 },
-          armR: { rot: 0.46 * swing + 0.1 },
-          spine: { rot: 0.08 },
-          head: { rot: -0.05 },
-          hairL: { rot: 0.22 * Math.sin(rPh - 0.7) },
-          hairR: { rot: 0.22 * Math.sin(rPh - 0.9) },
-          tail: { rot: 0.28 * Math.sin(rPh - 0.6) },
+          legL: { rot: 0.40 * swing, dy: -Math.max(0, swing) * 10 },
+          legR: { rot: -0.40 * swing, dy: -Math.max(0, -swing) * 10 },
+          armL: { rot: -0.36 * swing - 0.08 },
+          armR: { rot: 0.36 * swing + 0.08 },
+          spine: { rot: 0.06 },
+          head: { rot: -0.035 },
+          hairL: { rot: 0.16 * Math.sin(rPh - 0.7) },
+          hairR: { rot: 0.16 * Math.sin(rPh - 0.9) },
+          tail: { rot: 0.22 * Math.sin(rPh - 0.6) },
         },
         footPhase: ((rPh / Math.PI) % 1 + 1) % 1,
       };
@@ -489,9 +611,15 @@ export function evaluateCharacterMotion(plan, t, {
     const u = seg(t, wStart, wStart + wDur);
     const p = ease(u);
     x = lerp(fromX, toX, p);
+    const walkDirVx = (toX - fromX) / wDur;
+    if (Math.abs(walkDirVx) > 6) {
+      lastMovingVx = walkDirVx;
+      walkSegStartT = wStart;
+    }
     if (plan.walk.autoFace && autoFlip == null) autoFlip = toX < fromX;
     if (t >= wStart && t <= wStart + wDur) {
       walkingActive = true;
+      trackVx = walkDirVx;
       const env = ease(seg(t, wStart, wStart + 0.14)) * ease(seg(wStart + wDur - t, 0, 0.14));
       const style = plan.walk.style || (Math.abs(toX - fromX) / wDur > 260 ? 'run' : 'walk');
       const rawGait = evaluateMoveStyle(style, t - wStart, seed, { beatGrid });
@@ -546,40 +674,17 @@ export function evaluateCharacterMotion(plan, t, {
     }
   }
 
-  // 3b. 16 帧动作图集序列 (atlas / atlases) + 带预备/回弹与透明交叉淡入淡出的平滑切换
+  // 3b. 16 帧动作图集序列 (locomotion / atlas / atlases) + 同体无跳变切换
   const isPetRigAtlas = (name) => Boolean(name && (name.endsWith('_2leg') || name.endsWith('_pet') || name.endsWith('_bench')));
 
-  const WALK_TO_IDLE_ATLAS_MAP = {
-    whale_walk_happy_2leg: 'whale_idle_happy_pet',
-    whale_walk_sad_2leg: 'whale_idle_sad_pet',
-    whale_walk_side_2leg: 'whale_idle_side_pet',
-    doubao_walk_side_2leg: 'doubao_idle_side_pet',
-    gpt_push_walk_2leg: 'gpt_push_idle_pet',
-    gemini_walk_2leg: 'gemini_idle_pet',
-  };
-
-  // 双腿迈步与同体待机图集的原图朝向（对标 ai-girl-chatgpt-pets：按行进方向自动正对前方，停步后保持朝向不乱弹）
-  const PET_RIG_DEFAULT_FACING = {
-    whale_walk_side_2leg: 'left',
-    whale_idle_side_pet: 'left',
-    whale_seat_side_bench: 'left',
-    doubao_walk_side_2leg: 'left',
-    doubao_idle_side_pet: 'left',
-    whale_walk_happy_2leg: 'right',
-    whale_idle_happy_pet: 'right',
-    whale_walk_sad_2leg: 'right',
-    whale_idle_sad_pet: 'right',
-    gpt_push_walk_2leg: 'right',
-    gpt_push_idle_pet: 'right',
-    gemini_walk_2leg: 'right',
-    gemini_idle_pet: 'right',
-  };
+  const resolvedCharId = plan.characterId || plan.assetId || 'whale';
+  const defaultAtlasFromPlan = plan.atlas || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
 
   const atlasCols = plan.atlasCols || 16;
-  let activeAtlasSpec = plan.atlas
+  let activeAtlasSpec = defaultAtlasFromPlan
     ? {
       at: shotStart,
-      atlas: plan.atlas,
+      atlas: defaultAtlasFromPlan,
       cycle: plan.atlasCycle,
       loop: plan.atlasLoop !== false,
       flip: plan.flip,

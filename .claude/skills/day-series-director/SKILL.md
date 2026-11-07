@@ -16,8 +16,8 @@ compatibility: Node.js 22 and Python 3; run npm ci --prefix tools/engine for eng
 2. 读当集文案/TXT、当前 `episode.spec.mjs`、最近验收与用户纠正。Day12使用回归/@豆包/米饭大饼稿，不换回山姆护照旧稿。
 3. 用户要先看样片但缺指定音源时，可以走独立 `createPlanningPreview`/`tools/day12制作/render_sample.mjs` 无声入口，保持planning/measured=false，持续标识无声/规划/节选；不得把spec改成ready或捏造词轴来绕过生产门禁。先恢复并核验原素材，不能用占位脸。
 4. 有指定音源则读哈希、实测 `voice_alignment.json`、字幕轴；没有则 `measured=false`、`status=planning`，不造正式cue或拿SRT猜词时。
-5. 读 `tools/engine/README.md`、`tools/remotion-engine/README.md`、`camera_plan.mjs`、`character_motion.mjs`、`stage_sets_core.mjs`、`world_interactions.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
-6. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准手掌接触姿态（`CALIBRATION`）、以及 `character_motion.mjs` 已统一打通的 14 套 `RIG_ACTIONS` + 28 套 `LEGACY_ACTIONS` + 17 种 `move` 节拍步态。需要精确手掌接触动词（`drop_bonk`/`handoff` 等）时仍须使用已校准姿态，或使用 `actor.heldProp`（基于正向运动学 `handAt` 手部挂点与弧线 `transfer`/`placeToAnchor`）；严禁篡改固定 PNG 五官或画肤色假眼皮。
+5. 读 `tools/engine/README.md`、`tools/remotion-engine/README.md`、`tools/engine/day_episode.template.spec.mjs`、`camera_plan.mjs`、`character_motion.mjs`、`walk_rig_builder.mjs`、`stage_sets_core.mjs`、`world_interactions.mjs`、`schema_validator.mjs`、`prop_registry.mjs` 与 `tools/互动元素/actor_contacts.mjs`。
+6. 区分既有 `whale_poses.mjs` 视觉姿态、八种已校准手掌接触姿态（`CALIBRATION`）、`character_motion.mjs` 已打通的 18 套 `RIG_ACTIONS`（含 `walk_natural`/`stroll_calm`/`step_back`/`sit_settle`）+ 28 套 `LEGACY_ACTIONS` + 17 种 `move` 律动、以及 **8 位角色共 23 套双骨骼连续三角网格蒙皮步态与同体待机图集（`locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle' | 'sit_bench'`）**。横向长走位优先用 `locomotion: 'side_walk'`（或同伴 `locomotion: 'walk'`）配合 `walk`/`track`，行进结束自动无跳变切回同体 `*_pet` 待机，严禁横向切碎腿部位图或留裙下第 3 条残腿；需要精确手掌接触动词（`drop_bonk`/`handoff` 等）时仍须使用已校准姿态或 `actor.heldProp`；严禁篡改固定 PNG 五官或画肤色假眼皮。
 
 ## 核心规则
 

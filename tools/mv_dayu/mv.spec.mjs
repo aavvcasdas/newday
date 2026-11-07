@@ -188,10 +188,10 @@ export default {
             [7.45, [594, 600], 'linear'],
           ],
           atlases: [
-            { at: 4.18, atlas: 'whale_walk_happy_2leg', flip: false, cycle: 0.94 },
-            { at: 5.28, atlas: 'whale_idle_happy_pet', flip: false },
-            { at: 5.42, atlas: 'whale_walk_sad_2leg', flip: false, cycle: 0.92, emote: 'exclaim' },
-            { at: 6.62, atlas: 'whale_idle_sad_pet', flip: false, emote: 'sweat' },
+            { at: 4.18, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.94 },
+            { at: 5.28, atlas: 'whale_idle_side_pet', flip: true },
+            { at: 5.42, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.90, emote: 'exclaim' },
+            { at: 6.62, atlas: 'whale_idle_side_pet', flip: true, emote: 'sweat' },
           ],
         },
         {
@@ -243,7 +243,7 @@ export default {
           ],
           atlases: [
             { at: 7.45, atlas: 'whale_idle_happy_pet', flip: false },
-            { at: 8.85, atlas: 'whale_walk_sad_2leg', flip: true, cycle: 0.92, emote: 'question' },
+            { at: 8.85, atlas: 'whale_walk_sad_2leg', flip: false, cycle: 0.92, emote: 'question' },
             { at: 9.72, atlas: 'whale_idle_sad_pet', flip: false, emote: 'sweat' },
           ],
         },
@@ -321,10 +321,10 @@ export default {
             [14.07, [458, 600], 'linear'],
           ],
           atlases: [
-            { at: 11.10, atlas: 'whale_walk_happy_2leg', flip: false, cycle: 0.94 },
-            { at: 12.50, atlas: 'whale_idle_happy_pet', flip: false },
-            { at: 13.05, atlas: 'whale_walk_sad_2leg', flip: true, cycle: 0.88, emote: 'sweat' },
-            { at: 13.72, atlas: 'whale_idle_sad_pet', flip: false, emote: 'sweat' },
+            { at: 11.10, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.94 },
+            { at: 12.50, atlas: 'whale_idle_side_pet', flip: true },
+            { at: 13.05, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.88, emote: 'sweat' },
+            { at: 13.72, atlas: 'whale_idle_side_pet', flip: true, emote: 'sweat' },
           ],
         },
       ],
@@ -438,7 +438,7 @@ export default {
           ],
           atlases: [
             { at: 17.75, atlas: 'gemini_walk_2leg', flip: false, cycle: 0.94 },
-            { at: 19.42, atlas: 'gemini_idle_pet', flip: true },
+            { at: 19.42, atlas: 'gemini_idle_pet', flip: false },
           ],
         },
       ],
@@ -500,10 +500,10 @@ export default {
             [24.82, [508, 600], 'linear'],
           ],
           atlases: [
-            { at: 21.22, atlas: 'whale_walk_happy_2leg', flip: false, cycle: 0.94 },
-            { at: 22.65, atlas: 'whale_idle_happy_pet', flip: false },
-            { at: 23.40, atlas: 'whale_walk_sad_2leg', flip: false, cycle: 0.90, emote: 'question' },
-            { at: 24.15, atlas: 'whale_idle_sad_pet', flip: false, emote: 'sweat' },
+            { at: 21.22, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.94 },
+            { at: 22.65, atlas: 'whale_idle_side_pet', flip: true },
+            { at: 23.40, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.90, emote: 'question' },
+            { at: 24.15, atlas: 'whale_idle_side_pet', flip: true, emote: 'sweat' },
           ],
         },
         {

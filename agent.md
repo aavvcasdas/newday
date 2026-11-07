@@ -1,3 +1,5 @@
+> **双骨骼连续蒙皮步态修复与 Day 系列通用模板接入（2026-11-07）**：已彻底废除导致膝盖断层与第 3 条残腿/悬空残鞋的横向位图切片法，升级 `tools/remotion-engine/walk_rig_builder.mjs` 为与 `whale_rig.mjs` 同源的 **大腿+小腿双骨骼连续三角网格蒙皮（2-Bone LBS Triangle Mesh + 0.55px 外扩消缝）+ 100% 裙下净空底板**，重渲 `番外MV/我怀疑大禹治水/样片/Remotion_动态引擎重做_待审.mp4`（880 帧，SHA256 `39d16634...`）；并将 8 位角色共 23 套步态/同体待机/坐姿图集、`locomotion` 声明式预设、`RIG_ACTIONS`（`walk_natural`/`stroll_calm`/`step_back`/`sit_settle`）统一接入 `tools/engine/` 双后端（Canvas 2D 与 Remotion）及通用模板 `tools/engine/day_episode.template.spec.mjs`。
+
 > **新歌番外 Remotion 重做待审**：用户否决固定房间、缺人物背景互动和非 Remotion 的旧版。已另用 Remotion/React/SVG 绘制八套代码场景并复用旧动作，见 `番外MV/我怀疑大禹治水/README.md`；无新增图片，接触未经逐帧校准、未做全片动态或人耳听审。
 
 > **新番外《我怀疑大禹治水》一次生成待审**：用户要求代码画背景、复用旧动作、生成前核对、只生成一次。整片与边界见 `番外MV/我怀疑大禹治水/README.md`；没有新生图，未做后验动态或人耳听审；字幕时间为规划且第六句与源视频画面不同。
@@ -156,6 +158,12 @@
 31. **剧情 skill 的实际接入**：`00_运营总览/skills/剧情生成/SKILL.md` 是权威流程，引用 persona/beats/research；创作入口一起读取现行覆盖规则、上集全文、当集方向和人格提示。不能只检索笔记标题就说“已应用人设”。顺序是请朋友帮同一件事→求职梗造成障碍→主角修正、推动旧任务。开头允许先交代上集任务作为请人动机，不靠逐字复读上集凑命中。N≥12 的 script 门禁检查文本结构与红线，有导演spec时追加规划结构，人格/因果仍要编辑审读和用户确认。不按 12/15/18/20/25/201 字退稿；模型未配置明确报错，不用 mock 假装创作，不自动写回/发布/重渲。
 
 32. **先看样片并自检（2026-11-05 用户要求；覆盖第29条旧制作状态）**：已按固定上游blob恢复四张原角色PNG和三份字体，生成33.43秒/1080p/30fps四段无声规划节选；当前口播不变，不另配新声线；样片生成后推送时才发现远端新上传鲸鱼摇人音源，已原字节合并保留，尚未核对/建立词轴，未用于该无声样片。样片持续标识规划/非连续剧情，`createPlanningPreview`独立于正式渲染入口，保持planning/measured=false，不能翻标志绕过音源/词级时间门禁。生成后先全片解码、核参数/哈希，再检查镜头/走位/字幕/遮挡与编码后抽帧；只报告实际检查范围。C07是同落点正反面切镜，不伪称手掌翻纸。记录见 `Day12/样片/README.md` 和 `tools/day12制作/sample_check.json`；未验收指定声线、音画同步、BGM/SFX、C05/C08完整接触及九镜有声final。
+
+33. **双骨骼连续蒙皮步态与 Day 系列通用单集模板规范（2026-11-07 用户要求固化）**：针对角色行走出现「膝盖横向断缝/圆球鼓包、裙下残留第 3 条腿或悬空残鞋、跨立绘切图闪烁与蹦跳劈叉」等缺陷，后续所有 Day 正传新集与番外 MV 的角色行走/待机/落座统一遵循以下硬规范：
+    - **(a) 严禁横向一刀切腿部位图**：程序化屈膝严禁对腿部 PNG 做水平切片旋转或叠画圆形护膝补丁；一律使用 `tools/remotion-engine/walk_rig_builder.mjs` 的 **大腿+小腿双骨骼连续三角网格蒙皮（`buildSkinnedLegMesh` + `drawSkinnedTriangle` `0.55px` 外扩消缝）**，保证膝关节弯曲时内外轮廓线 100% 连续柔顺。
+    - **(b) 裙下 100% 净空防「第 3 条腿」门禁**：`lyric-action-v13/source/*_under.png` 等「去一腿」底图仍保留另一条原腿/原皮鞋，合成双腿前必须将裙摆以下（含斜向鲸尾下沿左下方区域）的原腿、白袜与深藏青原皮鞋逐像素清空并经放大抽帧核验（或优先选用 `dance-v11/source/*_legunder.png` 原生零腿底板），严禁残留第 3 条腿或悬空第 3 只鞋。
+    - **(c) 横向走位朝向与同体状态机**：长距离横向走位优先使用纯侧面步态与配对待机（如 `whale_walk_side_2leg` ↔ `whale_idle_side_pet`、`doubao_walk_side_2leg` ↔ `doubao_idle_side_pet`），让鞋尖朝向行进前方、鲸尾自然拖在身后，避免非对称 3/4 立绘在同一镜头内无动机来回 `flip` 造成尾巴瞬移；行走与停步必须成对绑定 100% 同体同比例的 `*_2leg` 与 `*_pet` 图集，步幅控制在自然范围（大腿约 `-18°..+20°`、膝后屈 `3°..28°`、头顶起伏 `<= ±2px`）。
+    - **(d) Day 系列通用模板直接调用**：新建或重做 DayN 分镜可复制通用模板 `tools/engine/day_episode.template.spec.mjs`，在 `actors` 中直接声明 `locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle' | 'sit_bench'` 配合 `walk` 或 `track`（覆盖 `whale`/`doubao`/`gpt`/`gemini`/`claude`/`kimi`/`qwen`/`zai` 全部 8 位角色共 23 套图集），或在 10 骨网格主角上调用 `RIG_ACTIONS` 新增动作 `walk_natural`、`stroll_calm`、`step_back`、`sit_settle`；Canvas 2D（`render_episode.mjs`）与 Remotion（`--backend remotion` / `render_cli.mjs --mode episode`）双后端同步支持。严守面部红线，不程序涂改任何固定 PNG 五官。
 
 ### 0.1 先前项目形象注册表（现行边界）
 

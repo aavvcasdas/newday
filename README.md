@@ -4,6 +4,16 @@
 
 仓库级生产规范见根目录 [`agent.md`](agent.md)。其中文首的 ai-yunying 覆盖规则优先级最高，下方保留的 video-fx 原文只用于理解角色骨架、动作系统和渲染架构。
 
+## 通用动态引擎、双骨骼蒙皮步态库与 Day 系列通用单集模板
+
+- **Day 系列通用单集模板**：[`tools/engine/day_episode.template.spec.mjs`](tools/engine/day_episode.template.spec.mjs)（`directorVersion: 1`，同时兼容 **Canvas 2D** `tools/engine/render_episode.mjs` 与 **Remotion** `tools/remotion-engine/render_cli.mjs --mode episode` 双渲染后端）。
+- **双骨骼连续三角网格蒙皮步态与同体待机库**：[`tools/remotion-engine/walk_rig_builder.mjs`](tools/remotion-engine/walk_rig_builder.mjs) 与 [`tools/engine/character_motion.mjs`](tools/engine/character_motion.mjs)
+  - 废除横向切片断膝做法，采用与 `whale_rig.mjs` 同源的 **大腿+小腿双骨骼连续三角网格蒙皮（2-Bone LBS Triangle Mesh + `0.55px` 外扩消缝）+ 裙下 100% 净空底板**，彻底根除「第 3 条腿 / 悬空残鞋 / 膝关节锯齿断口 / 原地蹦跳劈叉」。
+  - 覆盖全部 8 位角色（`whale`、`doubao`、`gpt`、`gemini`、`claude`、`kimi`、`qwen`、`zai`）共 **23 套 16 帧步态/同体待机/坐姿图集**，分镜只需声明 `locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle' | 'sit_bench'` 配合 `walk` 或 `track`，行进结束即自动无跳变切回同体 `*_pet` 待机。
+  - 10 骨网格高清主角同步新增 `RIG_ACTIONS`：`walk_natural`（自然匀速迈步）、`stroll_calm`（悠闲散步）、`step_back`（受惊退半步）、`sit_settle`（落座轻晃）。
+- **番外歌词 MV《我怀疑大禹治水》最新待审版**：[`番外MV/我怀疑大禹治水/README.md`](番外MV/我怀疑大禹治水/README.md) · [`样片/Remotion_动态引擎重做_待审.mp4`](番外MV/我怀疑大禹治水/样片/Remotion_动态引擎重做_待审.mp4)（8 镜 8 套动态舞台、帧级反转字幕、全员双骨骼连续蒙皮步态修复）。
+- **底层引擎与测试文档**：[`tools/engine/README.md`](tools/engine/README.md) · [`tools/remotion-engine/README.md`](tools/remotion-engine/README.md) · [`导演 Skill`](.claude/skills/day-series-director/SKILL.md)。
+
 ## 本轮：Day12 导演修复与无声样片
 
 - [33.43秒无声四段样片与自检](Day12/样片/README.md) · [播放MP4](Day12/样片/Day12_四段导演样片_无声.mp4)。

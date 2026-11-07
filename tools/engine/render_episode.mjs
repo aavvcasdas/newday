@@ -23,7 +23,14 @@ import { bodyPerformance, loadImageActors, drawImageActor, drawAmbient } from '.
 import { drawSemanticTracks } from './semantic_tracks.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
 import { LEGACY_ACTIONS } from '../day3制作/whale_girl_src/legacy_actions.mjs';
-import { computeLivingSkeleton, evaluateCharacterMotion, handAt } from './character_motion.mjs';
+import {
+  computeLivingSkeleton,
+  evaluateCharacterMotion,
+  handAt,
+  WALK_TO_IDLE_ATLAS_MAP,
+  resolveLocomotionAtlas,
+} from './character_motion.mjs';
+import { ensureWalkRigAtlases, WALK_RIG_BUILDERS, DEFAULT_WALK_CACHE_DIR } from '../remotion-engine/walk_rig_builder.mjs';
 import { resolveTransitionState } from './timeline_core.mjs';
 import { resolveShotSetSpec, resolveStageSet } from '../场景/stage_sets.mjs';
 import { computeWorldInteractionState, drawWorldForegroundFeedbackCanvas } from '../互动元素/world_interactions.mjs';
@@ -45,15 +52,15 @@ function argOf(argv, k) {
 
 export function gaitAnim(t, start, dur) {
   if (t < start || t > start + dur) return {};
-  const phase = (t - start) * Math.PI * 2 * 1.25;
-  const envelope = smooth((t - start) / 0.12) * smooth((start + dur - t) / 0.12);
+  const phase = (t - start) * Math.PI * 2 * 1.15;
+  const envelope = smooth((t - start) / 0.14) * smooth((start + dur - t) / 0.14);
   const a = Math.sin(phase) * envelope;
   return {
     bones: {
-      legL: { rot: a * 0.24, dy: -Math.max(0, a) * 11 },
-      legR: { rot: -a * 0.24, dy: -Math.max(0, -a) * 11 },
-      armL: { rot: -a * 0.18 },
-      armR: { rot: a * 0.18 },
+      legL: { rot: a * 0.22, dy: -Math.max(0, a) * 6.5 },
+      legR: { rot: -a * 0.22, dy: -Math.max(0, -a) * 6.5 },
+      armL: { rot: -a * 0.16 },
+      armR: { rot: a * 0.16 },
     },
   };
 }
@@ -213,6 +220,8 @@ function collectActorPoses(actorPlans) {
   const poses = new Set();
   for (const a of actorPlans) {
     if (!a || a.assetId) continue;
+    const usesAtlasOnly = Boolean(a.locomotion || a.atlas || (Array.isArray(a.atlases) && a.atlases.length));
+    if (usesAtlasOnly && !a.pose && !a.poses?.length && !a.poseChanges?.length) continue;
     poses.add(a.pose || 'idle');
     for (const p of a.poses || []) if (p?.pose) poses.add(p.pose);
     for (const p of a.poseChanges || []) if (p?.pose) poses.add(p.pose);
@@ -225,6 +234,74 @@ function collectActorPoses(actorPlans) {
   return [...poses];
 }
 
+function collectActorAtlases(actorPlans) {
+  const names = new Set();
+  const addWithIdle = (name) => {
+    if (!name) return;
+    names.add(name);
+    if (WALK_TO_IDLE_ATLAS_MAP[name]) names.add(WALK_TO_IDLE_ATLAS_MAP[name]);
+  };
+  for (const a of actorPlans) {
+    if (!a) continue;
+    const charId = a.characterId || a.assetId || 'whale';
+    if (a.locomotion) addWithIdle(resolveLocomotionAtlas(charId, a.locomotion));
+    if (a.atlas) addWithIdle(a.atlas);
+    for (const item of a.atlases || []) addWithIdle(item?.atlas);
+  }
+  return [...names];
+}
+
+async function loadAtlasImages(atlasNames) {
+  const map = new Map();
+  if (!atlasNames.length) return map;
+  const rigNames = atlasNames.filter((n) => WALK_RIG_BUILDERS[n]);
+  const built = rigNames.length ? await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR, { only: rigNames }) : {};
+  const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
+  for (const name of atlasNames) {
+    const filePath = built[name] || path.join(repoRoot, 'assets/ai-girls/lyric-action-v13', `${name}.png`);
+    if (fs.existsSync(filePath)) {
+      map.set(name, await loadImage(path.resolve(filePath)));
+    }
+  }
+  return map;
+}
+
+function drawAtlasActor(g, a, atlasImages) {
+  if ((a.opacity ?? 1) <= 0) return;
+  const img = atlasImages.get(a.atlas);
+  if (!img) return;
+  const cols = a.atlasCols || 16;
+  const cellW = img.width / cols;
+  const cellH = img.height;
+  const h = a.height || (a.assetId ? 310 : Math.round(10.4 * (a.u ?? 30)));
+  const w = (h * cellW) / cellH;
+  const sx = (a.imageScale ?? 1) * (a.sx ?? 1);
+  const sy = (a.imageScale ?? 1) * (a.sy ?? 1);
+  const dir = a.flip ? -1 : 1;
+  const footSink = h * 0.018;
+
+  const drawFrame = (sheetImg, frameIdx, alpha) => {
+    if (!sheetImg || alpha <= 0.005) return;
+    const cw = sheetImg.width / cols;
+    const ch = sheetImg.height;
+    const idx = Math.max(0, Math.min(cols - 1, frameIdx | 0));
+    g.save();
+    g.globalAlpha = (a.opacity ?? 1) * alpha;
+    g.translate(a.x, a.y + footSink);
+    g.rotate(a.lean || 0);
+    g.scale(dir * sx, sy);
+    g.drawImage(sheetImg, idx * cw, 0, cw, ch, -w / 2, -h, w, h);
+    g.restore();
+  };
+
+  if (a.prevAtlas && a.atlasBlend < 0.999 && atlasImages.has(a.prevAtlas)) {
+    drawFrame(atlasImages.get(a.prevAtlas), a.prevAtlasFrame ?? 0, 1 - a.atlasBlend);
+    drawFrame(img, a.atlasFrame ?? 0, a.atlasBlend);
+  } else {
+    drawFrame(img, a.atlasFrame ?? 0, 1);
+  }
+}
+
 async function createSceneRenderer({ spec, alignment, subdata, assetDir }, planningPreview) {
   validateSpec(spec, { cueCount: alignment.cues.length, cues: alignment.cues, requireWordTimes: !planningPreview });
   const cues = alignment.cues;
@@ -235,7 +312,8 @@ async function createSceneRenderer({ spec, alignment, subdata, assetDir }, plann
   const actorPlans = [spec.opener.actorA, spec.opener.actorB, ...spec.shots.flatMap((s) => s.actors || s.actorsPlan || [])];
   const poses = collectActorPoses(actorPlans);
   if (poses.length) await loadContactActors({ createCanvas, loadImage, poses, dir: assetDir });
-  await loadImageActors(actorPlans);
+  await loadImageActors(actorPlans.filter((a) => a?.assetId && !a.locomotion && !a.atlas && !(a.atlases?.length)));
+  const atlasImages = await loadAtlasImages(collectActorAtlases(actorPlans));
 
   const sub = createDay2Subtitle({ fontOf: (n, w) => `${w} ${n}px NotoSansSC`, measureCtx: createCanvas(1, 1).getContext('2d') });
   const stamp = spec.opener.stampWord
@@ -337,7 +415,8 @@ async function createSceneRenderer({ spec, alignment, subdata, assetDir }, plann
         },
         actors: (g) => {
           for (const a of actors) {
-            if (a.assetId) drawImageActor(g, a);
+            if (a.atlas && atlasImages.has(a.atlas)) drawAtlasActor(g, a, atlasImages);
+            else if (a.assetId) drawImageActor(g, a);
             else drawContactActor(g, a);
           }
         },

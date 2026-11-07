@@ -9,7 +9,8 @@
 | 模块 | 职责 |
 |---|---|
 | `timeline_core.mjs` | 纯 `t` 确定性数学底座（`hash`/`noise1d`/`wob`，严禁 `Math.random()`）、`backOut`/`elasticOut`/`springDamper`/`anticipationEnvelope` 预备过冲回弹曲线、`kf()` 多关键帧插值、`resolveMood()` 情绪平滑过渡、`createBeatGrid()` BPM 节拍脉冲、`resolveTransitionState()` 动机转场与 `auditTimelineActivity()` 反 PPT 静态检测 |
-| `character_motion.mjs` | 统一角色运动与手部正向运动学求解器：完整打通 14 套 `RIG_ACTIONS` + 28 套 `LEGACY_ACTIONS`（含语义别名）+ 17 种 `MOVE_STYLE_NAMES` 节拍律动/步态；站立待机锁死水平脚底不打滑（`dx === 0`），同时保持连续呼吸起伏与 7 根次级骨骼（`spine`/`head`/`armL`/`armR`/`hairL`/`hairR`/`tail`）自然微动（`idleMotion: 0` 可严格归零）；提供世界空间 `handAt(actor, 'left'\|'right')` 手部挂点 |
+| `character_motion.mjs` | 统一角色运动与手部正向运动学求解器：完整打通 18 套 `RIG_ACTIONS`（新增 `walk_natural`/`stroll_calm`/`step_back`/`sit_settle`）+ 28 套 `LEGACY_ACTIONS`（含语义别名）+ 17 种 `MOVE_STYLE_NAMES` + **8 位角色 23 套双骨骼连续三角网格蒙皮步态/同体待机/长椅坐姿图集（`locomotion` 声明式预设）**；站立待机锁死水平脚底不打滑（`dx === 0`），行走结束自动无跳变切回 100% 同体 `*_pet` 待机；提供世界空间 `handAt(actor, 'left'\|'right')` 手部挂点 |
+| `day_episode.template.spec.mjs` | **Day 正传系列通用单集模板**（`directorVersion: 1`）：开箱即用演示本鲸、豆包与 AI Girls 嘉宾的 `locomotion` 双骨骼蒙皮步态入场、同体待机、`step_back` 受惊退半步、`sit_bench` 收工落座、`heldProp` 交接与 `stageTriggers`，同时通过 Canvas 2D 与 Remotion 双后端验证 |
 | `../场景/stage_sets_core.mjs` & `stage_sets.mjs` | 告别单一死板海底墙背景：内置 12 套超宽视差舞台（`1800×920` 世界坐标，支持 `underwater_study`、`porthole_observatory`、`screening_desk`、`corridor_hatch`、`pantry_hearth`、`abyss_metaphor`、`split_stage`、`river_gate`、`terracotta_courtyard`、`mountain_pass`、`rain_street`、`sunset_ridge`），支持 `defineStageSet()` 自定义扩展与 `autoStageProgression` 自动跨镜换景，`sea_stage.mjs` 12 项像素回归测试完整保留 |
 | `../互动元素/world_interactions.mjs` | 人物 ↔ 背景 ↔ 道具双向空间交互总线：角色走过门区自动推门漏光、脚步触地激起水波涟漪/尘土、跳跃高度衰减地面阴影、舞台光源实时投射角色边缘受光（`rimLight`）、`stageTriggers` 场景机关（开门/开闸/拍桌震动/敲窗涟漪/钉板贴条/点灯/晨昏推进）、以及基于 `handAt()` 的手持道具跟随、抛放到桌面（`placeToAnchor`）与双人弧线交接（`transfer`） |
 | `../互动元素/actor_contacts.mjs` | 升级至 10 骨骼网格蒙皮（`spine`/`head`/`armL`/`armR`/`legL`/`legR`/`hairL`/`hairR`/`tail`），面部椭圆区域刚性锁死 `head` 守护五官不拉伸变形，0.005 rad 量化精灵缓存消除跳变，姿态切换支持预备弹跳与平滑叠化 |
@@ -32,17 +33,20 @@
   actors: [
     {
       name: '本鲸',
-      pose: 'point',
-      action: 'give',                    // 40+ 已打通 RIG_ACTIONS / LEGACY_ACTIONS
-      move: 'walk',                      // 17 种节拍律动与步态风格
-      walk: { from: 380, to: 560, startLine: 4, duration: 1.4 },
+      locomotion: 'side_walk',           // 自动绑定双骨骼连续蒙皮 whale_walk_side_2leg <-> whale_idle_side_pet
+      walk: { from: 320, to: 520, startLine: 4, duration: 1.4, autoFace: true },
       heldProp: {
         propId: 'folded_page',
         hand: 'right',
         transfer: { line: 5, char: '递', toActor: '豆包', toHand: 'left', duration: 0.48 }
       }
     },
-    { name: '豆包', assetId: 'doubao', x: 800, y: 600, facing: -1, action: 'cheer', move: 'groove' }
+    {
+      name: '豆包',
+      assetId: 'doubao',
+      locomotion: 'walk',                // 自动绑定 doubao_walk_side_2leg <-> doubao_idle_side_pet（覆盖全部 8 角色）
+      walk: { from: 980, to: 780, startLine: 4, duration: 1.35, autoFace: true }
+    }
   ],
   stageTriggers: [
     { kind: 'open_door', line: 4, char: '推', duration: 0.6, to: 0.92 },

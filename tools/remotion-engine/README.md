@@ -17,6 +17,7 @@
 - `entry.jsx` / `UniversalComposition.jsx`：Remotion Root 注册与通用舞台合成组件
 - `frame_evaluator.mjs`：纯 ESM 逐帧世界与骨骼交互求解器（浏览器 Bundle 与 Node 单测共用）
 - `mv_adapter.mjs`：歌词 MV 声明式规格适配器
+- `walk_rig_builder.mjs`：**2-Bone（大腿+小腿）连续三角网格蒙皮步态与同体待机图集构建器**（裙下 100% 净空零第 3 条腿，覆盖 `whale`/`doubao`/`gpt`/`gemini`/`claude`/`kimi`/`qwen`/`zai` 全部 8 位角色共 23 套 16 帧图集，供 MV 与 Day 系列双后端共用）
 - `render_cli.mjs`：支持 `--bundle-check`、`--dry-run`、本地静态资源 HTTP 服务与 MP4/PNG 渲染的统一 CLI
 - `components/`：`WorldCamera.jsx`、`StageSetView.jsx`、`RiggedCharacter.jsx`、`InteractivePropsLayer.jsx`、`TransitionOverlay.jsx`、`LyricAndSubtitleLayer.jsx`
 

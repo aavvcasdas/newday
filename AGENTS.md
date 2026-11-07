@@ -14,7 +14,9 @@
 
 ## 导演与稳定画面
 
-用户提到画面抖动、站桩、镜头重复或重做视频时，先读 `.claude/skills/day-series-director/SKILL.md`。按当前口播写音画双栏/逐镜卡，再更新directorVersion=1的spec；默认固定机位、idleMotion可关闭，不用晃动代替事件。视觉姿态与接触校准分开，不能冒称28个历史动作已全部接入。
+用户提到画面抖动、站桩、镜头重复、走路怪异/多腿或重做视频时，先读 `.claude/skills/day-series-director/SKILL.md` 与 `agent.md` 第 33 条。按当前口播写音画双栏/逐镜卡，可基于 Day 系列通用单集模板 `tools/engine/day_episode.template.spec.mjs` 编写 `directorVersion=1` 的 spec：
+- **通用步态与同体待机**：角色走位优先声明 `locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle' | 'sit_bench'` 配合 `walk` / `track`（由 `tools/remotion-engine/walk_rig_builder.mjs` 双骨骼连续三角网格蒙皮生成 8 角色共 23 套无断膝、零第 3 条腿的 16 帧图集，行走结束自动无跳变切回同体 `*_pet` 待机，Canvas 2D 与 Remotion 双后端通用）；10 骨高清网格主角亦可使用 `action: 'walk_natural' | 'stroll_calm' | 'step_back' | 'sit_settle'`。
+- 默认固定机位或每镜最多一次有动机运镜、`idleMotion` 可关闭，不用整体晃动代替事件；视觉姿态与手掌接触校准分开，严禁篡改固定 PNG 五官。
 Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分镜.md` 与 `tools/day12制作/episode.production.spec.mjs`，实际结果看同目录 `final_check.json`（不可脱离成片SHA引用）。原25行锁稿不改；指定音源未读首句，因此有独立24行视频字幕稿。用真实ASR整词区间绑定、关闭聚光灯、固定机位、独立stem混音验收；不声称音素级对齐、手纸真实接触或真人完整听审。`episode.spec.mjs`及四段无声样片是历史planning方案，不能替代当前有声版验收。
 
 ## Day12 v2 当前覆盖口径

@@ -9,7 +9,12 @@ import { validateSemanticTracks } from './semantic_tracks.mjs';
 import { validateDirection, validateShotContrast } from './director_contract.mjs';
 import { createHash } from 'node:crypto';
 import { assertOpenerUncrowded, assertShotDensity } from './crowd_and_density.mjs';
-import { isKnownCharacterAction, isKnownMoveStyle } from './character_motion.mjs';
+import {
+  isKnownCharacterAction,
+  isKnownMoveStyle,
+  isKnownLocomotionPreset,
+  isKnownAtlasRig,
+} from './character_motion.mjs';
 import { isKnownStageSet } from '../场景/stage_sets.mjs';
 import { STAGE_TRIGGER_KINDS } from '../互动元素/world_interactions.mjs';
 
@@ -33,8 +38,22 @@ function posesOf(actor) {
 
 export function validateActor(actor, where) {
   if (!actor || typeof actor !== 'object') throw new Error(`${where} 角色配置缺失`);
-  for (const pose of posesOf(actor)) {
-    if (actor.assetId ? !IMAGE_ACTORS[actor.assetId] : !VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
+  const usesAtlasOnly = Boolean(actor.locomotion || actor.atlas || (Array.isArray(actor.atlases) && actor.atlases.length));
+  if (!usesAtlasOnly || actor.pose || actor.poses?.length || actor.poseChanges?.length) {
+    for (const pose of posesOf(actor)) {
+      if (actor.assetId ? !IMAGE_ACTORS[actor.assetId] : !VISUAL_POSES.includes(pose)) throw new Error(`${where} 使用未注册视觉姿态 ${pose}`);
+    }
+  }
+  if (actor.locomotion != null && !isKnownLocomotionPreset(actor.locomotion)) {
+    throw new Error(`${where} 使用未注册步态预设 locomotion=${actor.locomotion}`);
+  }
+  if (actor.atlas != null && !isKnownAtlasRig(actor.atlas)) {
+    throw new Error(`${where} 使用未注册动作图集 atlas=${actor.atlas}`);
+  }
+  for (const [idx, item] of (actor.atlases || []).entries()) {
+    if (!item || !isKnownAtlasRig(item.atlas)) {
+      throw new Error(`${where}.atlases[${idx}] 使用未注册动作图集 ${item?.atlas}`);
+    }
   }
   if (actor.action != null && !isKnownCharacterAction(actor.action)) {
     throw new Error(`${where} 使用未注册角色动作 ${actor.action}`);
@@ -58,8 +77,14 @@ export function validateActor(actor, where) {
       throw new Error(`${where} walk 位置须为有限数或锚点、duration须为正数`);
     }
   }
-  const effectiveX = actor.x ?? actor.walk?.from;
-  const effectiveY = actor.y ?? 600;
+  const trackStartX = Array.isArray(actor.track) && actor.track.length >= 2
+    ? (Array.isArray(actor.track[0]?.[1]) ? actor.track[0][1][0] : actor.track[0]?.[1])
+    : null;
+  const trackStartY = Array.isArray(actor.track) && actor.track.length >= 2
+    ? (Array.isArray(actor.track[0]?.[1]) ? actor.track[0][1][1] : actor.track[0]?.[2])
+    : null;
+  const effectiveX = actor.x ?? actor.walk?.from ?? trackStartX;
+  const effectiveY = actor.y ?? trackStartY ?? 600;
   if ((effectiveX == null && !actor.walk?.fromAnchor && !actor.anchor) || (effectiveX != null && !Number.isFinite(effectiveX)) || !Number.isFinite(effectiveY)) {
     throw new Error(`${where} 角色坐标 x/y 必须为有限数`);
   }
@@ -154,7 +179,7 @@ export function validateSpec(spec, opts = {}) {
     const actors = shot.actors || shot.actorsPlan;
     if (!Array.isArray(actors) || (!actors.length && !(spec.directorVersion === 1 && shot.direction?.kind === 'prop'))) throw new Error(`${where} 缺少 actors 声明（仅导演道具特写可显式actors=[]）`);
     actors.forEach((a, j) => validateActor(a, `${where}.actors[${j}]`));
-    if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle') && !a.action && !a.move)) {
+    if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle') && !a.action && !a.move && !a.walk && !a.track && (!a.locomotion || a.locomotion === 'idle') && !a.atlas && !(a.atlases?.length))) {
       throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态或动作`);
     }
     for (const [j, it] of (shot.interactions || []).entries()) {

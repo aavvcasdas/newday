@@ -61,14 +61,32 @@ const CONFLICT_POSES = new Set(['shock', 'point', 'playful_fists', 'confident_hi
  * 规则：双人同场时 0-2s 内不得同姿、不得双双静立；0.65-1.10s 内须有一次姿态变化
  * （poseChanges 中声明，或由分镜 poses 时间线提供）。
  */
+const ACTIVE_LOCOMOTIONS = new Set(['walk', 'side_walk', 'happy_walk', 'sad_walk', 'push_walk']);
+
 export function validateOpenerActors(actors, { requireChange = true } = {}) {
   if (!Array.isArray(actors) || actors.length < 1) throw new Error('开场至少需要一名角色');
   if (actors.length >= 2) {
     const [a, b] = actors;
-    if (a.pose === b.pose) throw new Error(`开场双人同姿罚站被拒：两人同为 ${a.pose}`);
-    if (a.pose === 'idle' && b.pose === 'idle') throw new Error('开场双人同时静立被拒：禁止双 idle 罚站');
-    if (!CONFLICT_POSES.has(a.pose) && !CONFLICT_POSES.has(b.pose)) {
-      throw new Error(`开场缺少冲突姿态：${a.pose} / ${b.pose}，至少一人须处于冲突/动作态`);
+    const usesAtlasA = Boolean(a.locomotion || a.atlas);
+    const usesAtlasB = Boolean(b.locomotion || b.atlas);
+    if (usesAtlasA || usesAtlasB) {
+      const idA = a.pose || a.atlas || `${a.assetId || 'whale'}:${a.locomotion || 'idle'}`;
+      const idB = b.pose || b.atlas || `${b.assetId || 'whale'}:${b.locomotion || 'idle'}`;
+      if (idA === idB) throw new Error(`开场双人同姿罚站被拒：两人同为 ${idA}`);
+      const hasActive = CONFLICT_POSES.has(a.pose)
+        || CONFLICT_POSES.has(b.pose)
+        || ACTIVE_LOCOMOTIONS.has(a.locomotion)
+        || ACTIVE_LOCOMOTIONS.has(b.locomotion)
+        || Boolean(a.atlas?.endsWith('_2leg') || b.atlas?.endsWith('_2leg'));
+      if (!hasActive) {
+        throw new Error(`开场缺少冲突或步态动作：${idA} / ${idB}`);
+      }
+    } else {
+      if (a.pose === b.pose) throw new Error(`开场双人同姿罚站被拒：两人同为 ${a.pose}`);
+      if (a.pose === 'idle' && b.pose === 'idle') throw new Error('开场双人同时静立被拒：禁止双 idle 罚站');
+      if (!CONFLICT_POSES.has(a.pose) && !CONFLICT_POSES.has(b.pose)) {
+        throw new Error(`开场缺少冲突姿态：${a.pose} / ${b.pose}，至少一人须处于冲突/动作态`);
+      }
     }
   }
   if (requireChange) {

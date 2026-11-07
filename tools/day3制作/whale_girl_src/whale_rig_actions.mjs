@@ -309,6 +309,102 @@ export const RIG_ACTIONS = {
         }
       };
     }
+  },
+
+  // ------------------------------------------------------------------ 自然匀速迈步（零蹦跳头稳步态）
+  walk_natural: {
+    label: '自然匀速迈步', dur: 1.92,
+    fn: (t) => {
+      const ph = (t / 0.96) * TAU;
+      const swing = sin(ph);
+      const bob = abs(cos(ph));
+      return {
+        root: { dy: -2.2 * bob, rot: 0.016 * swing },
+        bones: {
+          legL: { rot: 0.26 * swing, dy: -Math.max(0, swing) * 6.5 },
+          legR: { rot: -0.26 * swing, dy: -Math.max(0, -swing) * 6.5 },
+          armL: { rot: -0.20 * swing },
+          armR: { rot: 0.20 * swing },
+          spine: { rot: 0.018 * swing },
+          head: { rot: -0.012 * swing, dy: -1.0 * bob },
+          hairL: { rot: 0.06 * sin(ph - 0.6) },
+          hairR: { rot: 0.06 * sin(ph - 0.8) },
+          tail: { rot: 0.16 * sin(ph - 0.5) }
+        },
+        lift: 0.08 * bob
+      };
+    }
+  },
+
+  // ------------------------------------------------------------------ 悠闲散步
+  stroll_calm: {
+    label: '悠闲轻步漫行', dur: 2.2,
+    fn: (t) => {
+      const ph = (t / 1.1) * TAU;
+      const swing = sin(ph);
+      const bob = abs(cos(ph));
+      return {
+        root: { dy: -1.5 * bob, rot: 0.012 * swing },
+        bones: {
+          legL: { rot: 0.18 * swing, dy: -Math.max(0, swing) * 4.5 },
+          legR: { rot: -0.18 * swing, dy: -Math.max(0, -swing) * 4.5 },
+          armL: { rot: -0.14 * swing },
+          armR: { rot: 0.14 * swing },
+          spine: { rot: 0.012 * swing },
+          head: { rot: -0.01 * swing },
+          hairL: { rot: 0.045 * sin(ph - 0.6) },
+          hairR: { rot: 0.045 * sin(ph - 0.8) },
+          tail: { rot: 0.12 * sin(ph - 0.5) }
+        },
+        lift: 0.05 * bob
+      };
+    }
+  },
+
+  // ------------------------------------------------------------------ 受惊后退半步
+  step_back: {
+    label: '受惊后退半步稳住', dur: 1.8,
+    fn: (t) => {
+      const k = bump(clamp(t / 0.85));
+      const settle = ease(clamp(t / 0.85));
+      return {
+        root: { dx: -14 * settle, dy: -2.0 * k, rot: -0.025 * k },
+        bones: {
+          legL: { rot: -0.18 * k, dy: -4 * k },
+          legR: { rot: 0.14 * k },
+          armL: { rot: -0.28 * k },
+          armR: { rot: 0.28 * k },
+          spine: { rot: -0.06 * k },
+          head: { rot: -0.05 * k, dy: -2 * k },
+          hairL: { rot: -0.08 * k },
+          hairR: { rot: 0.08 * k },
+          tail: { rot: 0.18 * k }
+        },
+        lift: 0.06 * k
+      };
+    }
+  },
+
+  // ------------------------------------------------------------------ 落座呼吸轻晃
+  sit_settle: {
+    label: '落座轻晃双脚', dur: 2.4,
+    fn: (t) => {
+      const th = (t / 2.4) * TAU;
+      const sway = sin(th);
+      return {
+        root: { dy: 1.2 * sway, rot: 0.008 * sway },
+        bones: {
+          legL: { rot: 0.10 * sway },
+          legR: { rot: -0.10 * sway },
+          armL: { rot: 0.06 },
+          armR: { rot: -0.06 },
+          head: { rot: 0.03 * sin(th - 0.4), dy: 0.8 * sway },
+          hairL: { rot: 0.04 * sway },
+          hairR: { rot: -0.04 * sway },
+          tail: { rot: 0.11 * sin(th - 0.5) }
+        }
+      };
+    }
   }
 };
 

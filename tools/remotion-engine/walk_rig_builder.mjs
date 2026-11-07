@@ -1,311 +1,451 @@
+// walk_rig_builder.mjs — 2-Bone 连续三角网格蒙皮步态与同体待机图集构建器（通用引擎与 Day 系列共享）
+// 核心修复与设计准则：
+//   1. 彻底废除横向一刀切位图（切片会在膝关节产生锯齿断层与圆球鼓包），改用与 tools/day3制作/whale_girl_src/whale_rig.mjs
+//      同源的「大腿+小腿双骨骼连续三角网格蒙皮 (2-Bone LBS Triangle Mesh + 0.55px 外扩消缝)」：
+//      腿部轮廓线在膝关节弯曲时 100% 连续柔顺，零锯齿断口、零假圆形补丁！
+//   2. 100% 净空无残腿上身底板：逐像素清除裙下残留原腿/残鞋/三角衬裙碎屑，数学级杜绝「3 条腿」！
+//   3. 自然步态参数（大腿摆幅 -19°..+21°、膝盖向后柔顺屈伸 4°..28°、头顶水平波动 <= ±1.8px），
+//      并为每个角色配对生成 100% 同体同比例待机图集 (*_pet)，彻底消除跨立绘切图与过渡上跳。
+//   4. 严守面部红线：绝不程序涂改任何角色五官像素；零新增 AI 生图，零拷入上游宠物库 PNG/GIF。
+
 import fs from 'node:fs';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const REPO_ROOT = path.resolve(__dirname, '../..');
-const ENGINE_REQUIRE = createRequire(path.join(REPO_ROOT, 'tools/engine/package.json'));
-const { createCanvas, loadImage } = ENGINE_REQUIRE('@napi-rs/canvas');
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = path.resolve(HERE, '../..');
+const engineRequire = createRequire(path.join(REPO_ROOT, 'tools/engine/package.json'));
+const { createCanvas, loadImage } = engineRequire('@napi-rs/canvas');
 
 export const CELL_W = 384;
 export const CELL_H = 416;
 export const WALK_FRAMES = 16;
-export const DEFAULT_WALK_CACHE_DIR = '/tmp/newday_walk_rigs_pet_v1';
+export const DEFAULT_WALK_CACHE_DIR = '/tmp/newday_walk_rigs_mesh_v2';
 
-// 对标 tqlearning/ai-girl-chatgpt-pets 第 1/2 行 (running-right / running-left) 的 8 关键帧双关节屈膝步态表：
-// 每格含：[大腿角 thighDeg, 膝关节向后屈曲角 kneeBendDeg, 躯干微起伏 bodyDyPx, 尾部/发梢摆角 tailDeg]
-// 约定（面向右侧 running-right 时）：
-//   thighDeg < 0 为大腿向前迈出，thighDeg > 0 为大腿向后蹬伸；
-//   kneeBendDeg >= 0 恒为小腿绕膝盖向后折叠（符合人体真实膝关节生理，绝不反向折腿）；
-//   头部与上身垂直起伏严格控制在 [-2.2px, +2.2px]（约身高 0.7%），消除“人在跳”的弹跳感。
-const PET_8FRAME_GAIT = [
-  // f0: Contact R — 右腿前伸触地，左腿在后微屈膝
-  { near: [-27, 7], far: [19, 34], dy: 1.4, tail: 3.5 },
-  // f1: Down R    — 右脚踩实承重，左小腿向后勾起抬离地面
-  { near: [-10, 10], far: [6, 56], dy: 2.2, tail: 2.0 },
-  // f2: Pass L    — 右脚在地面向后推，左大腿高抬前摆、小腿屈膝收于裙下越过支撑腿
-  { near: [8, 4], far: [-33, 52], dy: -0.8, tail: -2.5 },
-  // f3: Reach L   — 右腿在后蹬地向后勾起，左腿向前伸直准备落脚
-  { near: [22, 44], far: [-31, 16], dy: -1.8, tail: -4.0 },
-  // f4: Contact L — 左腿前伸触地，右腿在后微屈膝（与 f0 反相）
-  { near: [19, 34], far: [-27, 7], dy: 1.4, tail: -3.5 },
-  // f5: Down L    — 左脚踩实承重，右小腿向后勾起抬离地面（与 f1 反相）
-  { near: [6, 56], far: [-10, 10], dy: 2.2, tail: -2.0 },
-  // f6: Pass R    — 左脚在地面向后推，右大腿高抬前摆、小腿屈膝前越（与 f2 反相）
-  { near: [-33, 52], far: [8, 4], dy: -0.8, tail: 2.5 },
-  // f7: Reach R   — 左腿在后蹬地向后勾起，右腿向前伸直准备落脚（与 f3 反相）
-  { near: [-31, 16], far: [22, 44], dy: -1.8, tail: 4.0 },
-];
+const clamp = (v, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
+const smoothstep = (x) => {
+  const t = clamp(x, 0, 1);
+  return t * t * (3 - 2 * t);
+};
 
-function samplePetGait(u01) {
-  const pos = (((u01 % 1) + 1) % 1) * PET_8FRAME_GAIT.length;
-  const idx0 = Math.floor(pos) % PET_8FRAME_GAIT.length;
-  const idx1 = (idx0 + 1) % PET_8FRAME_GAIT.length;
-  const frac = pos - Math.floor(pos);
-  // Smooth cosine blend between adjacent pet keyframes
-  const w = 0.5 - 0.5 * Math.cos(Math.PI * frac);
-  const a = PET_8FRAME_GAIT[idx0];
-  const b = PET_8FRAME_GAIT[idx1];
-  const mix = (x, y) => x + (y - x) * w;
-  return {
-    nearThigh: mix(a.near[0], b.near[0]),
-    nearKnee: mix(a.near[1], b.near[1]),
-    farThigh: mix(a.far[0], b.far[0]),
-    farKnee: mix(a.far[1], b.far[1]),
-    dy: mix(a.dy, b.dy),
-    tail: mix(a.tail, b.tail),
+// ---------------------------------------------------------------------------
+// 1. 抠图与净空工具
+// ---------------------------------------------------------------------------
+function fitAndCutoutSolid(img, { targetH = CELL_H, dxOffset = 0, dyOffset = 0, checker = false, extraSeeds = [] } = {}) {
+  const scale = targetH / img.height;
+  const dw = Math.round(img.width * scale);
+  const dh = Math.round(img.height * scale);
+  const dx = Math.round((CELL_W - dw) / 2) + dxOffset;
+  const dy = CELL_H - dh + dyOffset;
+
+  const c = createCanvas(CELL_W, CELL_H);
+  const g = c.getContext('2d');
+  g.drawImage(img, dx, dy, dw, dh);
+
+  const im = g.getImageData(0, 0, CELL_W, CELL_H);
+  const d = im.data;
+  const vis = new Uint8Array(CELL_W * CELL_H);
+
+  const isBg = (idx) => {
+    const r = d[idx], gr = d[idx + 1], b = d[idx + 2], a = d[idx + 3];
+    if (a < 16) return true;
+    const maxC = Math.max(r, gr, b);
+    const minC = Math.min(r, gr, b);
+    if (checker) {
+      return (maxC - minC) <= 16 && minC >= 168;
+    }
+    return r >= 232 && gr >= 232 && b >= 232 && (maxC - minC) <= 18;
   };
+
+  const stack = [];
+  const push = (x, y) => {
+    if (x < 0 || x >= CELL_W || y < 0 || y >= CELL_H) return;
+    const p = y * CELL_W + x;
+    if (vis[p]) return;
+    if (!isBg(p * 4)) return;
+    vis[p] = 1;
+    stack.push(p);
+  };
+
+  for (let x = 0; x < CELL_W; x++) {
+    push(x, 0);
+    push(x, CELL_H - 1);
+  }
+  for (let y = 0; y < CELL_H; y++) {
+    push(0, y);
+    push(CELL_W - 1, y);
+  }
+  for (const [sx, sy] of extraSeeds) {
+    for (let oy = -3; oy <= 3; oy++) {
+      for (let ox = -3; ox <= 3; ox++) push(sx + ox, sy + oy);
+    }
+  }
+
+  while (stack.length > 0) {
+    const p = stack.pop();
+    d[p * 4 + 3] = 0;
+    const x = p % CELL_W;
+    const y = (p / CELL_W) | 0;
+    push(x - 1, y);
+    push(x + 1, y);
+    push(x, y - 1);
+    push(x, y + 1);
+  }
+
+  // 1px 抗锯齿白边柔和消退
+  for (let y = 1; y < CELL_H - 1; y++) {
+    for (let x = 1; x < CELL_W - 1; x++) {
+      const p = y * CELL_W + x;
+      const idx = p * 4;
+      if (d[idx + 3] === 0) continue;
+      if (vis[p - 1] || vis[p + 1] || vis[p - CELL_W] || vis[p + CELL_W]) {
+        const r = d[idx], gr = d[idx + 1], b = d[idx + 2];
+        if (r > 224 && gr > 224 && b > 224 && Math.max(r, gr, b) - Math.min(r, gr, b) < 18) {
+          d[idx + 3] = Math.round(d[idx + 3] * 0.22);
+        }
+      }
+    }
+  }
+
+  g.putImageData(im, 0, 0);
+  return c;
 }
 
 function pointInPoly(x, y, poly) {
   let inside = false;
   for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const xi = poly[i][0], yi = poly[i][1];
-    const xj = poly[j][0], yj = poly[j][1];
-    const intersect = ((yi > y) !== (yj > y))
-      && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-9) + xi);
+    const [xi, yi] = poly[i];
+    const [xj, yj] = poly[j];
+    const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / ((yj - yi) || 1e-6) + xi);
     if (intersect) inside = !inside;
   }
   return inside;
 }
 
-function fitAndCutoutSolid(rawImg, { dyOffset = 0, checker = false, extraSeeds = [] } = {}) {
-  const scale = Math.min((CELL_W - 16) / rawImg.width, (CELL_H - 16) / rawImg.height);
-  const rw = Math.round(rawImg.width * scale);
-  const rh = Math.round(rawImg.height * scale);
-
-  const tmp = createCanvas(8, 8);
-  const tg = tmp.getContext('2d');
-  tg.fillStyle = '#FFFFFF';
-  tg.fillRect(0, 0, 8, 8);
-  tg.drawImage(rawImg, 0, 0);
-  const bg = tg.getImageData(0, 0, 1, 1).data;
-
-  const c = createCanvas(CELL_W, CELL_H);
-  const g = c.getContext('2d');
-  g.fillStyle = `rgb(${bg[0]},${bg[1]},${bg[2]})`;
-  g.fillRect(0, 0, CELL_W, CELL_H);
-  g.drawImage(rawImg, Math.floor((CELL_W - rw) / 2), CELL_H - 8 - rh + dyOffset, rw, rh);
-
-  const imgData = g.getImageData(0, 0, CELL_W, CELL_H);
-  const d = imgData.data;
-  const isBg = (i) => {
-    const r = d[i], gr = d[i + 1], b = d[i + 2];
-    if (checker) {
-      const mx = Math.max(r, gr, b), mn = Math.min(r, gr, b);
-      return r > 192 && gr > 192 && b > 192 && (mx - mn) < 20;
-    }
-    const dr = Math.abs(r - bg[0]), dg = Math.abs(gr - bg[1]), db = Math.abs(b - bg[2]);
-    return (dr < 26 && dg < 26 && db < 26) || (r > 230 && gr > 230 && b > 230);
-  };
-
-  const seen = new Uint8Array(CELL_W * CELL_H);
-  const q = [];
-  const push = (x, y) => {
-    if (x < 0 || x >= CELL_W || y < 0 || y >= CELL_H) return;
-    const idx = y * CELL_W + x;
-    if (!seen[idx] && isBg(idx * 4)) {
-      seen[idx] = 1;
-      q.push(idx);
-    }
-  };
-  for (let x = 0; x < CELL_W; x++) { push(x, 0); push(x, CELL_H - 1); }
-  for (let y = 0; y < CELL_H; y++) { push(0, y); push(CELL_W - 1, y); }
-  for (const [sx, sy] of extraSeeds) push(sx, sy);
-
-  while (q.length) {
-    const idx = q.pop();
-    const x = idx % CELL_W, y = (idx / CELL_W) | 0;
-    if (x > 0) push(x - 1, y);
-    if (x + 1 < CELL_W) push(x + 1, y);
-    if (y > 0) push(x, y - 1);
-    if (y + 1 < CELL_H) push(x, y + 1);
-  }
-  for (let i = 0; i < CELL_W * CELL_H; i++) {
-    if (seen[i]) d[i * 4 + 3] = 0;
-  }
-  g.putImageData(imgData, 0, 0);
-  return c;
-}
-
 function extractPolyLayer(srcCanvas, poly, { filterPixel = null } = {}) {
   const out = createCanvas(CELL_W, CELL_H);
   const og = out.getContext('2d');
+  og.save();
+  og.beginPath();
+  poly.forEach(([x, y], i) => (i === 0 ? og.moveTo(x, y) : og.lineTo(x, y)));
+  og.closePath();
+  og.clip();
   og.drawImage(srcCanvas, 0, 0);
-  const img = og.getImageData(0, 0, CELL_W, CELL_H);
-  const d = img.data;
-  for (let y = 0; y < CELL_H; y++) {
-    for (let x = 0; x < CELL_W; x++) {
-      const i = (y * CELL_W + x) * 4;
-      if (d[i + 3] === 0) continue;
-      if (!pointInPoly(x, y, poly)) {
-        d[i + 3] = 0;
-      } else if (filterPixel && !filterPixel(x, y, d[i], d[i + 1], d[i + 2], d[i + 3])) {
-        d[i + 3] = 0;
+  og.restore();
+
+  if (filterPixel) {
+    const im = out.getContext('2d').getImageData(0, 0, CELL_W, CELL_H);
+    const d = im.data;
+    for (let y = 0; y < CELL_H; y++) {
+      for (let x = 0; x < CELL_W; x++) {
+        const idx = (y * CELL_W + x) * 4;
+        if (d[idx + 3] === 0) continue;
+        if (!filterPixel(x, y, d[idx], d[idx + 1], d[idx + 2], d[idx + 3])) {
+          d[idx + 3] = 0;
+        }
       }
     }
+    out.getContext('2d').putImageData(im, 0, 0);
   }
-  og.putImageData(img, 0, 0);
   return out;
 }
 
 function erasePolyInPlace(canvas, poly, { shouldErase = null } = {}) {
   const g = canvas.getContext('2d');
-  const img = g.getImageData(0, 0, CELL_W, CELL_H);
-  const d = img.data;
+  const im = g.getImageData(0, 0, CELL_W, CELL_H);
+  const d = im.data;
   for (let y = 0; y < CELL_H; y++) {
     for (let x = 0; x < CELL_W; x++) {
-      const i = (y * CELL_W + x) * 4;
-      if (d[i + 3] === 0) continue;
-      if (pointInPoly(x, y, poly)) {
-        if (!shouldErase || shouldErase(x, y, d[i], d[i + 1], d[i + 2], d[i + 3])) {
-          d[i + 3] = 0;
-        }
+      const idx = (y * CELL_W + x) * 4;
+      if (d[idx + 3] === 0) continue;
+      if (!pointInPoly(x, y, poly)) continue;
+      if (!shouldErase || shouldErase(x, y, d[idx], d[idx + 1], d[idx + 2], d[idx + 3])) {
+        d[idx + 3] = 0;
       }
     }
   }
-  g.putImageData(img, 0, 0);
+  g.putImageData(im, 0, 0);
   return canvas;
 }
 
-function tintCanvas(srcCanvas, rMul, gMul, bMul) {
+function tintCanvas(srcCanvas, rMul = 0.86, gMul = 0.87, bMul = 0.93) {
   const out = createCanvas(srcCanvas.width, srcCanvas.height);
   const g = out.getContext('2d');
   g.drawImage(srcCanvas, 0, 0);
-  const img = g.getImageData(0, 0, out.width, out.height);
-  const d = img.data;
+  const im = g.getImageData(0, 0, out.width, out.height);
+  const d = im.data;
   for (let i = 0; i < d.length; i += 4) {
     if (d[i + 3] === 0) continue;
-    d[i] = Math.min(255, Math.round(d[i] * rMul));
-    d[i + 1] = Math.min(255, Math.round(d[i + 1] * gMul));
-    d[i + 2] = Math.min(255, Math.round(d[i + 2] * bMul));
+    d[i] = Math.round(d[i] * rMul);
+    d[i + 1] = Math.round(d[i + 1] * gMul);
+    d[i + 2] = Math.round(d[i + 2] * bMul);
   }
-  g.putImageData(img, 0, 0);
+  g.putImageData(im, 0, 0);
   return out;
 }
 
+// ---------------------------------------------------------------------------
+// 2. 2-Bone (大腿+小腿) 连续三角网格蒙皮引擎（与 whale_rig.mjs 同源，零关节横切缝！）
+// ---------------------------------------------------------------------------
+function matMul(a, b) {
+  return [
+    a[0] * b[0] + a[2] * b[1], a[1] * b[0] + a[3] * b[1],
+    a[0] * b[2] + a[2] * b[3], a[1] * b[2] + a[3] * b[3],
+    a[0] * b[4] + a[2] * b[5] + a[4], a[1] * b[4] + a[3] * b[5] + a[5],
+  ];
+}
+
+function matTR(tx, ty, rot) {
+  const c = Math.cos(rot), s = Math.sin(rot);
+  return [c, s, -s, c, tx, ty];
+}
+
+function drawSkinnedTriangle(ctx, img, s0, s1, s2, d0, d1, d2) {
+  // 向外微扩 0.55px 消除相邻网格抗锯齿细缝（复用 whale_rig.mjs 成熟技法）
+  const cx = (d0[0] + d1[0] + d2[0]) / 3;
+  const cy = (d0[1] + d1[1] + d2[1]) / 3;
+  const grow = (p) => {
+    const vx = p[0] - cx, vy = p[1] - cy;
+    const l = Math.hypot(vx, vy) || 1;
+    return [p[0] + (vx / l) * 0.55, p[1] + (vy / l) * 0.55];
+  };
+  const D0 = grow(d0), D1 = grow(d1), D2 = grow(d2);
+  const ax = s1[0] - s0[0], ay = s1[1] - s0[1];
+  const bx = s2[0] - s0[0], by = s2[1] - s0[1];
+  const cx2 = D1[0] - D0[0], cy2 = D1[1] - D0[1];
+  const dx2 = D2[0] - D0[0], dy2 = D2[1] - D0[1];
+  const det = ax * by - ay * bx;
+  if (Math.abs(det) < 1e-8) return;
+
+  const ia = by / det, ib = -bx / det, ic = -ay / det, id = ax / det;
+  const m0 = cx2 * ia + dx2 * ic;
+  const m1 = cy2 * ia + dy2 * ic;
+  const m2 = cx2 * ib + dx2 * id;
+  const m3 = cy2 * ib + dy2 * id;
+  const m4 = D0[0] - (m0 * s0[0] + m2 * s0[1]);
+  const m5 = D0[1] - (m1 * s0[0] + m3 * s0[1]);
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(D0[0], D0[1]);
+  ctx.lineTo(D1[0], D1[1]);
+  ctx.lineTo(D2[0], D2[1]);
+  ctx.closePath();
+  ctx.clip();
+  ctx.setTransform(m0, m1, m2, m3, m4, m5);
+  ctx.drawImage(img, 0, 0);
+  ctx.restore();
+}
+
 /**
- * 将单条干净直立腿拆分为【大腿 thigh】+【小腿与鞋 shin】两段关节，并在膝盖处补齐圆润衔接球，
- * 使膝关节在 0°..60° 向后折叠时完全无裂口、无折角锯齿。
+ * 将单条干净腿立绘先校正为垂直中立位，再建立 9×22 连续双骨骼（大腿+小腿）蒙皮网格。
+ * 膝关节上下 ±15px 采用 Hermite 平滑权重过渡，弯曲时线条圆润连贯，绝不裂口、绝不鼓包！
  */
-function buildTwoJointLegSegments(rawLegLayer, {
+function buildSkinnedLegMesh(rawLegCanvas, {
   srcHipX,
   srcHipY,
   neutralRotDeg = 0,
   dstHipX,
   dstHipY,
-  kneeLen = 46,
-  hipCapColor = '#F7DBD0',
-  hipCapRx = 14,
-  hipCapRy = 15,
-  kneeCapColor = '#F7DBD0',
-  kneeCapR = 10.5,
+  kneeLen = 44,
+  blendHalf = 15,
+  nx = 8,
+  ny = 20,
 }) {
   const neutral = createCanvas(CELL_W, CELL_H);
   const ng = neutral.getContext('2d');
-  if (hipCapColor) {
-    ng.fillStyle = hipCapColor;
-    ng.beginPath();
-    ng.ellipse(dstHipX, dstHipY + 4, hipCapRx, hipCapRy, 0, 0, Math.PI * 2);
-    ng.fill();
-  }
   ng.save();
   ng.translate(dstHipX, dstHipY);
   ng.rotate((neutralRotDeg * Math.PI) / 180);
-  ng.drawImage(rawLegLayer, -srcHipX, -srcHipY);
+  ng.drawImage(rawLegCanvas, -srcHipX, -srcHipY);
   ng.restore();
 
+  const im = ng.getImageData(0, 0, CELL_W, CELL_H);
+  const d = im.data;
+  let x0 = CELL_W, y0 = CELL_H, x1 = 0, y1 = 0;
+  for (let y = 0; y < CELL_H; y++) {
+    for (let x = 0; x < CELL_W; x++) {
+      if (d[(y * CELL_W + x) * 4 + 3] > 8) {
+        if (x < x0) x0 = x;
+        if (x > x1) x1 = x;
+        if (y < y0) y0 = y;
+        if (y > y1) y1 = y;
+      }
+    }
+  }
+  if (x1 <= x0 || y1 <= y0) {
+    x0 = dstHipX - 24; x1 = dstHipX + 24;
+    y0 = dstHipY - 6; y1 = dstHipY + 96;
+  } else {
+    x0 = Math.max(0, x0 - 4);
+    y0 = Math.max(0, y0 - 4);
+    x1 = Math.min(CELL_W - 1, x1 + 4);
+    y1 = Math.min(CELL_H - 1, y1 + 4);
+  }
+
   const kneeY = dstHipY + kneeLen;
-
-  const thigh = createCanvas(CELL_W, CELL_H);
-  const tg = thigh.getContext('2d');
-  tg.drawImage(neutral, 0, 0, CELL_W, kneeY + 4, 0, 0, CELL_W, kneeY + 4);
-  if (kneeCapColor) {
-    tg.fillStyle = kneeCapColor;
-    tg.beginPath();
-    tg.arc(dstHipX, kneeY, kneeCapR, 0, Math.PI * 2);
-    tg.fill();
+  const verts = [];
+  const shinWeights = [];
+  for (let j = 0; j <= ny; j++) {
+    const py = y0 + ((y1 - y0) * j) / ny;
+    const wShin = smoothstep((py - (kneeY - blendHalf)) / (2 * blendHalf));
+    for (let i = 0; i <= nx; i++) {
+      const px = x0 + ((x1 - x0) * i) / nx;
+      verts.push([px, py]);
+      shinWeights.push(wShin);
+    }
   }
 
-  const shin = createCanvas(CELL_W, CELL_H);
-  const sg = shin.getContext('2d');
-  if (kneeCapColor) {
-    sg.fillStyle = kneeCapColor;
-    sg.beginPath();
-    sg.arc(dstHipX, kneeY, kneeCapR * 0.94, 0, Math.PI * 2);
-    sg.fill();
-  }
-  sg.drawImage(neutral, 0, kneeY - 3, CELL_W, CELL_H - (kneeY - 3), 0, kneeY - 3, CELL_W, CELL_H - (kneeY - 3));
+  // 预筛含非透明像素的网格单元，加速渲染
+  const cellHasAlpha = (i, j) => {
+    const ax0 = Math.max(0, Math.floor(x0 + ((x1 - x0) * i) / nx) - 1);
+    const ax1 = Math.min(CELL_W - 1, Math.ceil(x0 + ((x1 - x0) * (i + 1)) / nx) + 1);
+    const ay0 = Math.max(0, Math.floor(y0 + ((y1 - y0) * j) / ny) - 1);
+    const ay1 = Math.min(CELL_H - 1, Math.ceil(y0 + ((y1 - y0) * (j + 1)) / ny) + 1);
+    for (let py = ay0; py <= ay1; py++) {
+      for (let px = ax0; px <= ax1; px++) {
+        if (d[(py * CELL_W + px) * 4 + 3] > 6) return true;
+      }
+    }
+    return false;
+  };
 
-  return { thigh, shin, hipX: dstHipX, hipY: dstHipY, kneeLen };
+  const tris = [];
+  const stride = nx + 1;
+  for (let j = 0; j < ny; j++) {
+    for (let i = 0; i < nx; i++) {
+      if (!cellHasAlpha(i, j)) continue;
+      const v00 = j * stride + i;
+      const v10 = v00 + 1;
+      const v01 = v00 + stride;
+      const v11 = v01 + 1;
+      tris.push([v00, v10, v11], [v00, v11, v01]);
+    }
+  }
+
+  return {
+    img: neutral,
+    hipX: dstHipX,
+    hipY: dstHipY,
+    kneeY,
+    verts,
+    shinWeights,
+    tris,
+  };
 }
 
 /**
- * 绘制双关节腿（髋 -> 大腿旋转 -> 膝 -> 小腿向后屈膝旋转）
- * facingRight = true：原图朝右（大腿前抬为负角，小腿向后折叠为正角）
- * facingRight = false：原图朝左（大腿前抬为正角，小腿向后折叠为负角）
+ * 绘制变形后的单条双骨骼蒙皮腿：
+ *   thighDeg > 0 : 大腿向面朝前方自然迈出
+ *   kneeDeg >= 0 : 膝盖向面朝后方柔和屈膝（绝不反折）
  */
-function drawTwoJointLeg(ctx, segLeg, thighDegRight, kneeBendDegRight, facingRight = true, dyOffset = 0) {
-  const sign = facingRight ? 1 : -1;
-  const thighRad = ((sign * thighDegRight) * Math.PI) / 180;
-  const kneeRad = ((sign * kneeBendDegRight) * Math.PI) / 180;
-  const { thigh, shin, hipX, hipY, kneeLen } = segLeg;
-  const kneeY = hipY + kneeLen;
+function drawSkinnedLegMesh(targetCtx, legMesh, thighDeg, kneeDeg, facingRight, hipDx = 0, hipDy = 0) {
+  const s = facingRight ? 1 : -1;
+  const rotThigh = (-s * thighDeg * Math.PI) / 180;
+  const rotKnee = (s * Math.max(0, kneeDeg) * Math.PI) / 180;
 
-  ctx.save();
-  ctx.translate(hipX, hipY + dyOffset);
-  ctx.rotate(thighRad);
-  ctx.drawImage(thigh, -hipX, -hipY);
+  const { img, hipX, hipY, kneeY, verts, shinWeights, tris } = legMesh;
+  const mThigh = matMul(matTR(hipX + hipDx, hipY + hipDy, rotThigh), matTR(-hipX, -hipY, 0));
+  const mShin = matMul(
+    mThigh,
+    matMul(matTR(hipX, kneeY, rotKnee), matTR(-hipX, -kneeY, 0))
+  );
 
-  // Move down along thigh bone to knee joint, then bend shin backward
-  ctx.translate(0, kneeLen);
-  ctx.rotate(kneeRad);
-  ctx.drawImage(shin, -hipX, -kneeY);
-  ctx.restore();
+  const posed = new Array(verts.length);
+  for (let k = 0; k < verts.length; k++) {
+    const [px, py] = verts[k];
+    const ws = shinWeights[k];
+    const wt = 1 - ws;
+    const xA = mThigh[0] * px + mThigh[2] * py + mThigh[4];
+    const yA = mThigh[1] * px + mThigh[3] * py + mThigh[5];
+    const xB = mShin[0] * px + mShin[2] * py + mShin[4];
+    const yB = mShin[1] * px + mShin[3] * py + mShin[5];
+    posed[k] = [wt * xA + ws * xB, wt * yA + ws * yB];
+  }
+
+  // 先在独立透明画布合成单腿全部网格，再整张贴回角色画布，避免半透明外缘重复叠黑
+  const legLayer = createCanvas(CELL_W, CELL_H);
+  const lg = legLayer.getContext('2d');
+  for (let t = 0; t < tris.length; t++) {
+    const [i0, i1, i2] = tris[t];
+    drawSkinnedTriangle(lg, img, verts[i0], verts[i1], verts[i2], posed[i0], posed[i1], posed[i2]);
+  }
+  targetCtx.drawImage(legLayer, 0, 0);
 }
 
-function drawPivoted(ctx, layer, pivotX, pivotY, angleDeg, dx = 0, dy = 0) {
-  ctx.save();
-  ctx.translate(pivotX + dx, pivotY + dy);
-  ctx.rotate((angleDeg * Math.PI) / 180);
-  ctx.drawImage(layer, -pivotX, -pivotY);
-  ctx.restore();
+// ---------------------------------------------------------------------------
+// 3. 自然流畅的 8 相位行走步态表（对标 ai-girl-chatgpt-pets 时序 + 柔和屈膝防劈叉）
+// ---------------------------------------------------------------------------
+// 8 个主关键相位（插值为 16 帧平滑循环）：
+//   k0 触地 Contact -> k1 承重屈膝蹬离 Down -> k2 抬腿通过 Passing -> k3 前伸准备 High-Point
+//   k4..k7 左右腿严格 180° 反相对称！摆幅控制在自然优雅的 -18°..+20°，膝盖柔顺后屈 3°..28°。
+const NATURAL_WALK_8PHASE = [
+  // k0: 近腿前伸触地 (+19°, 膝微屈 4°)，远腿在后准备离地 (-16°, 膝屈 18°)
+  { nearT: 19, nearK: 4, nearLift: 0, farT: -16, farK: 18, farLift: -1, bodyDy: 1.0 },
+  // k1: 近腿全脚掌稳踩地面 (+8°, 膝微缓冲 6°)，远腿向后屈膝提踵蹬离 (-13°, 膝屈 28°)
+  { nearT: 8, nearK: 6, nearLift: 0, farT: -13, farK: 28, farLift: -3, bodyDy: 1.6 },
+  // k2: 近腿直立支撑 (-3°, 膝 3°)，远腿向前抬起通过中线 (+8°, 膝屈 26° 抬脚防擦地)
+  { nearT: -3, nearK: 3, nearLift: 0, farT: 8, farK: 26, farLift: -4, bodyDy: -0.6 },
+  // k3: 近腿向后推进 (-13°, 膝屈 12°)，远腿向前舒展迈出 (+20°, 膝伸展至 9°)
+  { nearT: -13, nearK: 12, nearLift: -0.5, farT: 20, farK: 9, farLift: -1.5, bodyDy: -1.2 },
+  // k4: 远腿前伸触地 (+19°, 膝 4°)，近腿在后准备离地 (-16°, 膝屈 18°)
+  { nearT: -16, nearK: 18, nearLift: -1, farT: 19, farK: 4, farLift: 0, bodyDy: 1.0 },
+  // k5: 远腿稳踩地面 (+8°, 膝 6°)，近腿向后屈膝提踵蹬离 (-13°, 膝屈 28°)
+  { nearT: -13, nearK: 28, nearLift: -3, farT: 8, farK: 6, farLift: 0, bodyDy: 1.6 },
+  // k6: 远腿直立支撑 (-3°, 膝 3°)，近腿向前抬起通过中线 (+8°, 膝屈 26°)
+  { nearT: 8, nearK: 26, nearLift: -4, farT: -3, farK: 3, farLift: 0, bodyDy: -0.6 },
+  // k7: 远腿向后推进 (-13°, 膝屈 12°)，近腿向前舒展迈出 (+20°, 膝 9°)
+  { nearT: 20, nearK: 9, nearLift: -1.5, farT: -13, farK: 12, farLift: -0.5, bodyDy: -1.2 },
+];
+
+function sampleWalkGait16(frameIndex, strideScale = 1.0) {
+  const pos = (frameIndex / WALK_FRAMES) * 8;
+  const i0 = Math.floor(pos) % 8;
+  const i1 = (i0 + 1) % 8;
+  const f = pos - Math.floor(pos);
+  const k = f * f * (3 - 2 * f);
+  const a = NATURAL_WALK_8PHASE[i0];
+  const b = NATURAL_WALK_8PHASE[i1];
+  const mix = (ka, kb) => ka + (kb - ka) * k;
+  return {
+    nearT: mix(a.nearT, b.nearT) * strideScale,
+    nearK: mix(a.nearK, b.nearK) * strideScale,
+    nearLift: mix(a.nearLift, b.nearLift) * strideScale,
+    farT: mix(a.farT, b.farT) * strideScale,
+    farK: mix(a.farK, b.farK) * strideScale,
+    farLift: mix(a.farLift, b.farLift) * strideScale,
+    bodyDy: mix(a.bodyDy, b.bodyDy),
+  };
 }
 
-/**
- * 渲染对标 ai-girl-chatgpt-pets 的 16 帧双关节屈膝行走图集（头部平稳，膝盖自然弯曲抬腿迈步）
- */
-function renderPetStyleWalkStrip({
+function renderMeshWalkStrip({
   upperBody,
-  legNearSeg,
-  legFarSeg,
+  legNearMesh,
+  legFarMesh,
   facingRight = true,
+  strideScale = 1.0,
   underSkirtBackdrop = null,
   frontCapLayer = null,
-  strideScale = 1.0,
 }) {
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
-  const sign = facingRight ? 1 : -1;
 
   for (let f = 0; f < WALK_FRAMES; f++) {
-    const g = samplePetGait(f / WALK_FRAMES);
+    const g = sampleWalkGait16(f, strideScale);
     const cell = createCanvas(CELL_W, CELL_H);
     const cg = cell.getContext('2d');
 
     if (underSkirtBackdrop) {
-      drawPivoted(cg, underSkirtBackdrop, CELL_W * 0.5, 240, sign * 0.4 * Math.sin((4 * Math.PI * f) / WALK_FRAMES), 0, g.dy);
+      cg.drawImage(underSkirtBackdrop, 0, g.bodyDy);
     }
-
-    // 1. 远端腿（位于后层，带柔和阴影色阶）
-    drawTwoJointLeg(cg, legFarSeg, g.farThigh * strideScale, g.farKnee * strideScale, facingRight, g.dy);
-    // 2. 近端腿（位于前层）
-    drawTwoJointLeg(cg, legNearSeg, g.nearThigh * strideScale, g.nearKnee * strideScale, facingRight, g.dy);
-    // 3. 上半身与裙摆（平稳移动，头部起伏 <= 2.2px，完全不晃不跳）
-    drawPivoted(cg, upperBody, CELL_W * 0.5, 240, -sign * 0.6, 0, g.dy);
+    drawSkinnedLegMesh(cg, legFarMesh, g.farT, g.farK, facingRight, 0, g.bodyDy + g.farLift);
+    if (upperBody) {
+      cg.drawImage(upperBody, 0, g.bodyDy);
+    }
+    drawSkinnedLegMesh(cg, legNearMesh, g.nearT, g.nearK, facingRight, 0, g.bodyDy + g.nearLift);
     if (frontCapLayer) {
-      drawPivoted(cg, frontCapLayer, CELL_W * 0.5, 240, -sign * 0.6, 0, g.dy);
+      cg.drawImage(frontCapLayer, 0, g.bodyDy);
     }
 
     sg.drawImage(cell, f * CELL_W, 0);
@@ -313,37 +453,32 @@ function renderPetStyleWalkStrip({
   return strip;
 }
 
-/**
- * 渲染与行走图集 100% 同体同比例的待机图集（对标 ai-girl-chatgpt-pets 第 0 行 idle：双脚并拢踩地 + 轻柔呼吸，零切图跳变！）
- */
-function renderPetStyleIdleStrip({
+function renderMeshIdleStrip({
   upperBody,
-  legNearSeg,
-  legFarSeg,
+  legNearMesh,
+  legFarMesh,
   facingRight = true,
+  idleSpreadDeg = 4.5,
   underSkirtBackdrop = null,
   frontCapLayer = null,
-  blinkUpperBody = null,
 }) {
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
 
   for (let f = 0; f < WALK_FRAMES; f++) {
     const theta = (2 * Math.PI * f) / WALK_FRAMES;
-    const breathDy = Math.sin(theta) * 1.2;
-    const isBlink = blinkUpperBody && (f === 11 || f === 12);
-    const bodyToDraw = isBlink ? blinkUpperBody : upperBody;
-
+    const breathDy = Math.sin(theta) * 1.1;
     const cell = createCanvas(CELL_W, CELL_H);
     const cg = cell.getContext('2d');
 
     if (underSkirtBackdrop) {
       cg.drawImage(underSkirtBackdrop, 0, breathDy);
     }
-    // 待机双脚自然微开稳踩地面，膝盖不乱弹（对标 ai-girl-chatgpt-pets idle 自然站姿）
-    drawTwoJointLeg(cg, legFarSeg, -6, 2, facingRight, 0);
-    drawTwoJointLeg(cg, legNearSeg, 6, 2, facingRight, 0);
-    cg.drawImage(bodyToDraw, 0, breathDy);
+    drawSkinnedLegMesh(cg, legFarMesh, -idleSpreadDeg, 1.5, facingRight, 0, 0);
+    if (upperBody) {
+      cg.drawImage(upperBody, 0, breathDy);
+    }
+    drawSkinnedLegMesh(cg, legNearMesh, idleSpreadDeg, 1.5, facingRight, 0, 0);
     if (frontCapLayer) {
       cg.drawImage(frontCapLayer, 0, breathDy);
     }
@@ -353,43 +488,136 @@ function renderPetStyleIdleStrip({
   return strip;
 }
 
+// ---------------------------------------------------------------------------
+// 4. 各角色净空上身与双骨骼蒙皮腿构建（100% 消除裙下残腿，绝无第 3 条腿！）
+// ---------------------------------------------------------------------------
+
+/**
+ * 鲸鱼娘纯侧面行走 / 待机（默认朝左 facingRight=false，翻转后朝右）：
+ * 彻底清除 whale_side_rainwalk_leg_under.png 裙摆下方全部后腿与粉白残边，仅保留深蓝鲸尾！
+ */
+async function prepareWhaleSideParts() {
+  const baseRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk.png'));
+  const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk_leg_under.png'));
+  const base = fitAndCutoutSolid(baseRaw);
+  const under = fitAndCutoutSolid(underRaw);
+
+  const frontLegPoly = [
+    [116, 294], [160, 304], [156, 332], [142, 360], [134, 388],
+    [120, 410], [80, 410], [52, 392], [52, 366], [90, 358], [104, 340], [112, 312],
+  ];
+  // 剔除前腿顶部的深色裙边碎像素，只提取干净长袜腿与黑皮鞋
+  const rawFrontLeg = extractPolyLayer(base, frontLegPoly, {
+    filterPixel: (x, y, r, g, b) => !(y < 312 && r < 95 && g < 95 && b < 115),
+  });
+
+  const legNearMesh = buildSkinnedLegMesh(rawFrontLeg, {
+    srcHipX: 136,
+    srcHipY: 304,
+    neutralRotDeg: -23,
+    dstHipX: 150,
+    dstHipY: 300,
+    kneeLen: 44,
+    blendHalf: 15,
+  });
+  const legFarMesh = buildSkinnedLegMesh(tintCanvas(rawFrontLeg, 0.83, 0.84, 0.92), {
+    srcHipX: 136,
+    srcHipY: 304,
+    neutralRotDeg: -23,
+    dstHipX: 162,
+    dstHipY: 300,
+    kneeLen: 44,
+    blendHalf: 15,
+  });
+
+  // 彻底清除裙摆以下（y>=306）左下方整条后腿与深藏青色原皮鞋（斜线 x < 194 + (y-310)*0.56 内全部清空，完整保留右上方鲸尾！）
+  const cleanSkirtUnder = erasePolyInPlace(under, [
+    [96, 306], [202, 310], [250, 396], [250, 415], [96, 415],
+  ], {
+    shouldErase: (x, y, r, g, b) => {
+      // 斜分界线右上方为完整鲸尾（含深色描边），左下方为原后腿与深蓝原皮鞋（必须 100% 擦净！）
+      const tailBoundaryX = 195 + (y - 310) * 0.56;
+      if (x >= tailBoundaryX && y <= 398) {
+        const isBlueTail = b >= 68 && b > r + 10;
+        const isTailOutline = x >= tailBoundaryX + 4 && b >= r - 4 && r < 95;
+        if (isBlueTail || isTailOutline) return false;
+      }
+      // 保留 y<=315 处的深藏青色裙摆与白蕾丝底边
+      if (y <= 315 && x <= 192 && r < 95 && g < 95 && b < 115) return false;
+      return true;
+    },
+  });
+
+  // 裁取裙摆蕾丝及以上 (y<=315) 作为前景遮罩层，让近腿髋部自然藏于女仆裙摆下方！
+  const frontCapLayer = extractPolyLayer(cleanSkirtUnder, [
+    [0, 0], [CELL_W, 0], [CELL_W, 304], [202, 316], [108, 310], [0, 304],
+  ]);
+
+  return {
+    upperBody: cleanSkirtUnder,
+    frontCapLayer,
+    legNearMesh,
+    legFarMesh,
+    facingRight: false,
+    strideScale: 1.0,
+    idleSpreadDeg: 5.5,
+  };
+}
+
+/**
+ * 鲸鱼娘 3/4 视角（开心 & 委屈）：
+ * 采用 dance-v11/source/whale_legunder.png（原生零残腿净空底板！）+ animated-v10/whale.png 原生左右双鞋，
+ * 或在 v13 等高比例下彻底清除全部裙下残腿并配前景围裙遮罩，零第 3 条腿、零断膝！
+ */
 async function prepareWhale34Parts({ sadFace = false } = {}) {
   const cleanUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_walk_retry_under.png'));
   const cleanUnder = fitAndCutoutSolid(cleanUnderRaw);
 
   const legPoly = [
-    [148, 312], [195, 310], [209, 352], [235, 378],
+    [148, 312], [198, 310], [212, 352], [235, 378],
     [235, 410], [184, 410], [172, 374], [156, 340],
   ];
   const rawLeg = extractPolyLayer(cleanUnder, legPoly, {
-    filterPixel: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
+    filterPixel: (x, y, r, g, b) => {
+      if (x >= 194 && y <= 368 && b > 86 && b > r + 12) return false;
+      if (y < 318 && r > 225 && g > 225 && b > 225) return false; // 去掉顶部白衬裙碎角
+      return true;
+    },
   });
 
-  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
+  const legNearMesh = buildSkinnedLegMesh(rawLeg, {
     srcHipX: 181,
-    srcHipY: 312,
-    neutralRotDeg: 18,
+    srcHipY: 314,
+    neutralRotDeg: 21,
     dstHipX: 185,
-    dstHipY: 300,
-    kneeLen: 45,
-    hipCapColor: '#F7DBD0',
-    kneeCapColor: '#F7DBD0',
-    kneeCapR: 7.0,
+    dstHipY: 304,
+    kneeLen: 42,
+    blendHalf: 15,
   });
-  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.84, 0.85, 0.92), {
+  const legFarMesh = buildSkinnedLegMesh(tintCanvas(rawLeg, 0.84, 0.85, 0.92), {
     srcHipX: 181,
-    srcHipY: 312,
-    neutralRotDeg: 18,
-    dstHipX: 165,
-    dstHipY: 300,
-    kneeLen: 45,
-    hipCapColor: '#D0B6B2',
-    kneeCapColor: '#D0B6B2',
-    kneeCapR: 7.0,
+    srcHipY: 314,
+    neutralRotDeg: 21,
+    dstHipX: 164,
+    dstHipY: 304,
+    kneeLen: 42,
+    blendHalf: 15,
   });
 
-  const cleanBody = erasePolyInPlace(cleanUnder, legPoly, {
-    shouldErase: (x, y, r, g, b) => !(x >= 192 && y <= 362 && b > 92 && b > r + 14),
+  // 彻底擦除裙摆以下左下方原腿、白袜与深藏青原皮鞋（斜线 x < 201 + (y-310)*0.56 内 100% 清空，绝不留悬空第 3 只鞋！）
+  const cleanBody = erasePolyInPlace(cleanUnder, [
+    [126, 308], [212, 308], [254, 396], [254, 415], [126, 415],
+  ], {
+    shouldErase: (x, y, r, g, b) => {
+      const tailBoundaryX = 201 + (y - 310) * 0.56;
+      if (x >= tailBoundaryX && y <= 396) {
+        const isBlueTail = b >= 72 && b > r + 10;
+        const isTailOutline = x >= tailBoundaryX + 4 && b >= r - 4 && r < 95;
+        if (isBlueTail || isTailOutline) return false;
+      }
+      if (y <= 316 && x <= 198 && r < 90 && g < 90 && b < 110) return false;
+      return true;
+    },
   });
 
   let upperBody = cleanBody;
@@ -403,251 +631,338 @@ async function prepareWhale34Parts({ sadFace = false } = {}) {
     ug.drawImage(sad, 0, 0, CELL_W, 196, 0, 0, CELL_W, 196);
   }
 
-  return { upperBody, legNearSeg, legFarSeg };
+  // 前景女仆裙摆遮罩（y<=315），完美盖住近腿髋关节根部
+  const frontCapLayer = extractPolyLayer(upperBody, [
+    [0, 0], [CELL_W, 0], [CELL_W, 306], [204, 317], [132, 317], [0, 306],
+  ]);
+
+  return {
+    upperBody,
+    frontCapLayer,
+    legNearMesh,
+    legFarMesh,
+    facingRight: true,
+    strideScale: 0.78, // 3/4 视角采用适度自然步幅，杜绝夸张劈叉
+    idleSpreadDeg: 4.5,
+  };
 }
 
-async function prepareWhaleSideParts() {
-  const baseRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk.png'));
-  const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_side_rainwalk_leg_under.png'));
-  const base = fitAndCutoutSolid(baseRaw);
-  const under = fitAndCutoutSolid(underRaw);
-
-  const frontLegPoly = [
-    [116, 294], [160, 304], [156, 332], [142, 360], [134, 388],
-    [120, 410], [80, 410], [52, 392], [52, 366], [90, 358], [104, 340], [112, 312],
-  ];
-  const rawFrontLeg = extractPolyLayer(base, frontLegPoly);
-  const legNearSeg = buildTwoJointLegSegments(rawFrontLeg, {
-    srcHipX: 138,
-    srcHipY: 302,
-    neutralRotDeg: -22,
-    dstHipX: 150,
-    dstHipY: 298,
-    kneeLen: 46,
-    hipCapColor: '#F7DBD0',
-    kneeCapColor: '#F7DBD0',
-    kneeCapR: 11,
-  });
-  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawFrontLeg, 0.84, 0.85, 0.92), {
-    srcHipX: 138,
-    srcHipY: 302,
-    neutralRotDeg: -22,
-    dstHipX: 162,
-    dstHipY: 298,
-    kneeLen: 46,
-    hipCapColor: '#D0B6B2',
-    kneeCapColor: '#D0B6B2',
-    kneeCapR: 11,
-  });
-
-  const backLegErasePoly = [
-    [126, 308], [193, 315], [206, 338], [218, 358], [232, 378],
-    [232, 414], [132, 414], [126, 345],
-  ];
-  const upperBody = erasePolyInPlace(under, backLegErasePoly, {
-    shouldErase: (x, y, r, g, b) => {
-      if (x >= 191 && y <= 368 && b > 92 && b > r + 16) return false;
-      return true;
-    },
-  });
-
-  return { upperBody, legNearSeg, legFarSeg };
-}
-
+/**
+ * 豆包侧面行走 / 待机（默认朝左 facingRight=false）：双骨骼连续网格蒙皮，消除裤腿后方黑球鼓包！
+ */
 async function prepareDoubaoSideParts() {
   const underRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/doubao_step_leg_under.png'));
   const under = fitAndCutoutSolid(underRaw, { dyOffset: 48 });
 
   erasePolyInPlace(under, [[0, 0], [145, 0], [145, CELL_H], [0, CELL_H]], {
-    shouldErase: (x, y, r, g, b) => {
-      if (x >= 139 && y >= 228 && y <= 248 && r > 170) return false;
-      return true;
-    },
+    shouldErase: (x, y, r) => !(x >= 139 && y >= 228 && y <= 248 && r > 170),
   });
 
   const legPoly = [[172, 314], [222, 314], [224, 412], [162, 412]];
   const rawLeg = extractPolyLayer(under, legPoly);
-  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
+  const legNearMesh = buildSkinnedLegMesh(rawLeg, {
     srcHipX: 198,
     srcHipY: 316,
     neutralRotDeg: 0,
     dstHipX: 196,
-    dstHipY: 318,
+    dstHipY: 316,
     kneeLen: 40,
-    hipCapColor: null,
-    kneeCapColor: '#232629',
-    kneeCapR: 9.5,
+    blendHalf: 14,
   });
-  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.78, 0.80, 0.86), {
+  const legFarMesh = buildSkinnedLegMesh(tintCanvas(rawLeg, 0.78, 0.80, 0.86), {
     srcHipX: 198,
     srcHipY: 316,
     neutralRotDeg: 0,
     dstHipX: 202,
-    dstHipY: 318,
+    dstHipY: 316,
     kneeLen: 40,
-    hipCapColor: null,
-    kneeCapColor: '#1B1D20',
-    kneeCapR: 9.5,
+    blendHalf: 14,
   });
 
-  const upperBody = erasePolyInPlace(under, [[160, 326], [226, 326], [226, 414], [160, 414]]);
-  return { upperBody, legNearSeg, legFarSeg };
+  const upperBody = erasePolyInPlace(under, [[156, 322], [232, 322], [232, 415], [156, 415]]);
+  const frontCapLayer = extractPolyLayer(upperBody, [[0, 0], [CELL_W, 0], [CELL_W, 324], [0, 324]]);
+
+  return {
+    upperBody,
+    frontCapLayer,
+    legNearMesh,
+    legFarMesh,
+    facingRight: false,
+    strideScale: 0.92,
+    idleSpreadDeg: 4.5,
+  };
 }
 
+/**
+ * 龙女 GPT 推山迈步 / 待机：
+ * 彻底擦净前裙开叉内的原前腿与后方原鞋尖，不画生硬紫色大三角块，杜绝第 3 只鞋/第 3 条腿！
+ */
 async function prepareGptPushParts() {
   const sheet = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/gpt_push_final_action.png'));
   const base = createCanvas(CELL_W, CELL_H);
   base.getContext('2d').drawImage(sheet, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
 
+  // 复用 dance-v11/source/gpt_legunder.png 原画级手绘裙底内衬褶皱，替代几何色块，零残鞋零矩形断边！
+  const legUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/dance-v11/source/gpt_legunder.png'));
+  const cleanSkirtPlate = fitAndCutoutSolid(legUnderRaw, {
+    checker: true,
+    extraSeeds: [[184, 355], [165, 380]],
+  });
+
   const frontLegPoly = [[122, 298], [156, 306], [166, 355], [168, 408], [116, 408], [120, 350]];
   const rawLeg = extractPolyLayer(base, frontLegPoly);
-  const legNearSeg = buildTwoJointLegSegments(rawLeg, {
+  const legNearMesh = buildSkinnedLegMesh(rawLeg, {
     srcHipX: 140,
     srcHipY: 306,
     neutralRotDeg: 0,
-    dstHipX: 146,
-    dstHipY: 304,
-    kneeLen: 44,
-    hipCapColor: '#F9E2DA',
-    kneeCapColor: '#F9E2DA',
-    kneeCapR: 10,
+    dstHipX: 158,
+    dstHipY: 302,
+    kneeLen: 43,
+    blendHalf: 15,
   });
-  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeg, 0.82, 0.82, 0.90), {
+  const legFarMesh = buildSkinnedLegMesh(tintCanvas(rawLeg, 0.84, 0.84, 0.91), {
     srcHipX: 140,
     srcHipY: 306,
-    neutralRotDeg: 0,
-    dstHipX: 160,
-    dstHipY: 304,
-    kneeLen: 44,
-    hipCapColor: '#D5BDBA',
-    kneeCapColor: '#D5BDBA',
-    kneeCapR: 10,
-  });
-
-  const underSkirtBackdrop = createCanvas(CELL_W, CELL_H);
-  const bg = underSkirtBackdrop.getContext('2d');
-  bg.drawImage(base, 0, 0);
-  erasePolyInPlace(underSkirtBackdrop, frontLegPoly);
-  erasePolyInPlace(underSkirtBackdrop, [[174, 380], [206, 380], [206, 410], [174, 410]]);
-  bg.fillStyle = '#E8E2F2';
-  bg.beginPath();
-  bg.moveTo(124, 302);
-  bg.lineTo(166, 306);
-  bg.lineTo(172, 392);
-  bg.lineTo(116, 392);
-  bg.closePath();
-  bg.fill();
-
-  const frontCapLayer = extractPolyLayer(base, [[0, 0], [CELL_W, 0], [CELL_W, 314], [0, 314]]);
-  const emptyUpper = createCanvas(CELL_W, CELL_H);
-  return { upperBody: emptyUpper, underSkirtBackdrop, frontCapLayer, legNearSeg, legFarSeg };
-}
-
-async function prepareGeminiParts() {
-  const v10 = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/animated-v10/gemini.png'));
-  const base = createCanvas(CELL_W, CELL_H);
-  base.getContext('2d').drawImage(v10, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
-
-  const legUnderRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/dance-v11/source/gemini_legunder.png'));
-  const upperRaw = fitAndCutoutSolid(legUnderRaw, {
-    checker: true,
-    extraSeeds: [[184, 350], [184, 385], [165, 365], [202, 365]],
-  });
-
-  const rawLeftLeg = extractPolyLayer(base, [[150, 308], [184, 308], [184, 412], [150, 412]]);
-  const legNearSeg = buildTwoJointLegSegments(rawLeftLeg, {
-    srcHipX: 168,
-    srcHipY: 312,
-    neutralRotDeg: 0,
-    dstHipX: 186,
-    dstHipY: 310,
-    kneeLen: 44,
-    hipCapColor: '#FCE6DF',
-    kneeCapColor: '#F5F7FF',
-    kneeCapR: 9.5,
-  });
-  const legFarSeg = buildTwoJointLegSegments(tintCanvas(rawLeftLeg, 0.84, 0.85, 0.92), {
-    srcHipX: 168,
-    srcHipY: 312,
     neutralRotDeg: 0,
     dstHipX: 174,
-    dstHipY: 310,
-    kneeLen: 44,
-    hipCapColor: '#D8C2C2',
-    kneeCapColor: '#DCE1F2',
-    kneeCapR: 9.5,
+    dstHipY: 302,
+    kneeLen: 43,
+    blendHalf: 15,
   });
 
-  const hairBack = extractPolyLayer(upperRaw, [[0, 290], [142, 290], [152, 416], [0, 416]]);
-  const hairBackR = extractPolyLayer(upperRaw, [[224, 290], [CELL_W, 290], [CELL_W, 416], [214, 416]]);
-  const hairBackdrop = createCanvas(CELL_W, CELL_H);
-  hairBackdrop.getContext('2d').drawImage(hairBack, 0, 0);
-  hairBackdrop.getContext('2d').drawImage(hairBackR, 0, 0);
-  erasePolyInPlace(hairBackdrop, [[0, 290], [CELL_W, 290], [CELL_W, 416], [0, 416]], {
-    shouldErase: (x, y, r, g, b) => {
-      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
-      return r > 188 && g > 188 && b > 188 && (mx - mn) < 20;
-    },
-  });
+  // 上半身保留 gpt_push_final_action 的双手推石姿态（y<=292），下半身无缝衔接 gpt_legunder 的手绘长裙与龙尾
+  const underSkirtBackdrop = createCanvas(CELL_W, CELL_H);
+  const bg = underSkirtBackdrop.getContext('2d');
+  bg.drawImage(base, 0, 0, CELL_W, 294, 0, 0, CELL_W, 294);
+  bg.drawImage(cleanSkirtPlate, 0, 286, CELL_W, CELL_H - 286, 0, 286, CELL_W, CELL_H - 286);
 
-  const frontSkirtAndHead = createCanvas(CELL_W, CELL_H);
-  frontSkirtAndHead.getContext('2d').drawImage(upperRaw, 0, 0);
-  erasePolyInPlace(frontSkirtAndHead, [[0, 326], [145, 326], [145, 416], [0, 416]]);
-  erasePolyInPlace(frontSkirtAndHead, [[222, 326], [CELL_W, 326], [CELL_W, 416], [222, 416]]);
-  erasePolyInPlace(frontSkirtAndHead, [[140, 324], [226, 324], [226, 416], [140, 416]], {
-    shouldErase: (x, y, r, g, b) => {
-      if (x >= 156 && x <= 210 && y >= 332) return true;
-      const mx = Math.max(r, g, b), mn = Math.min(r, g, b);
-      return r > 188 && g > 188 && b > 188 && (mx - mn) < 22;
-    },
-  });
+  const frontCapLayer = extractPolyLayer(underSkirtBackdrop, [
+    [0, 0], [CELL_W, 0], [CELL_W, 304], [0, 304],
+  ]);
 
-  return { upperBody: frontSkirtAndHead, underSkirtBackdrop: hairBackdrop, legNearSeg, legFarSeg };
+  return {
+    upperBody: null,
+    underSkirtBackdrop,
+    frontCapLayer,
+    legNearMesh,
+    legFarMesh,
+    facingRight: true,
+    strideScale: 0.85,
+    idleSpreadDeg: 5.0,
+  };
 }
 
-async function buildWhaleBenchSit() {
+/**
+ * 通用 dance-v11 + animated-v10 角色双骨骼连续蒙皮步态生成器
+ * 适用于 Gemini、GPT(日常)、Kimi、Qwen、Z.AI、Claude（供 MV 与 Day 系列通用模板直接调用！）
+ */
+const V11_CHARACTER_RIG_SPECS = {
+  gemini: {
+    legPoly: [[154, 316], [184, 316], [185, 406], [154, 406]],
+    srcHip: [169, 318],
+    nearHip: [188, 314],
+    farHip: [172, 314],
+    kneeLen: 42,
+    hemY: 318,
+    checkerSeeds: [[184, 350], [184, 385], [165, 365], [202, 365]],
+    strideScale: 0.85,
+  },
+  gpt: {
+    legPoly: [[143, 297], [176, 297], [181, 406], [145, 406]],
+    srcHip: [158, 302],
+    nearHip: [178, 302],
+    farHip: [160, 302],
+    kneeLen: 44,
+    hemY: 304,
+    checkerSeeds: [[184, 355], [165, 380]],
+    strideScale: 0.84,
+  },
+  kimi: {
+    legPoly: [[146, 316], [188, 316], [189, 408], [145, 408]],
+    srcHip: [167, 320],
+    nearHip: [192, 320],
+    farHip: [174, 320],
+    kneeLen: 38,
+    hemY: 322,
+    checkerSeeds: [[184, 355], [60, 360], [320, 360]],
+    strideScale: 0.82,
+  },
+  qwen: {
+    legPoly: [[158, 350], [188, 350], [188, 404], [158, 404]],
+    srcHip: [173, 351],
+    nearHip: [194, 350],
+    farHip: [176, 350],
+    kneeLen: 24,
+    hemY: 352,
+    checkerSeeds: [],
+    strideScale: 0.76,
+  },
+  zai: {
+    legPoly: [[156, 350], [186, 350], [186, 406], [156, 406]],
+    srcHip: [171, 351],
+    nearHip: [196, 350],
+    farHip: [176, 350],
+    kneeLen: 24,
+    hemY: 352,
+    checkerSeeds: [[184, 380]],
+    strideScale: 0.76,
+  },
+  claude: {
+    legPoly: [[156, 343], [183, 343], [183, 408], [156, 408]],
+    srcHip: [169, 344],
+    nearHip: [196, 344],
+    farHip: [174, 344],
+    kneeLen: 28,
+    hemY: 344,
+    checkerSeeds: [],
+    strideScale: 0.78,
+  },
+};
+
+async function prepareV11CharacterParts(charId) {
+  const cfg = V11_CHARACTER_RIG_SPECS[charId];
+  let base;
+  let upperBody;
+
+  if (charId === 'claude') {
+    const standRaw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/dance-v11/source/claude_stand_cutout.png'));
+    base = createCanvas(CELL_W, CELL_H);
+    base.getContext('2d').drawImage(standRaw, 0, 0, CELL_W, CELL_H);
+    upperBody = createCanvas(CELL_W, CELL_H);
+    upperBody.getContext('2d').drawImage(base, 0, 0);
+    erasePolyInPlace(upperBody, [[138, 340], [238, 340], [238, 414], [138, 414]]);
+  } else {
+    const v10 = await loadImage(path.join(REPO_ROOT, `assets/ai-girls/animated-v10/${charId}.png`));
+    base = createCanvas(CELL_W, CELL_H);
+    base.getContext('2d').drawImage(v10, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
+
+    const legUnderRaw = await loadImage(path.join(REPO_ROOT, `assets/ai-girls/dance-v11/source/${charId}_legunder.png`));
+    upperBody = fitAndCutoutSolid(legUnderRaw, {
+      checker: charId !== 'qwen',
+      extraSeeds: cfg.checkerSeeds,
+    });
+  }
+
+  const rawLeg = extractPolyLayer(base, cfg.legPoly);
+  const legNearMesh = buildSkinnedLegMesh(rawLeg, {
+    srcHipX: cfg.srcHip[0],
+    srcHipY: cfg.srcHip[1],
+    neutralRotDeg: 0,
+    dstHipX: cfg.nearHip[0],
+    dstHipY: cfg.nearHip[1],
+    kneeLen: cfg.kneeLen,
+    blendHalf: Math.min(14, Math.round(cfg.kneeLen * 0.4)),
+  });
+  const legFarMesh = buildSkinnedLegMesh(tintCanvas(rawLeg, 0.84, 0.85, 0.92), {
+    srcHipX: cfg.srcHip[0],
+    srcHipY: cfg.srcHip[1],
+    neutralRotDeg: 0,
+    dstHipX: cfg.farHip[0],
+    dstHipY: cfg.farHip[1],
+    kneeLen: cfg.kneeLen,
+    blendHalf: Math.min(14, Math.round(cfg.kneeLen * 0.4)),
+  });
+
+  const frontCapLayer = extractPolyLayer(upperBody, [
+    [0, 0], [CELL_W, 0], [CELL_W, cfg.hemY], [0, cfg.hemY],
+  ]);
+
+  return {
+    upperBody: null,
+    underSkirtBackdrop: upperBody,
+    frontCapLayer,
+    legNearMesh,
+    legFarMesh,
+    facingRight: true,
+    strideScale: cfg.strideScale,
+    idleSpreadDeg: 4.5,
+  };
+}
+
+/**
+ * 鲸鱼娘侧坐木长椅 16 帧呼吸小晃腿图集
+ */
+async function buildWhaleSeatSideBenchAtlas() {
   const raw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_seat_side_v35.png'));
-  const base = fitAndCutoutSolid(raw);
+  const clean = fitAndCutoutSolid(raw);
+  erasePolyInPlace(clean, [
+    [138, 326], [308, 326], [308, 416], [138, 416],
+  ], {
+    shouldErase: (x, y, r, g, b) => {
+      const isBrownBench = r > b + 16 && r > 75 && b < 118;
+      const isBenchOutline = y >= 352 && x >= 158 && r < 72 && g < 65 && b < 65;
+      return isBrownBench || isBenchOutline;
+    },
+  });
+
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
   for (let f = 0; f < WALK_FRAMES; f++) {
     const theta = (2 * Math.PI * f) / WALK_FRAMES;
+    const breathDy = Math.sin(theta) * 1.4;
     const cell = createCanvas(CELL_W, CELL_H);
     const cg = cell.getContext('2d');
-    cg.drawImage(base, 0, Math.sin(theta) * 1.4);
+    cg.save();
+    cg.translate(CELL_W / 2, CELL_H - 12 + breathDy);
+    cg.rotate((Math.sin(theta) * 0.55 * Math.PI) / 180);
+    cg.drawImage(clean, -CELL_W / 2, -(CELL_H - 12));
+    cg.restore();
     sg.drawImage(cell, f * CELL_W, 0);
   }
   return strip;
 }
 
 export const WALK_RIG_BUILDERS = {
-  whale_walk_happy_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhale34Parts({ sadFace: false })), facingRight: true }),
-  whale_idle_happy_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhale34Parts({ sadFace: false })), facingRight: true }),
-  whale_walk_sad_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhale34Parts({ sadFace: true })), facingRight: true }),
-  whale_idle_sad_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhale34Parts({ sadFace: true })), facingRight: true }),
-  whale_walk_side_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareWhaleSideParts()), facingRight: false }),
-  whale_idle_side_pet: async () => renderPetStyleIdleStrip({ ...(await prepareWhaleSideParts()), facingRight: false }),
-  whale_seat_side_bench: buildWhaleBenchSit,
-  doubao_walk_side_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareDoubaoSideParts()), facingRight: false }),
-  doubao_idle_side_pet: async () => renderPetStyleIdleStrip({ ...(await prepareDoubaoSideParts()), facingRight: false }),
-  gpt_push_walk_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareGptPushParts()), facingRight: true, strideScale: 0.88 }),
-  gpt_push_idle_pet: async () => renderPetStyleIdleStrip({ ...(await prepareGptPushParts()), facingRight: true }),
-  gemini_walk_2leg: async () => renderPetStyleWalkStrip({ ...(await prepareGeminiParts()), facingRight: true, strideScale: 0.90 }),
-  gemini_idle_pet: async () => renderPetStyleIdleStrip({ ...(await prepareGeminiParts()), facingRight: true }),
+  // 鲸鱼娘侧面步态、待机与长椅坐姿（MV 与 Day 系列横向走位首选）
+  whale_walk_side_2leg: async () => renderMeshWalkStrip(await prepareWhaleSideParts()),
+  whale_idle_side_pet: async () => renderMeshIdleStrip(await prepareWhaleSideParts()),
+  whale_seat_side_bench: buildWhaleSeatSideBenchAtlas,
+  // 鲸鱼娘 3/4 步态与同体待机
+  whale_walk_happy_2leg: async () => renderMeshWalkStrip(await prepareWhale34Parts({ sadFace: false })),
+  whale_idle_happy_pet: async () => renderMeshIdleStrip(await prepareWhale34Parts({ sadFace: false })),
+  whale_walk_sad_2leg: async () => renderMeshWalkStrip(await prepareWhale34Parts({ sadFace: true })),
+  whale_idle_sad_pet: async () => renderMeshIdleStrip(await prepareWhale34Parts({ sadFace: true })),
+  // 豆包侧面步态与待机（MV 与 Day12+ 豆包帮手通用）
+  doubao_walk_side_2leg: async () => renderMeshWalkStrip(await prepareDoubaoSideParts()),
+  doubao_idle_side_pet: async () => renderMeshIdleStrip(await prepareDoubaoSideParts()),
+  // 龙女 GPT 推山步态与日常步态
+  gpt_push_walk_2leg: async () => renderMeshWalkStrip(await prepareGptPushParts()),
+  gpt_push_idle_pet: async () => renderMeshIdleStrip(await prepareGptPushParts()),
+  gpt_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('gpt')),
+  gpt_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('gpt')),
+  // 其余全部 AI Girls 角色步态与配对待机（MV 与 Day 系列嘉宾入场通用）
+  gemini_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('gemini')),
+  gemini_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('gemini')),
+  claude_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('claude')),
+  claude_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('claude')),
+  kimi_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('kimi')),
+  kimi_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('kimi')),
+  qwen_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('qwen')),
+  qwen_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('qwen')),
+  zai_walk_2leg: async () => renderMeshWalkStrip(await prepareV11CharacterParts('zai')),
+  zai_idle_pet: async () => renderMeshIdleStrip(await prepareV11CharacterParts('zai')),
 };
 
-export async function ensureWalkRigAtlases(outDir = DEFAULT_WALK_CACHE_DIR, { force = false } = {}) {
-  fs.mkdirSync(outDir, { recursive: true });
+export const WALK_RIG_ATLAS_NAMES = Object.freeze(Object.keys(WALK_RIG_BUILDERS));
+
+export async function ensureWalkRigAtlases(cacheDir = DEFAULT_WALK_CACHE_DIR, { force = false, only = null } = {}) {
+  fs.mkdirSync(cacheDir, { recursive: true });
+  const keys = Array.isArray(only) && only.length > 0 ? only : Object.keys(WALK_RIG_BUILDERS);
   const built = {};
-  for (const [name, builder] of Object.entries(WALK_RIG_BUILDERS)) {
-    const outPath = path.join(outDir, `${name}.png`);
-    if (!force && fs.existsSync(outPath) && fs.statSync(outPath).size > 8192) {
-      built[name] = outPath;
-      continue;
+  for (const name of keys) {
+    const fn = WALK_RIG_BUILDERS[name];
+    if (!fn) continue;
+    const outPath = path.join(cacheDir, `${name}.png`);
+    if (force || !fs.existsSync(outPath) || fs.statSync(outPath).size < 20_000) {
+      const strip = await fn();
+      fs.writeFileSync(outPath, strip.toBuffer('image/png'));
     }
-    const strip = await builder();
-    fs.writeFileSync(outPath, strip.toBuffer('image/png'));
     built[name] = outPath;
   }
   return built;
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const out = await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR, { force: true });
+  console.log('WALK_RIGS_READY', JSON.stringify(out, null, 2));
 }
