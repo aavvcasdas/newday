@@ -19,6 +19,7 @@ import { CORE } from '../互动元素/cue_props_engine.mjs';
 import { cameraFor } from './camera_plan.mjs';
 import {bodyPerformance,loadImageActors,drawImageActor,drawAmbient} from './performance_v2.mjs';
 import { drawSemanticTracks } from './semantic_tracks.mjs';
+import { sampleMotionPath } from './story_motion.mjs';
 export { ambientCamera, cameraFor, CAMERA_PRESETS } from './camera_plan.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
 
@@ -119,12 +120,17 @@ export function resolveActor(plan, t, line, cues = []) {
       anim = { ...anim, bones: { ...anim.bones, ...gaitAnim(t, start, duration).bones } };
     }
   }
+  let pathY = plan.y ?? 600;
+  if (plan.motionPath) {
+    const point=sampleMotionPath(plan.motionPath,t); x=point.x;pathY=point.y;
+    if(point.moving && !plan.assetId) anim={...anim,bones:{...anim.bones,...gaitAnim(t,plan.motionPath[0].at,plan.motionPath.at(-1).at-plan.motionPath[0].at).bones}};
+  }
   const perf=plan.performanceV2?bodyPerformance(plan,t):null;
   const body = perf?{dx:perf.dx,dy:perf.dy,lean:perf.lean,squash:0}:livingBody(t, seed, plan.idleMotion ?? 1);
   if(perf?.pose)pose=perf.pose;
   return {
     assetId:plan.assetId,height:plan.height,opacity:perf?.opacity??1,imageScale:perf?.scale??1,
-    pose, name: plan.name, x: x + body.dx, y: (plan.y ?? 600) + body.dy, u: (plan.u ?? 38)*(perf?.scale??1),
+    pose, name: plan.name, x: x + body.dx, y: pathY + body.dy, u: (plan.u ?? 38)*(perf?.scale??1),
     flip: !!plan.flip, lean: (plan.lean ?? 0) + body.lean, squash: body.squash, anim,
   };
 }
@@ -232,7 +238,11 @@ async function createSceneRenderer({ spec, alignment, subdata }, planningPreview
             const { x, y, width } = shot.foregroundTable;
             drawForegroundTable(g, x, y, width);
           }
-          drawSemanticTracks(g, rawTime, shot.semanticTracks);
+          drawSemanticTracks(g, rawTime, shot.semanticTracks, {anchorAt: (actorIndex, key, at) => {
+            const frozen=holdFrame(Math.round(at*FPS),events,shot.id)/FPS;
+            const actor=actorsFor(shot,frozen,lineAt(at))[actorIndex];
+            return actorAnchors(actor)[key];
+          }});
           drawAmbient(g,rawTime,shot.ambient);
           for (const a of actors) if (a.name && a.opacity>.7 && !(isOpener&&spec.performanceVersion===2)) drawText(g, a.name, a.x, a.y - (a.assetId?a.height:10.4*a.u) - 18, 17, '#E5E8DD');
           // 头顶身份铭牌（场景空间，位于头顶上方，不贴角色本体）

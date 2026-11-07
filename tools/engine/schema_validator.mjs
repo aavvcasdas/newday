@@ -1,3 +1,4 @@
+import {validateMotionPath} from './story_motion.mjs';
 // schema_validator.mjs — episode.spec.mjs 声明式配置强校验
 // 在渲染前拦截：缺失交互、同姿罚站、越界坐标、未知道具/动词、违规文案。
 import { CALIBRATION, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
@@ -35,6 +36,7 @@ export function validateActor(actor, where) {
   }
   if (actor.action != null) throw new Error(`${where} action 尚未接入统一引擎；28个旧动作不能冒充可执行的姿态`);
   if (actor.idleMotion != null && (!Number.isFinite(actor.idleMotion) || actor.idleMotion < 0 || actor.idleMotion > 1)) throw new Error(`${where} idleMotion 必须在0..1`);
+  if (actor.motionPath) { validateMotionPath(actor.motionPath); if (actor.assetId) throw Error(`${where} fixed PNG lacks walking gait; motionPath not supported`); if (actor.walk) throw Error(`${where} cannot combine walk and motionPath`); }
   if (actor.walk && (![actor.walk.from, actor.walk.to, actor.walk.duration ?? 1].every(Number.isFinite) || (actor.walk.duration ?? 1) <= 0)) throw new Error(`${where} walk 位置须为有限数、duration须为正数`);
   if (!Number.isFinite(actor.x) || !Number.isFinite(actor.y)) throw new Error(`${where} 角色坐标 x/y 必须为有限数`);
   if (actor.y > 640 || actor.y < 420) throw new Error(`${where} 角色脚位 y=${actor.y} 越界（应在 420..640）`);
@@ -110,6 +112,12 @@ export function validateSpec(spec, opts = {}) {
     const actors = shot.actors || shot.actorsPlan;
     if (!Array.isArray(actors) || (!actors.length && !(spec.directorVersion === 1 && shot.direction?.kind === 'prop'))) throw new Error(`${where} 缺少 actors 声明（仅导演道具特写可显式actors=[]）`);
     actors.forEach((a, j) => validateActor(a, `${where}.actors[${j}]`));
+    for (const track of shot.semanticTracks || []) if(track.attach) {
+      const a=actors[track.attach.actor];
+      if(!a || a.assetId || !posesOf(a).every(p=>CALIBRATED_POSES.includes(p))) throw Error(`${where} attachment requires a calibrated actor`);
+      if(!(track.attach.anchor in (CALIBRATION[posesOf(a)[0]] || {}))) throw Error(`${where} attachment anchor missing`);
+      for(const p of posesOf(a)) if(!(track.attach.anchor in CALIBRATION[p])) throw Error(`${where} attachment anchor not available in every pose`);
+    }
     if (actors.length >= 2 && actors.every((a) => posesOf(a).every((p) => p === 'idle'))) {
       throw new Error(`${where} 双人全镜静立被拒：至少一人须有语义姿态`);
     }

@@ -1,3 +1,4 @@
+import {validateAttachment,attachedPosition} from './story_motion.mjs';
 // Explicit semantic object tracks; all times supplied by acoustic-word bindings, never ambient oscillation.
 import { drawText, smooth, mix } from './room_base.mjs';
 import { getProp } from './prop_registry.mjs';
@@ -10,6 +11,7 @@ export function validateSemanticTracks(tracks, where = 'semanticTracks') {
     if (!['sheet', 'tag', 'bowl', 'prop'].includes(t.kind)) throw new Error(`${where}未知语义道具类型`);
     if (![t.x, t.y, t.from, t.to].every(Number.isFinite) || t.to <= t.from) throw new Error(`${where}坐标/生命周期无效`);
     if (t.kind === 'prop') getProp(t.propId);
+    if (t.attach) { validateAttachment(t.attach); if(t.moves?.length) throw Error(`${where} attachment and moves cannot be combined`); if(t.attach.from<t.from || t.attach.to>t.to || (t.attach.release && t.attach.to+t.attach.release.duration>t.to)) throw Error(`${where} attachment outside lifecycle`); }
     if (t.kind !== 'bowl' && (![t.w, t.h].every(Number.isFinite) || t.w <= 0 || t.h <= 0)) throw new Error(`${where}纸张尺寸无效`);
     if (t.y + (t.kind === 'bowl' ? 28 : t.h / 2) > 600) throw new Error(`${where}道具侵入字幕空间`);
     for (const s of t.states || []) if (!Number.isFinite(s.at)) throw new Error(`${where}状态缺实际词时`);
@@ -17,7 +19,7 @@ export function validateSemanticTracks(tracks, where = 'semanticTracks') {
     for (const m of t.moves || []) if (![m.at, m.duration, m.x, m.y ?? t.y].every(Number.isFinite) || m.duration <= 0) throw new Error(`${where}移动参数无效`);
   }
 }
-export function semanticStateAt(track, time) {
+export function semanticStateAt(track, time, {anchorAt} = {}) {
   if (time < track.from || time >= track.to) return null;
   let state = { ...(track.state || {}) }, x = track.x, y = track.y;
   for (const s of track.states || []) if (time >= s.at) state = { ...state, ...s.state };
@@ -26,6 +28,7 @@ export function semanticStateAt(track, time) {
     const p = smooth((time - move.at) / move.duration);
     x = mix(x, move.x, p); y = mix(y, move.y ?? y, p);
   }
+  if(track.attach && time>=track.attach.from){const p=attachedPosition(track.attach,time,anchorAt);x=p.x;y=p.y;}
   let scaleX = 1, scale=1, opacity=1;
   if(track.enter){const q=Math.max(0,Math.min(1,(time-track.from)/(track.enter.duration||.45)));const ease=1-(1-q)**3;
     x+=(track.enter.dx||0)*(1-ease);y+=(track.enter.dy||0)*(1-ease);opacity=Math.min(1,q*3);
@@ -49,10 +52,10 @@ function fittedText(g, text, x, y, preferred, width, color) {
   while (size > 12) { g.font = `800 ${size}px NotoSansSC`; if (g.measureText(text).width < width) break; size--; }
   drawText(g, text, x, y, size, color);
 }
-export function drawSemanticTracks(g, time, tracks) {
+export function drawSemanticTracks(g, time, tracks, context = {}) {
   const drawn = [];
   for (const track of tracks || []) {
-    const s = semanticStateAt(track, time); if (!s) continue;
+    const s = semanticStateAt(track, time, context); if (!s) continue;
     drawn.push(s);g.save();g.globalAlpha=s.opacity;g.translate(s.x, s.y);g.scale(s.scaleX*s.scale, s.scale);
     if (track.kind === 'bowl' || track.kind === 'prop') { getProp(track.propId || 'empty_bowl').draw(g, time, s.state);g.restore();continue; }
     const paper = track.kind === 'sheet', state = s.state;

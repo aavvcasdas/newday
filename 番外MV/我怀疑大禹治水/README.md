@@ -1,6 +1,12 @@
 # 《我怀疑大禹治水治没了我的薪水》独立MV
 
-## 当前版本：Remotion 重做（待审）
+## 当前版本：走位与互动（待审）
+
+[Remotion走位与互动版](样片/Remotion_走位与互动_待审.mp4) 基于用户对上一版的否决：各镜用显式轨道让鲸娘进场走位，行走阶段复用现有步态图集，之后切换既有表演姿态；白发龙女随山运动，豆包伸手、梨变信封向鲸娘移动，纸鹤先附着于鲸娘手心估算点后释放向纸船。画面场景与道具仍由代码绘制，无新增图片。路径/持放数学来自 [Day 系列共享轨道](../../tools/engine/故事动作轨道.md)。
+
+本版 Remotion 导出、原 AAC 流复制封装，容器显示 1920×1080/30fps、29.33秒，SHA256 `2c83f92f3cb606f73c8f9d7a7831da11c4ab892f2ef300f411aa423df66a0fdb`；生成前查看八镜各一张静帧，未对成片连续动态审看或人耳听审。旧图集关节幅度有限，走位结束会切换姿态；手心坐标只是图集估算，接物真实贴合及人物/背景交互的观感仍需实际审看，不能说已经解决所有站桩或已完成完整肢体动画。字幕依然按用户文字及非实测规划轴；第六句与源画面字幕有差异，不冒称音轨已核实。
+
+## 历史：Remotion 首版（已被用户否决）
 
 用户否决上一版固定房间、人物与背景没有实际联系，以及没有使用 Remotion。现改为 [Remotion动态分镜待审版](样片/Remotion_动态分镜_待审.mp4)，[重做导演表](分镜/Remotion重做导演表.md)；旧视频保留作历史。以 Remotion 4.0.436 和 React/SVG 程序绘制八个不同布景，不生成任何新图片，角色沿用旧图集。参考 paint-mv-skills 的逐句事件、场景分层和动作转场，以及 music-mv 的多场景和角色叙事，未使用其外部引擎源码，也未声称 p5.brush 或 HyperFrames 渲染。
 
@@ -8,7 +14,7 @@
 
 输出媒体信息显示 1920×1080、30fps、29.33秒、HE-AACv2，编码元数据为 Remotion 4.0.436；原文件音轨以 `-c copy` 封入，未改速。SHA256 `00a4fe4e3fe214389bbd1fdcf8e680c6e802506dbc75ef5480cc50286cd1e0de`。字幕时间仍为画面字幕抽帧估算，非实测词轴；用户文字的第六句与来源画面不同，音轨实际唱词未听核。没有额外片尾卡；使用权发布前仍需确认。
 
-复现（从仓库根目录，需 Node、GitHub CLI 和安装了 imageio-ffmpeg 的 Python）：
+复现当前走位与互动版（从仓库根目录，需 Node、GitHub CLI 和安装了 imageio-ffmpeg 的 Python；历史首版需使用其对应提交的代码）：
 
 ```bash
 npm ci --prefix tools/mv_dayu/remotion
@@ -17,7 +23,7 @@ python3 tools/day12制作/restore_sample_assets.py
 node tools/mv_dayu/remotion/prepare.mjs
 node tools/mv_dayu/remotion/render.mjs
 FFMPEG=$(python3 -c "import imageio_ffmpeg; print(imageio_ffmpeg.get_ffmpeg_exe())")
-"$FFMPEG" -y -i tools/mv_dayu/remotion/out/video.mp4 -i 我怀疑大禹治水治没了我的薪水.mp3 -map 0:v:0 -map 1:a:0 -c copy -movflags +faststart 番外MV/我怀疑大禹治水/样片/Remotion_动态分镜_待审.mp4
+"$FFMPEG" -y -i tools/mv_dayu/remotion/out/video.mp4 -i 我怀疑大禹治水治没了我的薪水.mp3 -map 0:v:0 -map 1:a:0 -c copy -movflags +faststart 番外MV/我怀疑大禹治水/样片/Remotion_走位与互动_待审.mp4
 ```
 
 依赖审计：当前锁定依赖 `npm audit --omit=dev` 报7项 high，涉及 Remotion 工具链和其传递依赖；仅作为本地离线渲染工具，不部署为对外服务，后续需升级并复验兼容性。
