@@ -8,30 +8,31 @@ function LyricCharPop({
   t,
   charsTimed = null,
   activeColor = '#FFF9EB',
-  dimColor = '#C9D8E8',
+  dimColor = 'rgba(220, 232, 245, 0.52)',
 }) {
   const chars = Array.from(text || '');
-  const span = Math.max(0.2, (end ?? start + 1.8) - start);
-  const step = Math.min(0.065, (span * 0.58) / Math.max(1, chars.length));
+  const span = Math.max(0.25, (end ?? start + 1.5) - start);
+  // 按真实演唱时长均匀铺开逐字亮起节奏（覆盖本句前 78% 时长，留尾音稳定驻留）
+  const step = (span * 0.78) / Math.max(1, chars.length);
 
   return (
-    <span style={{ display: 'inline-flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1px' }}>
+    <span style={{ display: 'inline-flex', flexWrap: 'wrap', justifyContent: 'center', gap: '2px' }}>
       {chars.map((ch, idx) => {
         const timed = charsTimed?.[idx];
         const chStart = timed?.start ?? (start + idx * step);
         const age = t - chStart;
-        const p = clamp(age / 0.22);
-        const popScale = age < 0 ? 0.92 : backOut(p, 1.75);
+        const p = clamp(age / 0.16);
+        const popScale = age < 0 ? 0.94 : backOut(p, 1.65);
         const active = age >= 0;
         return (
           <span
             key={idx}
             style={{
               display: 'inline-block',
-              opacity: age < -0.04 ? 0.62 : clamp(0.68 + p * 0.32),
-              transform: `translateY(${(active ? (1 - p) * 8 : 3).toFixed(1)}px) scale(${popScale.toFixed(3)})`,
+              opacity: active ? 1 : 0.58,
+              transform: `translateY(${(active ? (1 - p) * 6 : 2).toFixed(1)}px) scale(${popScale.toFixed(3)})`,
               color: active ? activeColor : dimColor,
-              textShadow: active ? '0 3px 12px rgba(8, 18, 34, 0.88)' : '0 1px 4px rgba(8, 18, 34, 0.55)',
+              textShadow: active ? '0 3px 12px rgba(8, 18, 34, 0.92)' : '0 1px 4px rgba(8, 18, 34, 0.5)',
             }}
           >
             {ch === ' ' ? '\u00A0' : ch}
@@ -44,8 +45,8 @@ function LyricCharPop({
 
 /**
  * LyricAndSubtitleLayer — 屏幕空间安全区字幕与合规角标层（不随世界相机缩放晃动）
- *   - Lyric MV 模式：常驻「非官方同人 / AI生成」角标 + 前半句/反转句双段逐字 backOut 弹入高亮
- *   - Day Episode 模式：Day2 风格说话人字幕条 + 开场钩子横幅 + 「非官方同人 · AI生成 · 剧情演绎」合规角标
+ *   - Lyric MV 模式：分前半句（立典故）与后半句（反转梗）严格按演唱帧轴切换，逐字按真实唱速亮起，不提前剧透包袱
+ *   - Day Episode 模式：Day2 风格说话人字幕条 + 开场钩子横幅 + 合规角标
  */
 export function LyricAndSubtitleLayer({
   mode = 'day-episode',
@@ -63,6 +64,69 @@ export function LyricAndSubtitleLayer({
 
   const badgeText = complianceBadge ?? (mode === 'lyric-mv' ? '非官方同人 / AI生成' : '非官方同人 · AI生成 · 剧情演绎');
 
+  const renderMvPhrase = () => {
+    if (!activeScreen) return null;
+    if (activeScreen.top && activeScreen.bottom && activeScreen.pivot != null) {
+      const inPunchline = t >= activeScreen.pivot;
+      const phraseStart = inPunchline ? activeScreen.pivot : (activeScreen.vocalStart ?? activeScreen.start);
+      const phraseEnd = inPunchline ? activeScreen.end : activeScreen.pivot;
+      const phraseText = inPunchline ? activeScreen.bottom : activeScreen.top;
+      const pillPop = backOut(clamp((t - phraseStart) / 0.18), 1.35);
+
+      return (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 16,
+            padding: '12px 42px',
+            borderRadius: 999,
+            backgroundColor: inPunchline ? 'rgba(18, 25, 44, 0.86)' : 'rgba(11, 23, 41, 0.80)',
+            border: inPunchline ? '2.5px solid rgba(255, 214, 102, 0.78)' : '2px solid rgba(186, 224, 255, 0.48)',
+            boxShadow: '0 8px 26px rgba(0, 0, 0, 0.42)',
+            fontSize: 46,
+            fontWeight: 900,
+            letterSpacing: '2.5px',
+            transform: `scale(${pillPop.toFixed(3)})`,
+            maxWidth: 1640,
+          }}
+        >
+          <LyricCharPop
+            text={phraseText}
+            start={phraseStart}
+            end={phraseEnd}
+            t={t}
+            activeColor={inPunchline ? '#FFE066' : '#FFFDF7'}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div
+        style={{
+          padding: '12px 40px',
+          borderRadius: 999,
+          backgroundColor: 'rgba(11, 23, 41, 0.82)',
+          border: '2px solid rgba(255, 236, 179, 0.45)',
+          boxShadow: '0 8px 26px rgba(0, 0, 0, 0.38)',
+          fontSize: 44,
+          fontWeight: 900,
+          letterSpacing: '2px',
+          maxWidth: 1640,
+        }}
+      >
+        <LyricCharPop
+          text={activeScreen.text}
+          start={activeScreen.vocalStart ?? activeScreen.start}
+          end={activeScreen.end}
+          t={t}
+          charsTimed={activeScreen.chars_timed}
+        />
+      </div>
+    );
+  };
+
   return (
     <div
       style={{
@@ -72,7 +136,7 @@ export function LyricAndSubtitleLayer({
         fontFamily: 'NewdayNoto, Noto Sans CJK SC, PingFang SC, sans-serif',
       }}
     >
-      {/* 常驻合规角标（Day 系列与同人 MV 全程开启） */}
+      {/* 常驻合规角标 */}
       {badgeText && (
         <div
           style={{
@@ -94,7 +158,7 @@ export function LyricAndSubtitleLayer({
         </div>
       )}
 
-      {/* Day 系列开场顶部钩子横幅（仅在 0..openerEnd 内显示） */}
+      {/* Day 系列开场顶部钩子横幅 */}
       {mode === 'day-episode' && opener && t < (opener.openerEnd ?? 2.8) && (
         <div
           style={{
@@ -151,7 +215,7 @@ export function LyricAndSubtitleLayer({
         </div>
       )}
 
-      {/* 底部字幕 / 歌词安全区（严格位于底部安全带，绝不遮挡人物五官与主道具） */}
+      {/* 底部字幕 / 歌词安全区 */}
       {activeScreen && (
         <div
           style={{
@@ -164,51 +228,7 @@ export function LyricAndSubtitleLayer({
           }}
         >
           {mode === 'lyric-mv' ? (
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: 20,
-                padding: '12px 38px',
-                borderRadius: 999,
-                backgroundColor: 'rgba(11, 23, 41, 0.78)',
-                border: '2px solid rgba(255, 236, 179, 0.42)',
-                boxShadow: '0 8px 26px rgba(0, 0, 0, 0.38)',
-                fontSize: 42,
-                fontWeight: 900,
-                letterSpacing: '2px',
-                maxWidth: 1680,
-              }}
-            >
-              {activeScreen.top && activeScreen.bottom ? (
-                <>
-                  <LyricCharPop
-                    text={activeScreen.top}
-                    start={activeScreen.vocalStart ?? activeScreen.start}
-                    end={activeScreen.pivot ?? (activeScreen.start + activeScreen.end) * 0.5}
-                    t={t}
-                    activeColor="#FFFDF7"
-                  />
-                  <span style={{ color: 'rgba(255, 224, 130, 0.55)', fontSize: 32 }}>·</span>
-                  <LyricCharPop
-                    text={activeScreen.bottom}
-                    start={activeScreen.pivot ?? (activeScreen.start + activeScreen.end) * 0.5}
-                    end={activeScreen.end}
-                    t={t}
-                    activeColor="#FFE082"
-                    dimColor="#D9D2BE"
-                  />
-                </>
-              ) : (
-                <LyricCharPop
-                  text={activeScreen.text}
-                  start={activeScreen.vocalStart ?? activeScreen.start}
-                  end={activeScreen.end}
-                  t={t}
-                  charsTimed={activeScreen.chars_timed}
-                />
-              )}
-            </div>
+            renderMvPhrase()
           ) : (
             <div
               style={{

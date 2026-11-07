@@ -18,26 +18,39 @@ test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 �
   assert.equal(uniqueSets.size, 8, '大禹 MV 8 镜应切换 8 套不同舞台背景而非锁死单一背景');
 
   // 纯 t 确定性检验：打乱时间采样顺序必须返回完全一致的帧状态（支持 Remotion 并发分片渲染）
-  const sampleA1 = evaluateRemotionFrameState(props, 7.4);
+  const sampleA1 = evaluateRemotionFrameState(props, 5.8);
   const sampleOther = evaluateRemotionFrameState(props, 19.8);
-  const sampleA2 = evaluateRemotionFrameState(props, 7.4);
+  const sampleA2 = evaluateRemotionFrameState(props, 5.8);
   assert.deepEqual(sampleA1, sampleA2);
   assert.notEqual(sampleA1.setState.id, sampleOther.setState.id);
 
   // 环境交互检验：开闸触发器应驱动水闸开启度上升；后羿射日触发器应令昼夜光照下降
   const gateBefore = evaluateRemotionFrameState(props, 0.3);
-  const gateAfter = evaluateRemotionFrameState(props, 2.6);
+  const gateAfter = evaluateRemotionFrameState(props, 2.5);
   assert.ok(gateAfter.setState.reactive.gateOpen > gateBefore.setState.reactive.gateOpen + 0.5);
 
-  const sunBefore = evaluateRemotionFrameState(props, 6.1);
-  const sunAfter = evaluateRemotionFrameState(props, 8.5);
+  const sunBefore = evaluateRemotionFrameState(props, 5.0);
+  const sunAfter = evaluateRemotionFrameState(props, 6.9);
   assert.ok(sunAfter.setState.reactive.dawn < sunBefore.setState.reactive.dawn - 0.5);
 
-  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 3.85s 后 0.1s 内处于双图集平滑过渡态）
-  const pivotBlend = evaluateRemotionFrameState(props, 3.95);
-  assert.equal(pivotBlend.actors[0].atlas, 'whale_side_crouch_action');
+  // 16 帧图集切换平滑交叉淡入淡出检验（反转点 1.90s 后 0.1s 内处于双图集平滑过渡态）
+  const pivotBlend = evaluateRemotionFrameState(props, 2.0);
+  assert.equal(pivotBlend.actors[0].atlas, 'whale_rain_reach_blink_action');
   assert.equal(pivotBlend.actors[0].prevAtlas, 'whale_point');
   assert.ok(pivotBlend.actors[0].atlasBlend > 0 && pivotBlend.actors[0].atlasBlend < 1);
+
+  // 帧级音画同步回归校验：每镜区间与歌词卡拉OK起唱帧严丝合缝，且第 6 镜「对象」为真实美少女伴侣角色而非折纸鹤
+  const expectedStarts = [0.0, 4.18, 7.45, 11.10, 14.07, 17.75, 21.22, 24.82];
+  props.shots.forEach((shot, i) => {
+    assert.ok(Math.abs(shot.start - expectedStarts[i]) < 0.02, `第 ${i + 1} 镜起始时间应与人声对齐`);
+    assert.equal(shot.start, props.screens[i].start, `第 ${i + 1} 镜画面切镜与字幕起始须一致`);
+  });
+
+  const gfPier = evaluateRemotionFrameState(props, 18.4);
+  const gfBoat = evaluateRemotionFrameState(props, 20.6);
+  assert.equal(gfPier.actors.length, 2, '第 6 镜应同时包含主角与女朋友（对象）两名真人/美少女角色');
+  assert.equal(gfPier.actors[1].characterId, 'gemini');
+  assert.ok(gfBoat.actors[1].x > gfPier.actors[1].x + 350, '第 6 镜后半句女朋友角色应登上草船随草船丞相远去');
 
   // 反 PPT 静态检测：全片无 >=1.0s 的冻结区间
   const activity = auditRemotionPropsActivity(props);

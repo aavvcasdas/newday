@@ -65,32 +65,29 @@ function PropGlyph({ propId, state = {}, scale = 1 }) {
   }
 }
 
-function EnvelopeSvg({ scale = 1, waxColor = '#E05252' }) {
+function EnvelopeSvg({ scale = 1, waxColor = '#E05252', label = '' }) {
   return (
     <g transform={`scale(${scale})`}>
-      <rect x={-44} y={-28} width={88} height={56} rx={6} fill="#FFFDF7" stroke="#45566B" strokeWidth={2.8} />
-      <path d="M -43 -26 L 0 5 L 43 -26" fill="#F5ECD8" stroke="#45566B" strokeWidth={2.4} strokeLinejoin="round" />
-      <line x1={-42} y1={26} x2={-12} y2={0} stroke="#CBD3DC" strokeWidth={2} />
-      <line x1={42} y1={26} x2={12} y2={0} stroke="#CBD3DC" strokeWidth={2} />
-      <circle cx={0} cy={4} r={7.5} fill={waxColor} stroke="#FFF6EA" strokeWidth={1.6} />
-    </g>
-  );
-}
-
-function OrigamiCraneSvg({ color = '#FF9EB5', stroke = '#9C4660', wingLift = 0, scale = 1, flip = false }) {
-  const dir = flip ? -1 : 1;
-  return (
-    <g transform={`scale(${dir * scale}, ${scale})`}>
-      <polygon points="-28,6 0,-8 22,6 0,14" fill={color} stroke={stroke} strokeWidth={2.2} strokeLinejoin="round" />
-      <polygon points="10,2 30,-24 38,-20 20,6" fill={color} stroke={stroke} strokeWidth={2.2} strokeLinejoin="round" />
-      <polygon points="-14,4 -34,-22 -20,8" fill={color} stroke={stroke} strokeWidth={2.2} strokeLinejoin="round" />
-      <polygon
-        points={`-8,0 14,0 2,${(-34 - wingLift * 14).toFixed(1)}`}
-        fill="#FFF6F8"
-        stroke={stroke}
-        strokeWidth={2.2}
-        strokeLinejoin="round"
-      />
+      <rect x={-48} y={-30} width={96} height={60} rx={7} fill="#FFF7DF" stroke="#45566B" strokeWidth={3} />
+      <path d="M -47 -28 L 0 3 L 47 -28" fill="#F4E3B8" stroke="#45566B" strokeWidth={2.4} strokeLinejoin="round" />
+      {label ? (
+        <g>
+          <rect x={-32} y={-10} width={64} height={30} rx={5} fill="rgba(224, 67, 56, 0.14)" stroke="#D63B2F" strokeWidth={2} />
+          <text
+            x={0}
+            y={12}
+            textAnchor="middle"
+            fontSize={22}
+            fontWeight="900"
+            fill="#C93328"
+            fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif"
+          >
+            {label}
+          </text>
+        </g>
+      ) : (
+        <circle cx={0} cy={4} r={7.5} fill={waxColor} stroke="#FFF6EA" strokeWidth={1.6} />
+      )}
     </g>
   );
 }
@@ -122,45 +119,48 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'envelope_flood': {
+      // 梗1：大禹治水 -> 治没了我的薪水（鼓鼓囊囊的「薪水」袋被开闸大水一浪卷走！）
       const standX = mech.standX ?? 655;
       const standY = mech.standY ?? 600;
-      const floodU = seg(t, mech.floodAt ?? 3.65, mech.floodEnd ?? 5.25);
+      const floodU = seg(t, mech.floodAt ?? 1.90, mech.floodEnd ?? 3.95);
       const swept = floodU > 0;
       const q = ease(floodU);
       const envX = swept ? lerp(standX, mech.toX ?? 1135, q) : standX;
       const envY = swept
-        ? lerp(standY - 68, (mech.toY ?? 558), Math.min(1, floodU * 2.4)) + Math.sin(t * 9.5) * 11
-        : standY - 68 + Math.sin(t * 2.6) * 2.5;
-      const envRot = swept ? Math.sin(t * 7.2) * 22 + q * 28 : -4;
+        ? lerp(standY - 70, (mech.toY ?? 558), Math.min(1, floodU * 2.4)) + Math.sin(t * 9.5) * 11
+        : standY - 70 + Math.sin(t * 2.6) * 2.5;
+      const envRot = swept ? Math.sin(t * 7.2) * 20 + q * 26 : -3;
       return (
         <g key={`mech-${idx}`}>
           {/* 堤岸木托架 */}
           <g transform={`translate(${standX}, ${standY})`}>
             <rect x={-6} y={-52} width={12} height={52} rx={3} fill="#7B583B" stroke="#402C1D" strokeWidth={2} />
-            <rect x={-34} y={-58} width={68} height={10} rx={4} fill="#9E734E" stroke="#402C1D" strokeWidth={2} />
+            <rect x={-36} y={-58} width={72} height={10} rx={4} fill="#9E734E" stroke="#402C1D" strokeWidth={2} />
           </g>
-          {/* 水花浪头托举效果 */}
+          {/* 奔涌水浪托举 */}
           {swept && (
-            <g transform={`translate(${envX.toFixed(1)}, ${(envY + 20).toFixed(1)})`}>
-              <path d="M -54 6 Q -26 -18 0 2 Q 28 -16 56 6" fill="none" stroke="#E8FAFF" strokeWidth={4.5} strokeLinecap="round" />
-              <circle cx={-36} cy={-8} r={5} fill="#FFFFFF" opacity={0.85} />
-              <circle cx={32} cy={-10} r={6} fill="#FFFFFF" opacity={0.85} />
+            <g transform={`translate(${envX.toFixed(1)}, ${(envY + 24).toFixed(1)})`}>
+              <path d="M -68 10 Q -32 -18 0 4 Q 34 -16 68 8" fill="none" stroke="#8BE3FF" strokeWidth={7} strokeLinecap="round" />
+              <path d="M -54 6 Q -26 -16 0 2 Q 28 -14 56 6" fill="none" stroke="#E8FAFF" strokeWidth={4.5} strokeLinecap="round" />
+              <circle cx={-38} cy={-8} r={5.5} fill="#FFFFFF" opacity={0.88} />
+              <circle cx={34} cy={-10} r={6.5} fill="#FFFFFF" opacity={0.88} />
             </g>
           )}
           <g transform={`translate(${envX.toFixed(1)}, ${envY.toFixed(1)}) rotate(${envRot.toFixed(1)})`}>
-            <EnvelopeSvg scale={1.08} />
+            <EnvelopeSvg scale={1.12} label={mech.label ?? '薪水'} />
           </g>
         </g>
       );
     }
 
     case 'sunday_calendar': {
-      const hitU = seg(t, mech.pierceAt ?? 7.25, (mech.pierceAt ?? 7.25) + 1.35);
-      const hit = t >= (mech.pierceAt ?? 7.25);
+      // 梗2：后羿射日 -> 射没了我的周日（「周日」页被一箭射飞，直接露出底下黑底苦逼「周一」页！）
+      const hitU = seg(t, mech.pierceAt ?? 5.42, (mech.pierceAt ?? 5.42) + 1.25);
+      const hit = t >= (mech.pierceAt ?? 5.42);
       const q = easeOut(hitU);
-      const flyX = q * 285;
+      const flyX = q * 290;
       const flyY = -Math.sin(q * Math.PI) * 95 + q * 35;
-      const flyRot = q * 54;
+      const flyRot = q * 52;
       const shake = hit && hitU < 0.25 ? Math.sin(t * 48) * 5 * (1 - hitU * 4) : 0;
       return (
         <g key={`mech-${idx}`} transform={`translate(${(mech.x + shake).toFixed(1)}, ${mech.y})`}>
@@ -168,21 +168,38 @@ function renderMechanism(mech, t, idx) {
           <line x1={-38} y1={0} x2={-12} y2={-168} stroke="#8D623F" strokeWidth={7} strokeLinecap="round" />
           <line x1={38} y1={0} x2={12} y2={-168} stroke="#8D623F" strokeWidth={7} strokeLinecap="round" />
           <line x1={0} y1={0} x2={0} y2={-155} stroke="#6E4B2F" strokeWidth={6} strokeLinecap="round" />
-          {/* 日历底板与空白次页 */}
-          <rect x={-58} y={-166} width={116} height={112} rx={10} fill="#FFFDF7" stroke="#43352B" strokeWidth={3} />
-          <rect x={-58} y={-166} width={116} height={28} rx={8} fill="#7B8FA6" stroke="#43352B" strokeWidth={2.5} />
-          <line x1={-32} y1={-108} x2={32} y2={-108} stroke="#D5DCE4" strokeWidth={4} strokeLinecap="round" />
-          <line x1={-24} y1={-88} x2={24} y2={-88} stroke="#D5DCE4" strokeWidth={4} strokeLinecap="round" />
-          {/* 「周日」页（中箭后整页飘飞！） */}
+          {/* 日历底板：露出残酷的「周一」次页！ */}
+          <rect x={-58} y={-166} width={116} height={112} rx={10} fill="#28354A" stroke="#182232" strokeWidth={3} />
+          <rect x={-58} y={-166} width={116} height={28} rx={8} fill="#465978" stroke="#182232" strokeWidth={2.5} />
+          <text
+            x={0}
+            y={-90}
+            textAnchor="middle"
+            fontSize={35}
+            fontWeight="900"
+            fill="#E2ECF9"
+            fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif"
+          >
+            {mech.underLabel || '周一'}
+          </text>
+          {/* 红火快乐「周日」页（中箭后整页飘飞！） */}
           <g
             transform={`translate(${flyX.toFixed(1)}, ${(-110 + flyY).toFixed(1)}) rotate(${flyRot.toFixed(1)})`}
             opacity={1 - q * 0.22}
           >
             <rect x={-56} y={-54} width={112} height={108} rx={9} fill="#FFF9EA" stroke="#43352B" strokeWidth={3} />
-            <path d="M -56 -32 Q -56 -54 -34 -54 L 34 -54 Q 56 -54 56 -32 L 56 -26 L -56 -26 Z" fill="#FF7A59" stroke="#43352B" strokeWidth={2.5} />
+            <path d="M -56 -32 Q -56 -54 -34 -54 L 34 -54 Q 56 -54 56 -32 L 56 -26 L -56 -26 Z" fill="#FF6B57" stroke="#43352B" strokeWidth={2.5} />
             <circle cx={-28} cy={-40} r={4.5} fill="#FFFDF7" />
             <circle cx={28} cy={-40} r={4.5} fill="#FFFDF7" />
-            <text x={0} y={20} textAnchor="middle" fontSize={36} fontWeight="900" fill="#2D3748" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+            <text
+              x={0}
+              y={20}
+              textAnchor="middle"
+              fontSize={36}
+              fontWeight="900"
+              fill="#D63B2F"
+              fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif"
+            >
               {mech.label || '周日'}
             </text>
           </g>
@@ -191,39 +208,54 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'flying_arrow': {
-      if (t < (mech.shootAt ?? 6.95)) return null;
-      const flightU = seg(t, mech.shootAt ?? 6.95, mech.hitAt ?? 7.25);
+      const bowX = mech.bowX ?? 885;
+      const bowY = mech.bowY ?? 445;
+      const shootAt = mech.shootAt ?? 4.95;
+      const hitAt = mech.hitAt ?? 5.42;
+      const drawU = clamp((t - (shootAt - 0.55)) / 0.52);
+      const flightU = seg(t, shootAt, hitAt);
+      const fired = t >= shootAt;
       const landed = flightU >= 1;
-      const ax = lerp(mech.fromX ?? 1160, mech.toX ?? 640, easeOut(flightU));
-      const ay = lerp(mech.fromY ?? 155, mech.toY ?? 485, easeOut(flightU)) - Math.sin(flightU * Math.PI) * 32;
-      const dx = (mech.toX ?? 640) - (mech.fromX ?? 1160);
-      const dy = (mech.toY ?? 485) - (mech.fromY ?? 155);
+      const ax = lerp(mech.fromX ?? bowX, mech.toX ?? 640, easeOut(flightU));
+      const ay = lerp(mech.fromY ?? bowY, mech.toY ?? 485, easeOut(flightU)) - Math.sin(flightU * Math.PI) * 52;
+      const dx = (mech.toX ?? 640) - (mech.fromX ?? bowX);
+      const dy = (mech.toY ?? 485) - (mech.fromY ?? bowY);
       const baseDeg = (Math.atan2(dy, dx) * 180) / Math.PI;
-      const quiver = landed ? Math.exp(-(t - (mech.hitAt ?? 7.25)) * 7) * Math.sin(t * 55) * 6 : 0;
+      const quiver = landed ? Math.exp(-(t - hitAt) * 7) * Math.sin(t * 55) * 6 : 0;
+      const pull = !fired ? 24 * drawU : 0;
+
       return (
         <g key={`mech-${idx}`}>
-          {!landed && (
+          {/* 后羿雕花长弓 */}
+          <g transform={`translate(${bowX}, ${bowY}) rotate(-18)`}>
+            <path d="M 0 -58 Q -38 0 0 58" fill="none" stroke="#C87D2F" strokeWidth={7} strokeLinecap="round" />
+            <path d={`M 0 -56 L ${pull.toFixed(1)} 0 L 0 56`} fill="none" stroke="#FFF4D4" strokeWidth={2.5} />
+          </g>
+          {fired && !landed && (
             <line
               x1={ax - dx * 0.16}
               y1={ay - dy * 0.16}
               x2={ax}
               y2={ay}
               stroke="#FFE082"
-              strokeWidth={4}
+              strokeWidth={4.5}
               strokeLinecap="round"
-              opacity={0.72}
+              opacity={0.78}
             />
           )}
-          <g transform={`translate(${ax.toFixed(1)}, ${ay.toFixed(1)}) rotate(${(baseDeg + quiver).toFixed(1)})`}>
-            <line x1={-76} y1={0} x2={8} y2={0} stroke="#C88A4B" strokeWidth={5} strokeLinecap="round" />
-            <polygon points="18,0 -2,-9 -2,9" fill="#FFD54F" stroke="#5C4018" strokeWidth={2} />
-            <polygon points="-76,0 -92,-10 -82,0 -92,10" fill="#FF7043" stroke="#5C2B18" strokeWidth={1.6} />
-          </g>
+          {fired && (
+            <g transform={`translate(${ax.toFixed(1)}, ${ay.toFixed(1)}) rotate(${(baseDeg + quiver).toFixed(1)})`}>
+              <line x1={-76} y1={0} x2={8} y2={0} stroke="#C88A4B" strokeWidth={5.5} strokeLinecap="round" />
+              <polygon points="20,0 -2,-9 -2,9" fill="#FFD54F" stroke="#5C4018" strokeWidth={2} />
+              <polygon points="-76,0 -92,-10 -82,0 -92,10" fill="#FF7043" stroke="#5C2B18" strokeWidth={1.6} />
+            </g>
+          )}
         </g>
       );
     }
 
     case 'sliding_mountain': {
+      // 梗3：愚公移山 -> 移走了我的「靠山」（山体正中刻着醒目的「靠山」大匾，被愚公整座推走！）
       const pos = evalTrack2D(t, mech.track, mech.x ?? 620, mech.y ?? 600);
       const mx = pos[0];
       const my = pos[1] ?? 600;
@@ -244,18 +276,33 @@ function renderMechanism(mech, t, idx) {
             />
           )}
           <g transform={`translate(${mx.toFixed(1)}, ${my.toFixed(1)})`}>
-            <path d="M -165 0 L -78 -245 L 8 -165 L 72 -285 L 185 0 Z" fill="#678D79" stroke="#31493E" strokeWidth={4} strokeLinejoin="round" />
-            <path d="M -78 -245 L -42 -175 L -8 -195 L 8 -165 Z" fill="#E8F3EC" opacity={0.82} />
-            <path d="M 72 -285 L 36 -196 L 74 -212 L 114 -184 Z" fill="#F2F8F4" opacity={0.88} />
-            <path d="M -125 0 L -32 -162 L 62 -118 L 136 0 Z" fill="#4E7361" opacity={0.85} />
+            <path d="M -175 0 L -82 -252 L 8 -172 L 76 -292 L 192 0 Z" fill="#678D79" stroke="#31493E" strokeWidth={4} strokeLinejoin="round" />
+            <path d="M -82 -252 L -44 -178 L -8 -198 L 8 -172 Z" fill="#E8F3EC" opacity={0.82} />
+            <path d="M 76 -292 L 38 -198 L 76 -215 L 116 -186 Z" fill="#F2F8F4" opacity={0.88} />
+            <path d="M -132 0 L -34 -166 L 64 -120 L 142 0 Z" fill="#4E7361" opacity={0.85} />
+            {/* 「靠山」摩崖石刻牌匾（置于主峰高处，全程不被推山角色遮挡） */}
+            <g transform="translate(62, -172)">
+              <rect x={-52} y={-30} width={104} height={56} rx={9} fill="#FDF3DC" stroke="#B83B2E" strokeWidth={3.8} />
+              <text
+                x={0}
+                y={8}
+                textAnchor="middle"
+                fontSize={33}
+                fontWeight="900"
+                fill="#B83227"
+                fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif"
+              >
+                {mech.label ?? '靠山'}
+              </text>
+            </g>
           </g>
         </g>
       );
     }
 
     case 'cushion': {
-      if (t < (mech.enterAt ?? 11.1)) return null;
-      const pop = backOut(seg(t, mech.enterAt ?? 11.1, (mech.enterAt ?? 11.1) + 0.36), 1.6);
+      if (t < (mech.enterAt ?? 9.15)) return null;
+      const pop = backOut(seg(t, mech.enterAt ?? 9.15, (mech.enterAt ?? 9.15) + 0.36), 1.6);
       return (
         <g key={`mech-${idx}`} transform={`translate(${mech.x}, ${mech.y}) scale(${pop.toFixed(3)})`}>
           <ellipse cx={0} cy={-24} rx={48} ry={26} fill="#FF9EB5" stroke="#6E3546" strokeWidth={3} />
@@ -266,34 +313,67 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'paper_puppets': {
-      const enterU = easeOut(seg(t, mech.enterAt ?? 13.6, (mech.enterAt ?? 13.6) + 0.85));
+      // 梗4：女娲造人 -> 给我造的「小人」（职场小人三大损招：打「小报告」、甩「黑锅」、穿「小鞋」，倒八字眉坏笑指指点点！）
+      const enterU = easeOut(seg(t, mech.enterAt ?? 12.65, (mech.enterAt ?? 12.65) + 0.65));
       if (enterU <= 0.01) return null;
-      const scatterU = easeOut(seg(t, mech.scatterAt ?? 14.55, (mech.scatterAt ?? 14.55) + 0.75));
-      const colors = ['#FFE082', '#B2F2BB', '#FFC9C9'];
-      const bodies = ['#E69F73', '#D98A6C', '#CFA07E'];
+      const scatterU = easeOut(seg(t, mech.scatterAt ?? 13.65, (mech.scatterAt ?? 13.65) + 0.42));
+      const bodies = ['#48526E', '#574B6B', '#4B5E69'];
+      const roles = ['report', 'pot', 'shoe'];
+
       return (
         <g key={`mech-${idx}`}>
-          {[0, 1, 2].map((pi) => {
-            const baseX = lerp((mech.fromX ?? 930) + pi * 68, (mech.toX ?? 660) + pi * 74, enterU) + scatterU * (38 + pi * 26);
-            const hop = Math.abs(Math.sin(t * 8.5 + pi * 1.4)) * 12 * (1 - scatterU * 0.5);
-            const swing = Math.sin(t * 8.5 + pi * 1.4) * 26;
-            const noteFlyX = scatterU * (75 + pi * 35);
-            const noteFlyY = -scatterU * (65 + pi * 28);
-            const noteRot = scatterU * (48 + pi * 22);
+          {roles.map((role, pi) => {
+            const baseX = lerp((mech.fromX ?? 910) + pi * 78, (mech.toX ?? 645) + pi * 84, enterU) + scatterU * (32 + pi * 24);
+            const hop = Math.abs(Math.sin(t * 10.5 + pi * 1.4)) * 13 * (1 - scatterU * 0.5);
+            const swing = Math.sin(t * 10.5 + pi * 1.4) * 22;
+            const noteFlyX = scatterU * (55 + pi * 28);
+            const noteFlyY = -scatterU * (48 + pi * 22);
+            const noteRot = scatterU * (36 + pi * 18);
+
             return (
               <g key={`pp-${pi}`} transform={`translate(${baseX.toFixed(1)}, ${(600 - hop).toFixed(1)})`}>
-                {/* 关节泥纸小人 */}
-                <line x1={-8} y1={-28} x2={-12 - swing * 0.25} y2={0} stroke="#5C3D2E" strokeWidth={4.5} strokeLinecap="round" />
-                <line x1={8} y1={-28} x2={12 + swing * 0.25} y2={0} stroke="#5C3D2E" strokeWidth={4.5} strokeLinecap="round" />
-                <rect x={-16} y={-68} width={32} height={42} rx={9} fill={bodies[pi]} stroke="#5C3D2E" strokeWidth={2.8} />
-                <circle cx={0} cy={-86} r={17} fill="#FFE8D6" stroke="#5C3D2E" strokeWidth={2.8} />
-                <circle cx={-5} cy={-87} r={2.4} fill="#3B281E" />
-                <circle cx={5} cy={-87} r={2.4} fill="#3B281E" />
-                <line x1={-15} y1={-60} x2={-30} y2={-76 + swing * 0.4} stroke="#5C3D2E" strokeWidth={4} strokeLinecap="round" />
-                <line x1={15} y1={-60} x2={28} y2={-78 - swing * 0.4} stroke="#5C3D2E" strokeWidth={4} strokeLinecap="round" />
-                {/* 空白彩色小纸牌（零文字零数字，挥手后散开！） */}
-                <g transform={`translate(${(-32 + noteFlyX).toFixed(1)}, ${(-88 + noteFlyY).toFixed(1)}) rotate(${(-14 + noteRot).toFixed(1)})`}>
-                  <rect x={-18} y={-14} width={36} height={28} rx={4} fill={colors[pi]} stroke="#5C4B37" strokeWidth={2} />
+                {/* 职场小人腿与深色西装马甲身躯 */}
+                <line x1={-8} y1={-28} x2={-12 - swing * 0.25} y2={0} stroke="#2B3142" strokeWidth={4.5} strokeLinecap="round" />
+                <line x1={8} y1={-28} x2={12 + swing * 0.25} y2={0} stroke="#2B3142" strokeWidth={4.5} strokeLinecap="round" />
+                <rect x={-18} y={-68} width={36} height={42} rx={9} fill={bodies[pi]} stroke="#232838" strokeWidth={2.8} />
+                <circle cx={0} cy={-86} r={18} fill="#FFE6CE" stroke="#4D3729" strokeWidth={2.8} />
+                {/* 倒八字奸笑眉眼 */}
+                <line x1={-10} y1={-91} x2={-3} y2={-87} stroke="#2B1E17" strokeWidth={2.6} strokeLinecap="round" />
+                <line x1={10} y1={-91} x2={3} y2={-87} stroke="#2B1E17" strokeWidth={2.6} strokeLinecap="round" />
+                <path d="M -6 -79 Q 1 -74 7 -80" fill="none" stroke="#A6362B" strokeWidth={2.4} strokeLinecap="round" />
+                {/* 朝主角指指点点的手 */}
+                <line x1={-17} y1={-58} x2={-38} y2={-68 + swing * 0.3} stroke="#4D3729" strokeWidth={4.2} strokeLinecap="round" />
+                <line x1={17} y1={-58} x2={28} y2={-74 - swing * 0.3} stroke="#4D3729" strokeWidth={4.2} strokeLinecap="round" />
+
+                {/* 职场小人专属损招道具：小报告 / 大黑锅 / 穿小鞋 */}
+                <g transform={`translate(${(-34 + noteFlyX).toFixed(1)}, ${(-106 + noteFlyY).toFixed(1)}) rotate(${(-10 + noteRot).toFixed(1)})`}>
+                  {role === 'report' && (
+                    <g>
+                      <rect x={-32} y={-18} width={64} height={34} rx={5} fill="#FFF3B0" stroke="#A67B1E" strokeWidth={2.4} />
+                      <text x={0} y={5} textAnchor="middle" fontSize={16} fontWeight="900" fill="#8C331E" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                        小报告
+                      </text>
+                    </g>
+                  )}
+                  {role === 'pot' && (
+                    <g>
+                      <ellipse cx={0} cy={0} rx={29} ry={20} fill="#23262E" stroke="#101217" strokeWidth={3} />
+                      <path d="M -29 -2 Q -38 -10 -34 4" fill="none" stroke="#23262E" strokeWidth={3.8} />
+                      <path d="M 29 -2 Q 38 -10 34 4" fill="none" stroke="#23262E" strokeWidth={3.8} />
+                      <text x={0} y={6} textAnchor="middle" fontSize={16} fontWeight="900" fill="#FFE082" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                        黑锅
+                      </text>
+                    </g>
+                  )}
+                  {role === 'shoe' && (
+                    <g>
+                      <rect x={-30} y={-28} width={62} height={24} rx={5} fill="#8C2424" stroke="#F7D794" strokeWidth={1.8} />
+                      <text x={1} y={-11} textAnchor="middle" fontSize={14} fontWeight="900" fill="#FFF7DE" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                        穿小鞋
+                      </text>
+                      <path d="M -24 10 L -8 -4 L 18 2 L 26 12 Q 4 18 -24 10 Z" fill="#E05656" stroke="#7D2424" strokeWidth={2.5} />
+                    </g>
+                  )}
                 </g>
               </g>
             );
@@ -303,33 +383,40 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'savings_jar_beam': {
+      // 梗5：凿壁偷光 -> 偷光了我的「积蓄」（贴有「积蓄」红签的玻璃存钱罐，金币被隔壁凿穿的墙洞吸得一干二净！）
       const jarX = mech.x ?? 640;
       const jarY = mech.y ?? 472;
       const holeX = mech.holeX ?? 1020;
       const holeY = mech.holeY ?? 292;
-      const stealStart = mech.stealAt ?? 17.45;
+      const stealStart = mech.stealAt ?? 15.85;
       const tokenOffsets = [
         [-16, -16],
         [14, -15],
         [-2, -28],
         [-15, -36],
         [13, -38],
+        [0, -48],
       ];
       return (
         <g key={`mech-${idx}`}>
-          {/* 储蓄玻璃罐后壁 */}
+          {/* 凿壁金光光柱 */}
+          <polygon
+            points={`${holeX},${holeY - 16} ${holeX},${holeY + 16} ${jarX + 42},${jarY - 6} ${jarX - 42},${jarY - 82}`}
+            fill={t >= stealStart ? 'rgba(255, 212, 92, 0.34)' : 'rgba(255, 240, 170, 0.22)'}
+          />
+          {/* 储蓄玻璃罐 */}
           <g transform={`translate(${jarX}, ${jarY})`}>
-            <rect x={-36} y={-86} width={72} height={86} rx={16} fill="rgba(186, 236, 255, 0.28)" stroke="#9CE3F8" strokeWidth={3} />
-            <rect x={-26} y={-98} width={52} height={14} rx={4} fill="#B88B58" stroke="#5A3F24" strokeWidth={2.4} />
+            <rect x={-40} y={-92} width={80} height={92} rx={16} fill="rgba(186, 236, 255, 0.28)" stroke="#9CE3F8" strokeWidth={3.2} />
+            <rect x={-28} y={-104} width={56} height={14} rx={4} fill="#B88B58" stroke="#5A3F24" strokeWidth={2.4} />
           </g>
-          {/* 5 枚纯金色圆币（随偷光光束沿弧线被吸进墙洞！） */}
+          {/* 6 枚金币沿弧线被隔壁墙洞吸光！ */}
           {tokenOffsets.map(([ox, oy], ti) => {
-            const u = seg(t, stealStart + ti * 0.16, stealStart + ti * 0.16 + 0.92);
+            const u = seg(t, stealStart + ti * 0.13, stealStart + ti * 0.13 + 0.78);
             const q = ease(u);
             const startX = jarX + ox;
             const startY = jarY + oy;
             const tx = lerp(startX, holeX, q);
-            const ty = lerp(startY, holeY, q) - Math.sin(q * Math.PI) * (68 + ti * 10);
+            const ty = lerp(startY, holeY, q) - Math.sin(q * Math.PI) * (66 + ti * 9);
             const sc = q > 0.85 ? 1 - (q - 0.85) / 0.15 : 1;
             return (
               <g key={`tok-${ti}`} transform={`translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) scale(${sc.toFixed(3)})`}>
@@ -338,69 +425,117 @@ function renderMechanism(mech, t, idx) {
               </g>
             );
           })}
-          {/* 玻璃罐高光前壁 */}
-          <path d={`M ${jarX - 24} ${jarY - 74} L ${jarX - 24} ${jarY - 18}`} stroke="#FFFFFF" strokeWidth={3.5} strokeLinecap="round" opacity={0.55} />
+          {/* 红底金字「积蓄」封条 */}
+          <g transform={`translate(${jarX}, ${jarY - 46}) rotate(-4)`}>
+            <rect x={-27} y={-15} width={54} height={30} rx={5} fill="#D94336" stroke="#FFE299" strokeWidth={2} />
+            <text x={0} y={7} textAnchor="middle" fontSize={19} fontWeight="900" fill="#FFF6D6" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+              积蓄
+            </text>
+          </g>
+          <path d={`M ${jarX - 28} ${jarY - 78} L ${jarX - 28} ${jarY - 18}`} stroke="#FFFFFF" strokeWidth={3.5} strokeLinecap="round" opacity={0.55} />
         </g>
       );
     }
 
+    case 'straw_boat_minister':
     case 'straw_boat_cranes': {
+      // 梗6：草船丞相 -> 抢走了我的对象（「对象」= 活生生的女朋友角色！草船上立着头戴冠冕、手摇羽扇的 Q版「丞相」，靠岸把女朋友角色接上船头甲板载走！）
       const boatPos = evalTrack2D(t, mech.boatTrack, 880, 548);
       const bx = boatPos[0];
-      const by = (boatPos[1] ?? 548) + Math.sin(t * 2.8) * 5;
-      const pierX = mech.pierX ?? 595;
-      const pierY = mech.pierY ?? 554;
-      const boardU = seg(t, mech.boardAt ?? 21.05, (mech.boardAt ?? 21.05) + 0.95);
-      const q = ease(boardU);
-      const crane2X = boardU <= 0 ? pierX + 36 : lerp(pierX + 36, bx - 16, q);
-      const crane2Y = boardU <= 0 ? pierY : lerp(pierY, by - 48, q) - Math.sin(q * Math.PI) * 58;
-      const wing = 0.5 + 0.5 * Math.sin(t * 6.4);
+      const by = (boatPos[1] ?? 548) + Math.sin(t * 3.2) * 4.5;
+      const fanDeg = -22 + Math.sin(t * 7.5) * 18;
 
-      if (mech.renderPass === 'boat') {
+      if (mech.renderPass === 'heart') {
+        // 主角与女朋友角色之间的粉红恋爱心 ♥：前半句完好无损跳动，19.00s 女朋友登上草船瞬间咔嚓裂成两半 💔！
+        const breakAt = mech.breakAt ?? 19.00;
+        const breakU = clamp((t - breakAt) / 1.55);
+        if (breakU >= 0.99) return null;
+        const hx = lerp(mech.x ?? 432, 565, easeOut(clamp(breakU * 1.4)));
+        const hy = (mech.y ?? 318) + Math.sin(t * 5.4) * 5;
+        const pulse = breakU <= 0.005 ? 1 + Math.sin(t * 8.5) * 0.08 : 1;
+        const split = easeOut(clamp(breakU * 1.8)) * 28;
+        const fade = 1 - clamp((breakU - 0.78) / 0.22);
+
         return (
-          <g key={`mech-boat-${idx}`} transform={`translate(${bx.toFixed(1)}, ${by.toFixed(1)})`}>
-            {/* 船底水花 */}
-            <path d="M -118 18 Q -40 28 36 18 Q 88 26 126 16" fill="none" stroke="#E8FCFA" strokeWidth={4} strokeLinecap="round" />
-            {/* 草船木船身与草垛 */}
-            <path d="M -112 -6 L 112 -6 L 84 22 L -84 22 Z" fill="#8C5E3C" stroke="#472E1B" strokeWidth={3} strokeLinejoin="round" />
-            {[-58, -18, 22, 58].map((sx, si) => (
-              <ellipse key={si} cx={sx} cy={-16} rx={24} ry={16} fill="#E6C267" stroke="#8C6D23" strokeWidth={2.2} />
-            ))}
-            {/* 船桅与小帆 */}
-            <line x1={4} y1={-18} x2={4} y2={-132} stroke="#5B3E28" strokeWidth={5} strokeLinecap="round" />
-            <path d={`M 6 -126 Q ${58 + Math.sin(t * 3.2) * 8} -86 6 -42 Z`} fill="#FAF3E0" stroke="#7A6548" strokeWidth={2.4} />
+          <g key={`mech-heart-${idx}`} transform={`translate(${hx.toFixed(1)}, ${hy.toFixed(1)}) scale(${pulse.toFixed(3)})`} opacity={fade.toFixed(2)}>
+            {breakU <= 0.005 ? (
+              <path
+                d="M 0 18 C -26 2 -34 -18 -18 -28 C -8 -34 -1 -26 0 -18 C 1 -26 8 -34 18 -28 C 34 -18 26 2 0 18 Z"
+                fill="#FF6B9A"
+                stroke="#C2255C"
+                strokeWidth={2.6}
+              />
+            ) : (
+              <g>
+                <g transform={`translate(${(-split).toFixed(1)}, ${(split * 0.2).toFixed(1)}) rotate(${(-clamp(breakU * 1.8) * 18).toFixed(1)})`}>
+                  <path d="M 0 18 C -26 2 -34 -18 -18 -28 C -8 -34 -1 -26 0 -18 L -5 -7 L 3 3 Z" fill="#FF6B9A" stroke="#C2255C" strokeWidth={2.6} />
+                </g>
+                <g transform={`translate(${split.toFixed(1)}, ${(split * 0.2).toFixed(1)}) rotate(${(clamp(breakU * 1.8) * 18).toFixed(1)})`}>
+                  <path d="M 0 18 C 26 2 34 -18 18 -28 C 8 -34 1 -26 0 -18 L -5 -7 L 3 3 Z" fill="#FF6B9A" stroke="#C2255C" strokeWidth={2.6} />
+                </g>
+              </g>
+            )}
+            <g transform="translate(0, -44)">
+              <rect x={-32} y={-15} width={64} height={26} rx={13} fill={breakU <= 0.005 ? 'rgba(255, 107, 154, 0.94)' : 'rgba(92, 54, 82, 0.88)'} stroke="#FFF0F6" strokeWidth={1.8} />
+              <text x={0} y={4} textAnchor="middle" fontSize={15} fontWeight="900" fill="#FFFFFF" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                {breakU <= 0.005 ? '对象' : '被抢走'}
+              </text>
+            </g>
           </g>
         );
       }
 
       return (
-        <g key={`mech-cranes-${idx}`}>
-          {/* 留在码头桩上的单只纸鹤 */}
-          <g transform={`translate(${pierX - 6}, ${(pierY + Math.sin(t * 3.4) * 2).toFixed(1)})`}>
-            <OrigamiCraneSvg color="#8CE0F5" stroke="#2C6E85" wingLift={wing * 0.35} scale={0.95} />
+        <g key={`mech-boat-${idx}`} transform={`translate(${bx.toFixed(1)}, ${by.toFixed(1)})`}>
+          {/* 船底水花 */}
+          <path d="M -162 22 Q -50 32 42 22 Q 112 30 164 18" fill="none" stroke="#E8FCFA" strokeWidth={4.5} strokeLinecap="round" />
+          {/* 加宽草船木船身（左侧船头甲板宽敞承托登上草船的女朋友角色！） */}
+          <path d="M -160 -6 L 160 -6 L 122 26 L -122 26 Z" fill="#8C5E3C" stroke="#472E1B" strokeWidth={3.2} strokeLinejoin="round" />
+          {/* 船尾草垛靶子（草船借箭意象） */}
+          {[78, 112, 138].map((sx, si) => (
+            <ellipse key={si} cx={sx} cy={-18 + si * 2} rx={25 - si * 2} ry={18 - si} fill="#E6C267" stroke="#8C6D23" strokeWidth={2.4} />
+          ))}
+          {/* 船桅与大风帆 */}
+          <line x1={58} y1={-12} x2={58} y2={-142} stroke="#5B3E28" strokeWidth={5.5} strokeLinecap="round" />
+          <path d={`M 60 -136 Q ${124 + Math.sin(t * 3.2) * 8} -90 60 -42 Z`} fill="#FAF3E0" stroke="#7A6548" strokeWidth={2.5} />
+
+          {/* 船中威风凛凛手摇鹅毛羽扇的 Q版「草船丞相」！ */}
+          <g transform="translate(32, -6)">
+            <path d="M -24 0 L -16 -56 L 16 -56 L 24 0 Z" fill="#2B4C7E" stroke="#162947" strokeWidth={2.8} />
+            <path d="M -15 -56 L 0 -36 L 15 -56" fill="none" stroke="#F0DBA5" strokeWidth={3} />
+            <circle cx={0} cy={-72} r={16.5} fill="#FFE2C6" stroke="#5C4030" strokeWidth={2.5} />
+            {/* 丞相冠巾 */}
+            <path d="M -18 -80 L -12 -102 L 12 -102 L 18 -80 Z" fill="#1E3557" stroke="#E0BD6B" strokeWidth={2.2} />
+            <line x1={-8} y1={-74} x2={-3} y2={-74} stroke="#2B211B" strokeWidth={2.4} strokeLinecap="round" />
+            <line x1={3} y1={-74} x2={8} y2={-74} stroke="#2B211B" strokeWidth={2.4} strokeLinecap="round" />
+            <path d="M -3 -62 Q 0 -46 3 -62" fill="#2B211B" />
+            {/* 摇动的鹅毛羽扇 */}
+            <g transform={`translate(-18, -46) rotate(${fanDeg.toFixed(1)})`}>
+              <line x1={0} y1={0} x2={-14} y2={-18} stroke="#8C5A2B" strokeWidth={3.2} />
+              <ellipse cx={-23} cy={-29} rx={18} ry={12} transform="rotate(-35 -23 -29)" fill="#FFFFFF" stroke="#B8D4E8" strokeWidth={2.2} />
+            </g>
           </g>
-          {/* 被草船带走的另一只纸鹤（成对 -> 单只！） */}
-          <g transform={`translate(${crane2X.toFixed(1)}, ${crane2Y.toFixed(1)})`}>
-            <OrigamiCraneSvg
-              color="#FFA8BE"
-              stroke="#8C3B52"
-              wingLift={boardU > 0 && boardU < 1 ? wing : wing * 0.3}
-              scale={0.95}
-              flip={boardU <= 0}
-            />
+
+          {/* 船舷「草船丞相」木牌 */}
+          <g transform="translate(22, 10)">
+            <rect x={-46} y={-11} width={92} height={22} rx={5} fill="#FDF1D4" stroke="#6E4423" strokeWidth={2} />
+            <text x={0} y={5} textAnchor="middle" fontSize={15} fontWeight="900" fill="#5C2D16" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+              草船丞相
+            </text>
           </g>
         </g>
       );
     }
 
     case 'pear_to_envelope': {
-      const slideU = ease(seg(t, mech.slideStart ?? 23.45, mech.openAt ?? 25.55));
-      const openU = seg(t, mech.openAt ?? 25.55, (mech.openAt ?? 25.55) + 0.38);
-      const pushBackU = ease(seg(t, mech.pushBackAt ?? 26.2, (mech.pushBackAt ?? 26.2) + 0.85));
+      // 梗7：孔融让梨 -> 就是让我「离职」（大黄梨递过来咔嚓裂开，秒变盖红章的「离职书」+ 抱箱走人纸箱，主角一把推回去！）
+      const slideU = ease(seg(t, mech.slideStart ?? 21.45, mech.openAt ?? 23.40));
+      const openU = seg(t, mech.openAt ?? 23.40, (mech.openAt ?? 23.40) + 0.32);
+      const pushBackU = ease(seg(t, mech.pushBackAt ?? 23.85, (mech.pushBackAt ?? 23.85) + 0.72));
       const baseX = lerp(mech.fromX ?? 765, mech.midX ?? 625, slideU);
-      const curX = lerp(baseX, mech.pushBackX ?? 735, pushBackU);
-      const curY = mech.y ?? 464;
-      const opened = openU > 0.25;
+      const curX = lerp(baseX, mech.pushBackX ?? 742, pushBackU);
+      const curY = mech.y ?? 480;
+      const opened = openU > 0.22;
       const pop = opened ? backOut(clamp(openU), 1.7) : 1 + Math.sin(slideU * Math.PI) * 0.06;
 
       return (
@@ -416,14 +551,24 @@ function renderMechanism(mech, t, idx) {
               </g>
             ) : (
               <g transform="translate(0, -14)">
-                <EnvelopeSvg scale={1.12} waxColor="#D94848" />
+                {/* 打包离职纸箱 */}
+                <g transform="translate(62, 10)">
+                  <rect x={-32} y={-22} width={64} height={44} rx={4} fill="#D9A773" stroke="#7D522B" strokeWidth={2.6} />
+                  <line x1={-32} y1={-6} x2={32} y2={-6} stroke="#7D522B" strokeWidth={2.2} />
+                </g>
+                {/* 盖红章的「离职书」 */}
+                <rect x={-52} y={-34} width={104} height={68} rx={7} fill="#FFFDF9" stroke="#45566B" strokeWidth={3.2} />
+                <circle cx={30} cy={14} r={12} fill="rgba(224, 67, 56, 0.24)" stroke="#D93B30" strokeWidth={2.2} />
+                <text x={0} y={7} textAnchor="middle" fontSize={25} fontWeight="900" fill="#C93328" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                  离职书
+                </text>
               </g>
             )}
           </g>
-          {/* 鲸鱼娘收好胸前蓝色缎带工牌（纯图案无文字） */}
-          {t >= (mech.openAt ?? 25.55) && (
+          {/* 鲸鱼娘死死护住自己的蓝色工牌不肯离职 */}
+          {t >= (mech.openAt ?? 23.40) && (
             <g
-              transform={`translate(${mech.badgeX ?? 545}, ${mech.badgeY ?? 468}) scale(${backOut(seg(t, (mech.openAt ?? 25.55) + 0.35, (mech.openAt ?? 25.55) + 0.72), 1.5).toFixed(3)})`}
+              transform={`translate(${mech.badgeX ?? 545}, ${mech.badgeY ?? 468}) scale(${backOut(seg(t, (mech.openAt ?? 23.40) + 0.22, (mech.openAt ?? 23.40) + 0.55), 1.5).toFixed(3)})`}
             >
               <path d="M -14 -24 L 0 0 L 14 -24" fill="none" stroke="#4DABF7" strokeWidth={3.5} />
               <rect x={-18} y={-2} width={36} height={26} rx={5} fill="#E7F5FF" stroke="#1C7ED6" strokeWidth={2.4} />
@@ -435,22 +580,23 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'scrolling_houses': {
-      const scrollU = ease(seg(t, mech.start ?? 27.65, mech.end ?? 28.75));
-      const shiftX = lerp(mech.fromOffset ?? 120, mech.toOffset ?? -360, scrollU);
-      const specs = [
-        { x: 160, roof: '#4D6A88', wall: '#F5F2EB', door: '#7C583F' },
-        { x: 520, roof: '#C96A50', wall: '#FBE8D3', door: '#6E4736' },
-        { x: 880, roof: '#4E8C7B', wall: '#E8F4EE', door: '#59483B' },
-      ];
+      // 梗8：孟母三迁 -> 我月薪也是三千（三栋挂着「一迁」「二迁」「三迁」牌匾的屋舍滚过）
+      const u = ease(seg(t, mech.start ?? 24.82, mech.end ?? 27.57));
+      const offsetX = lerp(mech.fromOffset ?? 140, mech.toOffset ?? -420, u);
+      const labels = ['一迁', '二迁', '三迁'];
       return (
-        <g key={`mech-${idx}`} transform={`translate(${shiftX.toFixed(1)}, 0)`}>
-          {specs.map((hs, hi) => (
-            <g key={`hs-${hi}`} transform={`translate(${hs.x}, 600)`}>
-              <rect x={-96} y={-195} width={192} height={195} rx={4} fill={hs.wall} stroke="#3B3745" strokeWidth={3} />
-              <polygon points="-116,-190 0,-268 116,-190" fill={hs.roof} stroke="#2C2A35" strokeWidth={3} strokeLinejoin="round" />
-              <rect x={-22} y={-92} width={44} height={92} rx={4} fill={hs.door} stroke="#2C2A35" strokeWidth={2.5} />
-              <rect x={-72} y={-148} width={36} height={36} rx={4} fill="#FFE8A3" stroke="#5A4E3C" strokeWidth={2.4} />
-              <rect x={36} y={-148} width={36} height={36} rx={4} fill="#FFE8A3" stroke="#5A4E3C" strokeWidth={2.4} />
+        <g key={`mech-${idx}`} transform={`translate(${offsetX.toFixed(1)}, 0)`}>
+          {[280, 620, 960].map((hx, hi) => (
+            <g key={`house-${hi}`} transform={`translate(${hx}, 584)`} opacity={0.92}>
+              <rect x={-72} y={-136} width={144} height={136} rx={6} fill="#D8CFC2" stroke="#5A4E3C" strokeWidth={3} />
+              <polygon points="-88,-134 0,-196 88,-134" fill="#8C4F3E" stroke="#4A2920" strokeWidth={3} strokeLinejoin="round" />
+              <rect x={-20} y={-68} width={40} height={68} rx={4} fill="#7B563D" stroke="#4A2F1D" strokeWidth={2.4} />
+              <rect x={34} y={-112} width={30} height={30} rx={4} fill="#FFE8A3" stroke="#5A4E3C" strokeWidth={2.4} />
+              {/* 屋檐「一迁 / 二迁 / 三迁」牌匾 */}
+              <rect x={-36} y={-166} width={72} height={26} rx={5} fill="#FDF0D5" stroke="#6E4423" strokeWidth={2.2} />
+              <text x={0} y={-147} textAnchor="middle" fontSize={17} fontWeight="900" fill="#6B3418" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+                {labels[hi]}
+              </text>
             </g>
           ))}
         </g>
@@ -458,28 +604,51 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'steaming_teacup': {
-      if (t < (mech.enterAt ?? 28.45)) return null;
-      const pop = backOut(seg(t, mech.enterAt ?? 28.45, (mech.enterAt ?? 28.45) + 0.32), 1.5);
+      // 梗8后半句：也是三千（扁扁的「月薪三千」工资袋 + 三枚薄铜钱 + 热茶苦中作乐！）
+      if (t < (mech.enterAt ?? 27.45)) return null;
+      const pop = backOut(seg(t, mech.enterAt ?? 27.45, (mech.enterAt ?? 27.45) + 0.34), 1.5);
       return (
-        <g key={`mech-${idx}`} transform={`translate(${mech.x ?? 742}, ${mech.y ?? 542}) scale(${pop.toFixed(3)})`}>
-          <ellipse cx={0} cy={4} rx={24} ry={6} fill="#DCECE8" stroke="#486862" strokeWidth={2} />
-          <path d="M -16 -18 L 16 -18 L 12 2 L -12 2 Z" fill="#F3FAF8" stroke="#486862" strokeWidth={2.4} />
-          <path d="M 15 -14 Q 24 -14 22 -5 Q 20 0 13 -2" fill="none" stroke="#486862" strokeWidth={2.4} />
-          {[0, 1].map((si) => {
-            const rise = ((t * 1.1 + si * 0.5) % 1 + 1) % 1;
-            const sx = -5 + si * 10 + Math.sin(t * 4 + si) * 4;
-            return (
-              <path
-                key={si}
-                d={`M ${sx.toFixed(1)} ${(-22 - rise * 26).toFixed(1)} Q ${(sx + 5).toFixed(1)} ${(-30 - rise * 26).toFixed(1)} ${sx.toFixed(1)} ${(-38 - rise * 26).toFixed(1)}`}
-                fill="none"
-                stroke="#FFF9EE"
-                strokeWidth={2.4}
-                strokeLinecap="round"
-                opacity={(1 - rise) * 0.78}
+        <g key={`mech-${idx}`} transform={`translate(${mech.x ?? 762}, ${mech.y ?? 542}) scale(${pop.toFixed(3)})`}>
+          {/* 扁扁的「月薪三千」薪资袋 + 三枚薄铜钱 */}
+          <g transform="translate(-58, -4)">
+            <rect x={-44} y={-16} width={88} height={30} rx={6} fill="#FBE7B5" stroke="#9C6E2B" strokeWidth={2.4} />
+            <text x={0} y={5} textAnchor="middle" fontSize={16} fontWeight="900" fill="#9E3324" fontFamily="NewdayNoto, Noto Sans CJK SC, sans-serif">
+              月薪三千
+            </text>
+            {[-20, 0, 20].map((cx, ci) => (
+              <circle
+                key={ci}
+                cx={cx}
+                cy={-26 - Math.abs(Math.sin(t * 4.5 + ci)) * 4}
+                r={7.5}
+                fill="#FFD43B"
+                stroke="#B07914"
+                strokeWidth={2}
               />
-            );
-          })}
+            ))}
+          </g>
+
+          {/* 热茶杯 */}
+          <g transform="translate(22, 0)">
+            <ellipse cx={0} cy={4} rx={24} ry={6} fill="#DCECE8" stroke="#486862" strokeWidth={2} />
+            <path d="M -16 -18 L 16 -18 L 12 2 L -12 2 Z" fill="#F3FAF8" stroke="#486862" strokeWidth={2.4} />
+            <path d="M 15 -14 Q 24 -14 22 -5 Q 20 0 13 -2" fill="none" stroke="#486862" strokeWidth={2.4} />
+            {[0, 1].map((si) => {
+              const rise = ((t * 1.1 + si * 0.5) % 1 + 1) % 1;
+              const sx = -5 + si * 10 + Math.sin(t * 4 + si) * 4;
+              return (
+                <path
+                  key={si}
+                  d={`M ${sx.toFixed(1)} ${(-22 - rise * 26).toFixed(1)} Q ${(sx + 5).toFixed(1)} ${(-30 - rise * 26).toFixed(1)} ${sx.toFixed(1)} ${(-38 - rise * 26).toFixed(1)}`}
+                  fill="none"
+                  stroke="#FFF9EE"
+                  strokeWidth={2.4}
+                  strokeLinecap="round"
+                  opacity={(1 - rise) * 0.78}
+                />
+              );
+            })}
+          </g>
         </g>
       );
     }
@@ -525,7 +694,7 @@ function evaluateCueArc(ev, t, fps, actors) {
     const q = ease(clamp((frame - ev.startFrame) / Math.max(1, ev.endFrame - ev.startFrame)));
     return {
       x: land[0] + Math.sin(q * 9) * 14,
-      y: lerp(220, Math.min(585, land[1]), q),
+      y: lerp(220, Math.min(585, land.y ?? land[1]), q),
       rot: Math.sin(q * 7) * 12,
       hit: frame >= ev.contactFrame,
       hitPt: land,
@@ -544,7 +713,7 @@ function evaluateCueArc(ev, t, fps, actors) {
 
 /**
  * InteractivePropsLayer — 世界道具、声明式机关、handAt 手持道具、语义翻转纸张与接触冲击波层
- * 支持 layer="back"（人物身后层：如靠山、三迁屋舍、水面草船）与 layer="front"（人物前景层）
+ * 支持 layer="back"（人物身后层：如靠山、三迁屋舍、水面草船丞相）与 layer="front"（人物前景层）
  */
 export function InteractivePropsLayer({
   layer = 'front',
@@ -558,7 +727,7 @@ export function InteractivePropsLayer({
   openerStamp = null,
   isOpener = false,
 }) {
-  const mechanisms = shot.mechanisms || [];
+  const mechanisms = shot?.mechanisms || [];
 
   if (layer === 'back') {
     const backMechs = mechanisms.filter((m) => m.layer === 'back');
@@ -576,7 +745,7 @@ export function InteractivePropsLayer({
   }
 
   const frontMechs = mechanisms.filter((m) => m.layer !== 'back');
-  const shotEvents = events.filter((e) => !e.shotId || e.shotId === shot.id);
+  const shotEvents = events.filter((e) => !e.shotId || e.shotId === shot?.id);
 
   return (
     <svg
@@ -586,7 +755,7 @@ export function InteractivePropsLayer({
       style={{ position: 'absolute', left: 0, top: 0, overflow: 'visible', pointerEvents: 'none' }}
     >
       {/* 前景承托桌 */}
-      {shot.foregroundTable && (
+      {shot?.foregroundTable && (
         <g>
           <rect
             x={shot.foregroundTable.x - shot.foregroundTable.width / 2}
@@ -612,10 +781,10 @@ export function InteractivePropsLayer({
       {frontMechs.map((mech, idx) => renderMechanism(mech, t, idx))}
 
       {/* 场景配套静态/入场道具 (companionProps / mv props) */}
-      {(shot.companionProps || shot.props || []).map((ref, idx) => {
+      {(shot?.companionProps || shot?.props || []).map((ref, idx) => {
         const enterAt = Number.isFinite(ref.enterAt)
           ? ref.enterAt
-          : (ref.fromLine && cues[ref.fromLine - 1] ? cues[ref.fromLine - 1].start : (shot.start ?? 0));
+          : (ref.fromLine && cues[ref.fromLine - 1] ? cues[ref.fromLine - 1].start : (shot?.start ?? 0));
         if (t < enterAt) return null;
         const pop = ref.carry ? 1 : backOut(clamp((t - enterAt) / 0.28), 1.3);
         let state = { ...(ref.state || {}) };
@@ -631,7 +800,7 @@ export function InteractivePropsLayer({
       })}
 
       {/* 语义纸张翻转与勾画轨道 (semanticTracks) */}
-      {(shot.semanticTracks || []).map((track) => {
+      {(shot?.semanticTracks || []).map((track) => {
         const st = semanticStateAt(track, t);
         if (!st) return null;
         if (track.kind === 'prop') {
