@@ -383,91 +383,121 @@ function renderMechanism(mech, t, idx) {
     }
 
     case 'savings_jar_beam': {
-      // 梗5：凿壁偷光 -> 偷光了我的「积蓄」（青花大瓷碗里满满一碗热气腾腾的白米饭「积蓄」，被隔壁凿穿的墙洞连饭团带米粒吸得一粒不剩！）
-      const jarX = mech.x ?? 648;
+      // 梗5：凿壁偷光 -> 偷光了我的「积蓄」
+      // 青花大瓷碗里堆满晶莹饱满的白米饭粒「积蓄」，反转时刻起一粒接一粒高速飞入隔壁凿穿的墙洞，碗内米粒逐层迅速见底直至空碗！
+      const jarX = mech.x ?? 682;
       const jarY = mech.y ?? 478;
       const holeX = mech.holeX ?? 1020;
       const holeY = mech.holeY ?? 292;
       const stealStart = mech.stealAt ?? 15.85;
-      const drainU = ease(seg(t, stealStart, stealStart + 1.28));
-      const moundScaleY = Math.max(0, 1 - drainU);
-      const riceScoopOffsets = [
-        [-22, -78],
-        [18, -82],
-        [-4, -96],
-        [-28, -68],
-        [24, -70],
-        [0, -84],
-        [-12, -66],
-        [10, -64],
+
+      // 42 粒分层堆叠在碗口的饱满白米粒（从碗顶峰尖 i=0 到碗口底层 i=41，按顺序一粒一粒高速被吸走！）
+      const RICE_GRAINS = [
+        // 顶峰层 (0..6)
+        [0, -108, -8], [-11, -104, 16], [12, -103, -18], [-5, -99, 6], [7, -98, -12], [-18, -97, 22], [19, -96, -24],
+        // 上中层 (7..17)
+        [-25, -91, 18], [-12, -91, -14], [0, -90, 10], [13, -90, -8], [26, -89, 20],
+        [-31, -84, -22], [-18, -83, 12], [-5, -83, -10], [8, -82, 15], [21, -82, -16], [33, -81, 24],
+        // 中层 (18..29)
+        [-38, -76, 14], [-25, -75, -18], [-11, -75, 8], [3, -75, -12], [16, -74, 18], [29, -74, -14],
+        [39, -73, 20], [-42, -71, -10], [-17, -70, 14], [-2, -70, -8], [12, -70, 11], [25, -70, -15],
+        // 碗口底层 (30..41)
+        [-44, -66, -15], [-32, -66, 12], [-19, -65, -9], [-6, -65, 16], [7, -65, -14], [20, -65, 11],
+        [32, -65, -18], [43, -64, 15], [-28, -61, 6], [-9, -61, -7], [10, -61, 9], [28, -61, -11],
       ];
+      const totalGrains = RICE_GRAINS.length;
+      const launchStep = 0.024; // 每 0.024 秒起飞一粒（每秒超 40 粒连珠炮式高速吸走！）
+      const flightDur = 0.34;   // 单粒沿金光光束高速飞入墙洞仅需 0.34 秒
+      const totalStealSpan = (totalGrains - 1) * launchStep + flightDur;
+      const drainU = clamp((t - stealStart) / ((totalGrains - 1) * launchStep), 0, 1);
+      const moundScaleY = Math.max(0, 1 - ease(drainU));
+
+      const beamDx = holeX - jarX;
+      const beamDy = holeY - (jarY - 78);
+      const beamAngleDeg = (Math.atan2(beamDy, beamDx) * 180) / Math.PI;
+
       return (
         <g key={`mech-${idx}`}>
-          {/* 凿壁金光光柱 */}
+          {/* 凿壁强光光束 + 光束内柔和吸力金丝 */}
           <polygon
-            points={`${holeX},${holeY - 16} ${holeX},${holeY + 16} ${jarX + 54},${jarY - 46} ${jarX - 54},${jarY - 106}`}
-            fill={t >= stealStart ? 'rgba(255, 212, 92, 0.34)' : 'rgba(255, 240, 170, 0.20)'}
+            points={`${holeX},${holeY - 18} ${holeX},${holeY + 18} ${jarX + 56},${jarY - 50} ${jarX - 54},${jarY - 112}`}
+            fill={t >= stealStart ? 'rgba(255, 214, 84, 0.38)' : 'rgba(255, 240, 170, 0.20)'}
           />
+          {t >= stealStart && t <= stealStart + totalStealSpan && [-12, 4, 18].map((offsetY, si) => {
+            const dashOffset = -((t * 460 + si * 28) % 56);
+            return (
+              <line
+                key={`suction-ray-${si}`}
+                x1={jarX + 12}
+                y1={jarY - 82 + offsetY}
+                x2={holeX - 10}
+                y2={holeY + offsetY * 0.32}
+                stroke="rgba(255, 238, 158, 0.42)"
+                strokeWidth={1.8}
+                strokeDasharray="14 22"
+                strokeDashoffset={dashOffset}
+                strokeLinecap="round"
+              />
+            );
+          })}
 
-          {/* 碗内雪白饱满的白米饭山（随被吸走逐帧瘪下去直至空碗！） */}
+          {/* 碗内白米饭基底与尚未被吸走的米粒 */}
           <g transform={`translate(${jarX}, ${jarY})`}>
-            {/* 竹筷（插在米饭上，米饭被偷光后孤零零横在空碗边） */}
-            <g transform={`translate(${lerp(24, 10, drainU).toFixed(1)}, ${lerp(-88, -64, drainU).toFixed(1)}) rotate(${lerp(28, 8, drainU).toFixed(1)})`}>
+            {/* 竹筷（随米饭被一粒粒抽空而缓缓滑落到空碗边） */}
+            <g transform={`translate(${lerp(24, 10, drainU).toFixed(1)}, ${lerp(-90, -63, drainU).toFixed(1)}) rotate(${lerp(28, 7, drainU).toFixed(1)})`}>
               <line x1={-46} y1={-4} x2={44} y2={4} stroke="#C98A4B" strokeWidth={4.2} strokeLinecap="round" />
               <line x1={-44} y1={3} x2={45} y2={-3} stroke="#B07237" strokeWidth={4.2} strokeLinecap="round" />
             </g>
 
-            {moundScaleY > 0.03 && (
-              <g transform={`translate(0, -58) scale(${(0.92 + 0.08 * moundScaleY).toFixed(3)}, ${moundScaleY.toFixed(3)})`}>
-                {/* 白米饭蓬松圆顶 */}
+            {/* 碗内底层白米饭团核（随上层米粒一粒粒飞走同步下陷直至清零） */}
+            {moundScaleY > 0.04 && (
+              <g transform={`translate(0, -58) scale(${(0.88 + 0.12 * moundScaleY).toFixed(3)}, ${moundScaleY.toFixed(3)})`}>
                 <path
-                  d="M -52 0 C -55 -28 -34 -54 0 -56 C 34 -54 55 -28 52 0 Z"
+                  d="M -50 0 C -52 -25 -31 -48 0 -50 C 31 -48 52 -25 50 0 Z"
                   fill="#FFFFFF"
-                  stroke="#BCCCDC"
-                  strokeWidth={2.8}
+                  stroke="#CBD5E1"
+                  strokeWidth={2.4}
                 />
                 <path
-                  d="M -42 -4 C -36 -26 -18 -44 6 -46 C -10 -38 -22 -20 -26 -2 Z"
+                  d="M -38 -3 C -32 -22 -16 -38 6 -40 C -8 -32 -20 -18 -24 -2 Z"
                   fill="#F1F5F9"
-                  opacity={0.75}
+                  opacity={0.8}
                 />
-                {/* 饱满白米粒纹理 */}
-                {[
-                  [-24, -16, -18], [-8, -28, 12], [12, -24, -14], [26, -14, 22],
-                  [-14, -10, 8], [6, -12, -10], [0, -38, 6], [-20, -30, -24], [18, -34, 18],
-                ].map(([gx, gy, rot], gi) => (
-                  <ellipse
-                    key={`grain-${gi}`}
-                    cx={gx}
-                    cy={gy}
-                    rx={6.2}
-                    ry={3.1}
-                    transform={`rotate(${rot} ${gx} ${gy})`}
-                    fill="#FFFFFF"
-                    stroke="#CBD5E1"
-                    strokeWidth={1.4}
-                  />
-                ))}
-                {/* 热米饭袅袅热气 */}
-                {drainU < 0.45 && [-18, 6, 22].map((sx, si) => {
-                  const floatY = ((t * 24 + si * 11) % 24);
-                  return (
-                    <path
-                      key={`steam-${si}`}
-                      d={`M ${sx} ${-58 - floatY} Q ${sx - 5} ${-68 - floatY} ${sx + 2} ${-78 - floatY}`}
-                      fill="none"
-                      stroke="#FFFFFF"
-                      strokeWidth={2.4}
-                      strokeLinecap="round"
-                      opacity={(1 - floatY / 24) * 0.65}
-                    />
-                  );
-                })}
               </g>
             )}
 
-            {/* 青花大瓷饭碗（碗身遮住米饭底座，形成严丝合缝的盛饭视觉） */}
-            <ellipse cx={0} cy={-58} rx={55} ry={10} fill="#E2E8F0" stroke="#364FC7" strokeWidth={2.6} />
+            {/* 碗口堆叠的 36 粒分明大米：还没轮到被吸走的米粒稳稳留在碗里，轮到的瞬间立刻起飞！ */}
+            {RICE_GRAINS.map(([gx, gy, rot], gi) => {
+              const launchT = stealStart + gi * launchStep;
+              if (t >= launchT) return null;
+              const sinkY = (gy + 58) * (1 - (0.35 + 0.65 * moundScaleY));
+              const curY = gy - sinkY * 0.25;
+              return (
+                <g key={`bowl-grain-${gi}`} transform={`translate(${gx}, ${curY.toFixed(1)}) rotate(${rot})`}>
+                  <ellipse cx={0} cy={0} rx={7.2} ry={3.7} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={1.5} />
+                  <ellipse cx={-1.6} cy={-0.9} rx={3.6} ry={1.3} fill="#F8FAFC" />
+                </g>
+              );
+            })}
+
+            {/* 热米饭袅袅热气（被偷光前飘起） */}
+            {drainU < 0.35 && [-18, 6, 22].map((sx, si) => {
+              const floatY = ((t * 24 + si * 11) % 24);
+              return (
+                <path
+                  key={`steam-${si}`}
+                  d={`M ${sx} ${-108 - floatY} Q ${sx - 5} ${-118 - floatY} ${sx + 2} ${-128 - floatY}`}
+                  fill="none"
+                  stroke="#FFFFFF"
+                  strokeWidth={2.4}
+                  strokeLinecap="round"
+                  opacity={(1 - floatY / 24) * 0.65}
+                />
+              );
+            })}
+
+            {/* 青花大瓷饭碗（遮住碗口下沿，空碗时露出碗底内壁阴影） */}
+            <ellipse cx={0} cy={-58} rx={55} ry={10} fill={moundScaleY <= 0.05 ? '#CBD5E1' : '#E2E8F0'} stroke="#364FC7" strokeWidth={2.6} />
             <path
               d="M -56 -58 Q -52 -8 0 -8 Q 52 -8 56 -58 Z"
               fill="#F8FAFC"
@@ -475,7 +505,6 @@ function renderMechanism(mech, t, idx) {
               strokeWidth={3.2}
               strokeLinejoin="round"
             />
-            {/* 青花瓷碗口回纹装饰带 */}
             <path
               d="M -53 -49 Q 0 -42 53 -49"
               fill="none"
@@ -489,7 +518,6 @@ function renderMechanism(mech, t, idx) {
               stroke="#748FFC"
               strokeWidth={2}
             />
-            {/* 瓷碗碗足 */}
             <rect x={-24} y={-10} width={48} height={10} rx={3.5} fill="#E2E8F0" stroke="#2B44B8" strokeWidth={2.6} />
 
             {/* 碗身醒目红底金字「积蓄」封签 */}
@@ -501,28 +529,39 @@ function renderMechanism(mech, t, idx) {
             </g>
           </g>
 
-          {/* 8 团雪白米饭与散落白米粒沿弧线被隔壁墙洞吸得一干二净！ */}
-          {riceScoopOffsets.map(([ox, oy], ti) => {
-            const u = seg(t, stealStart + ti * 0.12, stealStart + ti * 0.12 + 0.78);
-            if (u <= 0.005 || u >= 0.995) return null;
-            const q = ease(u);
-            const startX = jarX + ox;
-            const startY = jarY + oy;
+          {/* 一粒一粒连珠炮式沿金光光束内部高速飞入墙洞的晶莹白米粒 */}
+          {RICE_GRAINS.map(([ox, oy, baseRot], gi) => {
+            const launchT = stealStart + gi * launchStep;
+            const u = (t - launchT) / flightDur;
+            if (u <= 0 || u >= 1) return null;
+            // 前段起吸、后段加速冲入墙洞的吸力曲线
+            const q = 0.42 * u + 0.58 * u * u;
+            const startX = jarX + ox * 0.72;
+            const startY = jarY + oy * 0.92;
+            // 严格收束在金色光束锥体内部，交错成清晰的米粒队列
+            const laneOffset = ((gi % 5) - 2) * 5.2 * (1 - q * 0.72);
+            const gentleArc = Math.sin(u * Math.PI) * (5 + (gi % 3) * 3);
             const tx = lerp(startX, holeX, q);
-            const ty = lerp(startY, holeY, q) - Math.sin(q * Math.PI) * (58 + (ti % 4) * 11);
-            const sc = q > 0.84 ? 1 - (q - 0.84) / 0.16 : (0.75 + 0.25 * Math.min(1, q * 5));
-            const spin = q * (ti % 2 === 0 ? 42 : -38);
+            const ty = lerp(startY, holeY, q) - gentleArc + laneOffset;
+            const sc = u > 0.88 ? Math.max(0.28, 1 - (u - 0.88) / 0.12) : (0.94 + 0.14 * Math.sin(u * Math.PI));
+            const rotDeg = beamAngleDeg + (baseRot * 0.45) + Math.sin(u * Math.PI * 2 + gi) * 14;
+
             return (
-              <g key={`rice-${ti}`} transform={`translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) rotate(${spin.toFixed(1)}) scale(${sc.toFixed(3)})`}>
-                {/* 蓬松雪白米饭团 */}
-                <circle cx={-6} cy={2} r={9.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
-                <circle cx={6} cy={2} r={9.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
-                <circle cx={0} cy={-5} r={10.5} fill="#FFFFFF" stroke="#94A3B8" strokeWidth={2.2} />
-                <circle cx={0} cy={0} r={8.5} fill="#FFFDF9" />
-                {/* 伴飞晶莹白米粒 */}
-                <ellipse cx={-17} cy={-6} rx={5.2} ry={2.6} transform="rotate(-24 -17 -6)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
-                <ellipse cx={16} cy={-8} rx={5.2} ry={2.6} transform="rotate(28 16 -8)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
-                <ellipse cx={2} cy={14} rx={5.0} ry={2.5} transform="rotate(12 2 14)" fill="#FFFFFF" stroke="#64748B" strokeWidth={1.6} />
+              <g
+                key={`flying-grain-${gi}`}
+                transform={`translate(${tx.toFixed(1)}, ${ty.toFixed(1)}) rotate(${rotDeg.toFixed(1)}) scale(${sc.toFixed(3)})`}
+              >
+                {/* 饱满大米颗粒本尊（微带胚芽弧度的雪白米粒，一眼认出是大米！） */}
+                <path
+                  d="M -8.6 0 C -8.6 -3.1 -3.8 -4.7 1.8 -4.4 C 6.2 -4.1 8.8 -2.1 8.8 0 C 8.8 2.4 5.6 4.5 -0.4 4.5 C -5.4 4.5 -8.6 2.6 -8.6 0 Z"
+                  fill="#FFFFFF"
+                  stroke="#475569"
+                  strokeWidth={1.7}
+                  strokeLinejoin="round"
+                />
+                {/* 米粒晶莹背脊高光 */}
+                <ellipse cx={-1.2} cy={-1.3} rx={4.6} ry={1.3} fill="#F8FAFC" />
+                <path d="M -4.2 0.8 Q 0.5 1.8 4.6 0.6" fill="none" stroke="#CBD5E1" strokeWidth={1.0} strokeLinecap="round" />
               </g>
             );
           })}

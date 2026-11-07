@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "watermark": false,
+  "covers": [
+    {
+      "ratio": "3:4",
+      "width": 1080,
+      "height": 1440,
+      "watermark": false,
+      "texts": [
+        {
+          "text": "我怀疑大禹治水 · 番外MV",
+          "size": 31,
+          "bounds": {
+            "left": 353,
+            "top": 63,
+            "right": 727,
+            "bottom": 98
+          }
+        },
+        {
+          "text": "我怀疑凿壁偷光",
+          "size": 96,
+          "bounds": {
+            "left": 196,
+            "top": 137,
+            "right": 884,
+            "bottom": 246
+          }
+        },
+        {
+          "text": "偷光了我的积蓄",
+          "size": 108,
+          "bounds": {
+            "left": 153,
+            "top": 256,
+            "right": 927,
+            "bottom": 378
+          }
+        },
+        {
+          "text": "连白米饭都一粒一粒吸走啦",
+          "size": 38,
+          "bounds": {
+            "left": 309,
+            "top": 1328,
+            "right": 771,
+            "bottom": 1371
+          }
+        }
+      ],
+      "file": "番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_3比4.png",
+      "sha256": "367b02853a3080bce1a39d9788cc19460856fd09ef3c71b8b3144f814fd9ee66"
+    },
+    {
+      "ratio": "4:3",
+      "width": 1440,
+      "height": 1080,
+      "watermark": false,
+      "texts": [
+        {
+          "text": "我怀疑大禹治水 · 番外MV",
+          "size": 29,
+          "bounds": {
+            "left": 112,
+            "top": 55,
+            "right": 462,
+            "bottom": 88
+          }
+        },
+        {
+          "text": "我怀疑凿壁偷光",
+          "size": 92,
+          "bounds": {
+            "left": 67,
+            "top": 112,
+            "right": 725,
+            "bottom": 214
+          }
+        },
+        {
+          "text": "偷光了我的积蓄",
+          "size": 104,
+          "bounds": {
+            "left": 66,
+            "top": 218,
+            "right": 810,
+            "bottom": 334
+          }
+        },
+        {
+          "text": "连白米饭都一粒一粒吸走啦",
+          "size": 35,
+          "bounds": {
+            "left": 507,
+            "top": 991,
+            "right": 933,
+            "bottom": 1032
+          }
+        }
+      ],
+      "file": "番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_4比3.png",
+      "sha256": "17c0827f1ab79fffb9d31df8f3934418f1a1c2844f4fb0841cb1a2ee8f677cdc"
+    }
+  ]
+}

@@ -7,7 +7,7 @@
 ## 设计要点（融合 `lintsinghua/paint-mv-skills` 与 `Win-Hao/music-mv`）
 
 - **纯帧号确定性求解 (`frame_evaluator.mjs`)**：每一帧完全由 `t = frame / fps` 纯函数求出（相机、动态舞台、多光源、10 骨骼角色动作、手部挂点 `handAt`、手持道具交接、环境触发器与动机转场），天然支持 Remotion 并发分片渲染与时间轴任意拖动预览。
-- **单一世界相机 (`components/WorldCamera.jsx`)**：1800×920 超宽世界空间内统一承载视差远景、中景建筑机关、体积光锥、地面接触阴影、脚步水波/尘土、角色与道具，杜绝人物与背景脱节漂移；字幕与歌词独立固定在屏幕安全区 (`components/LyricAndSubtitleLayer.jsx`)。
+- **单一世界相机 (`components/WorldCamera.jsx`)**：1800×920 超宽世界空间内统一承载视差远景、中景建筑机关、体积光锥、地面接触阴影、脚步水波/尘土、角色与道具，杜绝人物与背景脱节漂移；字幕与歌词独立固定在屏幕安全区 (`components/LyricAndSubtitleLayer.jsx`，按全局新规默认零右上角水印，支持 `--no-subtitles` 渲染纯净封面底板)。
 - **多舞台响应式环境 (`components/StageSetView.jsx`)**：与 Canvas 共享 `tools/场景/stage_sets_core.mjs` 的 12 套可切换舞台预设，实时响应 `open_door`、`open_gate`、`slam_desk`、`window_ripple`、`pin_note`、`toggle_lamp`、`dawn_shift` 等人物/剧情触发器。
 - **骨骼与切图双模角色 (`components/RiggedCharacter.jsx`)**：优先加载仓库真实角色抠图（`assets/ai-girls/` 与既有姿态图）并施加全身呼吸、挤压拉伸、姿态叠化与受光边缘高光（严禁篡改原图五官）；无位图角色或伴舞支持关节骨骼矢量木偶全身步态与手部动作。
 - **反 PPT 静态审计 (`auditRemotionPropsActivity`)**：对标 `music-mv` 的 `video_rhythm.py`，在 `--dry-run` 阶段扫描全片时间轴，自动拦截连续 `>= 1.0s` 的静态冻结幻灯片区间。

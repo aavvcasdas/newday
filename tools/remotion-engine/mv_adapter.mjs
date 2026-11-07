@@ -120,7 +120,7 @@ export function adaptMvToRemotionProps({
     durationInFrames,
     beatConfig,
     audioSrc: audioPath ? path.resolve(repoRoot, audioPath) : (spec.audioPath ? path.resolve(repoRoot, spec.audioPath) : null),
-    complianceBadge: spec.complianceBadge || '非官方同人 / AI生成',
+    complianceBadge: null,
     assetUrlMap,
     cues: resolvedLyrics,
     screens: resolvedLyrics,

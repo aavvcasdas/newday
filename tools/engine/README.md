@@ -14,7 +14,7 @@
 | `../场景/stage_sets_core.mjs` & `stage_sets.mjs` | 告别单一死板海底墙背景：内置 12 套超宽视差舞台（`1800×920` 世界坐标，支持 `underwater_study`、`porthole_observatory`、`screening_desk`、`corridor_hatch`、`pantry_hearth`、`abyss_metaphor`、`split_stage`、`river_gate`、`terracotta_courtyard`、`mountain_pass`、`rain_street`、`sunset_ridge`），支持 `defineStageSet()` 自定义扩展与 `autoStageProgression` 自动跨镜换景，`sea_stage.mjs` 12 项像素回归测试完整保留 |
 | `../互动元素/world_interactions.mjs` | 人物 ↔ 背景 ↔ 道具双向空间交互总线：角色走过门区自动推门漏光、脚步触地激起水波涟漪/尘土、跳跃高度衰减地面阴影、舞台光源实时投射角色边缘受光（`rimLight`）、`stageTriggers` 场景机关（开门/开闸/拍桌震动/敲窗涟漪/钉板贴条/点灯/晨昏推进）、以及基于 `handAt()` 的手持道具跟随、抛放到桌面（`placeToAnchor`）与双人弧线交接（`transfer`） |
 | `../互动元素/actor_contacts.mjs` | 升级至 10 骨骼网格蒙皮（`spine`/`head`/`armL`/`armR`/`legL`/`legR`/`hairL`/`hairR`/`tail`），面部椭圆区域刚性锁死 `head` 守护五官不拉伸变形，0.005 rad 量化精灵缓存消除跳变，姿态切换支持预备弹跳与平滑叠化 |
-| `scene_compositor.mjs` | 动态多舞台五层合成器（L0 超宽视差舞台 → L1 体积光锥与后景 → L2 地面接触阴影/涟漪 + 骨骼角色 → L3 前景交互道具/冲击波 → L4 屏幕安全区 HUD 字幕） |
+| `scene_compositor.mjs` | 动态多舞台五层合成器（L0 超宽视差舞台 → L1 体积光锥与后景 → L2 地面接触阴影/涟漪 + 骨骼角色 → L3 前景交互道具/冲击波 → L4 屏幕安全区 HUD 字幕；按全局新规默认零右上角水印，历史旧片保留不动） |
 | `performance_v2.mjs` | 固定立绘全身表演层，完整映射仓库已入库 `assets/ai-girls/` 7 位角色抠图（`doubao`/`claude`/`gemini`/`gpt`/`kimi`/`qwen`/`zai`），严禁程序画假眼皮或篡改固定 PNG 五官 |
 | `remotion_episode_adapter.mjs` | Day 系列分镜无损转译为通用 Remotion `UniversalComposition` `inputProps`，零硬编码桥接 `tools/remotion-engine/` |
 | `render_episode.mjs` | 统一单集入口：支持默认 Canvas+FFmpeg 渲染、`--export-remotion-props <json>` 导出动态 Remotion 输入、以及 `--backend remotion` 直接调用通用 Remotion 引擎渲染 |

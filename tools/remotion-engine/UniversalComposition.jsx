@@ -108,7 +108,8 @@ export function UniversalComposition(props) {
         cues={props.cues || []}
         speaker={props.speaker || '本鲸'}
         opener={props.opener || null}
-        complianceBadge={props.complianceBadge || null}
+        complianceBadge={null}
+        hideSubtitles={Boolean(props.hideSubtitles)}
         planningPreview={Boolean(props.planningPreview)}
         t={t}
       />

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { createCanvas, loadImage } from '../engine/room_base.mjs';
 import mvSpec from '../mv_dayu/mv.spec.mjs';
 import { adaptMvToRemotionProps } from './mv_adapter.mjs';
@@ -22,7 +23,7 @@ test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 �
   assert.equal(props.mode, 'lyric-mv');
   assert.equal(props.shots.length, 8);
   assert.equal(props.durationInFrames, 880);
-  assert.equal(props.complianceBadge, '非官方同人 / AI生成');
+  assert.equal(props.complianceBadge, null, '所有新视频一律不带右上角水印');
 
   const uniqueSets = new Set(props.shots.map((s) => s.setSpec.id));
   assert.equal(uniqueSets.size, 8, '大禹 MV 8 镜应切换 8 套不同舞台背景而非锁死单一背景');
@@ -205,10 +206,27 @@ test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积�
     assert.equal(nonEmpty, 0, `${rigKey} 鲸尾下方不应残留原皮鞋/第 3 条腿像素，实际残留 ${nonEmpty}px`);
   }
 
-  // 镜5「偷光积蓄」道具组件源码校验：已由金币替换为青花瓷碗白米饭团与晶莹米粒
+  // 镜5「偷光积蓄」道具组件源码校验：青花瓷碗白米饭一粒一粒快速被偷走，且全局视频层零右上角水印
   const propsLayerSrc = fs.readFileSync(new URL('./components/InteractivePropsLayer.jsx', import.meta.url), 'utf8');
-  assert.ok(propsLayerSrc.includes('riceScoopOffsets') && propsLayerSrc.includes('白米饭'), '第5镜 savings_jar_beam 应渲染白米饭积蓄而非金币');
+  assert.ok(
+    propsLayerSrc.includes('RICE_GRAINS') && propsLayerSrc.includes('flying-grain-') && propsLayerSrc.includes('白米饭'),
+    '第5镜 savings_jar_beam 应渲染白米饭一粒一粒快速被偷走的颗粒流'
+  );
   assert.ok(!propsLayerSrc.includes('6 枚金币沿弧线被隔壁墙洞吸光'), '第5镜旧版金币吸光逻辑不应残留');
+
+  const subtitleLayerSrc = fs.readFileSync(new URL('./components/LyricAndSubtitleLayer.jsx', import.meta.url), 'utf8');
+  assert.ok(!subtitleLayerSrc.includes('非官方同人'), 'Remotion 字幕层不应再渲染任何右上角水印角标');
+
+  const compositorSrc = fs.readFileSync(new URL('../engine/scene_compositor.mjs', import.meta.url), 'utf8');
+  assert.ok(!compositorSrc.includes('非官方同人'), 'Day 系列通用合成器不应再渲染任何右上角水印角标');
+
+  // 封面尺寸与零水印验收报告校验（3:4 竖版 1080x1440 + 4:3 横版 1440x1080）
+  const cover34 = await loadImage(fileURLToPath(new URL('../../番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_3比4.png', import.meta.url)));
+  const cover43 = await loadImage(fileURLToPath(new URL('../../番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_4比3.png', import.meta.url)));
+  assert.equal(cover34.width, 1080);
+  assert.equal(cover34.height, 1440);
+  assert.equal(cover43.width, 1440);
+  assert.equal(cover43.height, 1080);
 });
 
 test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼容双骨骼蒙皮步态与同体待机', async () => {

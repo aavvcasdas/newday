@@ -118,7 +118,6 @@ export async function main(argv = process.argv.slice(2)) {
       lines.forEach((ln, i) => drawOutlinedText(g, ln, box.x + box.w / 2, box.y + box.h / 2 + (i - (lines.length - 1) / 2) * 52, 44, '#FFFFFF'));
       g.restore();
     }
-    drawText(g, '非官方同人 · AI生成 · 剧情演绎', width / 2, layout.subtitle.y + layout.subtitle.h + 42, 26, '#B9CECB');
     const b = canvas.data();
     if (!ff.stdin.write(Buffer.from(b.buffer, b.byteOffset, b.byteLength))) await Promise.race([new Promise((res) => ff.stdin.once('drain', res)), done]);
     if (f % 150 === 0) console.log(`${f}/${renderer.frames}`);

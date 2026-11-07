@@ -317,6 +317,9 @@ export async function main(argv = process.argv.slice(2)) {
   }
 
   const props = await buildRemotionInputPropsFromCli(argv);
+  if (argv.includes('--no-subtitles')) {
+    props.hideSubtitles = true;
+  }
   const activity = auditRemotionPropsActivity(props);
 
   if (argv.includes('--dry-run')) {
@@ -353,6 +356,9 @@ export async function main(argv = process.argv.slice(2)) {
   const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR);
   try {
     const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl);
+    if (argv.includes('--no-subtitles')) {
+      liveProps.hideSubtitles = true;
+    }
     const serveUrl = await bundle({ entryPoint: path.join(HERE, 'entry.jsx') });
     const composition = await selectComposition({
       serveUrl,

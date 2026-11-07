@@ -53,15 +53,9 @@ export function composeScene(ctx, {
   return { setState, anchors: setState.anchors };
 }
 
-/** L4 合规小角标（固定屏幕空间，不随相机推拉）。 */
+/** L4 右上角角标钩子（按全局新规：所有新生成视频一律不绘制任何右上角水印/常驻角标；历史归档视频不动）。 */
 export function drawComplianceCorner(ctx) {
-  ctx.save();
-  ctx.beginPath();
-  ctx.roundRect(902, 11, 316, 32, 5);
-  ctx.fillStyle = 'rgba(12,25,46,.94)';
-  ctx.fill();
-  ctx.restore();
-  drawText(ctx, '非官方同人 · AI生成 · 剧情演绎', 1060, 28, 14, '#B9CECB');
+  void ctx;
 }
 
 /** L4 顶部钩子横幅（仅开场窗口内出现）。 */

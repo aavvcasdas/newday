@@ -55,14 +55,18 @@ export function LyricAndSubtitleLayer({
   speaker = '本鲸',
   opener = null,
   complianceBadge = null,
+  hideSubtitles = false,
   planningPreview = false,
   t = 0,
 }) {
-  const activeScreen = screens.find((s) => t >= s.start && t < s.end)
-    || cues.find((c) => t >= c.start && t < c.end)
-    || null;
+  const activeScreen = hideSubtitles
+    ? null
+    : (screens.find((s) => t >= s.start && t < s.end)
+      || cues.find((c) => t >= c.start && t < c.end)
+      || null);
 
-  const badgeText = complianceBadge ?? (mode === 'lyric-mv' ? '非官方同人 / AI生成' : '非官方同人 · AI生成 · 剧情演绎');
+  // 全局铁律（2026-11-07）：所有新制作视频（含 MV 与后续 Day 系列）一律不显示右上角水印/常驻角标。
+  void complianceBadge;
 
   const renderMvPhrase = () => {
     if (!activeScreen) return null;
@@ -136,28 +140,6 @@ export function LyricAndSubtitleLayer({
         fontFamily: 'NewdayNoto, Noto Sans CJK SC, PingFang SC, sans-serif',
       }}
     >
-      {/* 常驻合规角标 */}
-      {badgeText && (
-        <div
-          style={{
-            position: 'absolute',
-            right: 42,
-            top: 22,
-            padding: '7px 20px',
-            borderRadius: 999,
-            backgroundColor: 'rgba(12, 25, 46, 0.78)',
-            border: '1.5px solid rgba(196, 224, 245, 0.35)',
-            color: '#E2EEF5',
-            fontSize: 20,
-            fontWeight: 700,
-            letterSpacing: '0.8px',
-            boxShadow: '0 4px 14px rgba(0, 0, 0, 0.25)',
-          }}
-        >
-          {badgeText}
-        </div>
-      )}
-
       {/* Day 系列开场顶部钩子横幅 */}
       {mode === 'day-episode' && opener && t < (opener.openerEnd ?? 2.8) && (
         <div
