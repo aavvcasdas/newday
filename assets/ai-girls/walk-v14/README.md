@@ -10,7 +10,9 @@
 walk-v14/
   source/                     本轮重新生成的侧 3/4 立绘（AI 生成，白底，8 位角色各一张）
   <atlas>.png                 8 格 × 384×416 成品图集（透明 PNG）
-  preview/walk_v14_preview.png 两套图集的 8 帧总览图
+  preview/<char>_strip.png     8 帧并排、脚底同一条地面线（静态审阅）
+  preview/<char>_walk.gif      3s/25fps 走过舞台（每 120ms 换格，`render_walk_clips.py` 生成，默认不入库）
+  preview/walk_all8_sheet.png  3×3 汇总（每角色取第 4 帧）
 ```
 
 单格：`384 × 416`，脚底基线 `y = 406`，角色高度 `372px`，水平居中。
