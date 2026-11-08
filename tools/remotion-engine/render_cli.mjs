@@ -150,19 +150,7 @@ function resolveFontUrl(baseUrl) {
       return `${baseUrl}/${encodeURI(rel)}`;
     }
   }
-  const restoreScript = path.join(REPO_ROOT, 'tools/day12制作/restore_sample_assets.py');
-  if (fs.existsSync(restoreScript)) {
-    try {
-      execFileSync('python3', [restoreScript], { cwd: REPO_ROOT, stdio: 'ignore', timeout: 45_000 });
-    } catch {
-      // ignore if offline
-    }
-    for (const rel of candidates) {
-      if (fs.existsSync(path.join(REPO_ROOT, rel))) {
-        return `${baseUrl}/${encodeURI(rel)}`;
-      }
-    }
-  }
+
   return null;
 }
 

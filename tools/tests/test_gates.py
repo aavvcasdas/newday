@@ -44,7 +44,7 @@ class GateTests(unittest.TestCase):
         self.assertFalse(text_redlines(['大肥鱼是住户喊歪的称呼']))
         self.assertFalse(text_redlines(['有人说“本鱼。','本鱼回来了！”']))
     def test_relative_scanner_path(self):
-        p=ROOT/'tools/day9制作/render_day9_storyboard_full.mjs'
+        p=ROOT/'tools/engine/motion_library.mjs'
         result=subprocess.run([sys.executable,ROOT/'tools/剧本/画面红线体检.py','--file',str(p.relative_to(ROOT))],cwd=ROOT,capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stdout+result.stderr)
     def test_static_external_and_eye(self):

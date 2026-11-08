@@ -1,7 +1,8 @@
 // QA for REVIEWED local draw modules only. Importing arbitrary JS is code execution, not sandboxing.
 // Pixel metrics are a regression aid, never an aesthetic/copyright/OCR approval.
 import fs from 'node:fs';import path from 'node:path';import {pathToFileURL,fileURLToPath} from 'node:url';import {createHash} from 'node:crypto';
-import {createCanvas} from '../day8制作/render_day8.mjs';
+import {createRequire} from 'node:module';
+const {createCanvas}=createRequire(new URL('../engine/package.json',import.meta.url))('@napi-rs/canvas');
 export async function validateGeneratedProp(filename){
  const source=fs.readFileSync(filename,'utf8');const findings=[];
  if(/\b(?:ctx|g)\.fillRect\s*\(/.test(source))findings.push('bare rectangle painter rejected');

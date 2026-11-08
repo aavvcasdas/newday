@@ -271,7 +271,11 @@ test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积�
   assert.equal(cover43.height, 1080);
 });
 
-test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼容双骨骼蒙皮步态与同体待机', async () => {
+// 角色姿势 PNG（whale_*.png）是外部素材，未随仓库分发。缺图时这条用例跳过，
+// 而不是让整个套件因为素材缺失崩掉；素材就位后自动恢复。
+const HAVE_WHALE_ART = fs.existsSync(new URL('../../tools/engine/whale_rig/whale_point.png', import.meta.url));
+test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼容双骨骼蒙皮步态与同体待机',
+  { skip: !HAVE_WHALE_ART && '缺少 whale_*.png 姿势素材（外部素材，未随仓库分发）' }, async () => {
   const alignment = buildTemplatePlanningAlignment();
   const subdata = buildTemplatePlanningSubtitles();
 
