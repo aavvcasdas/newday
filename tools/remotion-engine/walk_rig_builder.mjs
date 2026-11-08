@@ -375,48 +375,51 @@ function drawSkinnedLegMesh(targetCtx, legMesh, thighDeg, kneeDeg, facingRight, 
 }
 
 // ---------------------------------------------------------------------------
-// 3. 自然流畅的 8 相位行走步态表（对标 ai-girl-chatgpt-pets 时序 + 柔和屈膝防劈叉）
+// 3. Pet 节拍八姿态步态表（对标 tqlearning/ai-girl-chatgpt-pets 的帧节奏与步幅）
 // ---------------------------------------------------------------------------
-// 8 个主关键相位（插值为 16 帧平滑循环）：
-//   k0 触地 Contact -> k1 承重屈膝蹬离 Down -> k2 抬腿通过 Passing -> k3 前伸准备 High-Point
-//   k4..k7 左右腿严格 180° 反相对称！摆幅控制在自然优雅的 -18°..+20°，膝盖柔顺后屈 3°..28°。
-const NATURAL_WALK_8PHASE = [
-  // k0: 近腿前伸触地 (+19°, 膝微屈 4°)，远腿在后准备离地 (-16°, 膝屈 18°)
-  { nearT: 19, nearK: 4, nearLift: 0, farT: -16, farK: 18, farLift: -1, bodyDy: 1.0 },
-  // k1: 近腿全脚掌稳踩地面 (+8°, 膝微缓冲 6°)，远腿向后屈膝提踵蹬离 (-13°, 膝屈 28°)
-  { nearT: 8, nearK: 6, nearLift: 0, farT: -13, farK: 28, farLift: -3, bodyDy: 1.6 },
-  // k2: 近腿直立支撑 (-3°, 膝 3°)，远腿向前抬起通过中线 (+8°, 膝屈 26° 抬脚防擦地)
-  { nearT: -3, nearK: 3, nearLift: 0, farT: 8, farK: 26, farLift: -4, bodyDy: -0.6 },
-  // k3: 近腿向后推进 (-13°, 膝屈 12°)，远腿向前舒展迈出 (+20°, 膝伸展至 9°)
-  { nearT: -13, nearK: 12, nearLift: -0.5, farT: 20, farK: 9, farLift: -1.5, bodyDy: -1.2 },
-  // k4: 远腿前伸触地 (+19°, 膝 4°)，近腿在后准备离地 (-16°, 膝屈 18°)
-  { nearT: -16, nearK: 18, nearLift: -1, farT: 19, farK: 4, farLift: 0, bodyDy: 1.0 },
-  // k5: 远腿稳踩地面 (+8°, 膝 6°)，近腿向后屈膝提踵蹬离 (-13°, 膝屈 28°)
-  { nearT: -13, nearK: 28, nearLift: -3, farT: 8, farK: 6, farLift: 0, bodyDy: 1.6 },
-  // k6: 远腿直立支撑 (-3°, 膝 3°)，近腿向前抬起通过中线 (+8°, 膝屈 26°)
-  { nearT: 8, nearK: 26, nearLift: -4, farT: -3, farK: 3, farLift: 0, bodyDy: -0.6 },
-  // k7: 远腿向后推进 (-13°, 膝屈 12°)，近腿向前舒展迈出 (+20°, 膝 9°)
-  { nearT: 20, nearK: 9, nearLift: -1.5, farT: -13, farK: 12, farLift: -0.5, bodyDy: -1.2 },
+// 参考项目 run-right / run-left 各 8 帧、每帧 120ms（末帧 220ms），单格固定不逐帧裁切，
+// 8 帧内脚底接地点差 10px、头顶起伏仅 0~1px、整体重心左右漂移 <1px。
+// 本项目据此重做步态：
+//   - 16 帧里只保留 8 个「固定关键姿态」，每姿态连续两帧重复（等同参考的 8 帧 × 2 倍时间分辨率）；
+//   - 姿态之间零插值、零跨姿态叠化：脚一落地就整只脚掌踩稳，绝无半抬着的模糊拖步；
+//   - 头顶起伏压到 ±1px（bodyDy 只做 0.9px 级起伏），摆幅取参考量级的大步幅抬脚；
+//   - 左右腿严格 180° 反相对称，膝盖只向后柔顺屈伸，绝不反折。
+const PET_STEP_POSES = [
+  // k0 近腿脚掌落地（前伸触地），远腿在后蹬离抬跟
+  { nearT: 26, nearK: 6, nearLift: 0, farT: -21, farK: 20, farLift: -3, bodyDy: 0.8 },
+  // k1 近腿整脚掌承重，远腿屈膝收起准备通过
+  { nearT: 12, nearK: 8, nearLift: 0, farT: -11, farK: 35, farLift: -6, bodyDy: 1.2 },
+  // k2 近腿直立支撑，远腿抬脚通过中线
+  { nearT: -5, nearK: 5, nearLift: 0, farT: 15, farK: 32, farLift: -8, bodyDy: -0.5 },
+  // k3 近腿向后蹬地推进，远腿向前舒展迈出
+  { nearT: -19, nearK: 16, nearLift: -1, farT: 28, farK: 12, farLift: -3, bodyDy: -1.0 },
+  // k4 远腿脚掌落地（与 k0 镜像）
+  { nearT: -21, nearK: 20, nearLift: -3, farT: 26, farK: 6, farLift: 0, bodyDy: 0.8 },
+  // k5 远腿整脚掌承重（与 k1 镜像）
+  { nearT: -11, nearK: 35, nearLift: -6, farT: 12, farK: 8, farLift: 0, bodyDy: 1.2 },
+  // k6 远腿直立支撑（与 k2 镜像）
+  { nearT: 15, nearK: 32, nearLift: -8, farT: -5, farK: 5, farLift: 0, bodyDy: -0.5 },
+  // k7 远腿向后蹬地（与 k3 镜像）
+  { nearT: 28, nearK: 12, nearLift: -3, farT: -19, farK: 16, farLift: -1, bodyDy: -1.0 },
 ];
 
-function sampleWalkGait16(frameIndex, strideScale = 1.0) {
-  const pos = (frameIndex / WALK_FRAMES) * 8;
-  const i0 = Math.floor(pos) % 8;
-  const i1 = (i0 + 1) % 8;
-  const f = pos - Math.floor(pos);
-  const k = f * f * (3 - 2 * f);
-  const a = NATURAL_WALK_8PHASE[i0];
-  const b = NATURAL_WALK_8PHASE[i1];
-  const mix = (ka, kb) => ka + (kb - ka) * k;
+/** 直接取第 k 个固定姿态（不再在姿态之间插值，脚落地即整掌踩实） */
+export function petStepPose(index, strideScale = 1.0) {
+  const p = PET_STEP_POSES[((index % 8) + 8) % 8];
   return {
-    nearT: mix(a.nearT, b.nearT) * strideScale,
-    nearK: mix(a.nearK, b.nearK) * strideScale,
-    nearLift: mix(a.nearLift, b.nearLift) * strideScale,
-    farT: mix(a.farT, b.farT) * strideScale,
-    farK: mix(a.farK, b.farK) * strideScale,
-    farLift: mix(a.farLift, b.farLift) * strideScale,
-    bodyDy: mix(a.bodyDy, b.bodyDy),
+    nearT: p.nearT * strideScale,
+    nearK: p.nearK * strideScale,
+    nearLift: p.nearLift * strideScale,
+    farT: p.farT * strideScale,
+    farK: p.farK * strideScale,
+    farLift: p.farLift * strideScale,
+    bodyDy: p.bodyDy,
   };
+}
+
+/** 16 帧图集里的每帧对应 8 个固定姿态：第 f 帧 -> 姿态 floor(f/2) */
+export function sampleWalkGait16(frameIndex, strideScale = 1.0) {
+  return petStepPose(Math.floor((frameIndex % WALK_FRAMES) / 2), strideScale);
 }
 
 function renderMeshWalkStrip({

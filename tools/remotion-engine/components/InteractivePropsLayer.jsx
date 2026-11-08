@@ -29,13 +29,20 @@ function PropGlyph({ propId, state = {}, scale = 1 }) {
           <ellipse cx={0} cy={-8} rx={36} ry={9} fill={propId === 'rice_bowl' ? '#FFFDF7' : '#6A8FA3'} stroke="#32445D" strokeWidth={2} />
         </g>
       );
-    case 'umbrella':
+    case 'umbrella': {
+      const shaft = state.shaft ?? 96;
+      const bottom = 44 + shaft;
       return (
         <g transform={`scale(${s})`}>
-          <path d="M-56,-34 Q0,-86 56,-34 Z" fill="#63C7B8" stroke="#1E3A46" strokeWidth={2.8} />
-          <line x1={0} y1={-34} x2={0} y2={24} stroke="#4A3B32" strokeWidth={3.2} />
+          <path d="M-58,44 Q0,-6 58,44 Z" fill={state.color || '#63C7B8'} stroke="#1E3A46" strokeWidth={2.8} />
+          {[-28, 0, 28].map((x) => (
+            <path key={`um-${x}`} d={`M${x},${44 - Math.abs(x) * 0.18} Q${x * 0.55},16 0,1`} fill="none" stroke="rgba(30,58,70,.45)" strokeWidth={1.6} />
+          ))}
+          <line x1={0} y1={2} x2={0} y2={bottom} stroke="#4A3B32" strokeWidth={3.2} />
+          <path d={`M0,${bottom + 2} A8,8 0 0 1 -14,${bottom + 4}`} fill="none" stroke="#4A3B32" strokeWidth={3.2} />
         </g>
       );
+    }
     case 'shovel':
     case 'river_staff':
       return (

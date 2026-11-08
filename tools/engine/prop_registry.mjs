@@ -98,6 +98,43 @@ const extra = {
       ctx.restore();
     },
   },
+  // 雨伞（MV「共伞同挡雨」与 Day 雨夜戏通用）
+  // 原点在伞尖顶，伞面 y 0..44，伞杆长度由 state.shaft 控制（默认 96px），伞柄钩在杆底。
+  umbrella: {
+    id: 'umbrella', extent: { bottom: 140 },
+    draw(ctx, _t, st = {}) {
+      const shaft = st.shaft ?? 96;
+      const bottom = 44 + shaft;
+      ctx.save();
+      ctx.beginPath();
+      ctx.moveTo(-58, 44);
+      ctx.quadraticCurveTo(0, -6, 58, 44);
+      ctx.closePath();
+      ctx.fillStyle = st.color || '#63C7B8';
+      ctx.fill();
+      ctx.strokeStyle = '#1E3A46';
+      ctx.lineWidth = 2.8;
+      ctx.stroke();
+      for (const x of [-28, 0, 28]) {
+        ctx.beginPath();
+        ctx.moveTo(x, 44 - Math.abs(x) * 0.18);
+        ctx.quadraticCurveTo(x * 0.55, 16, 0, 1);
+        ctx.strokeStyle = 'rgba(30,58,70,.45)';
+        ctx.lineWidth = 1.6;
+        ctx.stroke();
+      }
+      ctx.strokeStyle = '#4A3B32';
+      ctx.lineWidth = 3.2;
+      ctx.beginPath();
+      ctx.moveTo(0, 2);
+      ctx.lineTo(0, bottom);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(-7, bottom + 2, 8, 0, Math.PI, false);
+      ctx.stroke();
+      ctx.restore();
+    },
+  },
   // 治水木尺/水拍（手持工具）
   paddle: {
     id: 'paddle', extent: { bottom: 38 },

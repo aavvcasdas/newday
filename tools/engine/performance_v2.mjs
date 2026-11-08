@@ -11,7 +11,11 @@ export { bodyPerformance };
 
 const images = new Map();
 
+// 八位 MV 角色 + 本鲸：`assetId` 走静态立绘/图集时都能在这里找到唯一素材，
+// 缺登记会在 loadImageActors 里直接报 'Unregistered image actor'（禁止静默回退）。
 export const IMAGE_ACTORS = Object.freeze({
+  // 本鲸只在与图集步态无关的静态构图里用到（如开场立绘卡）
+  whale: { path: 'assets/ai-girls/dance-v11/whale.png', manifest: null },
   doubao: { path: 'assets/ai-girls/doubao/doubao-cutout.png', manifest: 'assets/ai-girls/doubao/source.json' },
   claude: { path: 'assets/ai-girls/dance-v11/source/claude_stand_cutout.png', manifest: null },
   gemini: { path: 'assets/ai-girls/extra-guests/cutouts/gemini.png', manifest: null },

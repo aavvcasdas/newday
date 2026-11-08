@@ -15,6 +15,7 @@ import {
   isKnownLocomotionPreset,
   isKnownAtlasRig,
 } from './character_motion.mjs';
+import { MV_CAST, MV_CAST_IDS, mvSignatureAction, mvSignaturePosture, isMvCastId, mvCastAtlasNames } from './mv_cast_registry.mjs';
 import { isKnownStageSet } from '../场景/stage_sets.mjs';
 import { STAGE_TRIGGER_KINDS } from '../互动元素/world_interactions.mjs';
 
@@ -55,12 +56,28 @@ export function validateActor(actor, where) {
       throw new Error(`${where}.atlases[${idx}] 使用未注册动作图集 ${item?.atlas}`);
     }
   }
-  if (actor.action != null && !isKnownCharacterAction(actor.action)) {
+  // MV 八位角色与招牌动作（tools/engine/mv_cast_registry.mjs）：Day 正传可直接点名
+  if (actor.characterId != null && !isMvCastId(actor.characterId)) {
+    throw new Error(`${where} characterId=${actor.characterId} 不是已登记的 MV 角色（可用：${MV_CAST_IDS.join('/')}）`);
+  }
+  if (actor.action != null && !isKnownCharacterAction(actor.action) && !mvSignatureAction(actor.action)) {
     throw new Error(`${where} 使用未注册角色动作 ${actor.action}`);
+  }
+  if (actor.action != null && mvSignatureAction(actor.action)) {
+    const sig = mvSignatureAction(actor.action);
+    const actorId = actor.characterId || actor.assetId || null;
+    if (actorId && sig.actor !== actorId) {
+      throw new Error(`${where} 招牌动作 ${actor.action} 属于 ${MV_CAST[sig.actor].label}（${sig.actor}），不能跨角色套用`);
+    }
+    // 坐/蹲/游姿动作不得与步态混用：否则会出现「坐着走路」的浮空残腿
+    const moving = Boolean(actor.walk || actor.track?.length || (actor.locomotion && actor.locomotion !== 'idle'));
+    if (moving && mvSignaturePosture(actor.action) !== 'standing') {
+      throw new Error(`${where} 招牌动作 ${actor.action} 是${mvSignaturePosture(actor.action)}姿态，不能与走位/步态同时声明`);
+    }
   }
   for (const item of actor.actions || []) {
     const actName = item?.action || item?.id;
-    if (!isKnownCharacterAction(actName)) throw new Error(`${where} actions 包含未注册角色动作 ${actName}`);
+    if (!isKnownCharacterAction(actName) && !mvSignatureAction(actName)) throw new Error(`${where} actions 包含未注册角色动作 ${actName}`);
   }
   if (actor.move != null && !isKnownMoveStyle(actor.move)) {
     throw new Error(`${where} 使用未注册律动风格 ${actor.move}`);

@@ -6,7 +6,7 @@
 //   3. 人物手掌 ↔ 道具绑定：基于 handAt(actor, side) 实现手持跟随、双手交接、以及从手掌抛放到桌面锚点的连续弧线过渡。
 
 import { TAU, clamp, lerp, seg, ease, easeOut, backOut, resolveAnchorTime } from '../engine/timeline_core.mjs';
-import { handAt } from '../engine/character_motion.mjs';
+import { actorPixelHeight, handAt } from '../engine/character_motion.mjs';
 import { resolveStageSet, resolveShotSetSpec } from '../场景/stage_sets_core.mjs';
 
 export const STAGE_TRIGGER_KINDS = Object.freeze([
@@ -246,8 +246,18 @@ export function computeWorldInteractionState({
   actors.forEach((actor, idx) => {
     if (!actor.heldProp) return;
     const specProp = typeof actor.heldProp === 'string' ? { propId: actor.heldProp } : actor.heldProp;
-    const hand = handAt(actor, specProp.hand || 'right', calibratedAnchors[idx]);
-    let pos = { x: hand.x + (specProp.offsetX || 0), y: hand.y + (specProp.offsetY || 0) };
+    // anchor: 'foot' 表示「钉子锚点」——直接以脚底原点 + 身高比例定位（伞这类与画中身体
+    // 严格对位的道具必须这样挂，手势变化不会把道具带偏）。默认仍按 handAt 手部锚点。
+    const hpx = actorPixelHeight(actor);
+    const useFootAnchor = specProp.anchor === 'foot';
+    const hand = useFootAnchor
+      ? { x: actor.x, y: actor.y, angle: actor.lean || 0, calibrated: true }
+      : handAt(actor, specProp.hand || 'right', specProp.hand === 'headTop' && !specProp.calibrated ? null : calibratedAnchors[idx]);
+    // offsetX/offsetY 为像素绝对值；offsetXFrac/offsetYFrac 为身高比例（跨 Canvas/Remotion 后端一致）
+    let pos = {
+      x: hand.x + (specProp.offsetX || 0) + (specProp.offsetXFrac || 0) * hpx * (actor.flip ? -1 : 1),
+      y: hand.y + (specProp.offsetY || 0) + (specProp.offsetYFrac || 0) * hpx,
+    };
     let rot = hand.angle + (specProp.angleOffset || 0);
 
     // 支持角色双手之间的弧线交接（例如本鲸右手递给豆包左手）
@@ -293,7 +303,11 @@ export function computeWorldInteractionState({
       y: pos.y,
       rotation: rot,
       angle: rot,
-      scale: specProp.scale ?? 0.72,
+      // scaleRef：以某个角色身高为基准按比例缩放，避免同款道具在小体型角色上过大。
+      // 未声明时保持历史行为（纯绝对缩放）。
+      scale: specProp.scaleRef
+        ? (specProp.scale ?? 0.72) * (hpx / specProp.scaleRef)
+        : (specProp.scale ?? 0.72),
       state: specProp.state || {},
       actorIndex: holderIdx,
     });

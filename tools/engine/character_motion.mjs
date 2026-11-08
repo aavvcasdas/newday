@@ -8,6 +8,8 @@
 
 import { RIG_ACTIONS, rigAnim } from '../day3制作/whale_girl_src/whale_rig_actions.mjs';
 import { LEGACY_ACTIONS, poseAt as legacyPoseAt, motionAt as legacyMotionAt } from '../day3制作/whale_girl_src/legacy_actions.mjs';
+import { MV_CAST, MV_CAST_IDS, mvCastLocomotionAtlas, mvSignatureAction, MV_SIGNATURE_ACTIONS } from './mv_cast_registry.mjs';
+import { atlasVisibleTopFrac } from './atlas_metrics.mjs';
 import {
   TAU,
   clamp,
@@ -156,32 +158,20 @@ export const LOCOMOTION_PRESETS = Object.freeze([
   'sit_bench',
 ]);
 
-export const CHARACTER_LOCOMOTION_RIGS = Object.freeze({
-  whale: {
-    walk: 'whale_walk_side_2leg',
-    side_walk: 'whale_walk_side_2leg',
-    happy_walk: 'whale_walk_happy_2leg',
-    sad_walk: 'whale_walk_sad_2leg',
-    idle: 'whale_idle_side_pet',
-    sit_bench: 'whale_seat_side_bench',
-  },
-  doubao: {
-    walk: 'doubao_walk_side_2leg',
-    side_walk: 'doubao_walk_side_2leg',
-    idle: 'doubao_idle_side_pet',
-  },
-  gpt: {
-    walk: 'gpt_walk_2leg',
-    side_walk: 'gpt_walk_2leg',
-    push_walk: 'gpt_push_walk_2leg',
-    idle: 'gpt_idle_pet',
-  },
-  gemini: { walk: 'gemini_walk_2leg', side_walk: 'gemini_walk_2leg', idle: 'gemini_idle_pet' },
-  claude: { walk: 'claude_walk_2leg', side_walk: 'claude_walk_2leg', idle: 'claude_idle_pet' },
-  kimi: { walk: 'kimi_walk_2leg', side_walk: 'kimi_walk_2leg', idle: 'kimi_idle_pet' },
-  qwen: { walk: 'qwen_walk_2leg', side_walk: 'qwen_walk_2leg', idle: 'qwen_idle_pet' },
-  zai: { walk: 'zai_walk_2leg', side_walk: 'zai_walk_2leg', idle: 'zai_idle_pet' },
-});
+export const CHARACTER_LOCOMOTION_RIGS = Object.freeze(
+  Object.fromEntries(MV_CAST_IDS.map((id) => [id, { ...MV_CAST[id].locomotion }]))
+);
+
+/** 角色同体待机图集（开心/委屈/推山等变体），供分镜直接点名 atlas 时免查表 */
+export const CHARACTER_IDLE_RIGS = Object.freeze(
+  Object.fromEntries(MV_CAST_IDS.map((id) => [id, { ...MV_CAST[id].idle }]))
+);
+
+/** MV 招牌动作 -> 图集名（Day 分镜可 `action: 'gpt_push_mountain'` 直接调用） */
+export const MV_ACTION_ATLAS = Object.freeze(
+  Object.fromEntries(Object.entries(MV_SIGNATURE_ACTIONS).map(([id, a]) => [id, a.atlas]))
+);
+
 
 export function isKnownLocomotionPreset(preset) {
   return typeof preset === 'string' && LOCOMOTION_PRESETS.includes(preset);
@@ -195,8 +185,21 @@ export function isKnownAtlasRig(name) {
 }
 
 export function resolveLocomotionAtlas(characterId = 'whale', preset = 'walk') {
+  const direct = mvCastLocomotionAtlas(characterId, preset);
+  if (direct) return direct;
   const table = CHARACTER_LOCOMOTION_RIGS[characterId] || CHARACTER_LOCOMOTION_RIGS.whale;
   return table[preset] || table.walk || 'whale_walk_side_2leg';
+}
+
+/**
+ * MV 招牌动作解析：`action: 'doubao_hold_umbrella'` -> { atlas, heldProp, actor }
+ * 返回 null 表示不是招牌动作，继续走 RIG_ACTIONS / LEGACY_ACTIONS 传统动作链。
+ */
+export function resolveMvSignatureAction(name, characterId = null) {
+  const hit = mvSignatureAction(name);
+  if (!hit) return null;
+  if (characterId && hit.actor !== characterId) return null;
+  return { ...hit };
 }
 
 /**
@@ -680,7 +683,12 @@ export function evaluateCharacterMotion(plan, t, {
   const resolvedCharId = plan.characterId || plan.assetId || 'whale';
   const defaultAtlasFromPlan = plan.atlas || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
 
-  const atlasCols = plan.atlasCols || 16;
+  // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
+  // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
+  const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
+  const atlasCols = plan.atlasCols || atlasColsFor(
+    plan.atlas || plan.atlases?.[0]?.atlas || (Array.isArray(plan.atlases) ? plan.atlases[0] : null) || null
+  );
   let activeAtlasSpec = defaultAtlasFromPlan
     ? {
       at: shotStart,
@@ -720,6 +728,49 @@ export function evaluateCharacterMotion(plan, t, {
         atlasBlend = 1;
       }
     }
+  }
+
+  // 3c. 先解出「当前生效的动作名」，让 MV 招牌动作能在图集解析前接管图集（与 locomotion 同一状态机）
+  const resolveActiveActionName = () => {
+    let cur = plan.action || null;
+    for (const a of plan.actions || []) {
+      // 归一：at 缺省时，有 line 用台词起点，否则按「镜头内相对秒数 + 镜头起点」，
+      // 这样分镜作者写 at: 2.2 就是「本镜第 2.2 秒」，不必手算全局时间。
+      const at = a.at != null ? a.at
+        : a.line != null ? (cues[a.line - 1]?.start ?? Infinity)
+        : (a.atShot != null ? shotStart + a.atShot : Infinity);
+      // 端点同样支持镜头相对秒数（endShot），否则会一直挂着最后一个动作
+      const end = a.endShot != null ? shotStart + a.endShot
+        : a.end != null ? a.end
+        : a.duration != null ? at + a.duration
+        : a.durationShot != null ? at + a.durationShot
+        : Infinity;
+      if (t >= at && t < end) cur = a.action || a.id;
+    }
+    return cur;
+  };
+  const signatureActionName = (() => {
+    const name = resolveActiveActionName();
+    return name && resolveMvSignatureAction(name, plan.characterId || plan.assetId || null) ? name : null;
+  })();
+  if (signatureActionName) {
+    // 招牌动作优先级最高：直接把动作图集及其入场时刻写进时间线（已声明同图集时沿用其时长/循环设置）
+    const sig = resolveMvSignatureAction(signatureActionName, plan.characterId || plan.assetId || null);
+    const declared = atlasTimeline.filter((item) => item.atlas === sig.atlas).pop();
+    // 注：atlases 里未显式声明该图集时，接管时刻沿用当前生效图集的起点（即到站/开场时刻）
+    const takeoverAt = declared ? declared.at : (activeAtlasSpec ? activeAtlasSpec.at : shotStart);
+    activeAtlasSpec = declared || {
+      at: takeoverAt,
+      atlas: sig.atlas,
+      cycle: plan.actionCycle || plan.atlasCycle,
+      loop: plan.actionLoop !== false,
+      flip: plan.flip,
+      emote: plan.emote,
+      phaseOffset: plan.phaseOffset,
+    };
+    atlasBlend = 1;
+    prevAtlasSpec = null;
+    // 招牌动作需要走位时，仍按原地站立循环图集播放（位移来自 walk/track，不受影响）
   }
 
   const resolveEffectiveAtlasName = (spec) => {
@@ -774,16 +825,10 @@ export function evaluateCharacterMotion(plan, t, {
   }
 
   // 4. 命名动作（RIG_ACTIONS / 28 个 LEGACY_ACTIONS）
-  const activeActionName = (() => {
-    let cur = plan.action || null;
-    for (const a of plan.actions || []) {
-      const at = a.at != null ? a.at : (a.line != null ? (cues[a.line - 1]?.start ?? Infinity) : Infinity);
-      const end = a.end != null ? a.end : (a.duration != null ? at + a.duration : Infinity);
-      if (t >= at && t < end) cur = a.action || a.id;
-    }
-    return cur;
-  })();
-  const actionResult = activeActionName ? evaluateNamedAction(activeActionName, localT, { loop: plan.actionLoop !== false }) : null;
+  const activeActionName = resolveActiveActionName();
+  const actionResult = activeActionName && !signatureActionName
+    ? evaluateNamedAction(activeActionName, localT, { loop: plan.actionLoop !== false })
+    : null;
   if (actionResult?.pose) {
     pose = actionResult.pose;
     prevPose = actionResult.prevPose;
@@ -924,7 +969,9 @@ export function evaluateCharacterMotion(plan, t, {
     anim,
     walking: walkingActive,
     footContacts,
-    heldProp: plan.heldProp || null,
+    heldProp: plan.heldProp
+      || (signatureActionName ? resolveMvSignatureAction(signatureActionName, plan.characterId || plan.assetId || null)?.heldProp || null : null),
+    signatureAction: signatureActionName,
   };
 }
 
@@ -934,11 +981,20 @@ export function evaluateCharacterMotion(plan, t, {
  *   - 若提供已校准网格锚点（CALIBRATION），优先返回精确网格投影坐标；
  *   - 否则由角色身高、朝向、身体倾斜 (lean)、挤压拉伸 (sx/sy) 与手臂骨骼角 (armL/armR) 正向运动学精确算出手掌位置与握持角！
  */
-export function handAt(actorState, side = 'right', calibratedAnchors = null) {
-  const dir = actorState.flip ? -1 : 1;
-  const h = actorState.assetId
+/** 角色屏幕像素身高（与 handAt / 图集绘制共用同一口径，供道具按身高比例定位） */
+export function actorPixelHeight(actorState) {
+  // 图集角色（charId/atlas/*_2leg/*_pet）与 imageActor 一样按声明 height 绘制；
+  // 只有 10 骨骼接触立绘才用 u 推算身高。
+  const usesAtlas = Boolean(actorState.atlas || actorState.atlases?.length || actorState.locomotion || actorState.characterId);
+  if (usesAtlas && actorState.height) return actorState.height * (actorState.imageScale ?? 1);
+  return actorState.assetId
     ? (actorState.height || 340) * (actorState.imageScale ?? 1)
     : 10.4 * (actorState.u ?? 38);
+}
+
+export function handAt(actorState, side = 'right', calibratedAnchors = null) {
+  const dir = actorState.flip ? -1 : 1;
+  const h = actorPixelHeight(actorState);
 
   if (calibratedAnchors) {
     if (side === 'headTop' && calibratedAnchors.headTop) {
@@ -962,8 +1018,12 @@ export function handAt(actorState, side = 'right', calibratedAnchors = null) {
   const sy = actorState.sy ?? (1 - (actorState.squash || 0) * 0.035);
 
   if (side === 'headTop') {
+    // 图集角色的格顶有固定留白（角色并不顶到格边），按实测内容顶部回缩，
+    // 否则道具会浮在头顶上方几十像素。未实测的图集退回 0.96 保守值。
+    const atlasName = actorState.atlas || actorState.atlases?.[0] || null;
+    const topFrac = atlasName ? atlasVisibleTopFrac(atlasName) : 0.96;
     const localX = 0;
-    const localY = -h * 0.96 * sy;
+    const localY = -h * topFrac * sy;
     return {
       x: actorState.x + Math.cos(lean) * localX - Math.sin(lean) * localY,
       y: actorState.y + Math.sin(lean) * localX + Math.cos(lean) * localY,

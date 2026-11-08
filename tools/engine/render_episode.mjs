@@ -29,6 +29,7 @@ import {
   handAt,
   WALK_TO_IDLE_ATLAS_MAP,
   resolveLocomotionAtlas,
+  resolveMvSignatureAction,
 } from './character_motion.mjs';
 import { ensureWalkRigAtlases, WALK_RIG_BUILDERS, DEFAULT_WALK_CACHE_DIR } from '../remotion-engine/walk_rig_builder.mjs';
 import { resolveTransitionState } from './timeline_core.mjs';
@@ -247,6 +248,12 @@ function collectActorAtlases(actorPlans) {
     if (a.locomotion) addWithIdle(resolveLocomotionAtlas(charId, a.locomotion));
     if (a.atlas) addWithIdle(a.atlas);
     for (const item of a.atlases || []) addWithIdle(item?.atlas);
+    // MV 招牌动作（`action: 'kimi_hold_lantern'`）对应的 16 帧表演图集同样要预载，
+    // 否则该角色会掉回 10 骨骼接触立绘并抛 Unknown pose。
+    for (const act of [a.action, ...(a.actions || []).map((it) => it?.action || it?.id)]) {
+      const sig = act ? resolveMvSignatureAction(act, charId) : null;
+      if (sig?.atlas) addWithIdle(sig.atlas);
+    }
   }
   return [...names];
 }
