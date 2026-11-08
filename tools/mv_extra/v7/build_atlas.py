@@ -13,7 +13,7 @@ W, H, COLS = 384, 416, 8
 DUR = {
     'idle': [280, 110, 110, 140, 140, 320],
     'thinking': [260, 150, 120, 120, 150, 260],
-    'eating': [220, 160, 170, 220, 180, 180],
+    'eating': [200, 150, 130, 200, 220, 200, 180, 240],
     'empty': [300, 180, 180, 180, 180, 300],
 }
 SETS = {
@@ -23,7 +23,10 @@ SETS = {
     },
     'whale': {
         'idle': ['whale_rice', 'whale_rice', 'whale_blink', 'whale_blink', 'whale_rice', 'whale_rice'],
-        'eating': ['whale_rice', 'whale_scoop', 'whale_scoop', 'whale_eat', 'whale_eat', 'whale_scoop'],
+        # 一整套吃饭动作：舀饭 → 抬勺 → 送到嘴边 → 嚼 → 咽 → 舔嘴 → 再舀。
+        # 8 帧由 tools/mv_extra/v7/build_eat_frames.py 从两张四格生成图切出来，
+        # 不再是 rice/scoop/eat 三个姿态各重复两遍。
+        'eating': ['eat/f%d' % i for i in range(1, 9)],
         'empty': ['whale_empty'] * 6,
     },
 }
@@ -56,7 +59,10 @@ def main():
             manifest['states'][state] = {'row': row, 'frames': len(sources), 'durations_ms': DUR[state]}
             for index, source in enumerate(sources):
                 im = Image.open(ASSET/'source'/f'{source}.png').convert('RGBA')
-                atlas.alpha_composite(cell(im,kind,index in (2, 3, 4)), (index*W,row*H))
+                # 换尾只给 idle/empty 那种"同一个站姿换尾巴"的格子用；
+                # 吃饭动作每一格本来就是画出来的，再换尾会把尾巴切一半。
+                alt = index in (2, 3, 4) and '/' not in source
+                atlas.alpha_composite(cell(im,kind,alt), (index*W,row*H))
         atlas.save(ASSET/f'{kind}.png', optimize=True)
         (ASSET/f'{kind}.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2)+'\n')
         print(kind, atlas.size)

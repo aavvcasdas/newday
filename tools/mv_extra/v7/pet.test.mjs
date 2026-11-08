@@ -22,8 +22,11 @@ test('atlas durations, rows, frame counts and transparent unused cells are valid
       assert.equal(s.frames,s.durations_ms.length); assert.ok(s.frames <= m.columns);
       const total=s.durations_ms.reduce((a,b)=>a+b,0)/1000;
       assert.deepEqual(petFrame(name,state,0.017),petFrame(name,state,total+0.017));
-      const blank=pixels(name,state,7,[0,0,m.cell_width,m.cell_height]);
-      assert.ok(blank.every(x=>x===0),`${name}/${state} unused cell`);
+      // 只检查"第一个没用到的格子"是透明的；eating 现在正好 8 帧，没有空格子。
+      if (s.frames < m.columns) {
+        const blank=pixels(name,state,s.frames,[0,0,m.cell_width,m.cell_height]);
+        assert.ok(blank.every(x=>x===0),`${name}/${state} unused cell`);
+      }
     }
   }
 });
@@ -34,6 +37,15 @@ test('eyes and tail change independently in actual atlas pixels', () => {
     const tail=name==='dragon'?[0,290,110,110]:[270,250,114,150];
     assert.ok(different(pixels(name,'idle',0,eyes),pixels(name,'idle',2,eyes))>100,`${name} eyes`);
     assert.ok(different(pixels(name,'idle',0,tail),pixels(name,'idle',2,tail))>50,`${name} tail`);
+  }
+});
+
+test('whale eating is a dedicated eight-pose action, not three repeated poses', () => {
+  const m=PETS.whale.metadata, upper=[60,150,260,175];
+  assert.equal(m.states.eating.frames,8);
+  for (const [a,b] of [[0,2],[2,4],[4,6],[6,7]]) {
+    assert.ok(different(pixels('whale','eating',a,upper),pixels('whale','eating',b,upper))>300,
+      `eating frame ${a} 与 ${b} 应明显不同`);
   }
 });
 

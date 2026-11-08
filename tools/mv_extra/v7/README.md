@@ -11,16 +11,16 @@
 自制 384×416 固定帧格的两个图集，播放器 `pet.mjs` 按状态和每帧毫秒数播放，而不是给整张图做周期性上下位移：
 
 - 龙娘：白发、紫眸、角、翅膀、尾巴；思考姿势、眨眼、两种尾巴形态。
-- Day12 鲸娘：蓝发鲸尾、抱金属饭盆；待机眨眼、舀饭/送饭到嘴、空盆失落。
+- Day12 鲸娘：蓝发鲸尾、抱金属饭盆；待机眨眼、**一整套 8 格干饭动作**（舀饭/抬勺/送到嘴边/嚼/咽/舔嘴/再舀）、空盆失落。
 - 其他配角仍使用 v6 的姿态切换与骨骼动作，未声称其都具有 Pet 那样的逐帧图集。新增两人的图集也只有两个／三个状态，不是复制参考项目的全套 9 状态和 16 视线方向。
 
-原始姿态由图像生成和局部编辑得到，共同画布保持一致。尾巴只有两种形态；吃饭由三个主要姿态组成，6 格中部分重复。两帧之间不做自动补帧。视频中对应故事镜头使用这些状态，其他镜头继续使用 Day12 多姿态。
+原始姿态由图像生成和局部编辑得到，共同画布保持一致。尾巴只有两种形态。干饭不再重复使用三个站姿：`build_eat_frames.py` 从 `assets/ai-girls/pet-v7/sheet/whale_eat_{a,b}.png` 两张四格图切出 8 个连续不同的姿态，图集第 1 行 8 格全用满。两帧之间不做自动补帧。视频中对应故事镜头使用这些状态，其他镜头继续使用 Day12 多姿态。
 
 ## 复现与验证
 
 1. 安装 `tools/engine` npm 依赖及 Python `pillow`、`numpy`、`imageio-ffmpeg`。
 2. `.venv/bin/python tools/mv_extra/v7/setup_v7.py` 下载并校验 Day12 等共享素材，检查图集及清单哈希。
-3. 可选：`.venv/bin/python tools/mv_extra/v7/build_atlas.py` 根据已提供的源姿态构造固定格图集。
+3. 可选：`python3 tools/mv_extra/v7/build_eat_frames.py`（把两张干饭四格图切成 `source/eat/f1..f8.png`）→ `python3 tools/mv_extra/v7/build_atlas.py` 根据已提供的源姿态构造固定格图集。
 4. `node --expose-gc tools/mv_extra/v7/film.mjs render` 渲染完整视频；`FFMPEG=<ffmpeg路径> node --expose-gc tools/mv_extra/v7/pet_preview.mjs` 渲染独立 13 秒动作演示。
 5. `node --expose-gc --test tools/mv_extra/v7/pet.test.mjs tools/mv_extra/v7/actions.test.mjs tools/mv_extra/v7/film.test.mjs tools/mv_extra/v7/planning.test.mjs`；`.venv/bin/python tools/mv_extra/v7/check_v7.py` 检查帧数与音轨。
 

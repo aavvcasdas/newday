@@ -24,6 +24,9 @@ const ALLOWED_FILES = [
   /^Day12\/样片\/Day12_四段导演样片_无声\.mp4$/,
   // 本轮新增：MV 八人并入 Day 的结构验收样片
   /^Day样片\/MV八人并入Day_结构验收_无声\.mp4$/,
+  // 用户明确要求「把 9 个走路角色渲染成一个能下载的视频」的交付件（4.6 MB，可由
+  // tools/remotion-engine/render_walk_video.py 用库内帧重渲，保留是为了让审看/下载有固定入口）
+  /^assets\/ai-girls\/walk-v14\/preview\/walk_all9\.mp4$/,
 ];
 
 // 允许入库的归档目录：整支 MV 的成片与审看样片，按用户明确指示保留（不是新上传的散落文件）。

@@ -140,6 +140,64 @@ def blob_from(mask_small, seed):
 
 
 
+
+def background_mask(rgb, white=WHITE):
+    """纯白**且和画面边缘连通**的像素才是背景。
+
+    早先直接按 `min(rgb) >= 250` 判背景，白色蕾丝/围裙上的高光也会被当成背景抠掉，
+    成品就在白花边上留下一圈深色针眼（鲸娘女仆头饰最明显）。
+    这里从四条边做一次扩张（等价于 4 连通 flood fill，但用 numpy 位移，不需要 scipy），
+    只有连到边上的白才算背景；人物内部包住的纯白继续留在身上。
+    """
+    white_px = rgb.min(axis=2) >= white
+    bg = np.zeros_like(white_px)
+    bg[0, :] = white_px[0, :]
+    bg[-1, :] = white_px[-1, :]
+    bg[:, 0] = white_px[:, 0]
+    bg[:, -1] = white_px[:, -1]
+    while True:
+        nb = bg.copy()
+        nb[1:, :] |= bg[:-1, :]
+        nb[:-1, :] |= bg[1:, :]
+        nb[:, 1:] |= bg[:, :-1]
+        nb[:, :-1] |= bg[:, 1:]
+        nb &= white_px
+        if np.array_equal(nb, bg):
+            return bg
+        bg = nb
+
+
+def white_to_alpha(piece, inside=None, white=WHITE, soft=22.0):
+    """白底 → 透明，并把边缘那一圈被白底"冲淡"的颜色还原回来。
+
+    直接二值抠白（min(rgb)<250 ? 不透明 : 透明）会把抗锯齿边缘整圈留成**白边**：
+    边缘像素本来是"人物色 × 白底"的混合，二值化之后它就变成一圈纯白，
+    贴在深色背景上就是明显的白轮廓。
+
+    做法：
+      1. 只有"紧邻背景"的那一圈按亮度给 alpha 坡（保留抗锯齿）；
+      2. 这一圈做**反预乘** C = (P - (1-a)·255) / a，把白底成分减掉；
+      3. 内部像素 alpha 恒为 255，颜色不动。
+    """
+    rgb = piece.astype(np.float32)
+    mn = rgb.min(axis=2)
+    if inside is None:
+        inside = mn < white
+    nbr = np.ones_like(inside)
+    nbr[1:, :] &= inside[:-1, :]
+    nbr[:-1, :] &= inside[1:, :]
+    nbr[:, 1:] &= inside[:, :-1]
+    nbr[:, :-1] &= inside[:, 1:]
+    edge = inside & ~nbr
+    a = np.where(edge, np.clip((white - mn) / soft, 0.0, 1.0), 1.0)
+    a[~inside] = 0.0
+    aa = a[..., None]
+    with np.errstate(divide='ignore', invalid='ignore'):
+        c = (rgb - (1.0 - aa) * 255.0) / np.maximum(aa, 1e-3)
+    c = np.where(inside[..., None], np.clip(c, 0.0, 255.0), 255.0)
+    return c.astype(np.uint8), (a * 255.0).astype(np.uint8)
+
+
 def keep_main_components(mask, frac=0.03, min_px=20):
     """去掉远处的小碎块（隔壁格子的发梢/地面线残渣），保留所有够大的连通块。
 
@@ -238,8 +296,20 @@ def main():
                 piece[max(0, gy0 - by0 - 1):max(0, gy1 - by0 + 2), :, :] = 255
                 erased += gy1 - gy0 + 1
 
+        # 生成图有时把地面线画在脚的紧下方、但不落在上面那条"贴底"的判定里
+        # （whale_b 的两格就是这样），它横贯整格、只有 1~3 行，留在包围盒里
+        # 就是脚下一根黑杠。只在最下面 12% 找：深色低饱和占比 >= 0.5、且上面几行明显更空。
+        bot = int(piece.shape[0] * 0.88)
+        mn_p = piece.min(axis=2)
+        mx_p = piece.max(axis=2)
+        dfrac = ((mn_p < LINEDARK) & ((mx_p - mn_p) < LINE_SAT)).mean(axis=1)
+        for gy in range(bot, piece.shape[0]):
+            if dfrac[gy] >= 0.5 and dfrac[max(0, gy - 3):gy].mean() < 0.35:
+                piece[gy, :, :] = 255
+                erased += 1
+
         # 白底 → 透明，只留人物（再扫掉隔壁格子漏进来的小碎块）
-        mask = keep_main_components(piece.min(axis=2) < WHITE, frac=args.keep_min)
+        mask = keep_main_components(~background_mask(piece), frac=args.keep_min)
         if not mask.any():
             print('第 %d 格是空的，跳过' % (i + 1))
             continue
@@ -249,13 +319,28 @@ def main():
 
         sub = mask[y0:y1 + 1, x0:x1 + 1]
         crop = piece[y0:y1 + 1, x0:x1 + 1]
+
+        # 脚下方那条地面线（whale_b 的两格）：在**人物宽度**上占比>=0.5，而鞋子只有 0.15，
+        # 很容易分开；裁进包围盒之后就是脚下一根黑杠。擦成白底、同时从掩码里去掉，
+        # 这样 groundY 的兜底也还是落在脚上。
+        ch, cw = crop.shape[:2]
+        mnc = crop.min(axis=2)
+        mxc = crop.max(axis=2)
+        dfc = ((mnc < LINEDARK) & ((mxc - mnc) < LINE_SAT)).mean(axis=1)
+        for gy in range(max(0, ch - int(ch * 0.18)), ch):
+            if dfc[gy] >= 0.5 and dfc[max(0, gy - 3):gy].mean() < 0.35:
+                crop[gy, :, :] = 255
+                sub[gy, :] = False
+                mask[y0 + gy, x0:x0 + cw] = False
+                erased += 1
         th = (y1 - y0 + 1) + args.pad * 2
         tw = (x1 - x0 + 1) + args.pad * 2
         tile = np.zeros((th, tw, 4), np.uint8)
         tile[:, :, :3] = 255
-        tile[args.pad:args.pad + crop.shape[0], args.pad:args.pad + crop.shape[1], :3] = crop
-        tile[args.pad:args.pad + crop.shape[0], args.pad:args.pad + crop.shape[1], 3] = \
-            np.where(sub, 255, 0).astype(np.uint8)
+        color, alpha = white_to_alpha(crop, sub)
+        alpha = np.where(sub, alpha, 0)
+        tile[args.pad:args.pad + crop.shape[0], args.pad:args.pad + crop.shape[1], :3] = color
+        tile[args.pad:args.pad + crop.shape[0], args.pad:args.pad + crop.shape[1], 3] = alpha
 
         name = 'f%d' % (args.offset + i)
         path = os.path.join(out_dir, name + '.png')
