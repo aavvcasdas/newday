@@ -5,7 +5,9 @@
     python3 tools/remotion-engine/render_walk_clips.py            # 全部角色
     python3 tools/remotion-engine/render_walk_clips.py whale kimi # 指定角色
 
-产物：assets/ai-girls/walk-v14/preview/<char>_walk.gif   动画（3 秒走过舞台）
+产物：assets/ai-girls/walk-v14/preview/<char>_walk.gif   动画（3 秒走过舞台，128 色，体积小）
+      assets/ai-girls/walk-v14/preview/<char>_walk.png   同一段动画的 APNG（全彩、无调色板）
+      assets/ai-girls/walk-v14/preview/<char>_native.png 8 帧 1:1 原尺寸拼图（384×416/格，不缩放）
       assets/ai-girls/walk-v14/preview/<char>_strip.png  8 帧静态条带
       assets/ai-girls/walk-v14/preview/walk_all8_sheet.png  3×3 汇总表
 
@@ -27,10 +29,12 @@ ART_H = 372          # 图集里角色美术高度（脚底 = GROUND_Y）
 CELL_GROUND = 406    # 单格内的脚底基线，条带按这条线对齐
 FPS = 25
 DUR = 3.0
-STAGE_W, STAGE_H = 640, 400
-GROUND_Y = 352
-CHAR_H = 300         # 屏幕上角色高度：尽量放大，方便看抬腿/落脚
-CHAR_MARGIN = 78     # 角色中心从左边走到右边的起终点
+SCALE = 1            # --scale N 整体放大（2 = 1280×800 舞台，看细节用）
+BASE_W, BASE_H = 640, 400
+STAGE_W, STAGE_H = BASE_W * SCALE, BASE_H * SCALE
+GROUND_Y = 352 * SCALE
+CHAR_H = 300 * SCALE # 屏幕上角色高度：尽量放大，方便看抬腿/落脚
+CHAR_MARGIN = 78     # 角色中心从左边走到右边的起终点（随 SCALE 放大）
 FRAME_MS = 120
 
 CHARS = {
@@ -54,25 +58,32 @@ def font(size):
 
 
 def stage_bg():
-    """夜色渐变舞台 + 地面，纯程序绘制（角色不会和背景混淆）。"""
-    bg = Image.new('RGB', (STAGE_W, STAGE_H), (12, 18, 34))
+    """夜色渐变舞台 + 地面，纯程序绘制（角色不会和背景混淆）。
+
+    背景按 640×400 画完再整体放大，人物是放大之后再贴上去的，
+    所以放大看细节时人物不会被插值糊掉。
+    """
+    W, H, GY = BASE_W, BASE_H, 352
+    bg = Image.new('RGB', (W, H), (12, 18, 34))
     d = ImageDraw.Draw(bg)
-    for y in range(STAGE_H):
-        t = y / STAGE_H
+    for y in range(H):
+        t = y / H
         r = int(14 + 24 * t)
         g = int(22 + 32 * t)
         b = int(44 + 40 * t)
-        d.line([(0, y), (STAGE_W, y)], fill=(r, g, b))
+        d.line([(0, y), (W, y)], fill=(r, g, b))
     # 远山（压在地平线附近，不挡住角色）
     d.polygon([(0, 250), (110, 196), (230, 248), (350, 200), (470, 246),
-               (570, 208), (STAGE_W, 244), (STAGE_W, 330), (0, 330)],
+               (570, 208), (W, 244), (W, 330), (0, 330)],
               fill=(20, 30, 54))
     # 地面
-    d.rectangle([0, GROUND_Y, STAGE_W, STAGE_H], fill=(26, 37, 60))
-    d.line([(0, GROUND_Y), (STAGE_W, GROUND_Y)], fill=(78, 106, 152), width=2)
+    d.rectangle([0, GY, W, H], fill=(26, 37, 60))
+    d.line([(0, GY), (W, GY)], fill=(78, 106, 152), width=2)
     # 地面刻度线（帮助判断是否匀速、是否有滑步）
-    for x in range(-32, STAGE_W + 64, 64):
-        d.line([(x, GROUND_Y + 1), (x - 26, STAGE_H)], fill=(34, 48, 76), width=1)
+    for x in range(-32, W + 64, 64):
+        d.line([(x, GY + 1), (x - 26, H)], fill=(34, 48, 76), width=1)
+    if SCALE != 1:
+        bg = bg.resize((STAGE_W, STAGE_H), Image.LANCZOS)
     return bg
 
 
@@ -132,11 +143,19 @@ def render_gif(char, atlas_name):
                fill=(150, 190, 240), font=label_font)
         frames.append(frame)
 
+    # 全彩 APNG：GIF 只有 128 色，用来判断"立绘糊不糊"会冤枉像素（调色板抖动比插值模糊更明显）
+    apng = os.path.join(OUT, '%s_walk.png' % char)
+    frames[0].save(apng, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / FPS), loop=0, optimize=True)
+
+    # GIF 固定回 640×400（--scale 只放大 APNG / 条带，GIF 保持小体积）
+    if SCALE != 1:
+        frames = [f.resize((BASE_W, BASE_H), Image.LANCZOS) for f in frames]
     # 统一调色板（所有帧共用一张表）+ 无抖动：GIF 帧间差异小，体积能小一个量级。
     # 调色板必须从"含角色的若干帧"里取，否则角色的浅色会被吸进夜色背景里。
-    montage = Image.new('RGB', (STAGE_W, STAGE_H * 4))
+    montage = Image.new('RGB', (BASE_W, BASE_H * 4))
     for k, idx in enumerate((0, len(frames) // 3, len(frames) // 2, len(frames) - 1)):
-        montage.paste(frames[idx], (0, k * STAGE_H))
+        montage.paste(frames[idx], (0, k * BASE_H))
     palette = montage.quantize(colors=128, method=Image.MEDIANCUT)
     quant = [f.quantize(palette=palette, dither=Image.Dither.NONE) for f in frames]
     out = os.path.join(OUT, '%s_walk.gif' % char)
@@ -170,6 +189,42 @@ def render_strip(char, atlas_name):
     return out
 
 
+def render_cycle(char, atlas_name, zoom=2):
+    """8 帧循环 APNG（不移动，只在原地摆腿）—— 判断"动作顺不顺 / 立绘糊不糊"看这张。
+
+    直接取图集单格按 zoom 倍最近邻放大：放大只用来看像素，不做任何插值模糊。
+    """
+    img = Image.open(os.path.join(ART, atlas_name + '.png')).convert('RGBA')
+    cw, chh = CELL_W * zoom, CELL_H * zoom
+    frames = []
+    for i in range(8):
+        cell = img.crop((i * CELL_W, 0, (i + 1) * CELL_W, CELL_H))
+        cell = cell.resize((cw, chh), Image.NEAREST)
+        bg = Image.new('RGB', (cw, chh), (16, 22, 38))
+        bg.paste(cell, (0, 0), cell)
+        frames.append(bg)
+    out = os.path.join(OUT, '%s_cycle.png' % char)
+    frames[0].save(out, save_all=True, append_images=frames[1:],
+                   duration=FRAME_MS, loop=0, optimize=True)
+    return out
+
+
+def render_native(char, atlas_name):
+    """8 帧 1:1 原尺寸并排（384×416/格，不缩放、不调色板）—— 判断清晰度就看这张。"""
+    img = Image.open(os.path.join(ART, atlas_name + '.png')).convert('RGBA')
+    pad_top = 26
+    sheet = Image.new('RGB', (CELL_W * 8, pad_top + CELL_H + 6), (16, 22, 38))
+    d = ImageDraw.Draw(sheet)
+    f = font(13)
+    for i in range(8):
+        cell = img.crop((i * CELL_W, 0, (i + 1) * CELL_W, CELL_H))
+        sheet.paste(cell, (i * CELL_W, pad_top), cell)
+        d.text((i * CELL_W + 6, 4), 'f%d' % (i + 1), fill=(150, 190, 240), font=f)
+    out = os.path.join(OUT, '%s_native.png' % char)
+    sheet.save(out)
+    return out
+
+
 def render_sheet(entries):
     """3×N 汇总表：每个角色裁剪到"天空 + 地面"的有效区间。"""
     top = max(0, GROUND_Y - CHAR_H - 26)
@@ -196,14 +251,32 @@ def render_sheet(entries):
 
 
 def main():
+    global SCALE, STAGE_W, STAGE_H, GROUND_Y, CHAR_H, CHAR_MARGIN
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument('chars', nargs='*')
+    ap.add_argument('--scale', type=int, default=1, help='整体放大倍数（2 = 1280×800，看细节用）')
+    ap.add_argument('--native-only', action='store_true', help='只出 1:1 原尺寸 8 帧拼图')
+    args = ap.parse_args()
+    SCALE = max(1, args.scale)
+    STAGE_W, STAGE_H = BASE_W * SCALE, BASE_H * SCALE
+    GROUND_Y = 352 * SCALE
+    CHAR_H = 300 * SCALE
+    CHAR_MARGIN = 78 * SCALE
+
     os.makedirs(OUT, exist_ok=True)
-    names = sys.argv[1:] or list(CHARS)
+    names = args.chars or list(CHARS)
     entries = []
     for n in names:
         if n not in CHARS:
             print('skip', n)
             continue
+        print('wrote', render_native(n, CHARS[n]))
+        print('wrote', render_cycle(n, CHARS[n]))
+        if args.native_only:
+            continue
         print('wrote', render_gif(n, CHARS[n]))
+        print('wrote', os.path.join(OUT, '%s_walk.png' % n))
         print('wrote', render_strip(n, CHARS[n]))
         entries.append((n, os.path.join(OUT, '%s_walk.gif' % n)))
     if entries:

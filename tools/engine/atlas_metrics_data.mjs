@@ -33,7 +33,7 @@ export const ATLAS_CONTENT = Object.freeze({
   "gemini_swim_action": {"topFrac":0.1683,"bottomFrac":0.9736,"leftFrac":0.026,"rightFrac":0.9714,"cols":16},
   "gemini_swim_cel": {"topFrac":0.1683,"bottomFrac":0.9736,"leftFrac":0,"rightFrac":0.9583,"cols":16},
   "gemini_swim_full_action": {"topFrac":0.488,"bottomFrac":0.9736,"leftFrac":0.026,"rightFrac":0.9714,"cols":16},
-  "gemini_walk_2leg": {"topFrac":0.1154,"bottomFrac":0.9688,"leftFrac":0.0078,"rightFrac":0.8099,"cols":8},
+  "gemini_walk_2leg": {"topFrac":0.0769,"bottomFrac":0.9784,"leftFrac":0.1302,"rightFrac":0.8594,"cols":8},
   "gpt_idle_pet": {"topFrac":0.0793,"bottomFrac":0.9736,"leftFrac":0.138,"rightFrac":0.862,"cols":8},
   "gpt_push_final_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.1094,"rightFrac":0.8854,"cols":16},
   "gpt_push_final_cel": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0,"rightFrac":0.9583,"cols":16},
@@ -58,7 +58,7 @@ export const ATLAS_CONTENT = Object.freeze({
   "qwen_idle_pet": {"topFrac":0.0793,"bottomFrac":0.9736,"leftFrac":0.2891,"rightFrac":0.7135,"cols":8},
   "qwen_reach_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.1875,"rightFrac":0.8073,"cols":16},
   "qwen_swim_full_retry_action": {"topFrac":0.3702,"bottomFrac":0.9712,"leftFrac":0.0286,"rightFrac":0.9688,"cols":16},
-  "qwen_walk_2leg": {"topFrac":0.0817,"bottomFrac":0.9736,"leftFrac":0.2865,"rightFrac":0.7135,"cols":8},
+  "qwen_walk_2leg": {"topFrac":0.0769,"bottomFrac":0.9784,"leftFrac":0.2839,"rightFrac":0.7474,"cols":8},
   "qwen_water_full_action": {"topFrac":0.0481,"bottomFrac":0.9639,"leftFrac":0.1224,"rightFrac":0.8542,"cols":16},
   "whale_bird": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.0417,"rightFrac":0.9531,"cols":16},
   "whale_camera_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.0443,"rightFrac":0.9505,"cols":16},
@@ -91,7 +91,7 @@ export const ATLAS_CONTENT = Object.freeze({
   "zai_memento_action": {"topFrac":0.1394,"bottomFrac":0.9736,"leftFrac":0.026,"rightFrac":0.9714,"cols":16},
   "zai_reach_action": {"topFrac":0.1442,"bottomFrac":0.9736,"leftFrac":0.026,"rightFrac":0.9714,"cols":16},
   "zai_reach_cel": {"topFrac":0.1442,"bottomFrac":0.9736,"leftFrac":0,"rightFrac":0.9583,"cols":16},
-  "zai_walk_2leg": {"topFrac":0.1154,"bottomFrac":0.9639,"leftFrac":0.013,"rightFrac":0.9609,"cols":8},
+  "zai_walk_2leg": {"topFrac":0.0769,"bottomFrac":0.976,"leftFrac":0,"rightFrac":0.7969,"cols":8},
 });
 
 export default ATLAS_CONTENT;

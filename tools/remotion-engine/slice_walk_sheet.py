@@ -267,6 +267,18 @@ def main():
                 ground = (gy1 - by0) - (y0 - 0) + args.pad
         if ground is not None and not (0 < ground < th):
             ground = None
+        if ground is None:
+            # 没画地面线（zai_b 就是这样）时的兜底：取**身体中段那一带**的最低不透明像素。
+            # 不能直接用整格包围盒底边——长发/裙摆垂到地上，会把整个人顶到半空。
+            wspan = x1 - x0 + 1
+            cx0 = x0 + int(wspan * 0.22)
+            cx1 = x0 + max(int(wspan * 0.78), cx0 + 1)
+            col = mask[:, cx0:cx1 + 1]
+            rows_any = np.nonzero(col.any(axis=1))[0]
+            if len(rows_any):
+                ground = int(rows_any.max()) - y0 + args.pad
+                if not (0 < ground < th):
+                    ground = None
         meta[name] = {'groundY': ground, 'w': int(tw), 'h': int(th)}
         print('wrote %s  %dx%d  groundY=%s' % (path, tw, th, ground))
 
