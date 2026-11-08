@@ -123,8 +123,8 @@ export const WALK_TO_IDLE_ATLAS_MAP = Object.freeze({
 });
 
 export const PET_RIG_DEFAULT_FACING = Object.freeze({
-  whale_walk_side_2leg: 'left',
-  whale_idle_side_pet: 'left',
+  whale_walk_side_2leg: 'right',
+  whale_idle_side_pet: 'right',
   whale_seat_side_bench: 'left',
   doubao_walk_side_2leg: 'left',
   doubao_idle_side_pet: 'left',
@@ -686,9 +686,13 @@ export function evaluateCharacterMotion(plan, t, {
   // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
   // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
   const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
-  const atlasCols = plan.atlasCols || atlasColsFor(
-    plan.atlas || plan.atlases?.[0]?.atlas || (Array.isArray(plan.atlases) ? plan.atlases[0] : null) || null
-  );
+  // 注意：atlas 也可能只由 locomotion 预设推导出来（plan.atlas 缺省），
+  // 这里必须把预设解析后的真实图集名也算进来，否则 8 格步态会被当成 16 列播，
+  // 抽到不存在的格子 → 角色闪空。
+  const initialAtlasName = plan.atlas
+    || plan.atlases?.[0]?.atlas
+    || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
+  const atlasCols = plan.atlasCols || atlasColsFor(initialAtlasName);
   let activeAtlasSpec = defaultAtlasFromPlan
     ? {
       at: shotStart,
@@ -819,7 +823,8 @@ export function evaluateCharacterMotion(plan, t, {
   const isPetRig = isPetRigAtlas(atlas);
   if (isTwoLegRig && (walkingActive || (activeAtlasSpec?.treadmillSpeed ?? plan.treadmillSpeed ?? 0) > 0)) {
     walkingActive = true;
-    if (atlasFrame === 2 || atlasFrame === 3 || atlasFrame === 10 || atlasFrame === 11) {
+    // 8 帧步态里脚掌落地发生在第 0 / 2 / 4 / 6 帧（左右各两次触地）
+    if (atlasCols === 8 ? atlasFrame % 2 === 0 : (atlasFrame === 2 || atlasFrame === 3 || atlasFrame === 10 || atlasFrame === 11)) {
       footContacts.push({ x, y: baseGroundY, strength: 0.82, phase: atlasFrame / atlasCols });
     }
   }

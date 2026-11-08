@@ -64,6 +64,8 @@ async function main() {
   // 表演图集 16 格；双骨骼步态/配对待机 8 格
   await measureDir(ATLAS_DIR, 16, metrics);
   await measureDir(WALK_DIR, 8, metrics);
+  // v14 预烘图集（assets/ai-girls/walk-v14）覆盖走位/待机最终素材
+  await measureDir(path.join(ROOT, 'assets/ai-girls/walk-v14'), 8, metrics);
 
   if (!process.argv.includes('--write')) {
     console.log(JSON.stringify(metrics, null, 2));

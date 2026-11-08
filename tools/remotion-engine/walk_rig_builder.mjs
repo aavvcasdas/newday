@@ -20,7 +20,7 @@ const { createCanvas, loadImage } = engineRequire('@napi-rs/canvas');
 
 export const CELL_W = 384;
 export const CELL_H = 416;
-export const WALK_FRAMES = 16;
+export const WALK_FRAMES = 8;
 export const DEFAULT_WALK_CACHE_DIR = '/tmp/newday_walk_rigs_mesh_v2';
 
 const clamp = (v, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
@@ -417,9 +417,12 @@ export function petStepPose(index, strideScale = 1.0) {
   };
 }
 
-/** 16 帧图集里的每帧对应 8 个固定姿态：第 f 帧 -> 姿态 floor(f/2) */
+/**
+ * 8 帧图集：第 f 帧 = 第 f 个固定姿态。
+ * （v13 曾生成 16 格却按 8 列播放，只播到前 4 个姿态 → 看上去像原地抖腿，这里彻底修正）
+ */
 export function sampleWalkGait16(frameIndex, strideScale = 1.0) {
-  return petStepPose(Math.floor((frameIndex % WALK_FRAMES) / 2), strideScale);
+  return petStepPose(frameIndex % WALK_FRAMES, strideScale);
 }
 
 function renderMeshWalkStrip({
@@ -948,6 +951,17 @@ export const WALK_RIG_BUILDERS = {
 
 export const WALK_RIG_ATLAS_NAMES = Object.freeze(Object.keys(WALK_RIG_BUILDERS));
 
+/**
+ * 仓库内预烘的 v14 图集（assets/ai-girls/walk-v14/*.png）优先：
+ * 有成品就读成品，保证「走路图片」是可审阅、可替换的真实素材。
+ */
+export const PREBUILT_WALK_DIR = path.join(REPO_ROOT, 'assets/ai-girls/walk-v14');
+
+export function prebuiltAtlasPath(name) {
+  const p = path.join(PREBUILT_WALK_DIR, `${name}.png`);
+  return fs.existsSync(p) && fs.statSync(p).size > 20_000 ? p : null;
+}
+
 export async function ensureWalkRigAtlases(cacheDir = DEFAULT_WALK_CACHE_DIR, { force = false, only = null } = {}) {
   fs.mkdirSync(cacheDir, { recursive: true });
   const keys = Array.isArray(only) && only.length > 0 ? only : Object.keys(WALK_RIG_BUILDERS);
@@ -955,6 +969,11 @@ export async function ensureWalkRigAtlases(cacheDir = DEFAULT_WALK_CACHE_DIR, { 
   for (const name of keys) {
     const fn = WALK_RIG_BUILDERS[name];
     if (!fn) continue;
+    const prebuilt = force ? null : prebuiltAtlasPath(name);
+    if (prebuilt) {
+      built[name] = prebuilt;
+      continue;
+    }
     const outPath = path.join(cacheDir, `${name}.png`);
     if (force || !fs.existsSync(outPath) || fs.statSync(outPath).size < 20_000) {
       const strip = await fn();

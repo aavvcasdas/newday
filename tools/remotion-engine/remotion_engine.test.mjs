@@ -192,18 +192,60 @@ test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积�
   assert.equal(evaluateRemotionFrameState(props, 20.10).actors[1].atlas, 'gemini_idle_pet');
   assert.equal(evaluateRemotionFrameState(props, 23.80).actors[1].atlas, 'doubao_idle_side_pet');
 
-  // 像素级红线校验：鲸鱼娘待机与行走帧右侧鲸尾下方 (x=218..236, y=386..406) 必须 100% 透明，绝无悬空第 3 只残鞋或第 3 条残腿
-  for (const rigKey of ['whale_idle_side_pet', 'whale_idle_happy_pet', 'whale_idle_sad_pet']) {
+  // 像素级红线校验（v14 起与立绘坐标解耦）：
+  //   1) 脚底基线以下不得有任何像素（悬空残鞋 / 出血）；
+  //   2) 下半身（y >= 370）必须是单一连通块 —— 出现第 2、3 个孤立块就说明有断腿或悬空残鞋。
+  for (const rigKey of ['whale_idle_side_pet', 'whale_idle_happy_pet', 'whale_idle_sad_pet', 'whale_walk_side_2leg']) {
     const img = await loadImage(path.resolve(built[rigKey]));
     const c = createCanvas(CELL_W, CELL_H);
     const ctx = c.getContext('2d');
-    ctx.drawImage(img, 0, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
-    const d = ctx.getImageData(218, 386, 18, 20).data;
-    let nonEmpty = 0;
-    for (let i = 3; i < d.length; i += 4) {
-      if (d[i] > 12) nonEmpty++;
+    for (let f = 0; f < 8; f++) {
+      ctx.clearRect(0, 0, CELL_W, CELL_H);
+      ctx.drawImage(img, f * CELL_W, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
+      const full = ctx.getImageData(0, 0, CELL_W, CELL_H).data;
+      for (let y = 408; y < CELL_H; y++) {
+        for (let x = 0; x < CELL_W; x++) {
+          assert.ok(full[(y * CELL_W + x) * 4 + 3] <= 12, `${rigKey} 第 ${f} 帧脚底基线以下不应有像素 (${x},${y})`);
+        }
+      }
+      const low = ctx.getImageData(0, 370, CELL_W, CELL_H - 370).data;
+      const seen = new Uint8Array(CELL_W * (CELL_H - 370));
+      const h = CELL_H - 370;
+      const compSizes = [];
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < CELL_W; x++) {
+          const p = y * CELL_W + x;
+          if (seen[p] || low[p * 4 + 3] <= 12) continue;
+          let size = 0;
+          const stack = [p];
+          seen[p] = 1;
+          while (stack.length) {
+            const q = stack.pop();
+            size++;
+            const qx = q % CELL_W;
+            const qy = (q / CELL_W) | 0;
+            for (let oy = -1; oy <= 1; oy++) {
+              for (let ox = -1; ox <= 1; ox++) {
+                const nx = qx + ox;
+                const ny = qy + oy;
+                if (nx < 0 || nx >= CELL_W || ny < 0 || ny >= h) continue;
+                const np = ny * CELL_W + nx;
+                if (seen[np] || low[np * 4 + 3] <= 12) continue;
+                seen[np] = 1;
+                stack.push(np);
+              }
+            }
+          }
+          compSizes.push(size);
+        }
+      }
+      // 下半身最多允许两条腿（两块），出现第 3 块足尺寸连通块 = 断腿 / 悬空残鞋
+      const solid = compSizes.filter((n) => n >= 60);
+      assert.ok(
+        solid.length <= 2,
+        `${rigKey} 第 ${f} 帧下半身出现 ${solid.length} 块足尺寸连通块（最多只应有两条腿），疑似断腿/悬空残鞋`
+      );
     }
-    assert.equal(nonEmpty, 0, `${rigKey} 鲸尾下方不应残留原皮鞋/第 3 条腿像素，实际残留 ${nonEmpty}px`);
   }
 
   // 镜5「偷光积蓄」道具组件源码校验：青花瓷碗白米饭一粒一粒快速被偷走，且全局视频层零右上角水印
@@ -242,11 +284,11 @@ test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼
   });
   const walkState = evaluateRemotionFrameState(remotionProps, 0.85);
   assert.equal(walkState.actors[0].atlas, 'whale_walk_side_2leg');
-  assert.equal(walkState.actors[0].flip, true, '向右行走时侧面图集应自动朝右');
+  assert.equal(walkState.actors[0].flip, false, 'v14 侧立绘本身朝右，向右行走时不应再镜像');
 
   const settledState = evaluateRemotionFrameState(remotionProps, 2.2);
   assert.equal(settledState.actors[0].atlas, 'whale_idle_side_pet', '到站停稳后应无跳变自动切回同体待机');
-  assert.equal(settledState.actors[0].flip, true, '停步后应保持先前行进朝向不反弹');
+  assert.equal(settledState.actors[0].flip, false, '停步后应保持先前行进朝向不反弹');
 
   const guestWalkState = evaluateRemotionFrameState(remotionProps, 9.6);
   assert.equal(guestWalkState.actors[1].atlas, 'gemini_walk_2leg');
