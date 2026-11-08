@@ -19,7 +19,7 @@
 - `mv_adapter.mjs`：歌词 MV 声明式规格适配器
 - `walk_rig_builder.mjs`：**8 帧步态 / 待机图集注册表与构建器**（`WALK_FRAMES = 8`，8 帧 × 120ms = 0.96s 双步周期，对齐 `tqlearning/ai-girl-chatgpt-pets` 的 `running-right`；仓库内 `assets/ai-girls/walk-v14/*.png` 有预烘成品时优先直接读取）
 - `walk_cycle_v14.mjs` + `build_walk_v14.mjs`：**v14 侧 3/4 八帧行走生成器**（AI 重绘的直立体侧立绘 → 上身/单腿切片分层 → 八姿态；一条腿切片做前腿、压暗复制做后腿，两腿绕髋**刚性旋转**严格 180° 反相，支撑腿脚底钉在 `GROUND_Y`、摆动腿抬脚离地，髋部起伏由腿倾角反推；腿层裁剪在 `legTop..GROUND_Y`，绝无灰腿鬼影 / 断膝 / 第三条腿 / 踩穿地面）；`node tools/remotion-engine/build_walk_v14.mjs` 落盘全部 9 套图集到 `assets/ai-girls/walk-v14/`
-- `slice_walk_sheet.py`：**把一张 2×2 四格走路姿态图切成 4 张逐帧立绘**（`python3 tools/remotion-engine/slice_walk_sheet.py sheet.png --char whale --offset 1|5`，顺带擦掉每格底部的地面线）→ 写进 `assets/ai-girls/walk-v14/frames/<char>/f1..f8.png`；八张齐了 `build_walk_v14.mjs` 就自动改走**逐帧成品模式**（和上游 pets 一样，每帧都是画出来的全身像，不切腿不蒙皮）
+- `slice_walk_sheet.py`：**把一张 2×2 四格走路姿态图切成 4 张逐帧立绘**（`python3 tools/remotion-engine/slice_walk_sheet.py sheet.png --char whale --offset 1|5 [--pad 8] [--inset 0.01] [--keep-min 0.03]`，四象限切格 + 只擦贴格底的地面线 + 丢 <3% 的小碎块 + 出 RGBA，并把每帧 `groundY` 写进同目录 `meta.json`）→ 写进 `assets/ai-girls/walk-v14/frames/<char>/f1..f8.png` + `meta.json`；八张齐了 `build_walk_v14.mjs` 就自动改走**逐帧成品模式**（和上游 pets 一样，每帧都是画出来的全身像，不切腿不蒙皮）
 - `render_walk_clips.py`：**把图集渲染成能直接看的走路片**（`python3 tools/remotion-engine/render_walk_clips.py [char…]` → `preview/<char>_walk.gif` 3s/25fps 每 120ms 换格、`preview/<char>_strip.png` 8 帧同地面线静态条带、`preview/walk_all8_sheet.png` 3×3 总览；GIF 体积较大，默认不入库，改了图集再跑一次即可）
 - `walk_preview.mjs`：走路图集审阅台（`node tools/remotion-engine/walk_preview.mjs --port 8099`，120ms 逐帧播放 + 单帧定格）
 - `render_cli.mjs`：支持 `--bundle-check`、`--dry-run`、本地静态资源 HTTP 服务与 MP4/PNG 渲染的统一 CLI

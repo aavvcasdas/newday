@@ -192,21 +192,53 @@ function alphaBoxAndCenter(canvas, topFrac = 0.38) {
  * 统一处理：抠白 → 按身高归一到 ART_H（每帧同高，腿张开也不会缩水）→ 脚底贴 GROUND_Y
  *          → 上半身重心对到单元格中线（腿摆动不会让整个人左右跳）。
  */
+function drawToCanvas(img) {
+  const c = createCanvas(img.width, img.height);
+  c.getContext('2d').drawImage(img, 0, 0);
+  return c;
+}
+
+function hasAlpha(img) {
+  const c = drawToCanvas(img);
+  const d = c.getContext('2d').getImageData(0, 0, img.width, img.height).data;
+  for (let i = 3; i < d.length; i += 4 * 7) if (d[i] < 250) return true;
+  return false;
+}
+
+function readFrameMeta(charId) {
+  const p = path.join(FRAME_DIR, charId, 'meta.json');
+  if (!fs.existsSync(p)) return {};
+  try { return JSON.parse(fs.readFileSync(p, 'utf8')); } catch { return {}; }
+}
+
 async function buildFrameStrip(charId) {
   const files = frameFilesFor(charId);
   if (!files) return null;
+  const meta = readFrameMeta(charId);
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
   for (let i = 0; i < files.length; i++) {
-    const cut = cutoutWhite(await loadImage(files[i]));
+    const raw = await loadImage(files[i]);
+    // 切片器出的是已经带 alpha 的 RGBA（blob 之外全透明）→ 不要再跑抠白，
+    // 否则两腿之间那块"被包住的白底"会被白裙/白袜的阈值误伤或残留。
+    const preCut = hasAlpha(raw);
+    const cut = preCut ? drawToCanvas(raw) : cutoutWhite(raw);
     const box = alphaBoxAndCenter(cut);
     if (!box) throw new Error(`${charId} 第 ${i + 1} 帧是空的`);
     const bw = box.x1 - box.x0 + 1;
     const bh = box.y1 - box.y0 + 1;
+    // 有 meta 就按"这一格画的地面线"缩放：脚正好踩在 GROUND_Y 上，尾巴垂到地面也不会把人物顶高
+    const gY = meta['f' + (i + 1)] && Number.isFinite(meta['f' + (i + 1)].groundY)
+      ? meta['f' + (i + 1)].groundY : null;
+    // 尺寸统一按"人物自身身高"缩（每帧一样大），位置按格子里的地面线落（脚踩在地上）
     const s = ART_H / bh;
     const dw = Math.max(1, Math.round(bw * s));
+    const dh = Math.max(1, Math.round(bh * s));
     const dx = Math.round(CELL_W / 2 - (box.centerX - box.x0) * s);
-    sg.drawImage(cut, box.x0, box.y0, bw, bh, i * CELL_W + dx, GROUND_Y - ART_H, dw, ART_H);
+    const dy = gY != null
+      ? Math.min(GROUND_Y, GROUND_Y - Math.round((gY - box.y0) * s))
+      : GROUND_Y - Math.round(bh * s);
+    sg.drawImage(cut, box.x0, box.y0, bw, bh, i * CELL_W + dx, dy, dw, dh);
   }
   return strip;
 }
