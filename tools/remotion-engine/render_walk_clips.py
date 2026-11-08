@@ -216,6 +216,44 @@ def render_cycle(char, atlas_name, zoom=2):
     return out
 
 
+def render_all_stage(names, cell_w=260, cell_h=282):
+    """3×3 全体"走过舞台"动画（WebP）：每格是缩小的舞台，角色从左走到右。"""
+    names = [n for n in names if n in CHARS][:9]
+    cols = 3
+    rows = (len(names) + cols - 1) // cols
+    cells = {n: load_cells(CHARS[n]) for n in names}
+    total = int(round(DUR * FPS))
+    frames = []
+    x0, x1 = cell_w * 0.22, cell_w * 0.78
+    for i in range(total):
+        t = i / float(FPS)
+        p2 = min(1.0, t / DUR)
+        fi = int(t * 1000 // FRAME_MS) % 8
+        board = Image.new('RGB', (cell_w * cols, cell_h * rows), (14, 20, 36))
+        d = ImageDraw.Draw(board)
+        lab = font(12)
+        for idx, n in enumerate(names):
+            cx = (idx % cols) * cell_w
+            cy = (idx // cols) * cell_h
+            # 每格画一条地平线
+            g = int(cy + cell_h * 0.86)
+            d.rectangle([cx, g, cx + cell_w - 1, cy + cell_h - 1], fill=(26, 37, 60))
+            d.line([(cx, g), (cx + cell_w - 1, g)], fill=(78, 106, 152), width=1)
+            cell, bbox = cells[n][fi]
+            ch = cell.crop(bbox)
+            hh = int(cell_h * 0.66)
+            ww = max(1, int(round(ch.width * hh / float(ch.height))))
+            ch = ch.resize((ww, hh), Image.LANCZOS)
+            x = cx + x0 + (x1 - x0) * p2
+            board.paste(ch, (int(round(x - ww / 2)), g - hh), ch)
+            d.text((cx + 4, cy + 2), n, fill=(120, 160, 210), font=lab)
+        frames.append(board)
+    out = os.path.join(OUT, 'walk_all9_stage.webp')
+    frames[0].save(out, save_all=True, append_images=frames[1:],
+                   duration=int(1000 / FPS), loop=0, quality=90, method=4)
+    return out
+
+
 def render_all_cycle(names):
     """3×3 汇总动画（WebP）：9 个角色同步循环，一眼看全体的迈步效果。"""
     names = [n for n in names if n in CHARS][:9]
@@ -315,6 +353,7 @@ def main():
         print('wrote', render_sheet(entries))
         if not args.native_only:
             print('wrote', render_all_cycle([e[0] for e in entries]))
+            print('wrote', render_all_stage([e[0] for e in entries]))
 
 
 if __name__ == '__main__':
