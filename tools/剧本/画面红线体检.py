@@ -10,7 +10,7 @@
 用法：
   python3 tools/剧本/画面红线体检.py            # 有违规 → 退出码 1
   python3 tools/剧本/画面红线体检.py -v         # 连历史留档也列出来
-  python3 tools/剧本/画面红线体检.py --file Day5/xxx.mjs
+  python3 tools/剧本/画面红线体检.py --file Day/Day5/xxx.mjs
 
 设计原则：**宁可误报，不可漏报**（误报看两眼就能判，漏报会进成片）。
 历史留档（Day1–Day4 已交付）只提示不判违规，但清单照样打出来。

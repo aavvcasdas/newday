@@ -22,12 +22,12 @@ python3 tools/gate.py --day 10 --stage final
 
 ```json
 {
-  "script": "Day10/Day10配音台词.txt",
-  "voice": "Day10/配音/用户指定文件.wav",
+  "script": "Day/Day10/Day10配音台词.txt",
+  "voice": "Day/Day10/配音/用户指定文件.wav",
   "alignment": "tools/day10制作/voice_alignment.json",
   "subs": "tools/day10制作/subtitle_timing.json",
   "renderer": "tools/day10制作/render_day10.mjs",
-  "video": "Day10/成片/当前待验版本.mp4",
+  "video": "Day/Day10/成片/当前待验版本.mp4",
   "tests": ["tools/day10制作/motion.test.mjs"],
   "rate": 3.35,
   "seconds": 60,

@@ -4,7 +4,7 @@
 // 每个动作：旧版中文名 + 旧版 id + 当前用的高清立绘 + 骨架视图小窗（前 1.1s 淡出）。
 // 用法：
 //   node render_legacy_sample.mjs --stills   # 只出静帧
-//   node render_legacy_sample.mjs            # 出片到 Day3/成片/旧动作复刻样片/
+//   node render_legacy_sample.mjs            # 出片到 Day/Day3/成片/旧动作复刻样片/
 import fs from 'node:fs';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
@@ -22,7 +22,7 @@ const { createCanvas, loadImage, GlobalFonts } = canvasPkg;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '../../..');
-const OUT_DIR = path.join(REPO, 'Day3/成片/旧动作复刻样片');
+const OUT_DIR = path.join(REPO, 'Day/Day3/成片/旧动作复刻样片');
 const OUT_FILE = path.join(OUT_DIR, 'whale旧动作复刻_骨架版v1.mp4');
 
 const W = 1920, H = 1080, FPS = 30;

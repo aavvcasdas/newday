@@ -59,8 +59,8 @@ class PlotSkillTests(unittest.TestCase):
         self.assertTrue(any("一个客人" in item for item in extra))
 
     def test_day12_hooks_day11(self):
-        prev = plot.load_lines(ROOT / "Day11/Day11配音台词.txt")
-        curr = plot.load_lines(ROOT / "Day12/Day12配音台词.txt")
+        prev = plot.load_lines(ROOT / "Day/Day11/Day11配音台词.txt")
+        curr = plot.load_lines(ROOT / "Day/Day12/Day12配音台词.txt")
         errors, notes = plot.check(curr, prev, "豆包")
         self.assertFalse(errors, errors)
         joined = "\n".join(notes)

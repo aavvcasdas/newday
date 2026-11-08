@@ -18,11 +18,11 @@
 - **通用步态与同体待机**：角色走位优先声明 `locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle'` 配合 `walk` / `track`。步态图集一律 **8 帧 / 每帧 120ms（一轮 0.96s 双步周期）**，与 `tqlearning/ai-girl-chatgpt-pets` 的 `running-right` 同规格；全部 8 位角色（whale / gpt / gemini / claude / kimi / qwen / zai / doubao）已切到 `assets/ai-girls/walk-v14/` 的 v14 八帧图集（**逐帧成品**：`assets/ai-girls/walk-v14/frames/<char>/f1..f8.png` 八张全身走路立绘直接拼图集，和上游 pets 一样每帧都是画出来的；没有逐帧立绘的角色才退回「单腿切片 + 绕髋反相摆动」的过渡骨架。出图用 `slice_walk_sheet.py` 把 2×2 四格图切成 4 帧，一个角色 2 张四格图 = 8 帧）；坐长椅图集（`whale_seat_side_bench` / `sit_bench` 预设）已整体下线；`gpt_push_*`（双手推山）已按新立绘重做。**严禁再把 16 格图集当成 8 列播放**（会只播半个周期，看上去是抖腿不迈步）。审阅：`python3 tools/remotion-engine/render_walk_clips.py` 出每位角色的走路 GIF / 8 帧条带 / 3×3 总览，或 `node tools/remotion-engine/walk_preview.mjs --port 8099` 网页逐帧定格。10 骨高清网格主角亦可使用 `action: 'walk_natural' | 'stroll_calm' | 'step_back' | 'sit_settle'`。
 - **全局零视频水印新规**：所有当前及今后新制作的视频与发布封面（MV、Day 正传、横/竖屏）一律不加右上角水印或常驻角标；此前已归档的历史成片保留原样不动。
 - 默认固定机位或每镜最多一次有动机运镜、`idleMotion` 可关闭，不用整体晃动代替事件；视觉姿态与手掌接触校准分开，严禁篡改固定 PNG 五官。
-Day12当前指定原音源版入口为 `Day12/README.md`、`Day12/Day12有声分镜.md` 与 `tools/day12制作/episode.production.spec.mjs`，实际结果看同目录 `final_check.json`（不可脱离成片SHA引用）。原25行锁稿不改；指定音源未读首句，因此有独立24行视频字幕稿。用真实ASR整词区间绑定、关闭聚光灯、固定机位、独立stem混音验收；不声称音素级对齐、手纸真实接触或真人完整听审。`episode.spec.mjs`及四段无声样片是历史planning方案，不能替代当前有声版验收。
+Day12当前指定原音源版入口为 `Day/Day12/README.md`、`Day/Day12/Day12有声分镜.md` 与 `tools/day12制作/episode.production.spec.mjs`，实际结果看同目录 `final_check.json`（不可脱离成片SHA引用）。原25行锁稿不改；指定音源未读首句，因此有独立24行视频字幕稿。用真实ASR整词区间绑定、关闭聚光灯、固定机位、独立stem混音验收；不声称音素级对齐、手纸真实接触或真人完整听审。`episode.spec.mjs`及四段无声样片是历史planning方案，不能替代当前有声版验收。
 
 ## Day12 v2 当前覆盖口径
 
-用户要求加入`shuaizenge/ai-girls`豆包原有素材、移除全部笨鱼立绘。当前执行方案为`Day12/Day12_v2修复导演表.md`和`episode.production.spec.mjs`的performanceVersion=2；旧固定机位/idleMotion=0是历史，不得重新覆盖本轮已授权的连续微呼吸、单次有动机运镜与转场。固定PNG无口型/眨眼/局部五官/真实头转；已有姿态仅做身体变换＋PNG切换。v2不拿脸ROI运动作“活”指标。技术结果看成片SHA绑定报告；人工动态审看为独立pending，禁止把自动差分/静帧当作真人动态批准。豆包是来源仓库已有生成参考全身，非官方全身原图；本轮只抠除背景，记录来源/NOTICE，不擅自声明商用开放授权。
+用户要求加入`shuaizenge/ai-girls`豆包原有素材、移除全部笨鱼立绘。当前执行方案为`Day/Day12/Day12_v2修复导演表.md`和`episode.production.spec.mjs`的performanceVersion=2；旧固定机位/idleMotion=0是历史，不得重新覆盖本轮已授权的连续微呼吸、单次有动机运镜与转场。固定PNG无口型/眨眼/局部五官/真实头转；已有姿态仅做身体变换＋PNG切换。v2不拿脸ROI运动作“活”指标。技术结果看成片SHA绑定报告；人工动态审看为独立pending，禁止把自动差分/静帧当作真人动态批准。豆包是来源仓库已有生成参考全身，非官方全身原图；本轮只抠除背景，记录来源/NOTICE，不擅自声明商用开放授权。
 
 ## 独立歌词MV现行入口（覆盖下方 v2 历史记录）
 

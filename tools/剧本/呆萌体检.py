@@ -15,8 +15,8 @@
   · 违背事实口径的长数字解释（数字只留短句，考据放附录，不进口播）。
 
 用法（读 md 里 ```text 代码块，或 --txt 纯台词文件）：
-  python3 tools/剧本/呆萌体检.py --md Day4/Day4文案.md
-  python3 tools/剧本/呆萌体检.py --md Day4/Day4文案.md --seconds 70
+  python3 tools/剧本/呆萌体检.py --md Day/Day4/Day4文案.md
+  python3 tools/剧本/呆萌体检.py --md Day/Day4/Day4文案.md --seconds 70
   python3 tools/剧本/呆萌体检.py --txt /tmp/taici.txt
 
 门禁（退出码 1 = 不合格，必须改稿）：

@@ -17,12 +17,12 @@ STAGES=['script','audio','pre-render','final']
 def find_prev_script(day):
     """上一集的锁定口播。
 
-    标准文件名是 `DayN/DayN配音台词.txt`。但 Day13 的锁定稿是由用户确认后
+    标准文件名是 `Day/DayN/DayN配音台词.txt`。但 Day13 的锁定稿是由用户确认后
     另存的 `Day13配音台词_用户版.txt`（原候选稿仍留作历史，不是配音来源），
     所以这里按「标准名优先、用户确认版次之」回退，避免为了过门禁而复制一份
     同名文件，制造两个互相矛盾的锁定稿。
     """
-    base=ROOT/f'Day{day}'
+    base=ROOT/'Day'/f'Day{day}'
     for name in (f'Day{day}配音台词.txt',f'Day{day}配音台词_用户版.txt'):
         candidate=base/name
         if candidate.is_file(): return candidate
@@ -48,11 +48,11 @@ def main():
     ap.add_argument('--report',type=Path,help='单独保存本次门禁报告，避免覆盖另一版本')
     args=ap.parse_args()
     if args.day<1: ap.error('day必须正整数')
-    config=args.config or ROOT/f'tools/day{args.day}制作/gate_config.json'
+    config=args.config or ROOT/'Day'/f'Day{args.day}'/'gate_config.json'
     if args.stage=='script' and args.config is None and not config.is_file():
         # 文案阶段尚未有音源/渲染器，不要求先伪造后续文件。
         cfg={}
-        paths={'script':ROOT/f'Day{args.day}/Day{args.day}配音台词.txt'}
+        paths={'script':ROOT/'Day'/f'Day{args.day}'/f'Day{args.day}配音台词.txt'}
     else:
         cfg,paths=build_paths(args.day,config)
     report={'config':str(config),'input_sha256':{},'day':args.day,'stage':args.stage,'timestamp':datetime.now(timezone.utc).isoformat(),'checks':[],'passed':False}
@@ -73,13 +73,13 @@ def main():
                 if args.day >= 12:
                     prev = find_prev_script(args.day - 1)
                     if prev is None:
-                        raise ValueError(f'缺上一集锁定口播：Day{args.day - 1}/Day{args.day - 1}配音台词.txt')
+                        raise ValueError(f'缺上一集锁定口播：Day/Day{args.day - 1}/Day{args.day - 1}配音台词.txt')
                     print(f'[剧情承接] 上一集锁定口播：{prev.relative_to(ROOT)}')
                     cmd = [py, ROOT/'tools/剧本/剧情.py', '--txt', paths['script'], '--prev', prev]
                     if cfg.get('guest'):
                         cmd += ['--guest', cfg['guest']]
                     ok = run('剧情承接', cmd) and ok
-                    director_spec = ROOT / f'tools/day{args.day}制作/episode.spec.mjs'
+                    director_spec = ROOT / 'Day' / f'Day{args.day}' / 'episode.spec.mjs'
                     if director_spec.is_file():
                         report['input_sha256'][str(director_spec.relative_to(ROOT))] = hashlib.sha256(director_spec.read_bytes()).hexdigest()
                         ok = run('导演分镜结构（仅规划）', ['node', ROOT/'tools/engine/check_storyboard.mjs', '--spec', director_spec, '--script', paths['script']]) and ok
@@ -101,14 +101,14 @@ def main():
                 ok=run('动作单测',['node','--test',*paths['tests']]) and ok
                 ok=run('渲染器自检',['node',paths['renderer'],'--voice',paths['voice'],'--alignment',paths['alignment'],'--subtitle-file',paths['subs'],'--test']) and ok
             else:
-                ok=run('通用媒体终验',[py,ROOT/'tools/验收/verify_episode.py',*sum(([f'--{k}',paths[v]] for k,v in [('video','video'),('voice','voice'),('alignment','alignment'),('subs','subs'),('script','script')]),[]),'--report',ROOT/f'tools/day{args.day}制作/gate_media_report.json']) and ok
+                ok=run('通用媒体终验',[py,ROOT/'tools/验收/verify_episode.py',*sum(([f'--{k}',paths[v]] for k,v in [('video','video'),('voice','voice'),('alignment','alignment'),('subs','subs'),('script','script')]),[]),'--report',ROOT/'Day'/f'Day{args.day}'/'gate_media_report.json']) and ok
                 # 前2秒防枯燥体检：仅新集（day>=11 或显式启用通用引擎）追加，历史单集门禁行为不变
                 if args.day>=11 or cfg.get('use_unified_engine'):
-                    ok=run('开场视觉',[py,ROOT/'tools/验收/check_opener_visual.py','--video',paths['video'],'--report',ROOT/f'tools/day{args.day}制作/gate_opener_visual_report.json']) and ok
+                    ok=run('开场视觉',[py,ROOT/'tools/验收/check_opener_visual.py','--video',paths['video'],'--report',ROOT/'Day'/f'Day{args.day}'/'gate_opener_visual_report.json']) and ok
         except (ValueError,OSError,KeyError,subprocess.CalledProcessError) as e:
             report['checks'].append(dict(name=stage,exit_code=1,error=str(e)));print(f'[{stage}] 失败：{e}');ok=False
     report['passed']=ok
-    out=(ROOT/args.report).resolve() if args.report else ROOT/f'tools/day{args.day}制作/gate_{args.stage}_report.json';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    out=(ROOT/args.report).resolve() if args.report else ROOT/'Day'/f'Day{args.day}'/f'gate_{args.stage}_report.json';out.parent.mkdir(parents=True,exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
     print(f'门禁{"通过" if ok else "未通过"}；报告：{out}')
     return 0 if ok else 1
 

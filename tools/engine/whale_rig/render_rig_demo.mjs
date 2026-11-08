@@ -5,7 +5,7 @@
 // 这样一眼能看出：动作不是靠换贴图，是同一张立绘被骨架带着弯。
 //
 // 用法：
-//   node render_rig_demo.mjs                 # 出片到 Day3/成片/骨架演示/
+//   node render_rig_demo.mjs                 # 出片到 Day/Day3/成片/骨架演示/
 //   node render_rig_demo.mjs --stills        # 只出几张静帧
 import fs from 'node:fs';
 import path from 'node:path';
@@ -23,7 +23,7 @@ const { createCanvas, loadImage, GlobalFonts } = canvasPkg;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '../../..');
-const OUT_DIR = path.join(REPO, 'Day3/成片/骨架演示');
+const OUT_DIR = path.join(REPO, 'Day/Day3/成片/骨架演示');
 const OUT_FILE = path.join(OUT_DIR, 'whale骨架动作库_v1.mp4');
 
 const W = 1920, H = 1080, FPS = 30;

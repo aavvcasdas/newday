@@ -34,8 +34,8 @@ python3 tools/agent/create_episode.py --day 12 --guest 豆包
 ## 检查与交付
 
 ```bash
-python3 tools/剧本/剧情.py --prev Day11/Day11配音台词.txt --card
-python3 tools/剧本/剧情.py --prev Day11/Day11配音台词.txt --txt Day12/Day12配音台词.txt --guest 豆包
+python3 tools/剧本/剧情.py --prev Day/Day11/Day11配音台词.txt --card
+python3 tools/剧本/剧情.py --prev Day/Day11/Day11配音台词.txt --txt Day/Day12/Day12配音台词.txt --guest 豆包
 python3 tools/gate.py --day 12 --stage script
 python3 -m unittest discover -s tools/tests -p 'test_*skill.py'
 ```

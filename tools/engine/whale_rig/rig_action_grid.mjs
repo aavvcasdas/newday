@@ -14,7 +14,7 @@ const { createCanvas, loadImage, GlobalFonts } = canvasPkg;
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const REPO = path.resolve(HERE, '../../..');
-const OUT = path.join(REPO, 'Day3/成片/骨架演示');
+const OUT = path.join(REPO, 'Day/Day3/成片/骨架演示');
 fs.mkdirSync(OUT, { recursive: true });
 try { GlobalFonts.registerFromPath(path.join(REPO, 'video-fx/assets/fonts/NotoSansSC-Bold.ttf'), 'NotoSansSC'); } catch {}
 

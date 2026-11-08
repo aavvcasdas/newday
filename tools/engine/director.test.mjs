@@ -9,8 +9,8 @@ import { checkStoryboard } from './check_storyboard.mjs';
 import { validateDirection } from './director_contract.mjs';
 import { createCanvas } from './room_base.mjs';
 import { actorAnchors, loadContactActors, drawContactActor, VISUAL_POSES } from '../互动元素/actor_contacts.mjs';
-import plan from '../day12制作/episode.spec.mjs';
-const script = fs.readFileSync(new URL('../../Day12/Day12配音台词.txt', import.meta.url), 'utf8');
+import plan from '../../Day/Day12/episode.spec.mjs';
+const script = fs.readFileSync(new URL('../../Day/Day12/Day12配音台词.txt', import.meta.url), 'utf8');
 const lines = script.trim().split('\n');
 const cues = lines.map((text, i) => ({ text, start: i * 4, end: i * 4 + 3.5,
   chars_timed: [...text].map((ch, j) => ({ ch, start: i * 4 + j * 0.08, end: i * 4 + (j + 1) * 0.08 })) }));
@@ -174,7 +174,7 @@ test('planning不能被生产renderer误当成完整成片', async () => {
 });
 
 test('检查CLI从当前文件实际加载计划，非占位图渲染', () => {
-  const result = spawnSync(process.execPath, ['tools/engine/check_storyboard.mjs', '--spec', 'tools/day12制作/episode.spec.mjs', '--script', 'Day12/Day12配音台词.txt'], { encoding: 'utf8', cwd: new URL('../..', import.meta.url) });
+  const result = spawnSync(process.execPath, ['tools/engine/check_storyboard.mjs', '--spec', 'Day/Day12/episode.spec.mjs', '--script', 'Day/Day12/Day12配音台词.txt'], { encoding: 'utf8', cwd: new URL('../..', import.meta.url) });
   assert.equal(result.status, 0, result.stderr);
   assert.equal(JSON.parse(result.stdout).check, 'planning_structure_only');
 });

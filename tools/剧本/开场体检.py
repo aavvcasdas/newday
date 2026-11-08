@@ -7,12 +7,12 @@
 把前 N 秒逐句摊开，标出：哪几句是招呼/前情，第一句真正的「事件」在第几秒。
 
 数据从哪来（必须是有实测时间的文件，不许按字数估）：
-  · Day3：Day3/day3_voice_alignment.json（Vosk 词时 + 5ms RMS 边界）
-  · Day1/Day2：tools/day1制作/最终配音对齐验收表.md、tools/day2制作/Day2指定配音对齐验收表.md
+  · Day3：Day/Day3/day3_voice_alignment.json（Vosk 词时 + 5ms RMS 边界）
+  · Day/Day1/Day2：tools/day1制作/最终配音对齐验收表.md、tools/day2制作/Day2指定配音对齐验收表.md
   · 加更：tools/day2加更制作/video-fx源码快照/day2_bonus_timing_piper_measured.js（Piper 占位，仅参考）
 
 用法：
-  python3 tools/剧本/开场体检.py --json Day3/day3_voice_alignment.json
+  python3 tools/剧本/开场体检.py --json Day/Day3/day3_voice_alignment.json
   python3 tools/剧本/开场体检.py --md tools/day2制作/Day2指定配音对齐验收表.md
   python3 tools/剧本/开场体检.py --json X.json --event-cue L03 --window 20
 

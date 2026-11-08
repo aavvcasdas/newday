@@ -7,6 +7,6 @@ const names=['whale_read_action','whale_gather_retry_action','whale_walk_retry_a
 fs.mkdirSync(path.join(base,'public'),{recursive:true});fs.mkdirSync(path.join(base,'out'),{recursive:true});
 for(const n of names)fs.copyFileSync(path.join(source,n+'.png'),path.join(base,'public',n+'.png'));
 const candidates=['tools/mv_extra/cache/NotoSansSC-Bold.ttf','video-fx/assets/fonts/NotoSansSC-Bold.ttf'];
-const font=candidates.find(fs.existsSync);if(!font)throw Error('Missing font: first run python3 tools/day12制作/restore_sample_assets.py');
+const font=candidates.find(fs.existsSync);if(!font)throw Error('Missing font: restore the font asset under tools/mv_dayu/remotion/fonts/');
 fs.copyFileSync(font,path.join(base,'public/font.ttf'));
 console.log('Copied existing atlases and CJK font to ignored Remotion public cache.');

@@ -17,7 +17,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const MEDIA_EXT = /\.(mp4|mov|webm|wav|mp3|m4a|flac|aac|ogg)$/i;
 
 // 允许入库的单个媒体：交付成片或不可重建的原始素材，且在对应 README 里有说明。
-// 2026-11-08 清理：Day 系列只保留通用模板 + 数据文案，Day12/Day13/Day样片 的成片与样片
+// 2026-11-08 清理：Day 系列只保留通用模板 + 数据文案，Day/Day12/Day13/Day样片 的成片与样片
 // 已从库里移除（仍在 git 历史里），白名单同步删掉，避免规则腐化成指向空文件的空壳。
 const ALLOWED_FILES = [
   // 用户明确要求「把 9 个走路角色渲染成一个能下载的视频」的交付件（4.6 MB，可由

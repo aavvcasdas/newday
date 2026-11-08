@@ -44,7 +44,7 @@ compatibility: Node.js 22 and Python 3; run npm ci --prefix tools/engine for eng
 ```bash
 npm ci --prefix tools/engine
 node --test tools/engine/*.test.mjs
-node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
+node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day/Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
 python3 tools/gate.py --day 12 --stage script
 ```
 

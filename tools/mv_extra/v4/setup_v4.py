@@ -76,7 +76,7 @@ def main() -> None:
         assert sha256_file(cutout_path) == item["derivedSha256"], f"Guest cutout SHA mismatch: {cutout_path}"
 
     print(
-        f"v4 setup verified: source audio/video, {len(manifest['actors'])} Day12/Claude HD poses, "
+        f"v4 setup verified: source audio/video, {len(manifest['actors'])} Day/Day12/Claude HD poses, "
         f"galgame cast, guest cutouts, and OFL fonts ready."
     )
 

@@ -1,6 +1,6 @@
 import test from'node:test';import assert from'node:assert/strict';
 import{bodyPerformance,validatePerformanceShot}from'./performance_v2.mjs';import{cameraFor,validateCameraPlan}from'./camera_plan.mjs';
-import spec,{visualEvents}from'../day12制作/episode.production.spec.mjs';import{validateSpec}from'./schema_validator.mjs';
+import spec,{visualEvents}from'../../Day/Day12/episode.production.spec.mjs';import{validateSpec}from'./schema_validator.mjs';
 test('v2 forbids fish sprites, uses actual Doubao asset and keeps nine shots',()=>{assert.equal(spec.shots.length,9);assert.equal(visualEvents.length,41);assert.ok(spec.shots.flatMap(s=>s.actors).every(a=>a.name!=='笨鱼'));assert.ok(spec.shots.flatMap(s=>s.actors).filter(a=>a.name==='豆包').every(a=>a.assetId==='doubao'));});
 test('continuous breathing phase and bounded word-body pulses, no facial parameters',()=>{const a={pose:'think',idleMotion:.4,performanceV2:true,bodyEvents:[{at:4,duration:.28,dy:1.6}]};const before=bodyPerformance(a,3.999999),after=bodyPerformance(a,4);assert.ok(Math.abs(before.dy-after.dy)<.00001);for(let t=0;t<10;t+=.01){const p=bodyPerformance(a,t);assert.ok(Math.abs(p.dy)<=4);assert.equal(p.lean,0);assert.equal(p.dx,0);assert.ok(!('mouth'in p));}});
 test('pose transition moves the whole body and switches existing PNG halfway, never morphs eyes',()=>{const a={pose:'think',idleMotion:.4,poseTransition:.25,poses:[{at:1,pose:'point'}]};assert.equal(bodyPerformance(a,1.01).pose,'think');assert.equal(bodyPerformance(a,1.2).pose,'point');assert.ok(bodyPerformance(a,1.1).dy>1);});

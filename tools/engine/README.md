@@ -76,7 +76,7 @@ NODE_PATH=$PWD/tools/engine/node_modules node --test \
   tools/场景/sea_stage.test.mjs
 
 # Day12 分镜结构检查、Python 测试套件与画面红线扫描
-node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
+node tools/engine/check_storyboard.mjs --spec tools/day12制作/episode.spec.mjs --script Day/Day12/Day12配音台词.txt --report tools/day12制作/storyboard_check.json
 python3 -m unittest discover -s tools/tests -v
 python3 tools/剧本/画面红线体检.py
 python3 tools/gate.py --day 12 --stage script
