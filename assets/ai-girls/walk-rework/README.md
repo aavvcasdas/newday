@@ -13,3 +13,9 @@
 运行 `bash assets/ai-girls/walk-rework/build_whale_test.sh` 可从原始八张试图生成 `whale_walk_test.gif`：固定画布缩小、不重定位，按参考项目节奏前七帧 120ms、末帧 220ms 循环。已用 ImageMagick 确认 8 帧均为 369×400，时长分别为 12、12、12、12、12、12、12、22 厘秒。该预览保留原绿色背景，未证明地面接触或位移同步。逐帧静态检查发现 4、7 帧尾巴位置与其他帧明显不一致，动作间还有相似姿态，因此测试未通过；尚未做真人动态验收。
 
 `gpt`、`doubao`、`gemini`、`claude`、`kimi`、`qwen`、`zai` 的 `*_walk_trial.png` 各为一张独立生成的走路姿态试图，不是八帧动画，也未抠图、接入或进行动态检查。Zai 的参考是裙底素材，人物全身身份及服装尤其需要复核；Gemini 画面较紧、Qwen 接近站姿，也须重做或调整。角色造型参考项目已有素材以及本次选出的鲸鱼娘，相关角色权利仍需另行确认。
+
+## Gemini 朝右侧面关键帧试验
+
+针对用户指出的 Gemini 正面问题，新生成 `gemini_side_base.png`，呈朝右侧脸和站立姿态；以它为共同参考生成 `gemini_step_0.png` 至 `gemini_step_7.png`，共 9 张新图。生成 `gemini_walk_test.gif` 的命令为 `bash assets/ai-girls/walk-rework/build_gemini_test.sh`；文件是未抠绿背景、未对齐的试验预览。ImageMagick 检查为 8 帧、每帧 400×380，前 7 帧 120ms、最后 220ms。
+
+逐帧静态比对：朝向已改为右侧，但首帧跨步过大，而其余多帧的腿姿相似，交替承重不清晰，长发遮挡地面，不能认定是自然完整步态。未做真人动态验收，也没有替换引擎素材。其余角色仍缺完整关键帧，鲸鱼娘先前测试缺陷也未修复。
