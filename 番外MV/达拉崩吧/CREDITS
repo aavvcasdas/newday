@@ -1,0 +1,25 @@
+《达拉崩吧》 — 16-bit Pixel RPG 复刻版 MV
+========================================
+
+Visual Direction & Code Synthesis
+  Pure-code 320×180 indexed framebuffer (×6 nearest-neighbour → 1920×1080 @ 24fps)
+  Built on the pixel-rpg pipeline.
+
+Cast (AI娘图鉴设定)
+  勇者 达拉崩吧斑得贝迪卜多比鲁翁 — 鲸鱼娘 (Whale)
+  恶龙 昆图库塔卡提考特苏瓦西拉松 — GPT 龙娘 (GPT)
+  被劫走的公主 — 豆包 (Doubao)
+  蒙达鲁克硫斯伯古比奇巴勒城女王陛下 — Claude 大小姐
+  皇家书记官 / 圣月光 — Kimi
+  王城使者 — Gemini
+  王城禁卫 — 智谱 (Zai)
+  偏远风车村长老 — 千问 (Qwen)
+
+Original Song & Reference MV
+  《达拉崩吧》 (词/曲：ilem) — 原曲音轨提取自仓库参考视频 `达拉崩吧.mp4`，叠加程序化 16-bit RPG 动作音效并母带校准至 -14 LUFS。
+
+Pixel Typography (SIL Open Font License 1.1)
+  Pre-rasterized 8px / 10px / 12px 1-bit pixel glyph bitmaps (`src/glyphs.js`) derived from:
+  - Fusion Pixel Font (Copyright (c) TakWolf, https://github.com/TakWolf/fusion-pixel-font),
+    incorporating Ark Pixel Font (TakWolf), Cubic 11 (ACh-K), and Galmuri (quiple).
+  - Full license text included in `fonts/LICENSE.font.txt` (OFL-1.1).
