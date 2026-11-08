@@ -45,7 +45,7 @@ assert int(v['nb_frames']) == 3343
 subprocess.run(['git', 'diff', '--exit-code', '--', 'Day9/配音', 'Day9/字幕', 'Day9/Day9配音台词.txt',
                 'Day9/成片/Day9_笨鱼看同类_配音对齐版.mp4', 'Day9/成片/Day9_笨鱼看同类_无配音样片.mp4',
                 'tools/day9制作/render_day9.mjs', 'tools/day9制作/voice_alignment.json',
-                'tools/day9制作/subtitle_timing.json', 'tools/day3制作/whale_girl_src'], check=True, cwd=ROOT)
+                'tools/day9制作/subtitle_timing.json', 'tools/engine/whale_rig'], check=True, cwd=ROOT)
 rep = dict(file=str(video.relative_to(ROOT)), bytes=video.stat().st_size,
            sha256=hashlib.sha256(video.read_bytes()).hexdigest(), video_codec=v['codec_name'],
            width=v['width'], height=v['height'], fps=v['r_frame_rate'], encoded_frames=int(v['nb_frames']),

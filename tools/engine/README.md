@@ -2,7 +2,10 @@
 
 先读根目录 `agent.md` 与 `AGENTS.md`。本目录是 **Day 正传系列** 与 **番外歌词 MV** 共享的底层纯函数时间轴、骨骼动作、多舞台场景与双向世界交互引擎，同时驱动 **2D Canvas 渲染后端** (`render_episode.mjs`) 与 **通用动态 Remotion 渲染引擎** (`tools/remotion-engine/`)。
 
-旧 Day0–Day10 独立 renderer 保持历史归档不改；本轮只做底层重构与契约升级，不批量重渲既有成片。
+**2026-11-08 结构收口**：每集各写一套 renderer 的时代结束了。Day 正传系列只保留「通用模板 + 数据文案」，
+所有可复用的动作收进 `motion_library.mjs`；鲸鱼娘骨架从 `tools/day3制作/whale_girl_src/` 迁到
+`tools/engine/whale_rig/`，Day 系列与番外 MV 共用同一份实现。8 个过时的单集渲染器
+（`day4/5/6/7/8/10/11/13制作`）已删除，都在 git 历史里。
 
 ## 核心架构模块（参考 `paint-mv-skills` 与 `music-mv` 重构）
 
@@ -13,6 +16,8 @@
 | `mv_cast_registry.mjs` | **MV 八位角色 + 39 个招牌动作的唯一事实源**：`MV_CAST`（视觉/台词权属/步态与待机图集）、`MV_SIGNATURE_ACTIONS`（`{actor, atlas, label, kind:'atlas', posture, heldProp}`）、`mvSignatureAction()` / `mvSignaturePosture()` / `mvStandingActions()`。分镜里直接写 `characterId: 'kimi', action: 'kimi_hold_lantern'` 即可，禁止各处分头硬编码图集名 |
 | `atlas_metrics.mjs` / `atlas_metrics_data.mjs` / `build_atlas_metrics.mjs` | 图集单元格**内容度量**（88 张图集的 `topFrac`/`bottomFrac`/`leftFrac`/`rightFrac`）。图集角色并不顶满单元格绘制，`headTop` 锚点按实测内容顶回缩，灯笼/伞这类道具才贴得住手；数据模块是纯字面量，Remotion（webpack）与 Node 两个后端共用，`build_atlas_metrics.mjs` 只在 Node 端重新量测 |
 | `mv_cast_day_spec.mjs` / `render_mv_cast_sample.mjs` | 新增角色或招牌动作后的**通用验收分镜**（8 行台词/8 镜，planning 无声）：走位 → 到站切同体待机 → 招牌动作 → 坐/蹲/游姿态，两个矢量道具（豆包举灯、撑伞）各验一遍；`node tools/engine/render_mv_cast_sample.mjs` 出 1920×1080 零水印样片 + 同名 `.json` 报告（报告写明「规划样片、非成片」，画面内不画任何角标） |
+| `motion_library.mjs` | **通用动作库（分镜能写的动作只有这一处事实源）**：9 位角色的 `walk`/`idle` 与情绪变体、`RIG_ACTIONS` 18 条骨骼动作、`LEGACY_ACTIONS` 28 条旧动作、`pet-v7` 宠物状态（鲸娘 `idle`/`thinking`/`eating`/`empty`、龙娘 `idle`/`thinking`）。`resolveMotion(char, action)` 解析成真实图集路径，`describeMotions()` 出一览，`validateMotionLibrary()` 在 `motion_library.test.mjs` 里断言**每条动作的素材都在库里**（74 条）。`node tools/engine/motion_library.mjs` 直接打印全表 |
+| `whale_rig/` | 鲸鱼娘 10 骨骼网格与 28 条旧动作的唯一实现（原 `tools/day3制作/whale_girl_src/`），Day 系列、番外 MV 共用 |
 | `day_episode.template.spec.mjs` | **Day 正传系列通用单集模板**（`directorVersion: 1`）：开箱即用演示本鲸、豆包与 AI Girls 嘉宾的 `locomotion` 双骨骼蒙皮步态入场、同体待机、`step_back` 受惊退半步、`heldProp` 交接与 `stageTriggers`，同时通过 Canvas 2D 与 Remotion 双后端验证 |
 | `../场景/stage_sets_core.mjs` & `stage_sets.mjs` | 告别单一死板海底墙背景：内置 12 套超宽视差舞台（`1800×920` 世界坐标，支持 `underwater_study`、`porthole_observatory`、`screening_desk`、`corridor_hatch`、`pantry_hearth`、`abyss_metaphor`、`split_stage`、`river_gate`、`terracotta_courtyard`、`mountain_pass`、`rain_street`、`sunset_ridge`），支持 `defineStageSet()` 自定义扩展与 `autoStageProgression` 自动跨镜换景，`sea_stage.mjs` 12 项像素回归测试完整保留 |
 | `../互动元素/world_interactions.mjs` | 人物 ↔ 背景 ↔ 道具双向空间交互总线：角色走过门区自动推门漏光、脚步触地激起水波涟漪/尘土、跳跃高度衰减地面阴影、舞台光源实时投射角色边缘受光（`rimLight`）、`stageTriggers` 场景机关（开门/开闸/拍桌震动/敲窗涟漪/钉板贴条/点灯/晨昏推进）、以及基于 `handAt()` 的手持道具跟随、抛放到桌面（`placeToAnchor`）与双人弧线交接（`transfer`） |

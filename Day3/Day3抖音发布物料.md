@@ -68,7 +68,7 @@ Day3｜AI 运营日记（AI 生成 · 非官方同人）
 
 - 封面文字与标题第一句一致，刷到视频点开不会有落差；
 - 竖屏封面的**顶部 280px、底部 120px** 是抖音 UI 遮盖区，重做文字时别往里放；
-- 角色用的是成片同一套素材（`whale_girl_src/whale_cheer.png` + `claude_src/chibi/pose_cheer.png`），
+- 角色用的是成片同一套素材（`engine/whale_rig/whale_cheer.png` + `claude_src/chibi/pose_cheer.png`），
   白描边是脚本加的，**没有改角色设计**。
 
 ---

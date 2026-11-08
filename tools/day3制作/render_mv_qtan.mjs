@@ -11,7 +11,7 @@
 //   （和 Day3 的 L13 一个做法），不做整图旋转（转 180° 会倒过来）。
 //
 // 素材与规则：
-//   · 角色：`tools/day3制作/whale_girl_src/pose_*.png`（1024×1024 高清立绘，项目默认素材，
+//   · 角色：`tools/engine/whale_rig/pose_*.png`（1024×1024 高清立绘，项目默认素材，
 //     不用像素骨架）。这批图是**白底 RGB 无 alpha**，所以这里做一次「从四边泛洪的白底抠图」
 //     （只抠和画面边缘连通的白，围裙/裙子内部的白色保留），抠完缓存在 /tmp/whale_alpha/；
 //   · 字幕：`tools/字幕/day2_style_sub.mjs`（项目默认字幕：短分句 + 说话人标签）；
@@ -368,7 +368,7 @@ function renderFrame(ctx, t) {
 const ALPHA_CACHE = '/tmp/whale_alpha';
 async function loadPoseAlpha(name) {
   fs.mkdirSync(ALPHA_CACHE, { recursive: true });
-  const src = path.join(HERE, 'whale_girl_src', `pose_${name}.png`);
+  const src = path.join(HERE, '..', 'engine', 'whale_rig', `pose_${name}.png`);
   if (!fs.existsSync(src)) return null;
   const out = path.join(ALPHA_CACHE, `${name}.png`);
   if (!fs.existsSync(out) || fs.statSync(out).mtimeMs < fs.statSync(src).mtimeMs) {
@@ -424,7 +424,7 @@ async function main() {
     const img = await loadPoseAlpha(n);
     if (img) IMGS[n] = img;
   }
-  if (!IMGS.cheer) throw new Error('缺少 tools/day3制作/whale_girl_src/pose_cheer.png');
+  if (!IMGS.cheer) throw new Error('缺少 tools/engine/whale_rig/pose_cheer.png');
   console.log(`鲸鱼娘姿势：${Object.keys(IMGS).join(' / ')}（白底已抠）`);
 
   const times = argOf('--times');

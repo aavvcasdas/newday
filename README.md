@@ -4,6 +4,26 @@
 
 仓库级生产规范见根目录 [`agent.md`](agent.md)。其中文首的 ai-yunying 覆盖规则优先级最高，下方保留的 video-fx 原文只用于理解角色骨架、动作系统和渲染架构。
 
+## 仓库结构（2026-11-08 清理后）
+
+**Day 正传系列 = 通用模板 + 数据文案，不再各自留一套渲染器与成片。**
+
+| 部分 | 位置 | 说明 |
+|---|---|---|
+| 通用单集模板 | `tools/engine/day_episode.template.spec.mjs` | 复制一份改台词锚点就是一集；Canvas2D 与 Remotion 双后端共用 |
+| 通用动作库 | `tools/engine/motion_library.mjs` | **走路/待机/骨骼动作/宠物状态（含鲸娘 8 格干饭）全部在这里注册**，分镜只写动作名：`side_walk` / `happy_walk` / `sad_walk` / `push_walk` / `idle` / `walk_natural` / `eating` …；`node tools/engine/motion_library.mjs` 打印全表，`validateMotionLibrary()` 在测试里确认素材齐全 |
+| 角色骨架与网格 | `tools/engine/whale_rig/`（原 `tools/day3制作/whale_girl_src/`） | 10 骨骼 / 双骨骼蒙皮步态的**唯一**实现，Day 系列与 MV 共用；不再按集复制 |
+| 渲染后端 | `tools/engine/`（Canvas2D）、`tools/remotion-engine/`（Remotion） | 走路图集预烘在 `assets/ai-girls/walk-v14/` |
+| 每集数据文案 | `DayN/*.md`、`*台词.txt`、`*字幕.srt`、`*_alignment.json`、`分镜/方向/发布物料` | 这是 Day 系列**唯一保留的内容** |
+| 番外 MV | `番外MV/`、`tools/mv_extra/`、`tools/mv_dayu/` | 本轮暂时原样保留 |
+
+本轮删除（都在 git 历史里，需要可 `git show` 取回）：
+
+- Day 系列成品/样片/封面/配音音轨：`Day12/成片`、`Day12/样片`、`Day12/封面`、`Day13/成片`、`Day13/配音`、`Day样片/*.mp4`。
+- 8 个已被通用模板取代的过时单集渲染器：`tools/day4制作`、`day5`、`day6`、`day7`、`day8`、`day10`、`day11`、`day13`。
+
+仍保留到下一轮处理：`tools/day1制作`、`day2制作`、`day2加更制作`、`day9制作`、`day12制作`、`day14制作`（部分被测试或 MV 工具引用，迁移前先改测试）。
+
 ## 通用动态引擎、双骨骼蒙皮步态库与 Day 系列通用单集模板
 
 - **Day 系列通用单集模板**：[`tools/engine/day_episode.template.spec.mjs`](tools/engine/day_episode.template.spec.mjs)（`directorVersion: 1`，同时兼容 **Canvas 2D** `tools/engine/render_episode.mjs` 与 **Remotion** `tools/remotion-engine/render_cli.mjs --mode episode` 双渲染后端）。
@@ -14,9 +34,10 @@
 - **番外歌词 MV《我怀疑大禹治水》最新待审版**：[`番外MV/我怀疑大禹治水/README.md`](番外MV/我怀疑大禹治水/README.md) · [`样片/Remotion_动态引擎重做_待审.mp4`](番外MV/我怀疑大禹治水/样片/Remotion_动态引擎重做_待审.mp4)（8 镜 8 套动态舞台、帧级反转字幕、全员双骨骼连续蒙皮步态修复）。
 - **底层引擎与测试文档**：[`tools/engine/README.md`](tools/engine/README.md) · [`tools/remotion-engine/README.md`](tools/remotion-engine/README.md) · [`导演 Skill`](.claude/skills/day-series-director/SKILL.md)。
 
-## 本轮：Day12 导演修复与无声样片
+## Day12 导演修复（样片已归档）
 
-- [33.43秒无声四段样片与自检](Day12/样片/README.md) · [播放MP4](Day12/样片/Day12_四段导演样片_无声.mp4)。
+- 33.43 秒无声四段样片与自检记录：样片 MP4 已按要求从库里移除（Day 系列只留模板与数据文案），
+  文件仍在 git 历史中（`git show <commit>:Day12/样片/...`）；自检结论保留在 `Day12/Day12制作记录`。
 - [九镜导演版与稳定镜头修复](Day12/Day12分镜_导演版.md) · [导演 Skill](.claude/skills/day-series-director/SKILL.md)。
 - [Day12 修复与复现](Day12/README.md) · [待锁文案](Day12/Day12文案.md) · [分镜规划](Day12/Day12方向.md)。
 - 主角仍是大肥鱼/鲸鱼娘，**外形和身份不换，只移植魔丸人格**；追问、拆穿与补救驱动剧情。
@@ -31,11 +52,14 @@
 | Day0 | `Day0/day0原视频.mp4` | 已发布原视频；运营截图、全部评论与回复合集已归档到 `参考资料/运营数据/Day0/` |
 | Day1 | `Day1/成片/当前版/day1视频_最终配音对齐版.mp4` | 当前对齐版；源音轨为 `Day1/配音_最终版.wav`。该 WAV 无引擎元数据、未通过晓伊 F0 门禁，只能称“用户最终配音对齐版”，不能称已核验晓伊终版 |
 | Day2 | `Day2/成片/当前版/day2视频_指定配音实测对齐版.mp4` | 已完成 1920×1080 对齐版；使用用户指定 WAV `Day2/鲸鱼运营第三天_克隆配音_无BGM_v4.wav`，17 cue 由 Vosk 词时 + 5ms RMS 边界实测对齐。该 WAV 无可验证合成引擎元数据、F0 中位数 391.72Hz，未核验为 Microsoft 晓伊 |
-| Day3 | `Day3/Day3文案.md`、`Day3/Day3配音台词.txt`、`Day3/成片/无配音样片/day3_无配音样片_v4.mp4` | 19 cue 剧本已按本轮重写：本鲸正名 + Day2/加更数据自嘲 + 吃得少是数据梗；形象段落固定为 **L01–L02 鲸鱼娘 → L03 染色即真变成 Claude 大小姐 → L16 入水褪色变回鲸鱼娘**。已出 1920×1080 / 30fps / 99.63s **无配音样片 v4（占位节奏、无音轨，不得发布）**：v2 修掉面部色块/全屏刷子/电视内形象/换镜黑屏/水分镜断裂；v3 把鲸鱼娘从 40 格像素骨架换成**高清立绘**（`dafeiyu.webp` 抠底）解决"模糊"；v4 再补**9 张同角色差分姿势 + 21 个动作**（每镜 4–5 拍：张望/弹起/转圈/挥手/小跳/扭捏/翻本子/叉腰/指证/护碗/吃/走/冲刺/哭/发抖/按快门/送爱心），解决 v3 "只有一张站姿、动作不够"，顺带修掉交叉淡化半透明与 L17–L19 角标没切回鲸鱼娘；素材与抠图脚本在 `tools/day3制作/whale_girl_src/`，渲染器 + QA 静帧在 `tools/day3制作/video-fx源码快照/`；实测 timing 与配音仍未开始。v5 另把 9 张立绘拆成 **10 骨骨架（线性混合蒙皮 + 900 三角贴图）**，新增 **15 个骨骼动作**（鞠躬/点头/摇头/抬臂/招手/蓄力跳/后仰/踮脚/扭胯/转圈/甩尾/泄气/踢腿/歪头比心），演示片在 `Day3/成片/骨架演示/`。v6 再按旧版 `ACTION_LIST` 复刻：新生成 9 张高清差分姿势，把 **28 个旧动作**逐条重写成「姿势 + 骨骼运动 + 表情」，出 `Day3/成片/旧动作复刻样片/whale旧动作复刻_骨架版v1.mp4`（78.8s，无音轨）；Day3 渲染器同步换成 15 张立绘 + 15 副骨架驱动。v7 把旧清单 28 个动作**全部配上专属姿势**（累计 25 张高清差分图、25 副骨架全部量成功），Claude 大小姐改用 `opsCar/claude-daxiaojie-assets` 的 10 张像素立绘（CC BY-NC-SA 4.0，按镜头切 greet/explain/wave/refuse/present/mic/shocked/flustered/signoff），署名见 `tools/day3制作/claude_src/ATTRIBUTION.md`。v10 按用户三条新要求再改：字幕**逐字点亮**（字级/音节级切分，非声学识别）、电视里加克制的 LIVE/MV 包装、大小姐全部换成 Q 版 chibi，成片见 `Day3/成片/配音版/day3_配音版_v4.mp4`（见制作记录 §〇之七）。v11 补掉 L03 变身段漏配的姿势键（该段原来回退成块状像素大小姐），并出抖音物料：标题/简介见 `Day3/Day3抖音发布物料.md`，横竖屏封面见 `Day3/成片/发布物料/`（§〇之八） |
-| Day4 | `Day4/Day4文案.md`、`tools/day4制作/render_day4.mjs`、`Day4/成片/样片/day4_样片_v4_DSH像素加更版.mp4` | v3 文案（米饭被 MV 吃光）+ 渲染器已落地：**角色＝Day2「加更」电视里那版 39 张 DSH 贴纸**（`tools/day2制作/video-fx源码快照/day2_poses/`，脚底锚定 + 等高 9.65u + 呼吸），旧像素骨架降为 `--char ss2/crisp` 对照（`Day4/成片/QA/画质对比_脸部.png`）；**C02 电视放很劣质的《朋友的酒》MV**（240×150 内屏 + 0.35× 慢放 + 音量 12% + 每 1.9s 换错表情 + 歌词延迟 2.4s）；**三处角标已全撤**；**片尾卡改「第 4 天 / 30 · 粉丝 2,180 / 10,000」**。已出 1920×1080 / 30fps / **69.90s 样片**（无配音，电视段有占位伴奏，不得发布）→ 见 `Day4/Day4制作记录.md` |
+| Day3 | `Day3/Day3文案.md`、`Day3/Day3配音台词.txt`、`Day3/成片/无配音样片/day3_无配音样片_v4.mp4` | 19 cue 剧本已按本轮重写：本鲸正名 + Day2/加更数据自嘲 + 吃得少是数据梗；形象段落固定为 **L01–L02 鲸鱼娘 → L03 染色即真变成 Claude 大小姐 → L16 入水褪色变回鲸鱼娘**。已出 1920×1080 / 30fps / 99.63s **无配音样片 v4（占位节奏、无音轨，不得发布）**：v2 修掉面部色块/全屏刷子/电视内形象/换镜黑屏/水分镜断裂；v3 把鲸鱼娘从 40 格像素骨架换成**高清立绘**（`dafeiyu.webp` 抠底）解决"模糊"；v4 再补**9 张同角色差分姿势 + 21 个动作**（每镜 4–5 拍：张望/弹起/转圈/挥手/小跳/扭捏/翻本子/叉腰/指证/护碗/吃/走/冲刺/哭/发抖/按快门/送爱心），解决 v3 "只有一张站姿、动作不够"，顺带修掉交叉淡化半透明与 L17–L19 角标没切回鲸鱼娘；素材与抠图脚本在 `tools/engine/whale_rig/`，渲染器 + QA 静帧在 `tools/day3制作/video-fx源码快照/`；实测 timing 与配音仍未开始。v5 另把 9 张立绘拆成 **10 骨骨架（线性混合蒙皮 + 900 三角贴图）**，新增 **15 个骨骼动作**（鞠躬/点头/摇头/抬臂/招手/蓄力跳/后仰/踮脚/扭胯/转圈/甩尾/泄气/踢腿/歪头比心），演示片在 `Day3/成片/骨架演示/`。v6 再按旧版 `ACTION_LIST` 复刻：新生成 9 张高清差分姿势，把 **28 个旧动作**逐条重写成「姿势 + 骨骼运动 + 表情」，出 `Day3/成片/旧动作复刻样片/whale旧动作复刻_骨架版v1.mp4`（78.8s，无音轨）；Day3 渲染器同步换成 15 张立绘 + 15 副骨架驱动。v7 把旧清单 28 个动作**全部配上专属姿势**（累计 25 张高清差分图、25 副骨架全部量成功），Claude 大小姐改用 `opsCar/claude-daxiaojie-assets` 的 10 张像素立绘（CC BY-NC-SA 4.0，按镜头切 greet/explain/wave/refuse/present/mic/shocked/flustered/signoff），署名见 `tools/day3制作/claude_src/ATTRIBUTION.md`。v10 按用户三条新要求再改：字幕**逐字点亮**（字级/音节级切分，非声学识别）、电视里加克制的 LIVE/MV 包装、大小姐全部换成 Q 版 chibi，成片见 `Day3/成片/配音版/day3_配音版_v4.mp4`（见制作记录 §〇之七）。v11 补掉 L03 变身段漏配的姿势键（该段原来回退成块状像素大小姐），并出抖音物料：标题/简介见 `Day3/Day3抖音发布物料.md`，横竖屏封面见 `Day3/成片/发布物料/`（§〇之八） |
+| Day4 | `Day4/Day4文案.md`（渲染器 `tools/day4制作/` 已按结构收口删除，逻辑由通用模板承接） | v3 文案（米饭被 MV 吃光）+ 渲染器已落地：**角色＝Day2「加更」电视里那版 39 张 DSH 贴纸**（`tools/day2制作/video-fx源码快照/day2_poses/`，脚底锚定 + 等高 9.65u + 呼吸），旧像素骨架降为 `--char ss2/crisp` 对照（`Day4/成片/QA/画质对比_脸部.png`）；**C02 电视放很劣质的《朋友的酒》MV**（240×150 内屏 + 0.35× 慢放 + 音量 12% + 每 1.9s 换错表情 + 歌词延迟 2.4s）；**三处角标已全撤**；**片尾卡改「第 4 天 / 30 · 粉丝 2,180 / 10,000」**。已出 1920×1080 / 30fps / **69.90s 样片**（无配音，电视段有占位伴奏，不得发布）→ 见 `Day4/Day4制作记录.md` |
 | MV | `Day3/成片/MV/朋友的酒_Q弹MV_v1.mp4` | 《朋友的酒》Q 弹同人 MV：1080×1920 / 42.00s / 30fps，音轨取 `video-fx` commit `ff94985` 的 `朋友的酒.mp3` 第 18.00s 起（实测偏移 0 误差、相关 0.9979）。角色用项目默认鲸鱼娘高清立绘 + 白底泛洪抠图，字幕用 `tools/字幕/day2_style_sub.mjs`，节拍 130.4 BPM 实测、每拍压扁（高 67% / 宽 150% / 脚底不动），每 8 拍换姿势。说明与版权见 `Day3/成片/MV/朋友的酒_Q弹MV_v1.md`；开头 A/B 样片在 `Day3/成片/MV/hook_ab/`。**非商用**，成片与音频都不入库 |
 
 ## 目录结构
+
+> 下面这棵树是历史归档描述，个别路径已在 2026-11-08 结构收口中删除（`tools/dayN制作` 的单集渲染器、
+> Day12/Day13 的成片与样片），删除项见文首「仓库结构」小节；需要旧文件时从 git 历史取。
 
 ```text
 .
@@ -81,7 +105,7 @@
    ├─ day1制作/             # Day1 音频、报告、生成器、验收表与 video-fx 源码快照
    ├─ day2制作/             # Day2 对齐音频、报告、生成器、验收表与 video-fx 源码快照
    ├─ 字幕/                 # 项目统一字幕组件（Day2 加更版，默认走这个）
-   └─ day3制作/             # Day3 渲染器 + 引擎补丁 + 高清立绘（whale_girl_src/ 41 张姿势 + 10 骨骨架）+ 大小姐素材（claude_src/chibi/ 14 张 Q 版，默认；full/ 旧正比例备用）+ 字级对齐脚本 + QA 静帧
+   └─ day3制作/             # Day3 渲染器 + 引擎补丁 + 高清立绘（engine/whale_rig/ 41 张姿势 + 10 骨骨架）+ 大小姐素材（claude_src/chibi/ 14 张 Q 版，默认；full/ 旧正比例备用）+ 字级对齐脚本 + QA 静帧
 ├─ video-fx/                # 成片项目 video-fx 源码（导入说明见目录内 导入说明.md）
 ```
 
@@ -115,7 +139,7 @@
 - **字幕**：一律用 **Day2 加更《鲸鱼选鱼》那一版** —— 短分句 + 说话人小标签 + 紧凑对话条，一屏一句；
   **不做逐字点亮**。唯一实现在 `tools/字幕/day2_style_sub.mjs`，新视频直接 `import`，不许各写一版；
   规格见 `tools/字幕/README.md`。逐字（Karaoke）与整句版只在 `DAY3_SUB_STYLE=karaoke|plain` 下作历史对照。
-- **角色**：一律用**现行素材** —— 鲸鱼娘 `tools/day3制作/whale_girl_src/`（高清姿势 + 34×54 网格骨架），
+- **角色**：一律用**现行素材** —— 鲸鱼娘 `tools/engine/whale_rig/`（高清姿势 + 34×54 网格骨架），
   Claude 大小姐 `tools/day3制作/claude_src/chibi/`（Q 版贴纸，CC BY-NC-SA 4.0）。
   正比例 `full/` 与几何像素立绘不再作为默认，也**不再作为静默回退**（Day3 两次画风事故都源于这个回退）。
 - 覆盖方式只有环境变量：`DAY3_SUB_STYLE`、`DAY3_WHALE_DIR`、`DAY3_CLAUDE_DIR`。

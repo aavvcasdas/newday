@@ -346,7 +346,7 @@ QA：渲染前生成并实际查看 138 张静帧（首帧、9 cue 各三点、3
 ### 2. 说话人：像素 rig → 高清立绘 + 10 骨骨架
 
 老场景统一用 `WHALE_GIRL.whaleGirl(ctx, x, y, u, o)` 画鲸鱼娘，`o.action` 就是 `ACTION_LIST` 的旧动作 id。
-新增 `tools/day3制作/whale_girl_src/hd_speaker_pack.mjs`，保持同一签名，把内部实现换成
+新增 `tools/engine/whale_rig/hd_speaker_pack.mjs`，保持同一签名，把内部实现换成
 Day3 的高清立绘 + 10 骨骨架（`drawRigged`），动作映射沿用 `MAIN_POSE_TO_PIXEL`（`peek_curious / jump_joy /
 confident_hips / eat_white_rice / wake_stretch / token_wordle_sneak / shock_petrify / shy_fidget`）。
 `render_day2_bonus_final.mjs` 在 require 场景之前替换 `WHALE_GIRL.whaleGirl`（场景是解构取值，必须抢在前面），

@@ -22,7 +22,7 @@ import { cameraFor } from './camera_plan.mjs';
 import { bodyPerformance, loadImageActors, drawImageActor, drawAmbient } from './performance_v2.mjs';
 import { drawSemanticTracks } from './semantic_tracks.mjs';
 import { createDay2Subtitle } from '../字幕/day2_style_sub.mjs';
-import { LEGACY_ACTIONS } from '../day3制作/whale_girl_src/legacy_actions.mjs';
+import { LEGACY_ACTIONS } from './whale_rig/legacy_actions.mjs';
 import {
   computeLivingSkeleton,
   evaluateCharacterMotion,

@@ -122,7 +122,7 @@
 | 钩子 | 复制 `tools/day3制作/video-fx源码快照/render_day3_sample.mjs` → `render_day4_hook.mjs`；`HOOK_TEXT` 固定在文件顶部，一行出 A/B/C 三版 | 渲染器已有 `--hook "第一行\|第二行"` / `--hook-out` 参数（见 `开头3秒优化.md` 第四节） |
 | 配音 | 沿用同一套流程；时间来自实测音频（句级静音缝 + 字级能量切分），**不许按字数估时** | `tools/day3制作/align_day3_voice.py`（改 `LINES`） |
 | 字幕 | 默认 Day2 加更版，直接 import，不新写、不做逐字点亮 | `tools/字幕/day2_style_sub.mjs` |
-| 角色 | 默认现行素材：鲸鱼娘高清姿势 + 骨架；本集不需要大小姐 | `tools/day3制作/whale_girl_src/` |
+| 角色 | 默认现行素材：鲸鱼娘高清姿势 + 骨架；本集不需要大小姐 | `tools/engine/whale_rig/` |
 | 新素材 | 只需 2 件：`704` 计数牌、三张投票卡（可用现有卡片组件改文字） | 现有卡片/字幕组件 |
 | 4 秒钩字样片 | 三版各出一条 4 秒样片（只换 `HOOK_TEXT`），用于付费/自然流量对比 2s 留存；按 `.gitignore` 不入库 | `Day3/成片/MV/hook_ab/` 的既有做法 |
 | 门禁 | 录完对齐后先跑 `python3 tools/剧本/开场体检.py --json <本集 alignment.json> --event-cue L01`，退出码 1 就回去改稿 | `tools/剧本/开场体检.py` |

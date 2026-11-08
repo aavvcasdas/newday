@@ -7,7 +7,7 @@
 > `day3_无配音样片_v3.mp4`（高清但只有一张站姿，被判"动作不够"），仅留档对照
 > 渲染器：`tools/day3制作/video-fx源码快照/render_day3_sample.mjs`
 > QA 静帧：`tools/day3制作/video-fx源码快照/day3_stills/`（67 张，`*_stills/` 已被 `.gitignore` 排除，不入库）
-> v5 骨架：`tools/day3制作/whale_girl_src/whale_rig.mjs` + `whale_rig_actions.mjs`；演示片 `Day3/成片/骨架演示/whale骨架动作库_v1.mp4`
+> v5 骨架：`tools/engine/whale_rig/whale_rig.mjs` + `whale_rig_actions.mjs`；演示片 `Day3/成片/骨架演示/whale骨架动作库_v1.mp4`
 
 ---
 
@@ -33,7 +33,7 @@ v4 不动形象设计（配色、服装、比例一律按 `dafeiyu.webp`），�
 | `think` | `whale_think.png` | 926×1024 | 46.3% | 0.989 | 低头翻户口本/返工单、按快门 |
 | `cheer` | `whale_cheer.png` | 927×978 | 51.2% | 0.980 | 得意小跳、拉伸、转圈 |
 
-`pose_*.png`（1024×1024）是未抠底的源图留档，来源与授权见 `tools/day3制作/whale_girl_src/ATTRIBUTION.md`。
+`pose_*.png`（1024×1024）是未抠底的源图留档，来源与授权见 `tools/engine/whale_rig/ATTRIBUTION.md`。
 
 ### 动作库（`WHALE_ACT`，21 个）
 
@@ -163,8 +163,8 @@ node render_day3_sample.mjs --out ../../../Day3/成片/无配音样片/day3_无�
 | `Day3/成片/旧动作复刻样片/whale旧动作复刻_骨架版v1.mp4` | 重新渲染，28 个旧动作**各自专属姿势**，78.8s / 1080p / 30fps / 无音轨 / 25.71MB |
 | `tools/day3制作/claude_src/full/*.png` | 大小姐 10 张立绘 |
 | `tools/day3制作/claude_src/ATTRIBUTION.md` | 署名、协议、逐镜用途（发布必须带上） |
-| `tools/day3制作/whale_girl_src/whale_poses.mjs` | 姿势注册表扩到 25 张 |
-| `tools/day3制作/whale_girl_src/rig_preview.mjs` | 改成遍历全部姿势，出 `skeleton_all_poses.png` |
+| `tools/engine/whale_rig/whale_poses.mjs` | 姿势注册表扩到 25 张 |
+| `tools/engine/whale_rig/rig_preview.mjs` | 改成遍历全部姿势，出 `skeleton_all_poses.png` |
 
 实测：`-f null -` 解码 OK；`ffprobe` 1920×1080 / 30fps / 78.80s / 单视频流；`blackdetect` 0 命中；
 Day3 主样片渲染器载入日志：`鲸鱼娘姿势 25 张 / 骨架 25 副`、`Claude 大小姐立绘 10 张 / 骨架 10 副`。
@@ -208,7 +208,7 @@ Day3 主样片渲染器载入日志：`鲸鱼娘姿势 25 张 / 骨架 25 副`�
 
 ### 3. 骨架驱动（`legacy_actions.mjs`）
 
-28 个动作在 `tools/day3制作/whale_girl_src/legacy_actions.mjs` 里逐条重写成：
+28 个动作在 `tools/engine/whale_rig/legacy_actions.mjs` 里逐条重写成：
 
 ```js
 { id: 'ciallo_wink', zh: 'Ciallo～比耶眨眼', dur: 2.4,
@@ -234,9 +234,9 @@ Day3 主样片渲染器载入日志：`鲸鱼娘姿势 25 张 / 骨架 25 副`�
 |---|---|
 | `Day3/成片/旧动作复刻样片/whale旧动作复刻_骨架版v1.mp4` | 28 个旧动作逐个表演，78.8s，1920×1080 / 30fps / **无音轨** |
 | `Day3/成片/旧动作复刻样片/still_*.png` | 6 张复核静帧（放大镜/比耶/相机/金币/握拳） |
-| `tools/day3制作/whale_girl_src/whale_poses.mjs` | 18 张姿势注册表（9 旧 + 9 新） |
-| `tools/day3制作/whale_girl_src/legacy_actions.mjs` | 28 个旧动作 + 26 个骨骼运动 |
-| `tools/day3制作/whale_girl_src/render_legacy_sample.mjs` | 旧动作复刻样片渲染器（`--stills` 出静帧） |
+| `tools/engine/whale_rig/whale_poses.mjs` | 18 张姿势注册表（9 旧 + 9 新） |
+| `tools/engine/whale_rig/legacy_actions.mjs` | 28 个旧动作 + 26 个骨骼运动 |
+| `tools/engine/whale_rig/render_legacy_sample.mjs` | 旧动作复刻样片渲染器（`--stills` 出静帧） |
 
 实测：`-f null -` 解码 OK；`ffprobe` 1920×1080 / 30fps / 78.80s / 只有一条视频流；`blackdetect` 0 命中；25.31MB；2364 帧渲染约 3.2 分钟。
 
@@ -257,7 +257,7 @@ v4 的 21 个动作本质是「整张立绘 + 外层 transform」：能跳、能
 
 ### 骨架是怎么「量」出来的（不靠手填坐标）
 
-`tools/day3制作/whale_girl_src/whale_rig.mjs`
+`tools/engine/whale_rig/whale_rig.mjs`
 
 1. **读 alpha 通道**：逐行统计每行不透明像素的左右边界，得到包围盒、逐行轮廓。
 2. **定中线**：取 0.45–0.72 高度区间每行中点的**中位数** —— 这样举起来的手、散开的头发不会把中线带偏。
@@ -325,16 +325,16 @@ v4 的 21 个动作本质是「整张立绘 + 外层 transform」：能跳、能
 | `Day3/成片/骨架演示/whale骨架动作库_v1.mp4` | 42.3s / 1920×1080 / 30fps / 无音轨；每个动作一张卡，左边成品、右边同帧骨架视图 |
 | `Day3/成片/骨架演示/骨架动作速览.png` | 15 个动作一屏速览（5×3，标注动作名与所用立绘） |
 | `Day3/成片/骨架演示/骨架图_9姿势.png` | 9 张立绘各自的骨架叠加图（证明骨架是按每张图分别量的） |
-| `tools/day3制作/whale_girl_src/whale_rig.mjs` | 量骨架 / 刷权重 / 蒙皮 / 三角形渲染 / 骨架可视化 |
-| `tools/day3制作/whale_girl_src/whale_rig_actions.mjs` | 15 个骨骼动作 |
-| `tools/day3制作/whale_girl_src/render_rig_demo.mjs` | 演示片渲染器（`--stills` 只出静帧） |
-| `tools/day3制作/whale_girl_src/rig_preview.mjs` | 骨架自检：9 姿势叠加图 + 静止姿势误差 |
-| `tools/day3制作/whale_girl_src/rig_action_grid.mjs` | 15 动作速览图 |
+| `tools/engine/whale_rig/whale_rig.mjs` | 量骨架 / 刷权重 / 蒙皮 / 三角形渲染 / 骨架可视化 |
+| `tools/engine/whale_rig/whale_rig_actions.mjs` | 15 个骨骼动作 |
+| `tools/engine/whale_rig/render_rig_demo.mjs` | 演示片渲染器（`--stills` 只出静帧） |
+| `tools/engine/whale_rig/rig_preview.mjs` | 骨架自检：9 姿势叠加图 + 静止姿势误差 |
+| `tools/engine/whale_rig/rig_action_grid.mjs` | 15 动作速览图 |
 
 复现：
 
 ```bash
-cd tools/day3制作/whale_girl_src
+cd tools/engine/whale_rig
 node rig_preview.mjs                 # 骨架图 + 静止误差自检
 node rig_action_grid.mjs             # 15 动作速览
 node render_rig_demo.mjs             # 演示片（约 1.5 分钟，1080p）
@@ -366,8 +366,8 @@ drawRigged(ctx, rig, charX, charY, u, { anim: rigAnim('bow_deep', localT) });
 |---|---|
 | 形象来源 | 用户指定：`dafeiyu.webp`（1024×1024，本次以它为准）；`dafeiyu-chibi-character-sheet.png`（1448×1086）作为三视图/细节对照与补充素材 |
 | 上游出处 | 鲸鱼娘开源资产库 <https://treapgogo.github.io/deepseek-whale-girl/>（社区维护的非官方资源库，MIT，**不代表深度求索官方**）；立绘原图来自其 `characters/dafeiyu/reference-sheets/` 与社区画廊 |
-| 抠图脚本 | `tools/day3制作/whale_girl_src/make_sprite.mjs`（可复现，见下） |
-| 产物 | `tools/day3制作/whale_girl_src/whale_idle.png`（926×1024，透明底） |
+| 抠图脚本 | `tools/engine/whale_rig/make_sprite.mjs`（可复现，见下） |
+| 产物 | `tools/engine/whale_rig/whale_idle.png`（926×1024，透明底） |
 | 渲染用法 | 渲染器 `WGF()` 优先画这张立绘：整体呼吸（±0.6%）+ 缓慢摆动（±0.01rad）+ 可选翻转；**不做骨块变形**，所以线条永远是原画的清晰度。找不到立绘时才退回补丁版像素骨架 |
 
 抠图流程（脚本内注释也写了，为什么每步都要有）：
@@ -414,7 +414,7 @@ L16 的湿向日葵从"飘在脸旁"挪到脚边地板上（v2 里那朵花压�
 
 ### 4. 白底抠图（这轮的关键工程问题）
 
-`whale_girl_src/pose_*.png` 是 **RGB 白底、没有 alpha**，直接画出来是一个大白方块。
+`engine/whale_rig/pose_*.png` 是 **RGB 白底、没有 alpha**，直接画出来是一个大白方块。
 改成「从画面四边泛洪，只抠和边缘连通的白」——围裙、裙子内部的白色保留；抠完再量内容 bbox，
 用 bbox 当脚底锚点（不量的话脚会悬在留白上）。缓存在 `/tmp/whale_alpha/`。
 
@@ -919,7 +919,7 @@ export VIDEO_FX_DIR=/tmp/video-fx   # aavvcasdas/video-fx 分支 arena/8be4c8f8-
 
 cd tools/day3制作/video-fx源码快照
 # 先做高清立绘（可选，仓库里已带产物）
-node ../whale_girl_src/make_sprite.mjs ../../../../dafeiyu.webp ../whale_girl_src/whale_idle.png
+node .../engine/whale_rig/make_sprite.mjs ../../../../dafeiyu.webp .../engine/whale_rig/whale_idle.png
 
 node render_day3_sample.mjs --stills      # 出 70 张 QA 静帧
 node render_day3_sample.mjs --out ../../../Day3/成片/无配音样片/day3_无配音样片_v4.mp4

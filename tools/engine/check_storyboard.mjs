@@ -5,7 +5,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createHash } from 'node:crypto';
 import { validateSpec } from './schema_validator.mjs';
 import {IMAGE_ACTORS} from './performance_v2.mjs';
-import { POSES } from '../day3制作/whale_girl_src/whale_poses.mjs';
+import { POSES } from './whale_rig/whale_poses.mjs';
 
 export function checkStoryboard(spec, script) {
   const lines = script.trim().split(/\r?\n/).map((s) => s.trim()).filter(Boolean);
@@ -15,7 +15,7 @@ export function checkStoryboard(spec, script) {
   const plans = [spec.opener.actorA, spec.opener.actorB, ...spec.shots.flatMap((s) => s.actors || s.actorsPlan || [])];
   const poses = [...new Set(plans.filter(a=>!a.assetId).flatMap((a) => [a.pose || 'idle', ...(a.poses || []).map((p) => p.pose), ...(a.poseChanges || []).map((p) => p.pose)]))];
   const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-  const missingAssets = poses.map((p) => `tools/day3制作/whale_girl_src/${POSES[p].file}`).filter((p) => !fs.existsSync(path.join(root, p)));
+  const missingAssets = poses.map((p) => `tools/engine/whale_rig/${POSES[p].file}`).filter((p) => !fs.existsSync(path.join(root, p)));
   for(const a of plans.filter(a=>a.assetId)){const src=IMAGE_ACTORS[a.assetId];if(!fs.existsSync(path.join(root,src.path)))missingAssets.push(src.path);}
   return {
     performanceVersion:spec.performanceVersion??1,cameraIntentCount:spec.shots.filter(s=>s.cameraIntent).length,

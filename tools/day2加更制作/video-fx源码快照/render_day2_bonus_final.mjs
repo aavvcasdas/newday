@@ -135,7 +135,7 @@ globalThis.DAY2_POSE_COUNT = DAY2_POSE_NAMES.length;
 const HD_SPEAKER = process.env.DAY2_HD_SPEAKER !== '0';
 if (HD_SPEAKER) {
   const hdDir = process.env.DAY3_SPRITE_DIR ||
-    path.resolve(ROOT, '..', 'tools', 'day3制作', 'whale_girl_src');
+    path.resolve(ROOT, '..', 'tools', 'engine', 'whale_rig');
   const packUrl = pathToFileURL(path.join(hdDir, 'hd_speaker_pack.mjs')).href;
   const { createHdSpeaker } = await import(packUrl);
   const hdSpeaker = await createHdSpeaker({ createCanvas, loadImage, dir: hdDir, onLog: console.log });

@@ -8,7 +8,7 @@
 //   Day3/成片/发布物料/抖音封面_横屏_1920x1080.png
 //   Day3/成片/发布物料/抖音封面_竖屏_1080x1920.png
 //
-// 素材：鲸鱼娘 whale_girl_src/whale_*.png + Claude 大小姐 chibi（CC BY-NC-SA 4.0）。
+// 素材：鲸鱼娘 engine/whale_rig/whale_*.png + Claude 大小姐 chibi（CC BY-NC-SA 4.0）。
 // 封面只做排版、光效与白描边，不改角色设计。
 // ============================================================================
 import fs from 'node:fs';
@@ -253,7 +253,7 @@ function badge(ctx, x, y, text, fs, color, align = 'left') {
 }
 
 // ---------- 素材 ----------
-const whale = await loadImage(path.join(HERE, 'whale_girl_src/whale_cheer.png'));
+const whale = await loadImage(path.join(HERE, 'engine/whale_rig/whale_cheer.png'));
 const claude = await loadImage(path.join(HERE, 'claude_src/chibi/pose_cheer.png'));
 
 // ---------- 横屏 1920×1080 ----------

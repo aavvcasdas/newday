@@ -82,8 +82,8 @@
 | 配音 | 沿用同一套流程与音源规范；**没有可用声学模型**，所以时间仍是「句级静音缝 + 字级能量切分」，不许写「词级」 | `tools/day3制作/align_day3_voice.py`（改 `LINES` 即可） |
 | 渲染 | 复制 `render_day3_sample.mjs` → `render_day4_sample.mjs`，改 16 镜与台词 | 现成渲染器 |
 | 字幕 | **默认 Day2 加更版**，直接 `import '../字幕/day2_style_sub.mjs'`，不新写 | `tools/字幕/day2_style_sub.mjs` |
-| 角色 | **默认现行**：鲸鱼娘高清姿势 + 34×54 骨架；大小姐 Q 版（本集可选客串「考官」1 镜） | `whale_girl_src/`、`claude_src/chibi/` |
-| 新素材 | 只需 3 件道具：火钳 + 铁板、一只螃蟹、一本《人类黑话词典》（可由现有姿势拼合，或按 `make_sprite.mjs` 出 3 张差分） | `tools/day3制作/whale_girl_src/make_sprite.mjs` |
+| 角色 | **默认现行**：鲸鱼娘高清姿势 + 34×54 骨架；大小姐 Q 版（本集可选客串「考官」1 镜） | `engine/whale_rig/`、`claude_src/chibi/` |
+| 新素材 | 只需 3 件道具：火钳 + 铁板、一只螃蟹、一本《人类黑话词典》（可由现有姿势拼合，或按 `make_sprite.mjs` 出 3 张差分） | `tools/engine/whale_rig/make_sprite.mjs` |
 | 封面/标题 | 复用 `tools/day3制作/make_douyin_cover.mjs`，改文字即可 | 现成脚本 |
 
 **不需要新学的技术点**：本集全部落在现有管线上；唯一新增工作量是 3 件道具图和 16 镜的台词节奏。

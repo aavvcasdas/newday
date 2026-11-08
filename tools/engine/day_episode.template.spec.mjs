@@ -56,6 +56,13 @@ export const DAY_EPISODE_TEMPLATE_SPEC = {
   measured: false,
   sourceScriptSha256: DAY_EPISODE_TEMPLATE_SHA256,
   defaultSet: 'underwater_study',
+  // 通用动作库（tools/engine/motion_library.mjs）里可用的 locomotion 词表。
+  // 这里只登记"分镜允许写的动作名"，具体图集/帧数/素材路径由动作库解析；
+  // tools/engine/motion_library.test.mjs 会确认这份表与动作库完全一致。
+  motionCatalog: [
+    'side_walk', 'walk', 'happy_walk', 'sad_walk', 'push_walk',
+    'idle', 'happy_idle', 'sad_idle',
+  ],
   pending: [
     '模板示例：正式单集须替换为当集锁定台词 SHA256 与实测 voice_alignment.json',
   ],

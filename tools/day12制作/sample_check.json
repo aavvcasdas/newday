@@ -19,19 +19,19 @@
       "passed": true,
       "evidence": [
         {
-          "path": "tools/day3制作/whale_girl_src/whale_fatfish_working.png",
+          "path": "tools/engine/whale_rig/whale_fatfish_working.png",
           "verified": true
         },
         {
-          "path": "tools/day3制作/whale_girl_src/whale_point.png",
+          "path": "tools/engine/whale_rig/whale_point.png",
           "verified": true
         },
         {
-          "path": "tools/day3制作/whale_girl_src/whale_shock.png",
+          "path": "tools/engine/whale_rig/whale_shock.png",
           "verified": true
         },
         {
-          "path": "tools/day3制作/whale_girl_src/whale_think.png",
+          "path": "tools/engine/whale_rig/whale_think.png",
           "verified": true
         },
         {

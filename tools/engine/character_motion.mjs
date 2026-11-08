@@ -6,8 +6,8 @@
 //      以及世界空间手部锚点 handAt(actorState, side) 供道具与场景双向绑定；
 //   4. 严格守护角色面部红线：不篡改固定 PNG 五官像素，不画肤色假眼皮。
 
-import { RIG_ACTIONS, rigAnim } from '../day3制作/whale_girl_src/whale_rig_actions.mjs';
-import { LEGACY_ACTIONS, poseAt as legacyPoseAt, motionAt as legacyMotionAt } from '../day3制作/whale_girl_src/legacy_actions.mjs';
+import { RIG_ACTIONS, rigAnim } from './whale_rig/whale_rig_actions.mjs';
+import { LEGACY_ACTIONS, poseAt as legacyPoseAt, motionAt as legacyMotionAt } from './whale_rig/legacy_actions.mjs';
 import { MV_CAST, MV_CAST_IDS, mvCastLocomotionAtlas, mvSignatureAction, MV_SIGNATURE_ACTIONS } from './mv_cast_registry.mjs';
 import { atlasVisibleTopFrac } from './atlas_metrics.mjs';
 import {

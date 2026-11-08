@@ -5,10 +5,10 @@
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { POSES } from '../day3制作/whale_girl_src/whale_poses.mjs';
-import { buildRig, drawRigged, skinMatrices, BONE_ORDER } from '../day3制作/whale_girl_src/whale_rig.mjs';
+import { POSES } from '../engine/whale_rig/whale_poses.mjs';
+import { buildRig, drawRigged, skinMatrices, BONE_ORDER } from '../engine/whale_rig/whale_rig.mjs';
 
-const DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../day3制作/whale_girl_src');
+const DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../engine/whale_rig');
 
 export const CALIBRATION = {
   idle: { headTop: [425, 12], mouth: [438, 477], handR: [697, 686], handL: [218, 685] },

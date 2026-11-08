@@ -14,7 +14,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createRequire } from 'node:module';
-import { buildRig, drawRigged, BONE_ORDER } from '../../day3制作/whale_girl_src/whale_rig.mjs';
+import { buildRig, drawRigged, BONE_ORDER } from '../../engine/whale_rig/whale_rig.mjs';
 import { drawExtrudedPiece } from './jigsaw.mjs';
 import { actionFrame } from './actions.mjs';
 import { drawPet } from './pet.mjs';

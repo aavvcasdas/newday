@@ -2,8 +2,8 @@
 // Inspired by staged-action/state separation, not copied from the external desktop pet.
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
-import {buildRig,drawRigged,BONE_ORDER} from '../day3制作/whale_girl_src/whale_rig.mjs';
-const DIR=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../day3制作/whale_girl_src');
+import {buildRig,drawRigged,BONE_ORDER} from '../engine/whale_rig/whale_rig.mjs';
+const DIR=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'../engine/whale_rig');
 export const clamp=x=>Math.max(0,Math.min(1,x));
 export const ease=x=>{x=clamp(x);return x*x*(3-2*x);};
 export const mix=(a,b,p)=>a+(b-a)*p;

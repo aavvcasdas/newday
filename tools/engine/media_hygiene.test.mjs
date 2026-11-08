@@ -17,13 +17,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const MEDIA_EXT = /\.(mp4|mov|webm|wav|mp3|m4a|flac|aac|ogg)$/i;
 
 // 允许入库的单个媒体：交付成片或不可重建的原始素材，且在对应 README 里有说明。
+// 2026-11-08 清理：Day 系列只保留通用模板 + 数据文案，Day12/Day13/Day样片 的成片与样片
+// 已从库里移除（仍在 git 历史里），白名单同步删掉，避免规则腐化成指向空文件的空壳。
 const ALLOWED_FILES = [
-  // Day12 正式成片与两份待审样片（历史交付，保持不动）
-  /^Day12\/成片\/Day12_鲸鱼摇人_有声BGM版\.mp4$/,
-  /^Day12\/样片\/Day12_v2_四段动态审看_有声\.mp4$/,
-  /^Day12\/样片\/Day12_四段导演样片_无声\.mp4$/,
-  // 本轮新增：MV 八人并入 Day 的结构验收样片
-  /^Day样片\/MV八人并入Day_结构验收_无声\.mp4$/,
   // 用户明确要求「把 9 个走路角色渲染成一个能下载的视频」的交付件（4.6 MB，可由
   // tools/remotion-engine/render_walk_video.py 用库内帧重渲，保留是为了让审看/下载有固定入口）
   /^assets\/ai-girls\/walk-v14\/preview\/walk_all9\.mp4$/,
@@ -36,11 +32,7 @@ const ALLOWED_PREFIXES = [
   '番外MV/把回忆拼好给你/',
 ];
 
-const DAY13_FILES = [
-  /^Day13\/成片\/Day13_鲸鱼MV画面_配音BGM_待审\.mp4$/,
-  /^Day13\/成片\/Day13_Day12鲸娘走动_待审\.mp4$/,
-  /^Day13\/配音\/Day13_伴奏\.flac$/,
-];
+const DAY13_FILES = [];
 
 const isAllowed = (f) =>
   ALLOWED_FILES.some((re) => re.test(f)) ||

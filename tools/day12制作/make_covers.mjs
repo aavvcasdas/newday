@@ -1,7 +1,7 @@
 import fs from 'node:fs';import { createCanvas, loadImage } from '../engine/node_modules/@napi-rs/canvas/index.js';
 import {W,H,drawBaseUnderwaterRoom} from '../engine/room_base.mjs';
 const out='Day12/封面';fs.mkdirSync(out,{recursive:true});
-const images=await Promise.all(['tools/day3制作/whale_girl_src/whale_shock.png','assets/ai-girls/doubao/doubao-cutout.png'].map(n=>loadImage(n)));
+const images=await Promise.all(['tools/engine/whale_rig/whale_shock.png','assets/ai-girls/doubao/doubao-cutout.png'].map(n=>loadImage(n)));
 const checks=[];
 function text(g,t,x,y,size,color='#F8EFD3',align='left') {g.font=`900 ${size}px NotoSansSC`;g.textAlign=align;g.textBaseline='middle';g.lineJoin='round';g.lineWidth=10;g.strokeStyle='#12213D';g.strokeText(t,x,y);g.fillStyle=color;g.fillText(t,x,y);const w=g.measureText(t).width;const left=align==='center'?x-w/2:x;if(left<20||left+w>g.canvas.width-20)throw Error('cover title overflow');checks.push({text:t,width:w,x,y,size});}
 function actor(g,i,x,bottom,height){const im=images[i];g.drawImage(im,x-im.width*height/im.height/2,bottom-height,im.width*height/im.height,height);}

@@ -8,7 +8,7 @@
 | 项 | 来源 | 备注 |
 |---|---|---|
 | 歌曲 | `aavvcasdas/video-fx` commit `ff94985acbe454a328b81f3699da8a3172b6c2b5` 里的 `朋友的酒.mp3` | 该 commit 只新增了两个音频（另一个是 `潮汐.MP3`），**没有视频素材**；文件扩展名是 .mp3，实际是 MP4 容器内的 HE-AACv2、3:08.38 |
-| 角色 | `tools/day3制作/whale_girl_src/pose_*.png` | 项目默认鲸鱼娘高清立绘（1024×1024），**不是**像素骨架 |
+| 角色 | `tools/engine/whale_rig/pose_*.png` | 项目默认鲸鱼娘高清立绘（1024×1024），**不是**像素骨架 |
 | 字幕 | `tools/字幕/day2_style_sub.mjs` | 项目默认 Day2 加更版（短分句 + 说话人标签），与 Day3/Day4 同一份实现 |
 | 字体 | `video-fx/assets/fonts/` | NotoSansSC-Bold / ZCOOLKuaiLe / Silkscreen |
 

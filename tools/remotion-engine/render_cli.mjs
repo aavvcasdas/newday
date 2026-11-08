@@ -14,7 +14,7 @@ import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.
 import { adaptMvToRemotionProps } from './mv_adapter.mjs';
 import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { auditTimelineActivity, semanticStateAt } from '../engine/timeline_core.mjs';
-import { POSES } from '../day3制作/whale_girl_src/whale_poses.mjs';
+import { POSES } from '../engine/whale_rig/whale_poses.mjs';
 import { IMAGE_ACTORS } from '../engine/performance_v2.mjs';
 import { ensureWalkRigAtlases, WALK_RIG_BUILDERS, DEFAULT_WALK_CACHE_DIR } from './walk_rig_builder.mjs';
 
@@ -99,7 +99,7 @@ function buildAssetUrlMap(baseUrl) {
     cheer: 'assets/ai-girls/lyric-action-v13/source/whale_meet.png',
   };
   for (const [poseName, info] of Object.entries(POSES)) {
-    const primaryRel = `tools/day3制作/whale_girl_src/${info.file}`;
+    const primaryRel = `tools/engine/whale_rig/${info.file}`;
     const fallbackRel = whaleFallbackPoses[poseName];
     const chosenRel = fs.existsSync(path.join(REPO_ROOT, primaryRel))
       ? primaryRel

@@ -35,7 +35,7 @@ assert corr > .999, corr
 result = subprocess.run([FF, '-v', 'error', '-i', str(video), '-f', 'null', '-'], capture_output=True)
 assert result.returncode == 0
 subprocess.run(['git', 'diff', '--exit-code', '--', 'tools/day9制作/render_day9_v2.mjs', 'tools/day9制作/motion_v2.mjs',
-                'tools/day9制作/voice_alignment.json', 'tools/day9制作/subtitle_timing.json', 'tools/day3制作/whale_girl_src',
+                'tools/day9制作/voice_alignment.json', 'tools/day9制作/subtitle_timing.json', 'tools/engine/whale_rig',
                 'Day9/配音', 'Day9/字幕', 'Day9/成片/Day9_笨鱼看同类_动作改进版_v2.mp4'], cwd=ROOT, check=True)
 source_subs = json.loads((HERE / 'subtitle_timing.json').read_text())['screens']
 subs = []

@@ -25,8 +25,8 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 // v6：鲸鱼娘改用「高清立绘 + 10 骨骨架」绘制（骨架从立绘的 alpha 自动量出来）
-import { buildRig, drawRigged } from '../whale_girl_src/whale_rig.mjs';
-import { LEGACY_MOTIONS } from '../whale_girl_src/legacy_actions.mjs';
+import { buildRig, drawRigged } from '../../engine/whale_rig/whale_rig.mjs';
+import { LEGACY_MOTIONS } from '../../engine/whale_rig/legacy_actions.mjs';
 // Claude 大小姐改用素材库立绘（CC BY-NC-SA 4.0，见 tools/day3制作/claude_src/ATTRIBUTION.md）
 import { CLAUDE_POSES, CLAUDE_SHOT_POSE, CLAUDE_ACTION_POSE } from '../claude_src/claude_poses.mjs';
 // 项目统一字幕（Day2 加更版）：见 tools/字幕/day2_style_sub.mjs
@@ -188,13 +188,13 @@ const FPS = 30;
 //          都不再作为默认或回退。
 // 覆盖方式只有环境变量，不写死在镜头里：
 //   DAY3_SUB_STYLE      day2（默认）| karaoke | plain
-//   DAY3_WHALE_DIR      鲸鱼娘姿势目录，默认 ../whale_girl_src
+//   DAY3_WHALE_DIR      鲸鱼娘姿势目录，默认 ../../engine/whale_rig
 //   DAY3_CLAUDE_DIR     大小姐姿势目录，默认 ../claude_src/chibi
 // ---------------------------------------------------------------------------
 const SUB_STYLE = (process.env.DAY3_SUB_STYLE || 'day2').toLowerCase();
 const DEFAULTS = {
   subStyle: SUB_STYLE,
-  whaleDir: process.env.DAY3_WHALE_DIR ? path.basename(process.env.DAY3_WHALE_DIR) : 'whale_girl_src',
+  whaleDir: process.env.DAY3_WHALE_DIR ? path.basename(process.env.DAY3_WHALE_DIR) : 'whale_rig',
   claudeDir: process.env.DAY3_CLAUDE_DIR ? path.basename(process.env.DAY3_CLAUDE_DIR) : 'claude_src/chibi'
 };
 
@@ -291,7 +291,7 @@ function blitChar(ctx, x, y, u, draw, o = {}) {
 // 2.1 鲸鱼娘（经典版）= 高清立绘，不再是 40 格像素骨架
 // ---------------------------------------------------------------------------
 // v1/v2 被退回"还是模糊"：骨架的脸只有 20 来个格子，任何 1080p 特写都撑不住。
-// v3 起改用高清立绘（`dafeiyu.webp` → `whale_girl_src/whale_idle.png`，先做四边泛洪去背），
+// v3 起改用高清立绘（`dafeiyu.webp` → `engine/whale_rig/whale_idle.png`，先做四边泛洪去背），
 // 只做整体呼吸 / 摆动 / 倾斜 / 翻转的程序化微动，**不做**骨块变形，所以永远是清晰的原画线条。
 let WHALE_RIGS = {};        // 姿势名 → 骨架（loadWhaleSprite 里现量）
 let CLAUDE_IMGS = {};       // 大小姐姿势名 → 图像
@@ -304,7 +304,7 @@ const SPRITE_FOOT_U = 0.30;  // 脚底相对 y 的偏移
 // ---------------------------------------------------------------------------
 // 2.2 姿势表 + 动作库（v4：把"只有一个站姿"补成和旧骨架一样多的动作）
 // ---------------------------------------------------------------------------
-// 9 张同角色立绘（`whale_girl_src/whale_*.png`，均由 make_sprite.mjs 抠底）：
+// 9 张同角色立绘（`engine/whale_rig/whale_*.png`，均由 make_sprite.mjs 抠底）：
 //   idle / wave / run / cry / shock / eat / point / think / cheer
 // 每个动作 = 姿势贴图 + 程序化变换（位移 / 倾斜 / 呼吸 / 跳跃 / squash / 镜像）。
 // 这样既保住原画清晰度，又不会像单张贴图那样"站着不动"。
@@ -2386,7 +2386,7 @@ const POSE_KEYS = {
   celebrate: 'dsh-whale-state-celebrate.webp',
   idle: 'dsh-whale-state-idle-cute.webp'
 };
-const SPRITE_DIR = path.resolve(__dirname, '../whale_girl_src');
+const SPRITE_DIR = path.resolve(__dirname, '../../engine/whale_rig');
 // 大小姐立绘：素材库 1024×1536 透明 PNG，直接用；骨架同一套量法
 async function loadClaudeSprite() {
   const DIR = path.join(__dirname, process.env.DAY3_CLAUDE_DIR || '../claude_src/chibi');
@@ -2418,7 +2418,7 @@ async function loadWhaleSprite() {
   const n = Object.keys(globalThis.WHALE_POSES).length;
   if (!n) {
     console.warn('⚠️ 没找到高清鲸鱼娘立绘，退回像素骨架：', SPRITE_DIR);
-    console.warn('   先跑：node ../whale_girl_src/make_sprite.mjs <源图> ../whale_girl_src/whale_<姿势>.png');
+    console.warn('   先跑：node ../../engine/whale_rig/make_sprite.mjs <源图> ../../engine/whale_rig/whale_<姿势>.png');
     return;
   }
   // 给每张立绘现量一副骨架（18×26 网格 / 10 骨），量不出来就退回整张图绘制

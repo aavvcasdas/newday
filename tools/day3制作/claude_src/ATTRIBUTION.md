@@ -43,5 +43,5 @@ Day3 样片里 L03–L16 的「Claude 大小姐」形象，从 v6 起改成**用
 ## 处理方式
 
 不重画、不调色、不改设计：直接用原图（透明底已就绪），只做**缩放与骨架绑定**。
-`tools/day3制作/whale_girl_src/whale_rig.mjs` 的骨架是「从 alpha 通道量」的通用实现，
+`tools/engine/whale_rig/whale_rig.mjs` 的骨架是「从 alpha 通道量」的通用实现，
 所以大小姐也能量出自己的 10 骨骨架，动作（点头/鞠躬/后仰/呼吸）与她共享同一套骨骼运动。

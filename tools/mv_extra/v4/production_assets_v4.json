@@ -21,7 +21,7 @@
     {
       "group": "whale",
       "file": "whale_idle.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_idle.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_idle.png",
       "gitBlobSha1": "e3f15d29e01d3e5306e1180faa3630cc71a58fbb",
       "sha256": "1a492e94e3db609e79391130faed220ba69e6fb9f8ccc15363fe5dfdd83381f6",
       "size": [
@@ -33,7 +33,7 @@
     {
       "group": "whale",
       "file": "whale_wave.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_wave.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_wave.png",
       "gitBlobSha1": "31ac9ffd66afd9fabbbc750a33a0241676dcf8aa",
       "sha256": "72f43b86e795634a2b44280d3d6bd85a7223ac971c32a978ac72c21dd346ecec",
       "size": [
@@ -45,7 +45,7 @@
     {
       "group": "whale",
       "file": "whale_walk_stand.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_stand.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_walk_stand.png",
       "gitBlobSha1": "46dd7f594491d18bd46f871f7116a8e434d2e873",
       "sha256": "59bc486d8c519321877dd1fd2c3a330ae31c08ee426202a2a094ff3dc15b15af",
       "size": [
@@ -57,7 +57,7 @@
     {
       "group": "whale",
       "file": "whale_walk_a.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_a.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_walk_a.png",
       "gitBlobSha1": "f9ce26d3a82874db34ae05feeeccf0c64b2032ee",
       "sha256": "91ac87b7e2f20373205aa87beb1473e25da2f46b77af7e848a554e914b0903b3",
       "size": [
@@ -69,7 +69,7 @@
     {
       "group": "whale",
       "file": "whale_walk_b.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_walk_b.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_walk_b.png",
       "gitBlobSha1": "37f9137b4569c1d63d49405b22f64e85bccf5727",
       "sha256": "947ba4c4e1014cd545a3e2ccad25eae5b24ca24c38c0f9f3ffd903dc717c9dc5",
       "size": [
@@ -81,7 +81,7 @@
     {
       "group": "whale",
       "file": "whale_run_a.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_run_a.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_run_a.png",
       "gitBlobSha1": "91c699ff16d2f851fb6a9cbb6d21e521c4c0b106",
       "sha256": "52da3cf61222858259588948bc47c231317b9ff8b60290cfdcb8e7d62f13ef43",
       "size": [
@@ -93,7 +93,7 @@
     {
       "group": "whale",
       "file": "whale_run_b.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_run_b.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_run_b.png",
       "gitBlobSha1": "6746765e32242fb1f381003ce40665041f72e0c6",
       "sha256": "3a9082030775b9caee4f157c420c8965977a6d92070cb163427de01d6ba526c8",
       "size": [
@@ -105,7 +105,7 @@
     {
       "group": "whale",
       "file": "whale_umbrella_stroll.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_umbrella_stroll.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_umbrella_stroll.png",
       "gitBlobSha1": "27a9f441feffb82410bd57825eb766e385907efb",
       "sha256": "aeccc4562222014d9081561d07e845e44d5efe31f365886caa302265c75b6226",
       "size": [
@@ -117,7 +117,7 @@
     {
       "group": "whale",
       "file": "whale_wake_stretch.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_wake_stretch.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_wake_stretch.png",
       "gitBlobSha1": "b53859c1a7121a62fc4f31d5e5eef9420c28c0ce",
       "sha256": "e25f8150cc22edc9f640e9ed9fa53422c31ea5e3a7ad3d8e596ea47739647b45",
       "size": [
@@ -129,7 +129,7 @@
     {
       "group": "whale",
       "file": "whale_cheer.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_cheer.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_cheer.png",
       "gitBlobSha1": "3b9bdcf2f539bac52b83f50c3fb6efc1e4e9ea86",
       "sha256": "c7649a8cac929475a17d6d1a03af4c8bc0c5c2148bbee1f4c694d6a39b4e4087",
       "size": [
@@ -141,7 +141,7 @@
     {
       "group": "whale",
       "file": "whale_jump_joy.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_jump_joy.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_jump_joy.png",
       "gitBlobSha1": "ff0bfc1e542ff59cd08e719815c241ebc5828794",
       "sha256": "ef5e9ff9b92a4d7feb037224ceae54bb05c4a0bd753d3e5c870842b161052c18",
       "size": [
@@ -153,7 +153,7 @@
     {
       "group": "whale",
       "file": "whale_sparkler_firework.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_sparkler_firework.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_sparkler_firework.png",
       "gitBlobSha1": "52a7190f0802da6df3a0de982f7df47006704a42",
       "sha256": "eea3c3b53b0cd0c4a9ec85fce43790c5ca256edb75c64cc3c537d3667075475a",
       "size": [
@@ -165,7 +165,7 @@
     {
       "group": "whale",
       "file": "whale_camera_shutter.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_camera_shutter.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_camera_shutter.png",
       "gitBlobSha1": "807a5cecc7a31dc55f53921b5ea9817823a1ffe5",
       "sha256": "765687dda39151f7c24bba9ddfc14e67181fd2ee566b0c611dc529a5e3b15af6",
       "size": [
@@ -177,7 +177,7 @@
     {
       "group": "whale",
       "file": "whale_rose_bouquet.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_rose_bouquet.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_rose_bouquet.png",
       "gitBlobSha1": "2f69183a2a405d0b804e98b3c7515e41b47ae2a7",
       "sha256": "76ad366c4a2bb1602cf914d57957e3edbdf16a34316cecdb19c98cb90f624d03",
       "size": [
@@ -189,7 +189,7 @@
     {
       "group": "whale",
       "file": "whale_tail_wag_dance.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_tail_wag_dance.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_tail_wag_dance.png",
       "gitBlobSha1": "1321af362e545faaa73edf64b4d3463c2a29a6be",
       "sha256": "471d3e3aa2f9a9c2b722748fe5ec7a39017a94715b1760bf77815687a28b3c66",
       "size": [
@@ -201,7 +201,7 @@
     {
       "group": "whale",
       "file": "whale_confident_hips.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_confident_hips.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_confident_hips.png",
       "gitBlobSha1": "8321d8fcd91562dac4d58d4923d560d084bd2d20",
       "sha256": "92f1e92913cc2659dda6cf89f82a1a94f5ab43db4b358e5195487fdde88adfe7",
       "size": [
@@ -213,7 +213,7 @@
     {
       "group": "whale",
       "file": "whale_point.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_point.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_point.png",
       "gitBlobSha1": "b134ea1681ccdd53d85fb2aadc792b49f71ec097",
       "sha256": "af80f7bf6f56279bd3f32c5f924e596b2ac5b3bf2986af451f13a2656dc77dc4",
       "size": [
@@ -225,7 +225,7 @@
     {
       "group": "whale",
       "file": "whale_think.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_think.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_think.png",
       "gitBlobSha1": "6c986c4e93ed1a55cf948bed0407bbe9fc108ec1",
       "sha256": "52008f7cdcc4529efd526211d829083f776bf626f9fe6fddaec8b0e1ea1301c1",
       "size": [
@@ -237,7 +237,7 @@
     {
       "group": "whale",
       "file": "whale_shock.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_shock.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_shock.png",
       "gitBlobSha1": "f8b454cc77babf0012feca13d476b8248f750196",
       "sha256": "6b80f05eaf20172b11d98ce2779288a8b322f85156120cfade49dfc705bfb14d",
       "size": [
@@ -249,7 +249,7 @@
     {
       "group": "whale",
       "file": "whale_shy_fidget.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_shy_fidget.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_shy_fidget.png",
       "gitBlobSha1": "1f16bfe60c2713b60704119d1e4608c6a4137d1c",
       "sha256": "183bb56ddd44c9b61ad49828c2cef3e1060b8d151baa44c55d100aa558af4388",
       "size": [
@@ -261,7 +261,7 @@
     {
       "group": "whale",
       "file": "whale_ciallo_wink.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_ciallo_wink.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_ciallo_wink.png",
       "gitBlobSha1": "f0b703b797fbd9e68b8ff53a6080e0e4cd92722e",
       "sha256": "4127c64d15a443700178a600c260cfdc859e10a1152caaff9e3ac27784780007",
       "size": [
@@ -273,7 +273,7 @@
     {
       "group": "whale",
       "file": "whale_peek_curious.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_peek_curious.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_peek_curious.png",
       "gitBlobSha1": "034225142a997e597974c0f4840aef241a0cf4ac",
       "sha256": "7cae534817934a5152604ef9614091d45023f570858a8ba11cc8876930121bb5",
       "size": [
@@ -285,7 +285,7 @@
     {
       "group": "whale",
       "file": "whale_idol_mic_sing.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_idol_mic_sing.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_idol_mic_sing.png",
       "gitBlobSha1": "5f9e97cb039a2e34cfbdb49b46dd16ea064938f2",
       "sha256": "ccd188b25c9a4891fc688d3538ce6735de16349aacdd515600267c57e850afe4",
       "size": [
@@ -297,7 +297,7 @@
     {
       "group": "whale",
       "file": "whale_playful_fists.png",
-      "upstreamPath": "tools/day3制作/whale_girl_src/whale_playful_fists.png",
+      "upstreamPath": "tools/engine/whale_rig/whale_playful_fists.png",
       "gitBlobSha1": "541f196140219961d7bc3eb8c585ab78dd006542",
       "sha256": "22499d20d4520f058c72e2e27bbbd0648608a6f035d2278eb07c578dec54f3b4",
       "size": [
