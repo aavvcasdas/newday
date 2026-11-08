@@ -146,3 +146,12 @@ node tools/remotion-engine/walk_preview.mjs --port 8099
 `source/*.png` 为本轮由 AI 图像生成、按各角色既有设定重新绘制的**侧 3/4 全身立绘**
 （挺背直立、双腿可见、白底），不是上游 pets 仓库的 PNG/GIF，也不含其美术文件。
 上游仓库仅作为**帧数、节拍、图集布局**的规格参考。
+
+## 白边（2026-11-08 修）
+
+成片里角色剪影外面那圈亮边有两个来源，都已修掉：
+
+1. **素材**：白底生成图抠 alpha 时最外一圈混着白底。现在 `slice_walk_sheet.py` 会把最外 2 像素的**颜色**换成里层颜色（不是只给 alpha 坡），已有帧用 `tools/remotion-engine/defringe_frames.py` 补一次。
+2. **缩放**：`PIL.resize()` 对 RGBA 四通道各自插值，透明像素的白色会被插进边缘 —— 素材干净、成片却有白边就是这一半。渲染器统一走 `frame_utils.resize_rgba()`（预乘 → 缩放 → 反预乘）。
+
+判据：`frames/<char>/f1.png` 放大 4 倍看不到白边，`preview/walk_all9.mp4` 里同样看不到。

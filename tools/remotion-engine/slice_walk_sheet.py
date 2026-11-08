@@ -167,35 +167,103 @@ def background_mask(rgb, white=WHITE):
         bg = nb
 
 
-def white_to_alpha(piece, inside=None, white=WHITE, soft=22.0):
-    """白底 → 透明，并把边缘那一圈被白底"冲淡"的颜色还原回来。
+def _band_distance(inside, steps=2):
+    """每个像素离背景有多远（像素数）。背景=0，人物边缘=1、2、…，更里层记 steps+1。"""
+    d = np.zeros(inside.shape, np.int16)
+    cur = ~inside
+    for k in range(1, steps + 1):
+        grow = cur.copy()
+        grow[1:, :] |= cur[:-1, :]
+        grow[:-1, :] |= cur[1:, :]
+        grow[:, 1:] |= cur[:, :-1]
+        grow[:, :-1] |= cur[:, 1:]
+        d[grow & ~cur] = k
+        cur = grow
+    d[inside & (d == 0)] = steps + 1
+    return d
+
+
+def _box_mean(arr, mask, r):
+    """在 mask 内做 (2r+1)² 的均值，返回 (mean, 有效像素数)。用积分图，不依赖 scipy。"""
+    a = (arr * mask[..., None]).astype(np.float64)
+    w = mask.astype(np.float64)
+    h_img, w_img = mask.shape
+    pad = r + 1
+
+    def integral(x):
+        ii = np.zeros((x.shape[0] + 1, x.shape[1] + 1) + x.shape[2:], np.float64)
+        ii[1:, 1:] = x.cumsum(0).cumsum(1)
+        return ii
+
+    def window(ii):
+        # 越界用边缘复制，避免 r 大于图像尺寸时越界
+        y0 = np.clip(np.arange(h_img) - r, 0, h_img)
+        y1 = np.clip(np.arange(h_img) + r + 1, 0, h_img)
+        x0 = np.clip(np.arange(w_img) - r, 0, w_img)
+        x1 = np.clip(np.arange(w_img) + r + 1, 0, w_img)
+        return (ii[np.ix_(y1, x1)] - ii[np.ix_(y0, x1)]
+                - ii[np.ix_(y1, x0)] + ii[np.ix_(y0, x0)])
+
+    num = window(integral(a))
+    den = window(integral(w))
+    mean = np.where(den[..., None] > 0, num / np.maximum(den, 1e-6)[..., None], 0.0)
+    return mean, den
+
+def white_to_alpha(piece, inside=None, white=WHITE, soft=22.0, band=2, color_radius=2):
+    """白底 → 透明，并且把边缘那一圈"被白底冲淡"的颜色换成里层颜色。
 
     直接二值抠白（min(rgb)<250 ? 不透明 : 透明）会把抗锯齿边缘整圈留成**白边**：
-    边缘像素本来是"人物色 × 白底"的混合，二值化之后它就变成一圈纯白，
-    贴在深色背景上就是明显的白轮廓。
+    边缘像素本来是"人物色 × 白底"的混合，二值化之后它就变成一圈浅色，贴在深色
+    舞台上就是明显的白轮廓。早先只做"紧邻背景一圈给 alpha 坡 + 反预乘"，但
+    斜坡判据是 (255-min(rgb))/22，只要像素稍暗就算满不透明，实际上还是二值，
+    颜色也只是把白减掉一半 —— 深色角色（鲸娘/龙娘的黑裙子）边上照样一条亮线。
 
-    做法：
-      1. 只有"紧邻背景"的那一圈按亮度给 alpha 坡（保留抗锯齿）；
-      2. 这一圈做**反预乘** C = (P - (1-a)·255) / a，把白底成分减掉；
-      3. 内部像素 alpha 恒为 255，颜色不动。
+    现在的做法（合成上的标准 defringe）：
+      1. 算出每个像素离背景几像素（dist）；
+      2. dist 1..band 的像素，颜色**直接取里层 dist>band 的平均色**（颜色去污）；
+         找不到里层像素（极细的发丝尖）就保持原色，不硬换；
+      3. 这一圈的 alpha 用**反混合**求：P = a·C + (1-a)·255 ⇒ a = (255-P)/(255-C)，
+         逐通道求再取中位数（只统计 255-C>25 的通道，浅色衣服自动跳过）；
+      4. 里层像素 alpha 恒为 255、颜色不动。
+    这样最外一圈又软又没有白，剪影也不会被"吃"掉一整像素。
     """
     rgb = piece.astype(np.float32)
-    mn = rgb.min(axis=2)
     if inside is None:
-        inside = mn < white
-    nbr = np.ones_like(inside)
-    nbr[1:, :] &= inside[:-1, :]
-    nbr[:-1, :] &= inside[1:, :]
-    nbr[:, 1:] &= inside[:, :-1]
-    nbr[:, :-1] &= inside[:, 1:]
-    edge = inside & ~nbr
-    a = np.where(edge, np.clip((white - mn) / soft, 0.0, 1.0), 1.0)
-    a[~inside] = 0.0
-    aa = a[..., None]
+        inside = rgb.min(axis=2) < white
+    dist = _band_distance(inside, steps=band)
+
+    # 里层颜色（dist > band），找不到就退回到更大掩码的均值
+    inner = dist > band
+    C, den = _box_mean(rgb, inner, r=color_radius)
+    if (den == 0).any():
+        C2, den2 = _box_mean(rgb, inside, r=color_radius + 2)
+        C = np.where((den > 0)[..., None], C, C2)
+        den = np.where(den > 0, den, den2)
+
+    edge = inside & (dist <= band)
+    has_c = edge & (den > 0)
+
+    # 反混合求 alpha：只用 (255-C) 够大的通道，避免浅色（接近白）的衣服解出噪声
+    d_ch = 255.0 - C
+    usable = d_ch > 25.0
     with np.errstate(divide='ignore', invalid='ignore'):
-        c = (rgb - (1.0 - aa) * 255.0) / np.maximum(aa, 1e-3)
-    c = np.where(inside[..., None], np.clip(c, 0.0, 255.0), 255.0)
-    return c.astype(np.uint8), (a * 255.0).astype(np.uint8)
+        a_ch = (255.0 - rgb) / np.where(usable, d_ch, 1.0)
+    a_ch = np.where(usable, a_ch, np.nan)
+    order = np.argsort(np.where(np.isnan(a_ch), 2.0, a_ch), axis=2)
+    a_sorted = np.take_along_axis(a_ch, order, axis=2)
+    n_usable = usable.sum(axis=2)
+    mid = np.clip((n_usable - 1) // 2, 0, 2)
+    a_est = np.take_along_axis(a_sorted, mid[..., None], axis=2)[..., 0]
+    a_est = np.where(n_usable > 0, a_est, 1.0)
+    a_est = np.clip(np.nan_to_num(a_est, nan=1.0), 0.0, 1.0)
+
+    # 只在这一圈用新 alpha；里层 1.0，背景 0.0
+    a = np.where(has_c, a_est, np.where(edge, 0.55, 1.0))
+    a[~inside] = 0.0
+
+    out = np.where(has_c[..., None], C, rgb)
+    out = np.where(inside[..., None], out, 255.0)
+    return np.clip(out, 0, 255).astype(np.uint8), (a * 255.0).astype(np.uint8)
 
 
 def keep_main_components(mask, frac=0.03, min_px=20):

@@ -21,6 +21,8 @@ import sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
+from frame_utils import resize_rgba  # 预乘缩放，避免白边
+
 try:
     import imageio_ffmpeg
 except ImportError:  # pragma: no cover
@@ -127,7 +129,7 @@ class Atlas:
             bb = im.getbbox()
             art = im.crop(bb)
             w = max(1, int(round(art.width * height / float(art.height))))
-            art = art.resize((w, height), Image.LANCZOS)
+            art = resize_rgba(art, (w, height), Image.LANCZOS)
             g = meta.get('f%d' % (i + 1), {}).get('groundY')
             feet = height
             if isinstance(g, (int, float)) and bb[1] <= g <= bb[3]:
@@ -193,7 +195,7 @@ def grid_frames(frames, names, atlases):
             src, feet = atlases[n].cells[fi]
             hh = int(chh * 0.84)
             ww = max(1, int(round(src.width * hh / float(src.height))))
-            im = src.resize((ww, hh), Image.LANCZOS)
+            im = resize_rgba(src, (ww, hh), Image.LANCZOS)
             board.paste(im, (cx + (cw - ww) // 2, int(round(g - feet * hh / float(src.height)))), im)
             d.text((cx + 10, cy + 8), n, fill=(120, 160, 210), font=lab)
         frames.append(board)

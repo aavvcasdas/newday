@@ -96,6 +96,11 @@ def load_cells(atlas_name):
     return cells
 
 
+def resize_rgba(im, size, resample=Image.LANCZOS):
+    from frame_utils import resize_rgba as _r
+    return _r(im, size, resample)
+
+
 def clean_alpha(im):
     """抗锯齿残留的极低 alpha 像素会在夜色背景上糊出一整块淡色矩形，先清干净。"""
     r, g, b, a = im.split()
@@ -107,7 +112,7 @@ def clean_alpha(im):
 def scaled(cell, bbox, height):
     ch = cell.crop(bbox)
     w = max(1, int(round(ch.width * height / float(h_art(bbox)))))
-    return ch.resize((w, int(round(height))), Image.LANCZOS)
+    return resize_rgba(ch, (w, int(round(height))), Image.LANCZOS)
 
 
 def h_art(bbox):
@@ -150,7 +155,7 @@ def render_gif(char, atlas_name):
 
     # GIF 固定回 640×400（--scale 只放大 APNG / 条带，GIF 保持小体积）
     if SCALE != 1:
-        frames = [f.resize((BASE_W, BASE_H), Image.LANCZOS) for f in frames]
+        frames = [resize_rgba(f, (BASE_W, BASE_H), Image.LANCZOS) for f in frames]
     # 统一调色板（所有帧共用一张表）+ 无抖动：GIF 帧间差异小，体积能小一个量级。
     # 调色板必须从"含角色的若干帧"里取，否则角色的浅色会被吸进夜色背景里。
     montage = Image.new('RGB', (BASE_W, BASE_H * 4))
@@ -243,7 +248,7 @@ def render_all_stage(names, cell_w=260, cell_h=282):
             ch = cell.crop(bbox)
             hh = int(cell_h * 0.66)
             ww = max(1, int(round(ch.width * hh / float(ch.height))))
-            ch = ch.resize((ww, hh), Image.LANCZOS)
+            ch = resize_rgba(ch, (ww, hh), Image.LANCZOS)
             x = cx + x0 + (x1 - x0) * p2
             board.paste(ch, (int(round(x - ww / 2)), g - hh), ch)
             d.text((cx + 4, cy + 2), n, fill=(120, 160, 210), font=lab)
@@ -310,7 +315,7 @@ def render_sheet(entries):
         gif = Image.open(gif_path)
         gif.seek(3)  # 第 4 帧：双腿分开最明显
         thumb = gif.convert('RGB').crop((0, top, STAGE_W, GROUND_Y + 26))
-        thumb = thumb.resize((tw, th), Image.LANCZOS)
+        thumb = resize_rgba(thumb, (tw, th), Image.LANCZOS)
         cx = (idx % cols) * tw
         cy = (idx // cols) * (th + 20)
         sheet.paste(thumb, (cx, cy + 20))

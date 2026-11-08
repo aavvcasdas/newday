@@ -84,7 +84,7 @@ export const ATLAS_CONTENT = Object.freeze({
   "whale_walk_happy_2leg": {"topFrac":0.0769,"bottomFrac":0.976,"leftFrac":0.1172,"rightFrac":0.8802,"cols":8},
   "whale_walk_retry_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.1146,"rightFrac":0.8828,"cols":16},
   "whale_walk_sad_2leg": {"topFrac":0.0769,"bottomFrac":0.976,"leftFrac":0.1172,"rightFrac":0.8802,"cols":8},
-  "whale_walk_side_2leg": {"topFrac":0.0817,"bottomFrac":0.9808,"leftFrac":0,"rightFrac":0.9974,"cols":8},
+  "whale_walk_side_2leg": {"topFrac":0.0841,"bottomFrac":0.976,"leftFrac":0,"rightFrac":0.9974,"cols":8},
   "whale_wipe_tear_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.0443,"rightFrac":0.9505,"cols":16},
   "zai_clock_action": {"topFrac":0.1418,"bottomFrac":0.9736,"leftFrac":0.026,"rightFrac":0.9714,"cols":16},
   "zai_idle_pet": {"topFrac":0.113,"bottomFrac":0.9423,"leftFrac":0.0156,"rightFrac":0.9609,"cols":8},
