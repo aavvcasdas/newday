@@ -14,6 +14,21 @@ from media_common import read_json, validate_timing, probe
 STAGES=['script','audio','pre-render','final']
 
 
+def find_prev_script(day):
+    """上一集的锁定口播。
+
+    标准文件名是 `DayN/DayN配音台词.txt`。但 Day13 的锁定稿是由用户确认后
+    另存的 `Day13配音台词_用户版.txt`（原候选稿仍留作历史，不是配音来源），
+    所以这里按「标准名优先、用户确认版次之」回退，避免为了过门禁而复制一份
+    同名文件，制造两个互相矛盾的锁定稿。
+    """
+    base=ROOT/f'Day{day}'
+    for name in (f'Day{day}配音台词.txt',f'Day{day}配音台词_用户版.txt'):
+        candidate=base/name
+        if candidate.is_file(): return candidate
+    return None
+
+
 def build_paths(day,config):
     cfg=read_json(config)
     for k in ['script','voice','alignment','subs','renderer','video','tests']:
@@ -56,9 +71,10 @@ def main():
         try:
             if stage=='script':
                 if args.day >= 12:
-                    prev = ROOT / f'Day{args.day - 1}' / f'Day{args.day - 1}配音台词.txt'
-                    if not prev.is_file():
-                        raise ValueError(f'缺上一集锁定口播：{prev}')
+                    prev = find_prev_script(args.day - 1)
+                    if prev is None:
+                        raise ValueError(f'缺上一集锁定口播：Day{args.day - 1}/Day{args.day - 1}配音台词.txt')
+                    print(f'[剧情承接] 上一集锁定口播：{prev.relative_to(ROOT)}')
                     cmd = [py, ROOT/'tools/剧本/剧情.py', '--txt', paths['script'], '--prev', prev]
                     if cfg.get('guest'):
                         cmd += ['--guest', cfg['guest']]

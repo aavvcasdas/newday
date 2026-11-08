@@ -1,0 +1,101 @@
+{
+  "measured": false,
+  "scope": "engine coordinates only; not a decoded-frame or hand-contact verification",
+  "coordinateSpace": "1280x720 viewBox (same as Day13 scenes)",
+  "stage": {
+    "whale": {
+      "x": 620,
+      "groundY": 610,
+      "height": 395
+    },
+    "doubao": {
+      "x": 870,
+      "groundY": 610,
+      "height": 370
+    },
+    "umbrella": {
+      "cx": 620,
+      "rimY": 176,
+      "halfWidth": 170,
+      "tiltDeg": -8
+    },
+    "caneX": 790
+  },
+  "derived": {
+    "whaleHeadTopY": 220.14,
+    "whaleHeadLeftX": 501.5,
+    "whaleHeadRightX": 738.5,
+    "canopyLeftX": 451.65,
+    "canopyRightX": 788.35,
+    "clearanceAboveHeadMinPx": 3.98,
+    "clearanceAboveHeadMaxPx": 36.97,
+    "clearanceSamples": [
+      {
+        "x": 501.5,
+        "rimY": 216.15,
+        "clearancePx": 3.98
+      },
+      {
+        "x": 531.13,
+        "rimY": 212.03,
+        "clearancePx": 8.11
+      },
+      {
+        "x": 560.75,
+        "rimY": 207.91,
+        "clearancePx": 12.23
+      },
+      {
+        "x": 590.38,
+        "rimY": 203.78,
+        "clearancePx": 16.35
+      },
+      {
+        "x": 620,
+        "rimY": 199.66,
+        "clearancePx": 20.48
+      },
+      {
+        "x": 649.63,
+        "rimY": 195.54,
+        "clearancePx": 24.6
+      },
+      {
+        "x": 679.25,
+        "rimY": 191.41,
+        "clearancePx": 28.72
+      },
+      {
+        "x": 708.88,
+        "rimY": 187.29,
+        "clearancePx": 32.84
+      },
+      {
+        "x": 738.5,
+        "rimY": 183.17,
+        "clearancePx": 36.97
+      }
+    ]
+  },
+  "checks": {
+    "horizontallyCovered": {
+      "pass": true,
+      "need": "鲸娘头部左右界都在伞面投影内"
+    },
+    "verticallyReasonable": {
+      "pass": true,
+      "need": "沿头顶整段宽度逐点采样，净空都落在 2–40px"
+    },
+    "caneReachesDoubao": {
+      "pass": true,
+      "need": "伞柄在豆包伸手可及范围内"
+    }
+  },
+  "passesGeometry": true,
+  "caveats": [
+    "头顶留白与头部半宽取自立绘实测比例，不是逐帧像素扫描",
+    "伞是代码绘制的圆弧，没有伞柄与手掌的接触数据",
+    "caneReachesDoubao 只算距离，不代表手掌真的落在柄上",
+    "通过本检查只代表构图数据无缝隙，不代表成片已获验收"
+  ]
+}
