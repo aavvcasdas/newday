@@ -567,7 +567,7 @@ export default {
           ],
           atlases: [
             { at: 24.82, atlas: 'whale_walk_side_2leg', flip: true, cycle: 0.96, treadmillSpeed: 135 },
-            { at: 27.45, atlas: 'whale_seat_side_bench', cycle: 1.5, flip: true, emote: 'sparkle' },
+            { at: 27.45, atlas: 'whale_idle_side_pet', cycle: 1.35, flip: true, emote: 'sparkle' },
           ],
         },
       ],

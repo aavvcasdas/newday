@@ -33,15 +33,18 @@ export const SOURCE_DIR = path.join(ART_DIR, 'source');
 const clamp = (v, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
 
 // 每位角色的下半身切分参数（384×416 单元格坐标；hemY 为裙摆/裤脚分界线）
+// stride = 步幅系数（1 = 常规步幅；<1 走路更收敛，比如双手推山是"压低重心往前挪"）
 export const WALK_CHAR_SPECS = {
-  whale: { source: 'whale.png', hemY: 344, legHalf: 44, stride: 1.0, mode: 'split' },
-  gpt: { source: 'gpt.png', hemY: 360, legHalf: 32, stride: 1.0, mode: 'split' },
-  gemini: { source: 'gemini.png', hemY: 330, legHalf: 46, stride: 1.0, mode: 'block' },
-  claude: { source: 'claude.png', hemY: 336, legHalf: 46, stride: 1.05, mode: 'split' },
-  kimi: { source: 'kimi.png', hemY: 300, legHalf: 42, stride: 1.0, mode: 'split' },
-  qwen: { source: 'qwen.png', hemY: 348, legHalf: 40, stride: 0.9, mode: 'block' },
-  zai: { source: 'zai.png', hemY: 340, legHalf: 44, stride: 1.0, mode: 'block' },
-  doubao: { source: 'doubao.png', hemY: 252, legHalf: 56, stride: 1.1, mode: 'block' },
+  whale: { source: 'whale.png', hemY: 344, legHalf: 44, stride: 1.0 },
+  gpt: { source: 'gpt.png', hemY: 360, legHalf: 32, stride: 1.0 },
+  gemini: { source: 'gemini.png', hemY: 330, legHalf: 46, stride: 1.0 },
+  claude: { source: 'claude.png', hemY: 336, legHalf: 46, stride: 1.05 },
+  kimi: { source: 'kimi.png', hemY: 300, legHalf: 42, stride: 1.0 },
+  qwen: { source: 'qwen.png', hemY: 348, legHalf: 40, stride: 0.9 },
+  zai: { source: 'zai.png', hemY: 340, legHalf: 44, stride: 1.0 },
+  doubao: { source: 'doubao.png', hemY: 252, legHalf: 56, stride: 1.1 },
+  // 双手推山（用力推）专用立绘：低重心、两腿前后蹬地，走"慢速发力"节奏
+  gpt_push: { source: 'gpt_push.png', hemY: 330, legHalf: 40, stride: 0.8 },
 };
 
 // ---------------------------------------------------------------------------
@@ -56,11 +59,13 @@ function cutoutWhite(img) {
   const im = g.getImageData(0, 0, w, h);
   const d = im.data;
 
+  // 背景是纯白 ~255；立绘里的白裙子常在 240~252，阈值放太低会把裙摆当成背景吃掉
+  // （表现就是裙子变成半透明、腿层透出来变成灰色方块）。这里只吃"贴着纯白"的像素。
   const isBg = (i) => {
     const r = d[i], gr = d[i + 1], b = d[i + 2];
     const mx = Math.max(r, gr, b);
     const mn = Math.min(r, gr, b);
-    return mn >= 194 && mx - mn <= 28;
+    return mn >= 241 && mx - mn <= 10;
   };
 
   const seen = new Uint8Array(w * h);
@@ -90,9 +95,15 @@ function cutoutWhite(img) {
         const r = d[i], gr = d[i + 1], b = d[i + 2];
         const mx = Math.max(r, gr, b);
         const mn = Math.min(r, gr, b);
-        if (mn > 206 && mx - mn < 24) d[i + 3] = Math.round(d[i + 3] * 0.4);
+        if (mn > 228 && mx - mn < 16) d[i + 3] = Math.round(d[i + 3] * 0.45);
       }
     }
+  }
+  // 抗锯齿残留（alpha 1~48）铺满整张画布时，引擎里会显示成一整片淡色方块：
+  // 48 以下直接清零，200 以上钉回实心，中间只保留真正的软边。
+  for (let i = 3; i < d.length; i += 4) {
+    if (d[i] < 48) d[i] = 0;
+    else if (d[i] > 200) d[i] = 255;
   }
   g.putImageData(im, 0, 0);
   return c;
@@ -162,13 +173,22 @@ function splitLayers(cell, cfg) {
   }
   const half = Math.min(96, autoHalf);
 
-  // 劈分点：两腿之间的"山谷"列（腿间最空的竖列），而不是简单的重心中线。
-  // 正面/侧 3/4 站立时两腿常常贴得很近，按重心中线劈开会把每条腿各切成两半。
-  let splitX = cx;
+  // 脚踝带（GROUND_Y-30 .. GROUND_Y-2）里腿像素的左右外沿，用来把劈分扫描限制在腿内部。
+  // 老版本在 cx±scan 里找"最空的一列"，经常直接选到腿外侧的空白列：结果一条腿吃掉全部像素、
+  // 另一条腿是空的，播出来就是"单腿顺拐滑步"（这是 v14 走路像滑行的真正原因）。
+  let legLo = CELL_W, legHi = -1;
+  for (let y = GROUND_Y - 30; y < GROUND_Y - 2; y++) {
+    for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
+      if (A(x, y) > 24) { if (x < legLo) legLo = x; if (x > legHi) legHi = x; }
+    }
+  }
+  if (legHi < 0) { legLo = cx - 20; legHi = cx + 20; }
+
+  // 劈分点：两条腿之间的"山谷"列，只在腿内部搜（留 6px 余量，避免劈到腿的外沿）
+  let splitX = Math.round((legLo + legHi) / 2);
   let bestCount = Infinity;
-  const scan = Math.max(6, Math.round(half * 0.6));
-  for (let x = cx - scan; x <= cx + scan; x++) {
-    if (x < 0 || x >= CELL_W) continue;
+  for (let x = legLo + 6; x <= legHi - 6; x++) {
+    if (x < 1 || x >= CELL_W - 1) continue;
     let count = 0;
     for (let y = cfg.hemY; y < GROUND_Y; y++) {
       if (A(x, y) > 24) count++;
@@ -181,8 +201,11 @@ function splitLayers(cell, cfg) {
     const r = d[i], g2 = d[i + 1], b = d[i + 2];
     return b > r + 34 && b > 118;
   };
+  // 腿层上边界：裙摆下沿再往下一点。裙摆底部那几行常常是阴影/衬里，
+  // 跟着腿一起旋转就会变成一块"浮空的深色方块"，所以把它们留给上半身，钉在原地。
+  const legTop = cfg.legTop != null ? cfg.legTop : Math.min(GROUND_Y - 8, cfg.hemY + 10);
   const isLegPixel = (x, y) => {
-    if (y < cfg.hemY || y >= CELL_H) return false;
+    if (y < legTop || y >= CELL_H) return false;
     if (Math.abs(x - cx) > half) return false;
     if (A(x, y) <= 24) return false;
     if (isTailLike(x, y)) return false;
@@ -195,7 +218,7 @@ function splitLayers(cell, cfg) {
   ug.drawImage(cell, 0, 0);
   const uim = ug.getImageData(0, 0, CELL_W, CELL_H);
   const legPix = new Uint8Array(CELL_W * CELL_H);
-  for (let y = cfg.hemY; y < CELL_H; y++) {
+  for (let y = legTop; y < CELL_H; y++) {
     for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
       if (!isLegPixel(x, y)) continue;
       legPix[y * CELL_W + x] = 1;
@@ -204,15 +227,66 @@ function splitLayers(cell, cfg) {
   }
   ug.putImageData(uim, 0, 0);
 
-  const buildLeg = (side) => {
+  // 后腿压暗：侧视图里后腿本来就该比前腿暗一档，不然两条腿叠在一起分不清
+  const darken = (src, k = 0.82) => {
+    const c = createCanvas(CELL_W, CELL_H);
+    const tg = c.getContext('2d');
+    tg.drawImage(src, 0, 0);
+    const tim = tg.getImageData(0, 0, CELL_W, CELL_H);
+    for (let i = 0; i < tim.data.length; i += 4) {
+      if (tim.data[i + 3] === 0) continue;
+      tim.data[i] = Math.round(tim.data[i] * k);
+      tim.data[i + 1] = Math.round(tim.data[i + 1] * k);
+      tim.data[i + 2] = Math.round(tim.data[i + 2] * k * 1.03);
+    }
+    tg.putImageData(tim, 0, 0);
+    return c;
+  };
+
+  // 单腿提取：取"前侧那条腿"的列切片，后腿用同一份复制（压暗），
+  // 侧视图里两腿横向重叠时也能保证画面里始终是两条腿在反相迈步。
+  const cols = new Array(CELL_W).fill(0);
+  for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
+    let c = 0;
+    for (let y = GROUND_Y - 34; y < GROUND_Y - 2; y++) if (legPix[y * CELL_W + x]) c++;
+    cols[x] = c;
+  }
+  const runs = [];
+  let runStart = null;
+  for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
+    if (cols[x] > 0) {
+      if (runStart === null) runStart = x;
+    } else if (runStart !== null) {
+      if (x - runStart >= 4) runs.push([runStart, x - 1]);
+      runStart = null;
+    }
+  }
+  if (runStart !== null) runs.push([runStart, Math.min(CELL_W - 1, cx + half)]);
+
+  let sliceLo, sliceHi;
+  if (runs.length >= 2) {
+    // 两条腿在画面上是分开的：最靠前（右）的那一段就是前腿
+    [sliceLo, sliceHi] = runs[runs.length - 1];
+  } else {
+    // 两腿在画面上粘成一片（侧视角下后腿被前腿挡住）：按 0.6 宽度从最前缘切一条腿
+    const r = runs[0] || [cx - Math.round(half * 0.5), cx + Math.round(half * 0.5)];
+    sliceHi = r[1];
+    sliceLo = r[0] + Math.round((r[1] - r[0] + 1) * 0.4);
+  }
+  // 单腿上限定宽：并腿立绘（长裤/贴身长袜）切出来可能是"两条腿粘一起"的宽块，
+  // 直接复制会变成四条腿，所以按前缘保留一条腿的宽度。
+  const MAX_LEG_W = 66;
+  if (sliceHi - sliceLo + 1 > MAX_LEG_W) sliceLo = sliceHi - MAX_LEG_W + 1;
+  sliceLo = Math.max(0, sliceLo - 2);
+  sliceHi = Math.min(CELL_W - 1, sliceHi + 2);
+
+  const buildLegSlice = () => {
     const c = createCanvas(CELL_W, CELL_H);
     const lg = c.getContext('2d');
     const lim = lg.createImageData(CELL_W, CELL_H);
-    for (let y = cfg.hemY; y < CELL_H; y++) {
-      for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
+    for (let y = legTop; y < CELL_H; y++) {
+      for (let x = sliceLo; x <= sliceHi; x++) {
         if (!legPix[y * CELL_W + x]) continue;
-        const isNearSide = side === 'R' ? x >= splitX : x < splitX;
-        if (!isNearSide) continue;
         const i = (y * CELL_W + x) * 4;
         lim.data[i] = d[i];
         lim.data[i + 1] = d[i + 1];
@@ -223,82 +297,65 @@ function splitLayers(cell, cfg) {
     lg.putImageData(lim, 0, 0);
     return c;
   };
-
-  const tint = (src) => {
-    const c = createCanvas(CELL_W, CELL_H);
-    const tg = c.getContext('2d');
-    tg.drawImage(src, 0, 0);
-    const tim = tg.getImageData(0, 0, CELL_W, CELL_H);
-    for (let i = 0; i < tim.data.length; i += 4) {
-      if (tim.data[i + 3] === 0) continue;
-      tim.data[i] = Math.round(tim.data[i] * 0.93);
-      tim.data[i + 1] = Math.round(tim.data[i + 1] * 0.94);
-      tim.data[i + 2] = Math.round(tim.data[i + 2] * 0.99);
-    }
-    tg.putImageData(tim, 0, 0);
-    return c;
+  const legSlice = buildLegSlice();
+  const hipY = cfg.hemY - 10;
+  return {
+    upper,                          // 上身（已剔除腿部像素）
+    legFar: darken(legSlice),       // 后腿：压暗，先画
+    legNear: legSlice,              // 前腿：原色，后画
+    cx,
+    hipX: Math.round((sliceLo + sliceHi) / 2),
+    hipY,
+    legTop,
+    legLen: GROUND_Y - hipY,
+    slice: [sliceLo, sliceHi],
+    runs: runs.length,
   };
-
-  if (cfg.mode === 'block') {
-    // 双腿在立绘里本来就并在一起（长裤/贴身长袜）时，硬劈开会露出空洞。
-    // 改为整块下半身斜切(shear)摆动：支点在髋部，剪切不会产生缝隙，读感是 chibi 小碎步。
-    const block = createCanvas(CELL_W, CELL_H);
-    const bg2 = block.getContext('2d');
-    const bim = bg2.createImageData(CELL_W, CELL_H);
-    for (let y = cfg.hemY; y < CELL_H; y++) {
-      for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
-        if (!legPix[y * CELL_W + x]) continue;
-        const i = (y * CELL_W + x) * 4;
-        bim.data[i] = d[i];
-        bim.data[i + 1] = d[i + 1];
-        bim.data[i + 2] = d[i + 2];
-        bim.data[i + 3] = d[i + 3];
-      }
-    }
-    bg2.putImageData(bim, 0, 0);
-    const empty = createCanvas(CELL_W, CELL_H);
-    return { upper, legL: block, legR: empty, cx, splitX, hemY: cfg.hemY, mode: 'block' };
-  }
-  return { upper, legL: tint(buildLeg('L')), legR: buildLeg('R'), cx, splitX, hemY: cfg.hemY, mode: 'split' };
 }
 
 // ---------------------------------------------------------------------------
-// 3. 8 帧步态表：左右腿 180° 反相
+// 3. 8 帧步态表：两条腿严格 180° 反相，绕髋关节做刚性旋转（不缩放、不拉伸像素）
 // ---------------------------------------------------------------------------
 export function walkPhase(frame) {
   return ((frame % WALK_FRAMES) + WALK_FRAMES) % WALK_FRAMES;
 }
 
+const PEAK_TILT = 0.30; // 最大摆角系数（弧度）：0.30 × stride ≈ 17°
+
 /**
- * 单腿姿态：
- *   lift  抬脚高度(px)
- *   swing 水平前后摆(px，正 = 朝面向方向)
- *   toe   脚掌微转(deg)
+ * 单腿姿态（全部绕髋关节，纯旋转 + 竖直补偿）：
+ *   rot   画布旋转弧度（负角度 = 脚朝面向方向踢出）
+ *   lift  额外上抬(px)：给摆动腿抬脚用，同时抵消髋部下沉，保证脚不穿地
+ *   swing 摆动相位权重 0..1（0 = 支撑期，脚必须踩死地面）
+ *   tilt  前摆角度（正 = 朝面向方向）
  */
-export function legPose(frame, { stride = 1, legSpan = 100 } = {}) {
-  const t = walkPhase(frame) / WALK_FRAMES;
-  const a = 2 * Math.PI * t;
-  const swingAmt = legSpan * 0.16 * stride;
-  const liftAmt = legSpan * 0.3 * stride;
-  const swing = -Math.cos(a) * swingAmt;
-  // 只有往前摆的那半个周期抬脚（t∈(0,0.5)）
-  const lift = Math.max(0, Math.sin(a)) ** 1.25 * liftAmt;
-  const toe = Math.sin(a) * 4 * stride;
-  return { lift, swing, toe };
+export function legPose(frame, { stride = 1, legLen = 100 } = {}) {
+  const a = (2 * Math.PI * walkPhase(frame)) / WALK_FRAMES;
+  const peak = PEAK_TILT * stride;
+  const tilt = Math.cos(a) * peak;         // 极值 = 前后触地，0 = 从支撑腿旁边擦过
+  const rot = -tilt;                       // canvas 旋转：负角度把脚送向 +x（面向方向）
+  const swing = Math.max(0, -Math.sin(a)); // 只有"往前迈"的那半个周期是腾空相
+  // 髋部下沉量由支撑腿的角度决定（腿越斜，髋越低），随后按每条腿自己的倾角补偿
+  const hipDrop = legLen * (1 - Math.cos(peak * Math.abs(Math.cos(a))));
+  const clearance = 0.14 * legLen * swing;
+  const lift = Math.max(0, hipDrop - legLen * (1 - Math.cos(tilt))) + clearance;
+  return { rot, tilt, lift, swing, hipDrop };
 }
 
-export function bodyBob(frame, { stride = 1, legSpan = 100 } = {}) {
-  const t = walkPhase(frame) / WALK_FRAMES;
-  const bob = (0.5 - 0.5 * Math.cos(4 * Math.PI * t)) * legSpan * 0.022 * stride;
-  const sway = Math.sin(2 * Math.PI * t) * legSpan * 0.012 * stride;
-  return { dy: -bob, dx: sway };
+export function bodyBob(frame, { stride = 1, legLen = 100 } = {}) {
+  const a = (2 * Math.PI * walkPhase(frame)) / WALK_FRAMES;
+  const peak = PEAK_TILT * stride;
+  const hipDrop = legLen * (1 - Math.cos(peak * Math.abs(Math.cos(a))));
+  const sway = Math.sin(a) * legLen * 0.012 * stride;
+  return { dy: hipDrop, dx: sway }; // dy 为正 = 整体下沉（髋越斜越低）
 }
 
-function drawLeg(ctx, leg, pose, hipX, hipY, facingSign = 1, extraDx = 0) {
+function drawLeg(ctx, leg, pose, hipX, hipY) {
   ctx.save();
-  ctx.translate(hipX + pose.swing * facingSign + extraDx, hipY);
-  ctx.rotate((pose.toe * Math.PI) / 180 * 0.25);
-  ctx.translate(-hipX, -hipY - pose.lift);
+  ctx.translate(hipX, hipY);
+  ctx.rotate(pose.rot);
+  ctx.translate(0, -pose.lift);
+  ctx.translate(-hipX, -hipY);
   ctx.drawImage(leg, 0, 0);
   ctx.restore();
 }
@@ -307,9 +364,10 @@ export async function buildWalkAtlas(charId) {
   const cfg = WALK_CHAR_SPECS[charId];
   const cell = await loadSideCell(charId);
   const layers = splitLayers(cell, cfg);
-  const legSpan = GROUND_Y - cfg.hemY;
-  const hipX = layers.cx;
-  const hipY = cfg.hemY - 8;
+  const hipX = layers.hipX;
+  const hipY = layers.hipY;
+  const legLen = layers.legLen;
+  const spin = { stride: cfg.stride, legLen };
 
   const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
   const sg = strip.getContext('2d');
@@ -317,36 +375,25 @@ export async function buildWalkAtlas(charId) {
   for (let f = 0; f < WALK_FRAMES; f++) {
     const frame = createCanvas(CELL_W, CELL_H);
     const fc = frame.getContext('2d');
-    const nearPose = legPose(f, { stride: cfg.stride, legSpan });
-    const farPose = legPose(f + 4, { stride: cfg.stride, legSpan });
-    const body = bodyBob(f, { stride: cfg.stride, legSpan });
+    const nearPose = legPose(f, spin);
+    const farPose = legPose(f + WALK_FRAMES / 2, spin);
+    const body = bodyBob(f, spin);
 
-    // 上半身（含裙摆、尾巴）先画，整体上下起伏 + 轻微左右晃
+    // 整身随髋部起伏/侧移；腿层只出现在裙摆线以下，抬腿时"滑进裙子里"，绝不破裙
+    // 注意：裁剪矩形必须画在"单元格坐标"里（先 clip 再 translate），
+    // 否则整体下沉会把裁剪框也带下去，脚会踩到地面线以下。
+    fc.save();
+    fc.beginPath();
+    fc.rect(0, layers.legTop, CELL_W, GROUND_Y - layers.legTop);
+    fc.clip();
+    fc.translate(body.dx, body.dy);
+    drawLeg(fc, layers.legFar, farPose, hipX, hipY);   // 后腿
+    drawLeg(fc, layers.legNear, nearPose, hipX, hipY); // 前腿
+    fc.restore();
+    // 上半身（含裙摆、尾巴）最后盖章：腿根的旋转切口被裙摆自然盖掉
     fc.save();
     fc.translate(body.dx, body.dy);
     fc.drawImage(layers.upper, 0, 0);
-    fc.restore();
-
-    // 双腿画在裙摆之上，但裁剪在裙摆线以下：抬腿时腿自然"滑进裙子里"，绝不破裙
-    fc.save();
-    fc.beginPath();
-    fc.rect(0, cfg.hemY, CELL_W, CELL_H - cfg.hemY);
-    fc.clip();
-    if (layers.mode === 'block') {
-      // 整块下半身：以髋为支点斜切摆动 + 轻微抬落，绝不劈缝
-      const t = walkPhase(f) / WALK_FRAMES;
-      const shear = Math.sin(2 * Math.PI * t) * 0.16 * cfg.stride;
-      const lift = Math.max(0, Math.sin(2 * Math.PI * t + Math.PI / 3)) * legSpan * 0.06 * cfg.stride;
-      fc.save();
-      fc.translate(hipX, hipY);
-      fc.transform(1, 0, -shear, 1, 0, 0);
-      fc.translate(-hipX, -hipY - lift);
-      fc.drawImage(layers.legL, 0, 0);
-      fc.restore();
-    } else {
-      drawLeg(fc, layers.legL, farPose, hipX, hipY, 1, 0);
-      drawLeg(fc, layers.legR, nearPose, hipX, hipY, 1, 0);
-    }
     fc.restore();
 
     sg.drawImage(frame, f * CELL_W, 0);
@@ -367,8 +414,8 @@ export async function buildIdleAtlas(charId) {
     const sway = Math.sin(theta * 0.5) * 0.8;
     const frame = createCanvas(CELL_W, CELL_H);
     const fc = frame.getContext('2d');
-    fc.drawImage(layers.legL, 0, 0);
-    fc.drawImage(layers.legR, -2, 0);
+    fc.drawImage(layers.legFar, 0, 0);
+    fc.drawImage(layers.legNear, -2, 0);
     fc.save();
     fc.translate(sway, breath);
     fc.drawImage(layers.upper, 0, 0);
@@ -380,7 +427,8 @@ export async function buildIdleAtlas(charId) {
 
 export async function __debugLayers(charId) {
   const cell = await loadSideCell(charId);
-  return splitLayers(cell, WALK_CHAR_SPECS[charId]);
+  const l = splitLayers(cell, WALK_CHAR_SPECS[charId]);
+  return { ...l, legL: l.legFar, legR: l.legNear };
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

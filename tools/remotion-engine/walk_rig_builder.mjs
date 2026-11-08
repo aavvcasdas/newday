@@ -885,44 +885,10 @@ async function prepareV11CharacterParts(charId) {
   };
 }
 
-/**
- * 鲸鱼娘侧坐木长椅 16 帧呼吸小晃腿图集
- */
-async function buildWhaleSeatSideBenchAtlas() {
-  const raw = await loadImage(path.join(REPO_ROOT, 'assets/ai-girls/lyric-action-v13/source/whale_seat_side_v35.png'));
-  const clean = fitAndCutoutSolid(raw);
-  erasePolyInPlace(clean, [
-    [138, 326], [308, 326], [308, 416], [138, 416],
-  ], {
-    shouldErase: (x, y, r, g, b) => {
-      const isBrownBench = r > b + 16 && r > 75 && b < 118;
-      const isBenchOutline = y >= 352 && x >= 158 && r < 72 && g < 65 && b < 65;
-      return isBrownBench || isBenchOutline;
-    },
-  });
-
-  const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
-  const sg = strip.getContext('2d');
-  for (let f = 0; f < WALK_FRAMES; f++) {
-    const theta = (2 * Math.PI * f) / WALK_FRAMES;
-    const breathDy = Math.sin(theta) * 1.4;
-    const cell = createCanvas(CELL_W, CELL_H);
-    const cg = cell.getContext('2d');
-    cg.save();
-    cg.translate(CELL_W / 2, CELL_H - 12 + breathDy);
-    cg.rotate((Math.sin(theta) * 0.55 * Math.PI) / 180);
-    cg.drawImage(clean, -CELL_W / 2, -(CELL_H - 12));
-    cg.restore();
-    sg.drawImage(cell, f * CELL_W, 0);
-  }
-  return strip;
-}
-
 export const WALK_RIG_BUILDERS = {
   // 鲸鱼娘侧面步态、待机与长椅坐姿（MV 与 Day 系列横向走位首选）
   whale_walk_side_2leg: async () => renderMeshWalkStrip(await prepareWhaleSideParts()),
   whale_idle_side_pet: async () => renderMeshIdleStrip(await prepareWhaleSideParts()),
-  whale_seat_side_bench: buildWhaleSeatSideBenchAtlas,
   // 鲸鱼娘 3/4 步态与同体待机
   whale_walk_happy_2leg: async () => renderMeshWalkStrip(await prepareWhale34Parts({ sadFace: false })),
   whale_idle_happy_pet: async () => renderMeshIdleStrip(await prepareWhale34Parts({ sadFace: false })),

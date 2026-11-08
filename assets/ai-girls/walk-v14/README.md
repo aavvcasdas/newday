@@ -32,17 +32,30 @@ walk-v14/
 情绪变体 `whale_walk_happy_2leg` / `whale_walk_sad_2leg` / `whale_idle_happy_pet` / `whale_idle_sad_pet`
 与上表鲸鱼娘同体同帧（情绪差异交给表演层与 emoji 气泡，不再换一套体型不一致的立绘）。
 
-仍走 v13 蒙皮的三个图集（姿势特殊、暂未重绘）：`whale_seat_side_bench`（坐长椅）、
-`gpt_push_walk_2leg` / `gpt_push_idle_pet`（双手推山）。
+第九套是特例：`gpt_push_walk_2leg` / `gpt_push_idle_pet`（双手推山，`source/gpt_push.png`，
+压低重心、双手前推，步幅系数 0.8 走"发力慢挪"的节奏）。
 
-## 两套下半身驱动模式
+长椅坐姿（`whale_seat_side_bench` / `sit_bench`）已整体下线：代码、预设、模板、MV 规格、
+指标表里都不再有这个名字。
 
-| 模式 | 适用 | 做法 |
-| --- | --- | --- |
-| `split` | 立绘里两条腿本来就分开、能看见缝（whale / gpt / claude / kimi） | 按"腿间山谷列"劈成左右腿两层，各自以髋为支点抬脚 + 前后摆 + 脚掌微转，180° 反相 |
-| `block` | 立绘里两腿并拢成一整块（gemini / qwen / zai / doubao 的长裙、长裤、长发） | 下半身整块以髋为支点**斜切（shear）**摆动 + 轻微抬落。剪切不会撕出缝隙，读感是 chibi 小碎步，绝不破裙 |
+## 下半身驱动：单腿切片 + 髋关节反相摆动
 
-两种模式都把腿层统一裁剪在裙摆线以下：抬腿时腿自然"滑进"裙子，几何上不可能出现悬空残鞋。
+八个角色共用一套腿的驱动方式（不再是早期的 `split` 劈腿 / `block` 斜切两种模式）：
+
+1. **取一条腿**：在脚掌带（`GROUND_Y-34 .. GROUND_Y-2`）里把腿遮罩按列切成连通段，
+   最靠前（右）的那段就是"前腿"，连同上方的腿身一起切成一条腿的竖直切片；
+   两腿在画面上粘成一片时按 0.6 宽度从最前缘切一条（宽度上限 66px）。
+2. **前腿 + 后腿**：后腿用同一份切片压暗到 0.82 倍先画，前腿用原色后画。
+   侧视角里后腿本来就该比前腿暗一档，两条腿叠在一起才分得清。
+3. **姿态**：绕髋关节做**刚性旋转**（不缩放、不拉伸像素），两腿严格 180° 反相
+   （`legPose(f)` / `legPose(f+4)`）。最大摆角 `0.30 × stride` 弧度 ≈ 17°。
+4. **贴地**：支撑腿的脚底永远压在 `GROUND_Y`；支撑腿越斜髋越低，
+   整体起伏 `hipDrop = legLen × (1 − cos θ)` 就是每轮两次的重心下沉。
+5. **抬脚**：只有"往前迈"的半个周期抬脚（`swing` 权重），
+   抬升量 = 抵消髋部下沉 + `0.14 × legLen × swing` 的离地间隙。
+6. **裁剪**：腿层只画在 `legTop`（裙摆下沿再往下一小段）到 `GROUND_Y` 之间；
+   裙摆底部那几行阴影留在上半身，不跟着腿转（否则会变成一块浮空深色方块）。
+   裁剪矩形画在单元格坐标里，所以整体下沉也不会让脚踩到地面线以下。
 
 ## 生成方式
 
@@ -51,18 +64,26 @@ walk-v14/
 node tools/remotion-engine/build_walk_v14.mjs            # 全部 8 位
 node tools/remotion-engine/build_walk_v14.mjs whale gpt  # 只做指定角色
 
-# 2. 审阅：120ms 逐帧播放，可点单帧定格
+# 2. 审阅 A：把每个人的走路渲染成"走过舞台"的 GIF + 8 帧静态条带 + 3×3 总览
+python3 tools/remotion-engine/render_walk_clips.py              # 全部 9 套
+python3 tools/remotion-engine/render_walk_clips.py whale kimi   # 只做指定角色
+#   → preview/<char>_walk.gif（3s / 25fps，每 120ms 换一格）
+#   → preview/<char>_strip.png（8 帧并排、脚底同一条地面线，静态看抬腿与落脚）
+#   → preview/walk_all8_sheet.png
+
+# 3. 审阅 B：网页里 120ms 逐帧播放，可点单帧定格
 node tools/remotion-engine/walk_preview.mjs --port 8099
 ```
 
 算法在 `tools/remotion-engine/walk_cycle_v14.mjs`：
 
 1. **抠图**：只对与画布边缘连通的浅色背景做 flood fill，白裙 / 白袜 / 白发不会被吃掉。
-2. **分层**：上半身（含裙摆、尾巴、长发）一层；腿像素按脚底重心 `cx` 与脚踝轮廓自动定横向范围，
+2. **分层**：上半身（含裙摆、尾巴、长发）一层，腿层一条腿的切片一份；
+   腿像素按脚底重心 `cx` 与脚踝轮廓自动定横向范围，
    尾巴 / 披风这类偏蓝紫附属物判为非腿像素，不跟着腿摆动。
-3. **步态**：8 个固定姿态；`lift` 抬脚、`swing` 前后摆、`toe` 脚掌微转；
-   上半身起伏 `bodyBob` 由 4π 相位算出（每轮两次重心下沉）。
-4. **遮罩**：腿层统一裁剪在裙摆线以下。
+3. **步态**：8 个固定姿态，全部绕髋关节刚性旋转 + 竖直补偿（见上节）；
+   上半身起伏 `bodyBob` 由 `hipDrop` 算出（每轮两次重心下沉）。
+4. **遮罩**：腿层裁剪在 `legTop..GROUND_Y`，绝不破裙、绝不踩穿地面线。
 
 ## 与 v13 的三个关键修正
 

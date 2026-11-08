@@ -1,7 +1,7 @@
 // day_episode.template.spec.mjs — Day 正传系列通用单集模板（同时兼容 Canvas 2D 与 Remotion 双渲染后端）
 // 用法：
 //   1. 新建 DayN 时可复制本模板至 tools/dayN制作/episode.spec.mjs，替换 day / title / sourceScriptSha256 与各镜台词锚点；
-//   2. 角色移动优先声明 locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'sit_bench'
+//   2. 角色移动优先声明 locomotion: 'side_walk' | 'walk' | 'happy_walk' | 'sad_walk' | 'push_walk' | 'idle'
 //      配合 walk: { from, to, startLine, duration } 或 track: [[t, [x, y], 'linear'], ...]：
 //      - 行进期间自动播放双骨骼连续三角网格蒙皮 16 帧步态（*_2leg，零膝盖断缝、零第 3 条腿、头顶平稳不蹦跳）；
 //      - 起步前与到站停稳后自动无跳变切回 100% 同体同比例待机图集（*_pet），绝不跨立绘闪变；
@@ -287,12 +287,14 @@ export const DAY_EPISODE_TEMPLATE_SPEC = {
       mood: 'cozy_warm',
       cameraIntent: {
         type: 'static',
-        reason: '温暖固定镜头留足收工落座停留感',
+        reason: '温暖固定镜头留足收尾停留感',
       },
       actors: [
         {
           name: '本鲸',
-          locomotion: 'sit_bench',
+          locomotion: 'idle',
+          // 收尾镜不再用长椅坐姿（已下线）：显式指定同体待机图集，保证双人全镜不是"纯静态摆拍"
+          atlas: 'whale_idle_side_pet',
           x: 560,
           y: 600,
           height: 304,
@@ -316,9 +318,9 @@ export const DAY_EPISODE_TEMPLATE_SPEC = {
       interactions: [],
       direction: {
         kind: 'reaction',
-        focus: '收工后本鲸侧坐长椅温柔收尾',
-        entry: '茶水间暖灯亮起，本鲸安稳坐在长椅上，豆包在旁陪伴',
-        action: '本鲸使用 sit_bench 长椅坐姿呼吸微动，留足 0.8s 收尾停留',
+        focus: '收工后本鲸原地温柔收尾',
+        entry: '茶水间暖灯亮起，本鲸安稳站定，豆包在旁陪伴',
+        action: '本鲸使用同体待机图集呼吸微动，留足 0.8s 收尾停留',
         trigger: 'L05「坐」',
         wordLine: 5,
         wordChar: '坐',

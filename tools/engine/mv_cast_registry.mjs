@@ -23,7 +23,7 @@ export const MV_CAST = Object.freeze({
     role: 'lead',
     speech: true,
     visual: 'Day12 鲸娘（蓝发女仆装、鲸尾）',
-    locomotion: { walk: 'whale_walk_side_2leg', side_walk: 'whale_walk_side_2leg', happy_walk: 'whale_walk_happy_2leg', sad_walk: 'whale_walk_sad_2leg', idle: 'whale_idle_side_pet', sit_bench: 'whale_seat_side_bench' },
+    locomotion: { walk: 'whale_walk_side_2leg', side_walk: 'whale_walk_side_2leg', happy_walk: 'whale_walk_happy_2leg', sad_walk: 'whale_walk_sad_2leg', idle: 'whale_idle_side_pet' },
     idle: { happy: 'whale_idle_happy_pet', sad: 'whale_idle_sad_pet' },
   },
   doubao: {
@@ -112,7 +112,6 @@ export const MV_SIGNATURE_ACTIONS = Object.freeze({
   'whale_greet_wave': { actor: 'whale', atlas: 'whale_bird', label: '站立招手', kind: 'atlas', posture: 'standing', heldProp: null },
   'whale_react_surprise': { actor: 'whale', atlas: 'whale_meet_action', label: '站立惊喜', kind: 'atlas', posture: 'standing', heldProp: null },
   'whale_point_at': { actor: 'whale', atlas: 'whale_point', label: '站立指认', kind: 'atlas', posture: 'standing', heldProp: null },
-  'whale_sit_bench': { actor: 'whale', atlas: 'whale_seat_side_bench', label: '长椅落座', kind: 'atlas', posture: 'sitting', heldProp: null },
   // —— 豆包（帮手）：Day12 起的常驻帮手 ——
   'doubao_lift_lantern': { actor: 'doubao', atlas: 'doubao_lantern_action', label: '双手举灯照路', kind: 'atlas', heldProp: { propId: 'lantern', hand: 'headTop', offsetYFrac: 0.012, scale: 0.62, scaleRef: 298 } },
   // 伞用「钉子锚点」钉在画中那根绿棒上（脚底原点 + 身高比例），手势变化不会带偏：

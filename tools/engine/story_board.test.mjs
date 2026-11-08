@@ -20,7 +20,7 @@ const DIRECTION_DOCS = [
 ];
 
 // 文档里允许出现的步态/待机图集名（由 walk_rig_builder 运行时生成，不在招牌动作表里）
-const LOCOMOTION_ATLAS = /_(walk_side_2leg|walk_2leg|idle_side_pet|idle_pet|seat_side_bench)$/;
+const LOCOMOTION_ATLAS = /_(walk_side_2leg|walk_2leg|idle_side_pet|idle_pet)$/;
 
 function docText(rel) {
   const p = path.join(ROOT, rel);

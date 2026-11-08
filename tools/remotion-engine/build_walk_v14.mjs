@@ -18,6 +18,7 @@ const REPO_ROOT = path.resolve(HERE, '../..');
 const ATLAS_NAMES = {
   whale: { walk: 'whale_walk_side_2leg', idle: 'whale_idle_side_pet' },
   gpt: { walk: 'gpt_walk_2leg', idle: 'gpt_idle_pet' },
+  gpt_push: { walk: 'gpt_push_walk_2leg', idle: 'gpt_push_idle_pet' },
   gemini: { walk: 'gemini_walk_2leg', idle: 'gemini_idle_pet' },
   claude: { walk: 'claude_walk_2leg', idle: 'claude_idle_pet' },
   kimi: { walk: 'kimi_walk_2leg', idle: 'kimi_idle_pet' },

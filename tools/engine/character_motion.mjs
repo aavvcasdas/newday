@@ -85,7 +85,6 @@ export function isKnownMoveStyle(style) {
 export const WALK_RIG_ATLAS_NAMES = Object.freeze([
   'whale_walk_side_2leg',
   'whale_idle_side_pet',
-  'whale_seat_side_bench',
   'whale_walk_happy_2leg',
   'whale_idle_happy_pet',
   'whale_walk_sad_2leg',
@@ -125,7 +124,6 @@ export const WALK_TO_IDLE_ATLAS_MAP = Object.freeze({
 export const PET_RIG_DEFAULT_FACING = Object.freeze({
   whale_walk_side_2leg: 'right',
   whale_idle_side_pet: 'right',
-  whale_seat_side_bench: 'left',
   doubao_walk_side_2leg: 'left',
   doubao_idle_side_pet: 'left',
   whale_walk_happy_2leg: 'right',
@@ -155,7 +153,6 @@ export const LOCOMOTION_PRESETS = Object.freeze([
   'sad_walk',
   'push_walk',
   'idle',
-  'sit_bench',
 ]);
 
 export const CHARACTER_LOCOMOTION_RIGS = Object.freeze(
@@ -181,7 +178,7 @@ export function isKnownAtlasRig(name) {
   if (typeof name !== 'string' || !name.trim()) return false;
   if (WALK_RIG_ATLAS_NAMES.includes(name)) return true;
   // 兼容 assets/ai-girls/lyric-action-v13/*.png 的 16 帧表演图集命名
-  return /^[a-z0-9_]+_(action|walk|idle|bench|pet|2leg)$/i.test(name);
+  return /^[a-z0-9_]+_(action|walk|idle|pet|2leg)$/i.test(name);
 }
 
 export function resolveLocomotionAtlas(characterId = 'whale', preset = 'walk') {
@@ -678,14 +675,14 @@ export function evaluateCharacterMotion(plan, t, {
   }
 
   // 3b. 16 帧动作图集序列 (locomotion / atlas / atlases) + 同体无跳变切换
-  const isPetRigAtlas = (name) => Boolean(name && (name.endsWith('_2leg') || name.endsWith('_pet') || name.endsWith('_bench')));
+  const isPetRigAtlas = (name) => Boolean(name && (name.endsWith('_2leg') || name.endsWith('_pet')));
 
   const resolvedCharId = plan.characterId || plan.assetId || 'whale';
   const defaultAtlasFromPlan = plan.atlas || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
 
   // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
   // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
-  const atlasColsFor = (name) => (name && /(_2leg|_pet|_bench)$/.test(name) ? 8 : 16);
+  const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
   // 注意：atlas 也可能只由 locomotion 预设推导出来（plan.atlas 缺省），
   // 这里必须把预设解析后的真实图集名也算进来，否则 8 格步态会被当成 16 列播，
   // 抽到不存在的格子 → 角色闪空。

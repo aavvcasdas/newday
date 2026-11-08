@@ -295,8 +295,8 @@ test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼
   const guestIdleState = evaluateRemotionFrameState(remotionProps, 11.1);
   assert.equal(guestIdleState.actors[1].atlas, 'gemini_idle_pet');
 
-  const benchState = evaluateRemotionFrameState(remotionProps, 13.0);
-  assert.equal(benchState.actors[0].atlas, 'whale_seat_side_bench');
+  const settleState = evaluateRemotionFrameState(remotionProps, 13.0);
+  assert.equal(settleState.actors[0].atlas, 'whale_idle_side_pet', '收尾镜头应停在同体待机（长椅坐姿已下线）');
 
   // 2. Canvas 2D 后端实际渲染帧验证
   const preview = await createPlanningPreview({
