@@ -7,7 +7,19 @@ from PIL import Image, ImageDraw, ImageFont
 import render_reference_sample as ref
 import render_rpg_sample as r
 
-FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_剧情动作版.mp4'
+FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_冒险动作版.mp4'
+RIDER=[]
+for name in ('whale_horse_cutout.png','whale_horse_pose2_cutout.png'):
+    source=Image.open(r.ROOT/'assets/ai-girls/dalabengba'/name).convert('RGBA')
+    RIDER.append(source.crop(source.getbbox()))
+
+def rider(pic,x,y,height,t):
+    source=RIDER[int(t/.24)%2]
+    w=round(source.width*height/source.height)
+    sprite=source.resize((w,height),Image.Resampling.LANCZOS)
+    # The gallop is a two-pose cutout; it is not a full skeletal animation.
+    pic.paste(sprite,(int(x-w/2),int(y-height)),sprite)
+
 FONT=r.FONT; BODY=ImageFont.truetype(str(FONT),29); SMALL=ImageFont.truetype(str(FONT),24)
 
 def im(c):return Image.new('RGB',(320,180),c)
@@ -60,7 +72,7 @@ def throne(t):
     d.rectangle((256,60,289,105),fill='#854d61',outline='#e9bd80',width=2)
     ref.actor(pic,'claude',273,109,49)
     d=ImageDraw.Draw(pic);d.polygon((262,64,264,54,269,60,273,52,277,60,282,54,284,64),fill='#f2cf7e',outline='#8e6b64')
-    ref.actor(pic,'whale',90,131,48)
+    ref.actor(pic,'whale',90+(2 if int(t*2)%2 else 0),131,48,0)
     ref.actor(pic,'qwen',154,126,27,0,True);ref.actor(pic,'kimi',177,126,27)
     return pic
 
@@ -84,9 +96,9 @@ def village(t):
         a=angle+i*math.pi/2;ex=cx+int(math.cos(a)*26);ey=cy+int(math.sin(a)*26)
         d.line((cx,cy,ex,ey),fill='#795f5b',width=2);d.rectangle((ex-4,ey-3,ex+4,ey+3),fill='#eee8d0',outline='#795f5b')
     d.ellipse((129,61,135,67),fill='#e3b66d')
-    # treasure opens late in the shot
+    # treasure opens when the hero arrives in the shot
     d.rectangle((245,108,262,119),fill='#ad7254',outline='#574e53',width=2)
-    if t%7>3.0:d.polygon((245,107,246,101,262,99,262,107),fill='#d99c63',outline='#574e53')
+    if t>=103.5:d.polygon((245,107,246,101,262,99,262,107),fill='#d99c63',outline='#574e53')
     else:d.rectangle((245,103,262,108),fill='#d99c63',outline='#574e53')
     d.rectangle((252,106,255,114),fill='#f3d37e')
     return pic
@@ -173,7 +185,7 @@ def render(t):
     if t<71:
         pic=throne(t);d=ImageDraw.Draw(pic)
         # Word cards give the repeated long name the source's game-like visual punch.
-        n=min(12,max(1,int((t-52)*2)))
+        n=min(13,max(1,int((t-52)*2)))
         for i in range(n):
             x=30+(i%12)*21;y=81
             d.rectangle((x,y,x+18,y+20),fill='#b7666e',outline='#f3d48f',width=1)
@@ -190,25 +202,39 @@ def render(t):
     if t<92:
         pic=ref.town();ref.notice(ImageDraw.Draw(pic))
         for n,x in (('qwen',180),('kimi',201),('claude',222)):ref.actor(pic,n,x,120,29)
-        ref.actor(pic,'whale',72+int((t-86)*9),122,40,int((t-86)/.12))
+        rider(pic,72+int((t-86)*9),122-int(2*abs(math.sin(t*6.5))),55,t)
         return label(pic,'出发','从城堡里出发')
     if t<101:
-        pic=travel(t);ref.actor(pic,'whale',92,122,38,int(t/.12));d=ImageDraw.Draw(pic)
+        pic=travel(t);rider(pic,87,122-int(2*abs(math.sin(t*7))),54,t);d=ImageDraw.Draw(pic)
         if t<97:
-            x=235-int((t-92)*17);d.ellipse((x-10,99,x+10,120),fill='#bd807a',outline='#594f5d',width=2);d.point((x-3,107),fill='#fff2d4');d.point((x+3,107),fill='#fff2d4')
-            if t>95:d.line((105,109,130,96),fill='#f6edc9',width=3)
+            # Enemy advances, attacks and recoils after the hero's strike.
+            x=235-int((t-92)*21)+(int((t-95.1)*24) if t>95.1 else 0)
+            x=max(131,min(244,x)); bob=int(2*math.sin(t*7))
+            d.ellipse((x-12,98+bob,x+12,121+bob),fill='#bd807a',outline='#594f5d',width=2)
+            d.polygon((x-9,101+bob,x-8,91+bob,x-1,99+bob),fill='#785b6a',outline='#594f5d')
+            d.polygon((x+1,99+bob,x+8,91+bob,x+9,101+bob),fill='#785b6a',outline='#594f5d')
+            d.rectangle((x-7,106+bob,x-4,109+bob),fill='#fff2d4');d.rectangle((x+4,106+bob,x+7,109+bob),fill='#fff2d4')
+            d.line((x-4,116+bob,x+4,116+bob),fill='#594f5d')
+            if 93.5<t<95.1:
+                u=(t-93.5)/1.6;px=int(x-(x-107)*u);d.ellipse((px-4,104,px+4,112),fill='#f3b36b',outline='#ae655d')
+            if 95.1<t<96.5:
+                d.line((113,109,140,93),fill='#f6edc9',width=3)
+                for j in range(4):
+                    a=j*math.pi/2+t; xx=x+int(13*math.cos(a));yy=108+int(13*math.sin(a));d.line((x,108,xx,yy),fill='#ffde8f')
+            d.rectangle((9,7,92,23),fill='#284858',outline='#dbe9d2')
+            d.rectangle((46,13,86,18),fill='#243c4d');d.rectangle((47,14,47+int(37*min(1,max(0,1-(t-94.4)/2))),17),fill='#e89482')
             return label(pic,'战斗','战胜魔兽来袭')
         for i in range(12):
             x=157+(i%6)*15;y=67+(i//6)*11-int((t*6+i)%5);d.ellipse((x,y,x+7,y+7),fill='#f4cc6c',outline='#a67e5d')
         return label(pic,'奖励','获得十二金币')
     if t<106:
-        pic=village(t);ref.actor(pic,'whale',90+int((t-101)*9),121,38,int(t/.12));ref.actor(pic,'qwen',202,118,28)
+        pic=village(t);rider(pic,75+int((t-101)*18),121-int(2*abs(math.sin(t*7))),49,t);ref.actor(pic,'qwen',202,118,28)
         return label(pic,'村庄','打开所有宝箱')
     if t<110:
         pic=travel(t);d=ImageDraw.Draw(pic);d.ellipse((230,5,281,56),fill='#f1efcb')
         for i in range(35):
             x=(i*47+int(t*12))%320;y=(i*29+int(t*24))%119;d.point((x,y),fill='#f4f5db')
-        ref.actor(pic,'whale',85,121,38,int(t/.12))
+        rider(pic,85,121-int(2*abs(math.sin(t*7))),52,t)
         return label(pic,'旅途','指引前路的圣月光')
     pic=cave(t)
     # Cut between hero, dragon and wide shots in the long exchange.
@@ -319,7 +345,7 @@ def motion_events(pic,t):
         for j in range(1+(tick//8)%3):d.ellipse((x-8+j*7,y-3,x-6+j*7,y-1),fill='#8d7c78')
         if t>=52:
             # Sequential letter cards are the actual syllables, drawn below at HD.
-            for i in range(min(12,1+int((t%4)*3))):
+            for i in range(min(13,1+int((t%5)*3))):
                 x2=25+i*23;d.rectangle((x2,82,x2+18,102),fill='#b86670',outline='#f5da9e')
     elif t<110:
         # Road signs, pickups and weather change in response to the current beat.
@@ -346,6 +372,12 @@ def motion_events(pic,t):
                 d.line((x-2,y,x+2,y),fill='#c5efdf');d.line((x,y-2,x,y+2),fill='#c5efdf')
     pic.paste(layer.resize((960,540),Image.Resampling.NEAREST),(0,0),layer.resize((960,540),Image.Resampling.NEAREST))
     d=ImageDraw.Draw(pic)
+    if 52<=t<70:
+        name='达拉崩吧斑得贝迪卜多比鲁翁'
+        visible=min(13,1+int((t%5)*3))
+        tilefont=ImageFont.truetype(str(FONT),32)
+        for i,ch in enumerate(name[:visible]):
+            d.text(((25+i*23)*3+10,83*3+5),ch,font=tilefont,fill='#fff2d3',stroke_width=1,stroke_fill='#a45f66')
     # Replace lyric overlays with compact role-labelled game dialogue.
     who,words=dialogue(t)
     d.rectangle((25,448,933,516),fill=r.BLUE)
