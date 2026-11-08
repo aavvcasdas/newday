@@ -7,3 +7,9 @@
 参考：[tqlearning/ai-girl-chatgpt-pets](https://github.com/tqlearning/ai-girl-chatgpt-pets) 的 `FORMAT.md` 描述左右移动各 8 帧，固定格子、不逐帧裁切；前 7 帧各 120ms，末帧 220ms。该库 `RIGHTS.md` 明确美术 PNG/GIF 不属于文档的 MIT 授权；本次参考其图像生成新素材，未将上游图片复制进仓库，生成图片不自动取得角色或参考作品的权利。
 
 当前 `tools/remotion-engine/walk_rig_builder.mjs` 从单张角色图切出腿并经骨骼变形生成 16 格，实际每两个格重复同一关键姿态；注释中的自然与零缺陷结论不能替代动态检查。固定 8 姿态并不等于重新绘制的 8 帧；单凭帧数也不能证明落脚、肢体连接和行走方向正确。
+
+## 循环测试及其余角色试图
+
+运行 `bash assets/ai-girls/walk-rework/build_whale_test.sh` 可从原始八张试图生成 `whale_walk_test.gif`：固定画布缩小、不重定位，按参考项目节奏前七帧 120ms、末帧 220ms 循环。已用 ImageMagick 确认 8 帧均为 369×400，时长分别为 12、12、12、12、12、12、12、22 厘秒。该预览保留原绿色背景，未证明地面接触或位移同步。逐帧静态检查发现 4、7 帧尾巴位置与其他帧明显不一致，动作间还有相似姿态，因此测试未通过；尚未做真人动态验收。
+
+`gpt`、`doubao`、`gemini`、`claude`、`kimi`、`qwen`、`zai` 的 `*_walk_trial.png` 各为一张独立生成的走路姿态试图，不是八帧动画，也未抠图、接入或进行动态检查。Zai 的参考是裙底素材，人物全身身份及服装尤其需要复核；Gemini 画面较紧、Qwen 接近站姿，也须重做或调整。角色造型参考项目已有素材以及本次选出的鲸鱼娘，相关角色权利仍需另行确认。
