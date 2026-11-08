@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Full-length reference-guided RPG cut. Cue points are estimates, not lyric alignment."""
 from fractions import Fraction
-import math
+import math, json
 import av
 from PIL import Image, ImageDraw, ImageFont
 import render_reference_sample as ref
 import render_rpg_sample as r
 
-FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_完整初版.mp4'
+FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_动态歌词版.mp4'
 FONT=r.FONT; BODY=ImageFont.truetype(str(FONT),29); SMALL=ImageFont.truetype(str(FONT),24)
 
 def im(c):return Image.new('RGB',(320,180),c)
@@ -37,7 +37,8 @@ def worldmap(t):
         d.rectangle((x,y,x+5,y+4),fill='#92b58d');d.point((x+2,y-2),fill='#769f7f')
     progress=max(0,min(1,(t-(35 if t<45 else 79))/8)); path=[(37,107),(95,106),(140,56),(193,102),(263,59)];q=progress*4;j=min(3,int(q));f=q-j
     x=int(path[j][0]*(1-f)+path[j+1][0]*f);y=int(path[j][1]*(1-f)+path[j+1][1]*f)
-    d.ellipse((x-4,y-6,x+4,y+2),fill='#f7cf77',outline='#6d5662')
+    d.ellipse((x-7,y-2,x+7,y+2),fill='#b0a482')
+    ref.actor(pic,'whale',x,y,23,int(t/.12) if progress<1 else 0)
     return pic
 
 def throne(t):
@@ -210,6 +211,11 @@ def render(t):
         ref.actor(pic,'whale',85,121,38,int(t/.12))
         return label(pic,'旅途','指引前路的圣月光')
     pic=cave(t)
+    # Cut between hero, dragon and wide shots in the long exchange.
+    if 115.5 <= t < 118 or 122 <= t < 124 or 127 <= t < 129:
+        pic=pic.crop((0,0,250,140)).resize((320,180),Image.Resampling.NEAREST)
+    elif 118 <= t < 122 or 124 <= t < 127:
+        pic=pic.crop((70,0,320,140)).resize((320,180),Image.Resampling.NEAREST)
     if t<114:msg='闯入一座山洞'
     elif t<116:msg='公主和可怕巨龙'
     elif t<118:msg='英雄拔出宝剑'
@@ -221,6 +227,32 @@ def render(t):
     else:msg='昆图库塔卡提考特苏瓦西拉松'
     return label(pic,'洞穴',msg)
 
+LYRICS=json.loads((r.ROOT/'tools/mv_dalabengba/lyrics_timing.json').read_text(encoding='utf-8'))
+
+def motion_and_lyrics(pic,t):
+    # Moving pixel accents occupy the game HUD: stars during travel, embers during
+    # danger, and pulsing magic in the cave.  They don't imply character acting.
+    d=ImageDraw.Draw(pic)
+    color=('#ffd38b' if 22<=t<28 else '#ccecef' if t>=110 else '#fff3bd')
+    phase=int(t*FPS)
+    for i in range(7):
+        x=24+((i*131+phase)%906); y=16+((i*31+(phase//3))%72)
+        if (phase+i)%5 < 3:
+            d.rectangle((x,y,x+5,y+5),fill=color)
+            d.rectangle((x-3,y+2,x+8,y+3),fill=color)
+    # On-screen lyrics are approximate cues, not audio-aligned karaoke.
+    current=next((text for start,end,text in LYRICS if start<=t<end),None)
+    if current:
+        d.rectangle((25,448,933,516),fill=r.BLUE)
+        face=ImageFont.truetype(str(FONT),32)
+        bounds=d.textbbox((0,0),current,font=face,stroke_width=1)
+        width=bounds[2]-bounds[0]
+        if width>870:face=ImageFont.truetype(str(FONT),max(22,int(32*870/width)))
+        bounds=d.textbbox((0,0),current,font=face,stroke_width=1)
+        x=max(35,(960-(bounds[2]-bounds[0]))//2)
+        d.text((x,462),current,font=face,fill='#f8fffa',stroke_width=1,stroke_fill='#17364a')
+    return pic
+
 def main():
     OUT.parent.mkdir(parents=True,exist_ok=True)
     inp=av.open(str(r.SRC));a=inp.streams.audio[0]
@@ -228,7 +260,7 @@ def main():
         v=out.add_stream('libx264',rate=FPS);v.width=960;v.height=540;v.pix_fmt='yuv420p';v.options={'crf':'18','preset':'fast'}
         ao=out.add_stream_from_template(a)
         for i in range(FRAMES):
-            f=av.VideoFrame.from_image(render(i/FPS));f.pts=i;f.time_base=Fraction(1,FPS)
+            f=av.VideoFrame.from_image(motion_and_lyrics(render(i/FPS),i/FPS));f.pts=i;f.time_base=Fraction(1,FPS)
             for packet in v.encode(f):out.mux(packet)
         for packet in v.encode():out.mux(packet)
         for packet in inp.demux(a):
