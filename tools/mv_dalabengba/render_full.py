@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import render_reference_sample as ref
 import render_rpg_sample as r
 
-FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_动态歌词版.mp4'
+FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_剧情动作版.mp4'
 FONT=r.FONT; BODY=ImageFont.truetype(str(FONT),29); SMALL=ImageFont.truetype(str(FONT),24)
 
 def im(c):return Image.new('RGB',(320,180),c)
@@ -227,30 +227,133 @@ def render(t):
     else:msg='昆图库塔卡提考特苏瓦西拉松'
     return label(pic,'洞穴',msg)
 
-LYRICS=json.loads((r.ROOT/'tools/mv_dalabengba/lyrics_timing.json').read_text(encoding='utf-8'))
+def dialogue(t):
+    # Game dialogue and prompts, not lyric subtitles.
+    if t<8:return '系统','新的冒险，即将开始。'
+    if t<20:return '王国','城堡里一切安好。'
+    if t<22:return '公主','今天的天空真晴朗！'
+    if t<22.85:return '警报','天空怎么暗下来了？'
+    if t<23.8:return '村民','不好，是龙娘！'
+    if t<24.8:return '警报','城镇着火了！'
+    if t<25.7:return '豆包','谁来救救我？'
+    if t<27.7:return '龙娘','公主跟我走！'
+    if t<29.7:return '国王','公主不见了！'
+    if t<31.8:return '村民','快找一位勇者！'
+    if t<34:return '鲸鱼娘','交给我吧！'
+    if t<43:
+        return '作战计划',('先拿宝剑！' if t<37 else '翻山越岭！' if t<39 else '穿过森林！' if t<41 else '救出公主！')
+    if t<47:return '国王','勇者，请问你叫什么？'
+    if t<52:return '鲸鱼娘','让我想一想……'
+    if t<55.5:return '鲸鱼娘','达拉崩吧斑得贝迪卜多比鲁翁！'
+    if t<57:return '国王','等等，能再说一遍吗？'
+    if t<60:return '鲸鱼娘','达拉崩吧斑得贝迪卜多比鲁翁！'
+    if t<61:return '国王','是这样吗？'
+    if t<64.2:return '国王','达拉崩吧斑得贝迪卜多比鲁翁？'
+    if t<65.3:return '鲸鱼娘','对对对！'
+    if t<70:return '鲸鱼娘','记住啦，我们出发！'
+    if t<79:return '系统','任务已接取！'
+    if t<86:return '地图','向龙穴前进！'
+    if t<92:return '村民','勇者，一路小心！'
+    if t<97:return '战斗','小心魔兽！'
+    if t<101:return '奖励','获得金币！等级提升！'
+    if t<106:return '村庄','宝箱打开了！'
+    if t<110:return '旅途','月光会指引我们。'
+    if t<114:return '鲸鱼娘','那边就是山洞！'
+    if t<116:return '豆包','我在这里！'
+    if t<118:return '鲸鱼娘','放开公主！'
+    if t<121:return '龙娘','我是昆图库塔卡提考特苏瓦西拉松！'
+    if t<122.5:return '鲸鱼娘','再说一遍？'
+    if t<125:return '龙娘','昆图库塔卡提考特苏瓦西拉松！'
+    if t<126.5:return '鲸鱼娘','是这个名字吗？'
+    if t<129.5:return '鲸鱼娘','昆特牌提琴烤蛋挞苏打马拉松？'
+    if t<130.2:return '龙娘','不对！'
+    return '龙娘','昆图库塔卡提考特苏瓦西拉松！'
 
-def motion_and_lyrics(pic,t):
-    # Moving pixel accents occupy the game HUD: stars during travel, embers during
-    # danger, and pulsing magic in the cave.  They don't imply character acting.
+def motion_events(pic,t):
+    # This overlay animates recognisable props and events in native game pixels.
+    layer=Image.new('RGBA',(320,180));d=ImageDraw.Draw(layer)
+    tick=int(t*FPS); beat=int(t)
+    if t<8 or 71<=t<79:
+        # Floating game items orbit the book; a loading bar fills and resets.
+        for i in range(3):
+            x=104+i*51+int(5*math.sin(t*2+i));y=67+int(8*math.sin(t*2.4+i*2))
+            d.rectangle((x-6,y-6,x+6,y+6),fill='#d09b64',outline='#fff0b5')
+            if i==0:d.line((x-3,y+3,x+3,y-4),fill='#fffbe3',width=2)
+            elif i==1:d.ellipse((x-3,y-3,x+3,y+3),fill='#f5d783')
+            else:d.polygon((x-3,y+3,x,y-4,x+3,y+3),fill='#a6d7c4')
+        d.rectangle((104,119,215,125),fill='#4b4754',outline='#f5d788')
+        d.rectangle((106,121,106+int((t%4)/4*106),123),fill='#f7e6aa')
+    elif t<20:
+        # Villagers, fluttering pennants, moving clouds and a turning weather vane.
+        for i,x in enumerate((72,239)):
+            sx=x+int(3*math.sin(t*1.4+i*3))
+            ref.actor(layer,['qwen','kimi'][i],sx,128,17,int(t/.12+i*3))
+        for x in (79,239):
+            shift=int(2*math.sin(t*8+x));d.polygon((x,5,x+10+shift,8,x,11),fill='#f2c477')
+        for i in range(3):
+            x=(tick//3+i*94)%345-25;y=15+i*8
+            d.rectangle((x,y,x+15,y+3),fill='#edf0d9');d.rectangle((x+4,y-2,x+11,y+5),fill='#edf0d9')
+    elif t<34:
+        # Event markers track the attack: ember, alert, rescue prompt.
+        if 22<=t<28:
+            for i in range(7):
+                x=(i*47+tick//3)%320;y=130-((tick*2+i*19)%73)
+                d.rectangle((x,y,x+2,y+2),fill=('#f7cf7d' if i%2 else '#e99272'))
+        elif 29.7<=t<34:
+            for i in range(3):
+                x=170+i*20;y=76-int(2*math.sin(t*7+i))
+                d.rectangle((x,y,x+2,y+8),fill='#f9d47f');d.rectangle((x,y+10,x+2,y+12),fill='#f9d47f')
+    elif t<43 or 79<=t<86:
+        # A compass needle, moving path marker and active destination.
+        d.ellipse((274,15,301,42),fill='#f5e7b9',outline='#9a876f',width=2)
+        a=t*2;d.line((287,28,287+int(9*math.cos(a)),28+int(9*math.sin(a))),fill='#b96f68',width=2)
+        pulse=3+(tick//5)%4; d.ellipse((263-pulse,59-pulse,263+pulse,59+pulse),outline='#b86f69')
+        x=44+(tick*2%214);d.rectangle((x,110,x+3,112),fill='#d49079')
+    elif t<71:
+        # Turn-taking cues: speech balloon changes sides and pops with the dialog.
+        from_king=(43<=t<47 or 55.5<=t<57 or 60<=t<64.2)
+        x=262 if from_king else 94
+        y=31+int(2*math.sin(t*5))
+        d.rounded_rectangle((x-18,y-9,x+18,y+7),radius=4,fill='#fff3d5',outline='#957f75')
+        d.polygon((x-3,y+7,x+2,y+7,x,y+12),fill='#fff3d5',outline='#957f75')
+        for j in range(1+(tick//8)%3):d.ellipse((x-8+j*7,y-3,x-6+j*7,y-1),fill='#8d7c78')
+        if t>=52:
+            # Sequential letter cards are the actual syllables, drawn below at HD.
+            for i in range(min(12,1+int((t%4)*3))):
+                x2=25+i*23;d.rectangle((x2,82,x2+18,102),fill='#b86670',outline='#f5da9e')
+    elif t<110:
+        # Road signs, pickups and weather change in response to the current beat.
+        if t<92:
+            for x in (185,204,223):
+                y=74+int(2*math.sin(t*6+x));d.polygon((x-3,y,x+3,y,x,y+5),fill='#f6ce81')
+        elif t<101:
+            for i in range(3):
+                x=110+i*8+int((t*19)%15);y=96+i*3
+                d.line((x,y,x+5,y-3),fill='#fff0bc',width=2)
+        elif t<106:
+            for i in range(4):
+                x=250+(i-2)*5;y=102-((tick//3+i*7)%17)
+                d.rectangle((x,y,x+2,y+2),fill='#ffe9a0')
+        else:
+            for i in range(14):
+                x=(i*37+tick//2)%320;y=(i*17+tick)%130
+                d.rectangle((x,y,x+1,y+2),fill='#f4f9e7')
+    else:
+        # Crystals twinkle in the cave independently of dialog/shot changes.
+        for i in range(7):
+            x=(25+i*47+(tick//5)%5)%320;y=102+(i*11%29)
+            if (tick//4+i)%3==0:
+                d.line((x-2,y,x+2,y),fill='#c5efdf');d.line((x,y-2,x,y+2),fill='#c5efdf')
+    pic.paste(layer.resize((960,540),Image.Resampling.NEAREST),(0,0),layer.resize((960,540),Image.Resampling.NEAREST))
     d=ImageDraw.Draw(pic)
-    color=('#ffd38b' if 22<=t<28 else '#ccecef' if t>=110 else '#fff3bd')
-    phase=int(t*FPS)
-    for i in range(7):
-        x=24+((i*131+phase)%906); y=16+((i*31+(phase//3))%72)
-        if (phase+i)%5 < 3:
-            d.rectangle((x,y,x+5,y+5),fill=color)
-            d.rectangle((x-3,y+2,x+8,y+3),fill=color)
-    # On-screen lyrics are approximate cues, not audio-aligned karaoke.
-    current=next((text for start,end,text in LYRICS if start<=t<end),None)
-    if current:
-        d.rectangle((25,448,933,516),fill=r.BLUE)
-        face=ImageFont.truetype(str(FONT),32)
-        bounds=d.textbbox((0,0),current,font=face,stroke_width=1)
-        width=bounds[2]-bounds[0]
-        if width>870:face=ImageFont.truetype(str(FONT),max(22,int(32*870/width)))
-        bounds=d.textbbox((0,0),current,font=face,stroke_width=1)
-        x=max(35,(960-(bounds[2]-bounds[0]))//2)
-        d.text((x,462),current,font=face,fill='#f8fffa',stroke_width=1,stroke_fill='#17364a')
+    # Replace lyric overlays with compact role-labelled game dialogue.
+    who,words=dialogue(t)
+    d.rectangle((25,448,933,516),fill=r.BLUE)
+    head=ImageFont.truetype(str(FONT),24);body=ImageFont.truetype(str(FONT),30)
+    d.text((43,457),who,font=head,fill='#ffe4a5',stroke_width=1,stroke_fill='#17364a')
+    bounds=d.textbbox((0,0),words,font=body);width=bounds[2]-bounds[0]
+    if width>710:body=ImageFont.truetype(str(FONT),max(20,int(30*710/width)))
+    d.text((208,457),words,font=body,fill='#f9fffa',stroke_width=1,stroke_fill='#17364a')
     return pic
 
 def main():
@@ -260,7 +363,7 @@ def main():
         v=out.add_stream('libx264',rate=FPS);v.width=960;v.height=540;v.pix_fmt='yuv420p';v.options={'crf':'18','preset':'fast'}
         ao=out.add_stream_from_template(a)
         for i in range(FRAMES):
-            f=av.VideoFrame.from_image(motion_and_lyrics(render(i/FPS),i/FPS));f.pts=i;f.time_base=Fraction(1,FPS)
+            f=av.VideoFrame.from_image(motion_events(render(i/FPS),i/FPS));f.pts=i;f.time_base=Fraction(1,FPS)
             for packet in v.encode(f):out.mux(packet)
         for packet in v.encode():out.mux(packet)
         for packet in inp.demux(a):
