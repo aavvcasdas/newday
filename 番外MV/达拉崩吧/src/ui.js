@@ -176,32 +176,32 @@ const GAG_ITEMS = ['昆特牌', '提琴', '烤蛋挞', '苏打', '马拉松'];
 const GAG_TIMES = [125.45, 126.00, 126.55, 127.10, 127.65];
 
 export function drawWrongItemInventory(fb, t) {
-  const burn = clamp((t - 128.42) / 0.85, 0, 1);
+  const burn = clamp((t - 128.40) / 0.46, 0, 1);
   if (burn >= 1) return;
-  const winW = 244, winH = 60;
-  const wx = Math.round((W - winW) * 0.5) - 10;
-  const wy = (burn > 0 ? 32 : 44) + (burn > 0 ? Math.round(Math.sin(t * 40) * 2) : 0);
+  const winW = 192, winH = 58;
+  const wx = 6;
+  const wy = (burn > 0 ? 34 : 44) + (burn > 0 ? Math.round(Math.sin(t * 40) * 2) : 0);
 
   drawRpgWindow(fb, wx, wy, winW, winH, {
     skin: burn > 0.35 ? 'dark' : 'parchment',
     alert: burn > 0,
   });
-  drawTextPx(fb, wx + 8, wy + 6, burn > 0 ? '道具栏 — 惨遭龙焰焚毁!!' : '道具栏 ITEM — 勇者猜测中…', {
+  drawTextPx(fb, wx + 6, wy + 6, burn > 0 ? '道具栏 — 惨遭龙焰焚毁!!' : '道具栏 ITEM — 勇者猜测中…', {
     size: 8,
     color: burn > 0 ? C.goldL : C.ink,
   });
 
   for (let i = 0; i < 5; i++) {
-    const sx = wx + 8 + i * 46;
+    const sx = wx + 6 + i * 36;
     const sy = wy + 18;
     const shown = t >= GAG_TIMES[i];
     const active = shown && (i === 4 || t < GAG_TIMES[i + 1]) && burn === 0;
-    fb.rect(sx, sy, 42, 34, burn > 0.4 ? C.ink : C.sand);
-    fb.box(sx, sy, 42, 34, active ? C.scarf : C.dbrown);
+    fb.rect(sx, sy, 34, 34, burn > 0.4 ? C.ink : C.sand);
+    fb.box(sx, sy, 34, 34, active ? C.scarf : C.dbrown);
     if (shown) {
-      drawGagItemIcon(fb, sx + 21, sy + 13, i, burn);
+      drawGagItemIcon(fb, sx + 17, sy + 13, i, burn);
       const lw = measureTextPx(GAG_ITEMS[i], 8);
-      drawTextPx(fb, sx + Math.round((42 - lw) * 0.5), sy + 24, GAG_ITEMS[i], {
+      drawTextPx(fb, sx + Math.round((34 - lw) * 0.5), sy + 24, GAG_ITEMS[i], {
         size: 8,
         color: burn > 0.3 ? C.orange : C.ink,
       });

@@ -453,14 +453,10 @@ export function renderScene(fb, t) {
     // Sub-shot S09b (54.16–55.41s): Petrified Close-Up on Claude Queen ("再说一次?!")
     if (t >= 54.16 && t < 55.41) {
       drawThroneRoom(fb, t, -8);
-      drawCastSprite(fb, 206, 126, 'kimi', t, { pose: 'scribe', facing: -1 });
-      // Enlarged 2× Claude Queen shocked on throne!
-      const p = getPortrait('claude', 'petrified');
-      for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
-        const c = p.get(x, y); if (c !== 255) fb.rect(118 + x * 2, 42 + y * 2, 2, 2, c);
-      }
-      drawRpgWindow(fb, 54, 24, 92, 26, { skin: 'parchment' });
-      drawTextPx(fb, 64, 31, '再说一次?!', { size: 12, color: C.ink });
+      drawCastSprite(fb, 224, 128, 'kimi', t, { pose: 'scribe', facing: -1 });
+      drawCastSprite(fb, 154, 142, 'claude', t, { pose: 'petrified', big: true, facing: -1 });
+      drawRpgWindow(fb, 46, 24, 92, 26, { skin: 'parchment' });
+      drawTextPx(fb, 56, 31, '再说一次?!', { size: 12, color: C.ink });
       return { lut: LUT.full, texts };
     }
 
@@ -936,11 +932,9 @@ export function renderScene(fb, t) {
       }
       return { lut: LUT.full, texts };
     }
-    // 116.30 – 117.55s: Haughty 3× Portrait Close-Up of GPT Dragon-Girl ("我是——")!
-    const gp = getPortrait('gpt', 'haughty');
-    for (let y = 0; y < 32; y++) for (let x = 0; x < 32; x++) {
-      const c = gp.get(x, y); if (c !== 255) fb.rect(168 + x * 3, 24 + y * 3, 3, 3, c);
-    }
+    // 116.30 – 117.55s: Haughty Close-Up of Pixelized GPT Dragon-Girl Boss ("听好了，我是——")!
+    for (let i = 0; i < 10; i++) fb.hline(0, W, 12 + i * 11, i % 2 ? C.dragD : C.night);
+    drawGptDragonBoss(fb, 186, 122, t, { litScales: 0, rage: true });
     drawDialogBox(fb, t, {
       who: 'gpt', mood: 'haughty', name: 'GPT龙娘', text: '听好了，我是——', t0: 116.30, dur: 1.0,
     });
@@ -996,11 +990,11 @@ export function renderScene(fb, t) {
     drawWhaleHero(fb, 54, 144, t, { pose: t >= 128.55 ? 'charred' : 'think', scarfLen: 26 });
     drawWrongItemInventory(fb, t);
     if (t < 128.40) {
-      texts.push({ id: 'inv_hdr', text: '道具栏', x0: 32 * 6, y0: 44 * 6, x1: 110 * 6, y1: 58 * 6 });
+      texts.push({ id: 'inv_hdr', text: '道具栏', x0: 10 * 6, y0: 44 * 6, x1: 94 * 6, y1: 58 * 6 });
     }
     if (rage) {
-      drawRpgWindow(fb, 168, 12, 72, 24, { alert: true });
-      drawTextPx(fb, 178, 18, '不对！！', { size: 12, color: C.goldL, shadow: C.ink });
+      drawRpgWindow(fb, 218, 8, 72, 24, { alert: true });
+      drawTextPx(fb, 228, 14, '不对！！', { size: 12, color: C.goldL, shadow: C.ink });
     }
     return { lut: rage ? LUT.dragonRage : LUT.full, texts };
   }

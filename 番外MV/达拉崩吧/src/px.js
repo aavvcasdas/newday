@@ -1,4 +1,6 @@
 // px.js — 320×180 native indexed-colour pixel engine (×6 nearest-neighbour → 1920×1080)
+import { CHAR_HEX } from './sprites_data.js';
+
 export const W = 320, H = 180, SCALE = 6;
 export const T = 255;
 
@@ -18,6 +20,8 @@ const HEX = [
   '#eef1ff', '#b8c0e8', '#7b4bc4', '#432375',
   // 46..47: Mage lavender & warm parchment
   '#9d8df2', '#f3e5c0',
+  // 48..143: 96 quantized 16-bit palette colours baked from project AI-girls sprites
+  ...CHAR_HEX,
 ];
 
 export const C = {
@@ -40,9 +44,9 @@ export const RGB = HEX.map(rgb);
 const lum = ([r, g, b]) => 0.299 * r + 0.587 * g + 0.114 * b;
 const pack = ([r, g, b]) => (255 << 24) | (b << 16) | (g << 8) | r;
 
-function nearestIdx(targetRgb, allowProtected = false) {
+function nearestIdx(targetRgb, allowProtected = false, maxIdx = NPAL) {
   let best = 0, bd = 1e12;
-  for (let i = 0; i < NPAL; i++) {
+  for (let i = 0; i < maxIdx; i++) {
     if (!allowProtected && PROTECT.has(i)) continue;
     const c = RGB[i];
     const d = (c[0] - targetRgb[0]) ** 2 * 0.3 + (c[1] - targetRgb[1]) ** 2 * 0.59 + (c[2] - targetRgb[2]) ** 2 * 0.11;
@@ -51,14 +55,17 @@ function nearestIdx(targetRgb, allowProtected = false) {
   return best;
 }
 
-// Index-stepping light / shadow tables (STYLE.md §2: light is index stepping, never alpha)
+// Index-stepping light / shadow / soot-charred tables (STYLE.md §2: light is index stepping, never alpha)
 export const LIGHT = new Uint8Array(256);
 export const DARK = new Uint8Array(256);
+export const CHARRED = new Uint8Array(256);
 for (let i = 0; i < NPAL; i++) {
-  if (PROTECT.has(i)) { LIGHT[i] = i; DARK[i] = i; continue; }
+  if (PROTECT.has(i)) { LIGHT[i] = i; DARK[i] = i; CHARRED[i] = i; continue; }
   const [r, g, b] = RGB[i];
-  LIGHT[i] = nearestIdx([Math.min(255, r * 1.28 + 26), Math.min(255, g * 1.26 + 24), Math.min(255, b * 1.22 + 18)]);
-  DARK[i] = nearestIdx([r * 0.62, g * 0.60, b * 0.68]);
+  const cap = i < 48 ? 48 : NPAL;
+  LIGHT[i] = nearestIdx([Math.min(255, r * 1.28 + 26), Math.min(255, g * 1.26 + 24), Math.min(255, b * 1.22 + 18)], false, cap);
+  DARK[i] = nearestIdx([r * 0.62, g * 0.60, b * 0.68], false, cap);
+  CHARRED[i] = nearestIdx([r * 0.25 + 16, g * 0.24 + 14, b * 0.28 + 20], false, 48);
 }
 
 function lutFrom(fn) {
@@ -366,6 +373,21 @@ export class FB {
         const c = src.d[y * src.w + (flip ? src.w - 1 - x : x)];
         if (c === T) continue;
         this.px(dx + x, dy + y, c);
+      }
+    }
+  }
+  blitSprite(src, dx, dy, flip = false, remap = null) {
+    if (!src) return;
+    dx = Math.round(dx); dy = Math.round(dy);
+    for (let y = 0; y < src.h; y++) {
+      const yy = dy + y;
+      if (yy < 0 || yy >= this.h) continue;
+      for (let x = 0; x < src.w; x++) {
+        const xx = dx + x;
+        if (xx < 0 || xx >= this.w) continue;
+        const c = src.d[y * src.w + (flip ? src.w - 1 - x : x)];
+        if (c === T) continue;
+        this.d[yy * this.w + xx] = remap ? remap[c] : c;
       }
     }
   }

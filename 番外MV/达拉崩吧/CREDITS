@@ -1,9 +1,9 @@
 《达拉崩吧》 — 16-bit Pixel RPG 复刻版 MV
 ========================================
 
-Visual Direction & Code Synthesis
-  Pure-code 320×180 indexed framebuffer (×6 nearest-neighbour → 1920×1080 @ 24fps)
-  Built on the pixel-rpg pipeline.
+Visual Direction & Pixel Sprite Synthesis
+  320×180 indexed 144-colour framebuffer (×6 nearest-neighbour → 1920×1080 @ 24fps)
+  All 8 character sprites & 32×32 RPG portraits (`src/sprites_data.js`) are pixelized and palette-quantized directly from this repository's official character sheets in `assets/ai-girls/` (`full-v9/`, `walk-v14/`, `lyric-action-v13/`, `dance-v11/`, `whale-pet-study/`).
 
 Cast (AI娘图鉴设定)
   勇者 达拉崩吧斑得贝迪卜多比鲁翁 — 鲸鱼娘 (Whale)

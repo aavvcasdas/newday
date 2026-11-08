@@ -25,14 +25,13 @@ let lastTexts = [];
 
 function renderModelSheet(t) {
   fb.gradV(0, 0, W, H, [C.night, C.navy, C.dslate]);
-  fb.box(3, 3, W - 6, H - 6, C.gold);
-  drawTextPx(fb, 8, 7, '《达拉崩吧》16-BIT PIXEL RPG 角色设定表', { size: 8, color: C.goldL, shadow: C.ink });
+  fb.box(2, 2, W - 4, H - 4, C.gold);
+  drawTextPx(fb, 8, 5, '《达拉崩吧》16-BIT PIXEL RPG 角色设定表', { size: 8, color: C.goldL, shadow: C.ink });
 
-  // Top Row: All 8 Cast Portraits + Full-Body Sprites
+  // Left 7-Column Cast Lineup (Portraits + Full-Body Pixelized Sprites)
   const lineup = [
     ['whale', '鲸鱼娘'],
     ['doubao', '豆包'],
-    ['gpt', 'GPT龙'],
     ['claude', '大小姐'],
     ['kimi', 'Kimi'],
     ['gemini', 'Gemini'],
@@ -40,28 +39,35 @@ function renderModelSheet(t) {
     ['qwen', '千问'],
   ];
   lineup.forEach(([who, label], idx) => {
-    const x = 6 + idx * 39;
-    drawRpgWindow(fb, x, 19, 36, 36, { skin: 'dark' });
-    fb.blit(getPortrait(who, who === 'gpt' ? 'rage' : 'neutral'), x + 2, 21);
+    const x = 5 + idx * 33;
+    drawRpgWindow(fb, x, 15, 32, 34, { skin: 'dark' });
+    fb.blit(getPortrait(who, 'neutral'), x, 16);
     if (who === 'whale') {
-      drawWhaleHero(fb, x + 18, 88, t, { pose: 'sword', scarfLen: 16 });
+      drawWhaleHero(fb, x + 16, 96, t, { pose: 'sword', scarfLen: 12 });
     } else {
-      drawCastSprite(fb, x + 18, 88, who, t);
+      drawCastSprite(fb, x + 16, 96, who, t);
     }
-    drawTextPx(fb, x + 4, 92, label, { size: 8, color: C.uiW, shadow: C.ink });
+    drawTextPx(fb, x + 2, 99, label, { size: 8, color: C.uiW, shadow: C.ink });
   });
 
-  // Bottom Row: White Steed + Caged Doubao + 5 Gag Icons + GPT Dragon Boss!
-  drawRpgWindow(fb, 6, 106, 308, 68, { skin: 'parchment' });
-  drawWhiteHorse(fb, 38, 162, t, 1);
-  drawWhaleHero(fb, 36, 145, t, { pose: 'ride', scarfLen: 24 });
-  drawDoubaoInCage(fb, 92, 146, t, false, 110);
+  // Bottom-Left RPG Props Panel: Mounted Steed + Caged Doubao + 5 Wrong-Name Gag Icons!
+  drawRpgWindow(fb, 5, 110, 230, 66, { skin: 'parchment' });
+  drawWhiteHorse(fb, 36, 166, t, 1);
+  drawWhaleHero(fb, 34, 149, t, { pose: 'ride', scarfLen: 20 });
+  drawDoubaoInCage(fb, 92, 149, t, false, 113);
   for (let i = 0; i < 5; i++) {
-    fb.rect(116 + i * 20, 136, 18, 18, C.sand);
-    fb.box(116 + i * 20, 136, 18, 18, C.dbrown);
-    drawGagItemIcon(fb, 125 + i * 20, 145, i, 0);
+    fb.rect(116 + i * 22, 138, 19, 19, C.sand);
+    fb.box(116 + i * 22, 138, 19, 19, C.dbrown);
+    drawGagItemIcon(fb, 125 + i * 22, 147, i, 0);
   }
-  drawGptDragonBoss(fb, 258, 168, t, { litScales: 6 });
+
+  // Right Full-Height Final Boss Panel: GPT Dragon-Girl LV.99!
+  drawRpgWindow(fb, 238, 15, 77, 161, { skin: 'dark', alert: true });
+  fb.blit(getPortrait('gpt', 'rage'), 243, 20);
+  drawTextPx(fb, 278, 24, '恶龙', { size: 10, color: C.goldL, shadow: C.ink });
+  drawTextPx(fb, 278, 38, 'GPT龙娘', { size: 8, color: C.uiW });
+  drawGptDragonBoss(fb, 282, 158, t, { litScales: 0, rage: true });
+  drawTextPx(fb, 250, 165, 'BOSS LV.99', { size: 8, color: C.goldL, shadow: C.ink });
   out.present(fb, LUT.full);
   out.show();
 }
