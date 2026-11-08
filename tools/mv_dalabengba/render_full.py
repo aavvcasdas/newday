@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 import render_reference_sample as ref
 import render_rpg_sample as r
 
-FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_场景互动版.mp4'
+FPS=30; FRAMES=3983; OUT=r.ROOT/'番外MV/达拉崩吧/成片/达拉崩吧_RPG_全篇动态版.mp4'
 RIDER=[]
 for name in ('whale_horse_cutout.png','whale_horse_pose2_cutout.png'):
     source=Image.open(r.ROOT/'assets/ai-girls/dalabengba'/name).convert('RGBA')
@@ -21,8 +21,23 @@ def rider(pic,x,y,height,t):
     pic.paste(sprite,(int(x-w/2),int(y-height)),sprite)
 
 BG={}
-for name in ('palace','cave','worldmap','village'):
+for name in ('palace','cave','worldmap','village','road','night','castle'):
     BG[name]=Image.open(r.ROOT/f'assets/ai-girls/dalabengba/{name}_pixel_source.png').convert('RGB').resize((320,180),Image.Resampling.LANCZOS)
+
+DARK_CASTLE=Image.blend(BG['castle'],Image.new('RGB',(320,180),'#373454'),0.46)
+# Reference-section events are retained, but staged on the same artwork family.
+ref.castle=lambda day=True,t=0: BG['castle'].copy() if day else DARK_CASTLE.copy()
+ref.town=lambda: BG['village'].copy()
+ref.palace_close=lambda: BG['castle'].crop((130,24,245,105)).resize((320,180),Image.Resampling.NEAREST)
+
+ROAD=Image.open(r.ROOT/'assets/ai-girls/dalabengba/road_pixel_source.png').convert('RGB').resize((480,180),Image.Resampling.LANCZOS)
+
+def trajectory(t,points):
+    for (a,x),(b,y) in zip(points,points[1:]):
+        if t<b:
+            u=max(0,min(1,(t-a)/(b-a)))
+            return round(x+(y-x)*u)
+    return points[-1][1]
 
 FONT=r.FONT; BODY=ImageFont.truetype(str(FONT),29); SMALL=ImageFont.truetype(str(FONT),24)
 
@@ -47,20 +62,20 @@ def worldmap(t):
 
 def throne(t):
     pic=BG['palace'].copy()
-    # Blocking: the hero steps forward, king responds, aides react; keep top strip clear for cards.
-    hx=69+min(22,max(0,int((t-43)*8))) if t<46 else 91
-    if 55.5<=t<57 or 60<=t<64.2: hx-=2
-    kx=263+(2 if 55.5<=t<57 or 60<=t<64.2 else 0)
+    # Directed positions: hero approaches, king and aides respond during the name exchange.
+    hx=trajectory(t,[(43,55),(46,91),(49,98),(52,103),(55.5,105),(57,96),(60,101),(64.2,96),(67,106),(70,112),(71,112)])
+    kx=trajectory(t,[(43,263),(52,263),(55.5,261),(57,252),(60,261),(64.2,251),(67,263),(71,263)])
     d=ImageDraw.Draw(pic)
     active_king=(43<=t<47 or 55.5<=t<57 or 60<=t<64.2)
     active_x=kx if active_king else hx
     d.ellipse((active_x-15,126,active_x+15,135),outline='#f7db8c',width=2)
-    ref.actor(pic,'whale',hx,135,53,int((t-43)/.12) if t<45.7 else 0)
+    hero_frame=int(t/.12) if t<46 or 55.5<=t<57 or 64.2<=t<67 else 0
+    ref.actor(pic,'whale',hx,135,53,hero_frame)
     ref.actor(pic,'claude',kx,128,50,0,True)
-    # Aides turn toward the current speaker and take a small reaction step.
-    react=1 if int(t*2)%2 else 0
-    ref.actor(pic,'qwen',155-react,135,30,0,active_king)
-    ref.actor(pic,'kimi',184+react,135,30,0,active_king)
+    ax=trajectory(t,[(43,166),(47,164),(52,168),(56,174),(60,171),(64,176),(68,171),(71,171)])
+    bx=trajectory(t,[(43,196),(47,194),(52,197),(56,203),(60,200),(64,205),(68,200),(71,200)])
+    ref.actor(pic,'qwen',ax,135,30,0,active_king)
+    ref.actor(pic,'kimi',bx,135,30,0,active_king)
     return pic
 
 def storybook(t):
@@ -71,6 +86,13 @@ def storybook(t):
     d.ellipse((147,27,173,53),fill='#efcf89',outline='#fbebba',width=2)
     for x in (72,247):
         for y in (28,123):d.ellipse((x-3,y-3,x+3,y+3),outline='#e3bf81')
+    # The cover opens to reveal the next world rather than holding one still card.
+    local=t if t<8 else t-71
+    if local>=5:
+        amount=min(1,(local-5)/2.5)
+        w=max(1,int(190*amount));page=BG['worldmap'].resize((190,103),Image.Resampling.NEAREST)
+        pic.paste(page.crop((0,0,w,103)),(65,24));d=ImageDraw.Draw(pic)
+        d.line((65+w,24,65+w,127),fill='#f4e5b7',width=2)
     return pic
 
 def village(t):
@@ -83,41 +105,56 @@ def village(t):
     return pic
 
 def travel(t):
-    pic=im('#a8cfdd');d=ImageDraw.Draw(pic)
-    d.ellipse((259,12,289,42),fill='#f7e7a7')
-    for x in (20,92,188):d.rectangle((x,24,x+23,28),fill='#eef2db');d.rectangle((x+5,20,x+16,32),fill='#eef2db')
-    for i in range(7):
-        x=((i*67-int(t*4))%380)-40;d.polygon((x,104,x+30,65,x+65,104),fill='#87a9a6')
-    d.rectangle((0,104,319,144),fill='#94ba7b')
-    for i in range(9):
-        x=((i*48-int(t*15))%380)-30
-        d.rectangle((x-2,96,x+2,119),fill='#7e6b52');d.ellipse((x-11,79,x+11,102),fill='#5b956f',outline='#467a67')
-        d.ellipse((x-6,82,x,87),fill='#9dbb80')
-    d.rectangle((0,123,319,143),fill='#d2ba8b')
-    for x in range(-20,340,24):
-        xx=(x-int(t*18))%344-12;d.line((xx,133,xx+9,133),fill='#b49976')
-    return pic
+    if t>=106:
+        return BG['night'].copy()
+    # Motivated horizontal travel across a wider environment, never camera shake.
+    offset=min(160,max(0,int((t-92)*12)))
+    return ROAD.crop((offset,0,offset+320,180))
 
 def cave(t):
     pic=BG['cave'].copy()
-    # Start separated, then the hero approaches and the dragon reacts to the exchange.
-    hx=39+min(25,max(0,int((t-110)*6)))
-    dx=216+(2 if 122<=t<124 or 127<=t<129 else 0)
-    ref.actor(pic,'whale',hx,137,49,int((t-110)/.12) if t<114.1 else 0)
-    ref.actor(pic,'gpt',dx,136,74,0,True)
-    ref.actor(pic,'doubao',276,96,32)
+    # The confrontation has distinct approaches, pauses and reactions.
+    hx=trajectory(t,[(110,27),(114,64),(115.5,78),(118,75),(121,72),(122,61),(124,65),(127,68),(129,59),(131,65),(132.77,67)])
+    dx=trajectory(t,[(110,228),(114,222),(116,216),(118,206),(121,213),(122,218),(124,209),(127,217),(129,223),(131,211),(132.77,214)])
+    hero_walking=t<115.5 or 121<=t<122 or 127<=t<129
+    dragon_walking=114<=t<118 or 122<=t<124 or 129<=t<131
+    ref.actor(pic,'whale',hx,137,49,int(t/.12) if hero_walking else 0)
+    ref.actor(pic,'gpt',dx,136,74,int(t/.12) if dragon_walking else 0,True)
+    # The captive shifts slightly within the cage, not through it.
+    captive_x=276+(1 if int(t*2)%2 else -1)
+    ref.actor(pic,'doubao',captive_x,96,32)
     d=ImageDraw.Draw(pic);d.rectangle((263,62,290,99),outline='#e8c67b',width=2)
     for x in (269,275,281,287):d.line((x,63,x,98),fill='#e8c67b')
     if 115.5<=t<118:
-        d.line((hx+21,108,hx+43,81),fill='#f6f2d6',width=3);d.line((hx+18,106,hx+26,112),fill='#e9c77f',width=2)
+        u=min(1,(t-115.5)*2); ex=hx+21+int(22*u);ey=108-int(27*u)
+        d.line((hx+21,108,ex,ey),fill='#f6f2d6',width=3);d.line((hx+18,106,hx+26,112),fill='#e9c77f',width=2)
+    # Reactions are directed to the active speaker and disappear on a new turn.
+    if 121<=t<122.5 or 125<=t<129.5:
+        y=64+(int(t*4)%2);d.ellipse((hx-5,y,hx+5,y+10),fill='#fff2cd',outline='#527477')
+        d.line((hx,y+3,hx+2,y+5),fill='#527477');d.point((hx,y+8),fill='#527477')
+    if 129.5<=t<131:
+        d.polygon((dx-8,45,dx-4,39,dx,45,dx+4,39,dx+8,45,dx+3,52,dx-3,52),fill='#ed9b83')
     return pic
 
 def render(t):
     if t<8:
         pic=storybook(t);return label(pic,'开始','达拉崩吧')
     if t<20:
-        pic=ref.castle(True,t);ref.actor(pic,'doubao',159,88,23)
+        pic=ref.castle(True,t);ref.actor(pic,'doubao',190,96,18)
         return label(pic,'王国','很久很久以前')
+    if 23.8<=t<24.8:
+        pic=DARK_CASTLE.copy();d=ImageDraw.Draw(pic)
+        # Fires attach to the existing village roofs, not opaque placeholder houses.
+        for i,(x,y) in enumerate(((25,128),(55,128),(268,125),(289,122))):
+            h=5+((int(t*8)+i)%4)
+            d.polygon((x-4,y,x-2,y-h,x,y-h//2,x+3,y-h-2,x+5,y),fill='#dc7952')
+            d.polygon((x-2,y,x,y-h//2-2,x+3,y),fill='#ffdb87')
+            for k in range(3):
+                sy=y-9-((int(t*8)+k*9)%23);sx=x+k*2
+                d.ellipse((sx-2,sy-2,sx+2,sy+2),fill='#777986')
+        ref.actor(pic,'qwen',80-int((t-23.8)*18),137,20,int(t/.12),True)
+        ref.actor(pic,'kimi',240+int((t-23.8)*18),137,20,int(t/.12))
+        return label(pic,'警报','城镇着火了！')
     if t<34:return ref.frame(t-20)
     if t<43:
         pic=worldmap(t)
@@ -145,7 +182,7 @@ def render(t):
         pic=storybook(t);return label(pic,'任务','英雄达拉崩吧')
     if t<86:return label(worldmap(t),'地图','带着大家的希望')
     if t<92:
-        pic=ref.town();ref.notice(ImageDraw.Draw(pic))
+        pic=BG['village'].copy();ref.notice(ImageDraw.Draw(pic))
         for n,x in (('qwen',180),('kimi',201),('claude',222)):ref.actor(pic,n,x,120,29)
         rider(pic,72+int((t-86)*9),122-int(2*abs(math.sin(t*6.5))),55,t)
         return label(pic,'出发','从城堡里出发')
@@ -173,13 +210,15 @@ def render(t):
             x=157+(i%6)*15;y=67+(i//6)*11-int((t*6+i)%5);d.ellipse((x,y,x+7,y+7),fill='#f4cc6c',outline='#a67e5d')
         return label(pic,'奖励','获得十二金币')
     if t<106:
-        pic=village(t);rider(pic,70+int((t-101)*32),137-int(2*abs(math.sin(t*7))),49,t);ref.actor(pic,'qwen',247,135,32,0,True)
+        pic=village(t);rider(pic,70+int((t-101)*32),137-int(2*abs(math.sin(t*7))),49,t)
+        villager_x=trajectory(t,[(101,254),(103,249),(104.7,241),(106,246)])
+        ref.actor(pic,'qwen',villager_x,135,32,int(t/.12) if t<104.7 else 0,True)
         return label(pic,'村庄','打开所有宝箱')
     if t<110:
-        pic=travel(t);d=ImageDraw.Draw(pic);d.ellipse((230,5,281,56),fill='#f1efcb')
+        pic=travel(t);d=ImageDraw.Draw(pic)
         for i in range(35):
             x=(i*47+int(t*12))%320;y=(i*29+int(t*24))%119;d.point((x,y),fill='#f4f5db')
-        rider(pic,85,121-int(2*abs(math.sin(t*7))),52,t)
+        rider(pic,90+int((t-106)*25),135-int(2*abs(math.sin(t*7))),52,t)
         return label(pic,'旅途','指引前路的圣月光')
     pic=cave(t)
     # Keep the complete characters above the dialogue window; no crop through bodies.
@@ -241,22 +280,27 @@ def motion_events(pic,t):
     layer=Image.new('RGBA',(320,180));d=ImageDraw.Draw(layer)
     tick=int(t*FPS); beat=int(t)
     if t<8 or 71<=t<79:
-        # Floating game items orbit the book; a loading bar fills and resets.
-        for i in range(3):
+        # Before the opening, items orbit the closed book.
+        local=t if t<8 else t-71
+        for i in range(3 if local<5 else 0):
             x=104+i*51+int(5*math.sin(t*2+i));y=67+int(8*math.sin(t*2.4+i*2))
             d.rectangle((x-6,y-6,x+6,y+6),fill='#d09b64',outline='#fff0b5')
             if i==0:d.line((x-3,y+3,x+3,y-4),fill='#fffbe3',width=2)
             elif i==1:d.ellipse((x-3,y-3,x+3,y+3),fill='#f5d783')
             else:d.polygon((x-3,y+3,x,y-4,x+3,y+3),fill='#a6d7c4')
-        d.rectangle((104,119,215,125),fill='#4b4754',outline='#f5d788')
-        d.rectangle((106,121,106+int((t%4)/4*106),123),fill='#f7e6aa')
+        if local<5:
+            d.rectangle((104,119,215,125),fill='#4b4754',outline='#f5d788')
+            d.rectangle((106,121,106+int((t%4)/4*106),123),fill='#f7e6aa')
     elif t<20:
         # Villagers, fluttering pennants, moving clouds and a turning weather vane.
         for i,x in enumerate((72,239)):
-            sx=x+int(3*math.sin(t*1.4+i*3))
-            ref.actor(layer,['qwen','kimi'][i],sx,128,17,int(t/.12+i*3))
-        for x in (79,239):
-            shift=int(2*math.sin(t*8+x));d.polygon((x,5,x+10+shift,8,x,11),fill='#f2c477')
+            distance=min(34,max(0,int((t-8)*4)))
+            sx=(30+distance if i==0 else 285-distance)
+            ref.actor(layer,['qwen','kimi'][i],sx,137,22,int(t/.12) if t<16.5 else 0, i==1)
+        # Bells or birds move over the castle without covering the princess.
+        for j in range(2):
+            x=(int(t*11)+j*48)%320;y=25+j*7
+            d.line((x-3,y,x,y-2,x+3,y),fill='#f5ede0')
         for i in range(3):
             x=(tick//3+i*94)%345-25;y=15+i*8
             d.rectangle((x,y,x+15,y+3),fill='#edf0d9');d.rectangle((x+4,y-2,x+11,y+5),fill='#edf0d9')
