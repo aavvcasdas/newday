@@ -685,7 +685,7 @@ export function evaluateCharacterMotion(plan, t, {
 
   // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
   // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
-  const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
+  const atlasColsFor = (name) => (name && /(_2leg|_pet|_bench)$/.test(name) ? 8 : 16);
   // 注意：atlas 也可能只由 locomotion 预设推导出来（plan.atlas 缺省），
   // 这里必须把预设解析后的真实图集名也算进来，否则 8 格步态会被当成 16 列播，
   // 抽到不存在的格子 → 角色闪空。

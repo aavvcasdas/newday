@@ -18,6 +18,12 @@ const REPO_ROOT = path.resolve(HERE, '../..');
 const ATLAS_NAMES = {
   whale: { walk: 'whale_walk_side_2leg', idle: 'whale_idle_side_pet' },
   gpt: { walk: 'gpt_walk_2leg', idle: 'gpt_idle_pet' },
+  gemini: { walk: 'gemini_walk_2leg', idle: 'gemini_idle_pet' },
+  claude: { walk: 'claude_walk_2leg', idle: 'claude_idle_pet' },
+  kimi: { walk: 'kimi_walk_2leg', idle: 'kimi_idle_pet' },
+  qwen: { walk: 'qwen_walk_2leg', idle: 'qwen_idle_pet' },
+  zai: { walk: 'zai_walk_2leg', idle: 'zai_idle_pet' },
+  doubao: { walk: 'doubao_walk_side_2leg', idle: 'doubao_idle_side_pet' },
 };
 
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(ATLAS_NAMES);

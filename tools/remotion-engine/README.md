@@ -18,7 +18,7 @@
 - `frame_evaluator.mjs`：纯 ESM 逐帧世界与骨骼交互求解器（浏览器 Bundle 与 Node 单测共用）
 - `mv_adapter.mjs`：歌词 MV 声明式规格适配器
 - `walk_rig_builder.mjs`：**8 帧步态 / 待机图集注册表与构建器**（`WALK_FRAMES = 8`，8 帧 × 120ms = 0.96s 双步周期，对齐 `tqlearning/ai-girl-chatgpt-pets` 的 `running-right`；仓库内 `assets/ai-girls/walk-v14/*.png` 有预烘成品时优先直接读取）
-- `walk_cycle_v14.mjs` + `build_walk_v14.mjs`：**v14 侧 3/4 八帧行走生成器**（AI 重绘的直立体侧立绘 → 上身/左右腿分层 → 抬脚·前后摆·脚掌微转八姿态 → 裙摆裁剪，绝无灰腿鬼影 / 断膝 / 第三条腿）；`node tools/remotion-engine/build_walk_v14.mjs whale gpt` 落盘到 `assets/ai-girls/walk-v14/`
+- `walk_cycle_v14.mjs` + `build_walk_v14.mjs`：**v14 侧 3/4 八帧行走生成器**（AI 重绘的直立体侧立绘 → 上身/腿分层 → 八姿态；腿分开的角色走 `split` 左右腿反相抬摆，腿并拢成一整块的角色走 `block` 斜切摆动；统一裙摆裁剪，绝无灰腿鬼影 / 断膝 / 第三条腿）；`node tools/remotion-engine/build_walk_v14.mjs` 落盘全部 8 位角色到 `assets/ai-girls/walk-v14/`
 - `walk_preview.mjs`：走路图集审阅台（`node tools/remotion-engine/walk_preview.mjs --port 8099`，120ms 逐帧播放 + 单帧定格）
 - `render_cli.mjs`：支持 `--bundle-check`、`--dry-run`、本地静态资源 HTTP 服务与 MP4/PNG 渲染的统一 CLI
 - `components/`：`WorldCamera.jsx`、`StageSetView.jsx`、`RiggedCharacter.jsx`、`InteractivePropsLayer.jsx`、`TransitionOverlay.jsx`、`LyricAndSubtitleLayer.jsx`

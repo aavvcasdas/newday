@@ -34,14 +34,14 @@ const clamp = (v, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
 
 // 每位角色的下半身切分参数（384×416 单元格坐标；hemY 为裙摆/裤脚分界线）
 export const WALK_CHAR_SPECS = {
-  whale: { source: 'whale.png', hemY: 344, legHalf: 40, stride: 1.0 },
-  gpt: { source: 'gpt.png', hemY: 360, legHalf: 26, stride: 1.0 },
-  gemini: { source: 'gemini.png', hemY: 346, legHalf: 38, stride: 0.95 },
-  claude: { source: 'claude.png', hemY: 296, legHalf: 46, stride: 1.05 },
-  kimi: { source: 'kimi.png', hemY: 326, legHalf: 42, stride: 1.0 },
-  qwen: { source: 'qwen.png', hemY: 352, legHalf: 34, stride: 0.85 },
-  zai: { source: 'zai.png', hemY: 326, legHalf: 44, stride: 0.95 },
-  doubao: { source: 'doubao.png', hemY: 250, legHalf: 46, stride: 1.15 },
+  whale: { source: 'whale.png', hemY: 344, legHalf: 44, stride: 1.0, mode: 'split' },
+  gpt: { source: 'gpt.png', hemY: 360, legHalf: 32, stride: 1.0, mode: 'split' },
+  gemini: { source: 'gemini.png', hemY: 330, legHalf: 46, stride: 1.0, mode: 'block' },
+  claude: { source: 'claude.png', hemY: 336, legHalf: 46, stride: 1.05, mode: 'split' },
+  kimi: { source: 'kimi.png', hemY: 300, legHalf: 42, stride: 1.0, mode: 'split' },
+  qwen: { source: 'qwen.png', hemY: 348, legHalf: 40, stride: 0.9, mode: 'block' },
+  zai: { source: 'zai.png', hemY: 340, legHalf: 44, stride: 1.0, mode: 'block' },
+  doubao: { source: 'doubao.png', hemY: 252, legHalf: 56, stride: 1.1, mode: 'block' },
 };
 
 // ---------------------------------------------------------------------------
@@ -152,7 +152,29 @@ function splitLayers(cell, cfg) {
   }
   const cx = n ? Math.round(sx / n) : CELL_W / 2;
 
-  const half = cfg.legHalf || 40;
+  // 腿部横向范围：取脚踝一带真实轮廓的外沿 + 余量，保证裁切边落在背景上（不留竖向残条）
+  let autoHalf = cfg.legHalf || 40;
+  for (let y = GROUND_Y - 26; y < GROUND_Y - 4; y++) {
+    for (let x = 0; x < CELL_W; x++) {
+      if (A(x, y) <= 24) continue;
+      autoHalf = Math.max(autoHalf, Math.abs(x - cx) + 8);
+    }
+  }
+  const half = Math.min(96, autoHalf);
+
+  // 劈分点：两腿之间的"山谷"列（腿间最空的竖列），而不是简单的重心中线。
+  // 正面/侧 3/4 站立时两腿常常贴得很近，按重心中线劈开会把每条腿各切成两半。
+  let splitX = cx;
+  let bestCount = Infinity;
+  const scan = Math.max(6, Math.round(half * 0.6));
+  for (let x = cx - scan; x <= cx + scan; x++) {
+    if (x < 0 || x >= CELL_W) continue;
+    let count = 0;
+    for (let y = cfg.hemY; y < GROUND_Y; y++) {
+      if (A(x, y) > 24) count++;
+    }
+    if (count < bestCount) { bestCount = count; splitX = x; }
+  }
   // 尾巴 / 披风这类偏蓝紫的附属物不算腿，避免跟着腿一起摆动
   const isTailLike = (x, y) => {
     const i = (y * CELL_W + x) * 4;
@@ -189,7 +211,7 @@ function splitLayers(cell, cfg) {
     for (let y = cfg.hemY; y < CELL_H; y++) {
       for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
         if (!legPix[y * CELL_W + x]) continue;
-        const isNearSide = side === 'R' ? x >= cx : x < cx;
+        const isNearSide = side === 'R' ? x >= splitX : x < splitX;
         if (!isNearSide) continue;
         const i = (y * CELL_W + x) * 4;
         lim.data[i] = d[i];
@@ -217,7 +239,27 @@ function splitLayers(cell, cfg) {
     return c;
   };
 
-  return { upper, legL: tint(buildLeg('L')), legR: buildLeg('R'), cx, hemY: cfg.hemY };
+  if (cfg.mode === 'block') {
+    // 双腿在立绘里本来就并在一起（长裤/贴身长袜）时，硬劈开会露出空洞。
+    // 改为整块下半身斜切(shear)摆动：支点在髋部，剪切不会产生缝隙，读感是 chibi 小碎步。
+    const block = createCanvas(CELL_W, CELL_H);
+    const bg2 = block.getContext('2d');
+    const bim = bg2.createImageData(CELL_W, CELL_H);
+    for (let y = cfg.hemY; y < CELL_H; y++) {
+      for (let x = Math.max(0, cx - half); x <= Math.min(CELL_W - 1, cx + half); x++) {
+        if (!legPix[y * CELL_W + x]) continue;
+        const i = (y * CELL_W + x) * 4;
+        bim.data[i] = d[i];
+        bim.data[i + 1] = d[i + 1];
+        bim.data[i + 2] = d[i + 2];
+        bim.data[i + 3] = d[i + 3];
+      }
+    }
+    bg2.putImageData(bim, 0, 0);
+    const empty = createCanvas(CELL_W, CELL_H);
+    return { upper, legL: block, legR: empty, cx, splitX, hemY: cfg.hemY, mode: 'block' };
+  }
+  return { upper, legL: tint(buildLeg('L')), legR: buildLeg('R'), cx, splitX, hemY: cfg.hemY, mode: 'split' };
 }
 
 // ---------------------------------------------------------------------------
@@ -290,8 +332,21 @@ export async function buildWalkAtlas(charId) {
     fc.beginPath();
     fc.rect(0, cfg.hemY, CELL_W, CELL_H - cfg.hemY);
     fc.clip();
-    drawLeg(fc, layers.legL, farPose, hipX, hipY, 1, 0);
-    drawLeg(fc, layers.legR, nearPose, hipX, hipY, 1, 0);
+    if (layers.mode === 'block') {
+      // 整块下半身：以髋为支点斜切摆动 + 轻微抬落，绝不劈缝
+      const t = walkPhase(f) / WALK_FRAMES;
+      const shear = Math.sin(2 * Math.PI * t) * 0.16 * cfg.stride;
+      const lift = Math.max(0, Math.sin(2 * Math.PI * t + Math.PI / 3)) * legSpan * 0.06 * cfg.stride;
+      fc.save();
+      fc.translate(hipX, hipY);
+      fc.transform(1, 0, -shear, 1, 0, 0);
+      fc.translate(-hipX, -hipY - lift);
+      fc.drawImage(layers.legL, 0, 0);
+      fc.restore();
+    } else {
+      drawLeg(fc, layers.legL, farPose, hipX, hipY, 1, 0);
+      drawLeg(fc, layers.legR, nearPose, hipX, hipY, 1, 0);
+    }
     fc.restore();
 
     sg.drawImage(frame, f * CELL_W, 0);
@@ -321,6 +376,11 @@ export async function buildIdleAtlas(charId) {
     sg.drawImage(frame, f * CELL_W, 0);
   }
   return strip;
+}
+
+export async function __debugLayers(charId) {
+  const cell = await loadSideCell(charId);
+  return splitLayers(cell, WALK_CHAR_SPECS[charId]);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
