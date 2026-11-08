@@ -9,6 +9,7 @@
 ```
 walk-v14/
   source/                     本轮重新生成的侧 3/4 立绘（AI 生成，白底，8 位角色各一张）
+  frames/<char>/f1..f8.png    逐帧成品立绘（走路的每一帧都是画出来的，和上游 pets 一致）
   <atlas>.png                 8 格 × 384×416 成品图集（透明 PNG）
   preview/<char>_strip.png     8 帧并排、脚底同一条地面线（静态审阅）
   preview/<char>_walk.gif      3s/25fps 走过舞台（每 120ms 换格，`render_walk_clips.py` 生成，默认不入库）
@@ -40,7 +41,38 @@ walk-v14/
 长椅坐姿（`whale_seat_side_bench` / `sit_bench`）已整体下线：代码、预设、模板、MV 规格、
 指标表里都不再有这个名字。
 
-## 下半身驱动：单腿切片 + 髋关节反相摆动
+## 两种出图模式（优先逐帧成品）
+
+上游 `ai-girl-chatgpt-pets` 的 `running-right` 是**每一帧单独画一张全身像**：
+8 格每格的 bbox 几乎完全一样（38,37,153,203），腿是画出来的、不是切出来的，
+所以迈步时腿和身体始终是同一条轮廓。
+
+v14 现在也支持这条路，并且**优先用它**：
+
+| 模式 | 触发条件 | 做法 |
+| --- | --- | --- |
+| **逐帧成品**（推荐） | `frames/<char>/f1.png … f8.png` 八张齐全 | 抠白 → 按身高归一到 `ART_H`（每帧同高）→ 脚底贴 `GROUND_Y` → 上半身重心对到单元格中线 → 直接拼成 8 格图集。不切腿、不蒙皮、不做任何形变 |
+| 单腿切片骨架（过渡） | 没有 `frames/` 的角色 | 取一条腿的切片做前腿、压暗复制做后腿，绕髋反相刚性旋转 |
+
+当前状态：**kimi 已切到逐帧成品**；其余 8 套仍在单腿切片骨架上，
+逐帧立绘补齐一张就自动切换一张（`build_walk_v14.mjs` 会自动检测，不需要改代码）。
+
+### 逐帧立绘怎么来
+
+一次生图稳定出 4 个姿态，所以每个角色只要 **2 张 2×2 四格图 = 8 帧**：
+
+```bash
+# 第一张四格图（左上/右上/左下/右下 → f1..f4）
+python3 tools/remotion-engine/slice_walk_sheet.py sheet_a.png --char whale --offset 1
+# 第二张（另外半套相位）→ f5..f8
+python3 tools/remotion-engine/slice_walk_sheet.py sheet_b.png --char whale --offset 5
+# 拼图集（自动走逐帧成品模式）
+node tools/remotion-engine/build_walk_v14.mjs whale
+```
+
+切片器会擦掉每格底部那条地面线、并按 `--inset` 内缩躲开格子之间的串味。
+
+## 下半身驱动：单腿切片 + 髋关节反相摆动（仅过渡角色）
 
 八个角色共用一套腿的驱动方式（不再是早期的 `split` 劈腿 / `block` 斜切两种模式）：
 

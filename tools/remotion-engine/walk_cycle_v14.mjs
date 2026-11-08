@@ -29,6 +29,9 @@ export const GROUND_Y = 406;
 export const ART_H = 372;
 export const ART_DIR = path.join(REPO_ROOT, 'assets/ai-girls/walk-v14');
 export const SOURCE_DIR = path.join(ART_DIR, 'source');
+// 逐帧成品立绘（对标上游 pets 的做法：8 帧各画一张全身，腿是真的画出来的）
+export const FRAME_DIR = path.join(ART_DIR, 'frames');
+export const FRAME_FILES = ['f1.png', 'f2.png', 'f3.png', 'f4.png', 'f5.png', 'f6.png', 'f7.png', 'f8.png'];
 
 const clamp = (v, lo = 0, hi = 1) => (v < lo ? lo : v > hi ? hi : v);
 
@@ -68,6 +71,23 @@ function cutoutWhite(img) {
     const mn = Math.min(r, gr, b);
     return mn >= 241 && mx - mn <= 10;
   };
+
+  // 生成图底部常压着一条"地面/投影"浅灰带（不是纯白，flood fill 进不去）：
+  // 不剔掉的话包围盒会被撑到整张图，归一化后人物忽大忽小、脚下还挂一条灰边。
+  const isFloorRow = (y) => {
+    let grey = 0;
+    for (let x = 0; x < w; x++) {
+      const i = (y * w + x) * 4;
+      const r = d[i], gr = d[i + 1], b = d[i + 2];
+      const mx = Math.max(r, gr, b);
+      const mn = Math.min(r, gr, b);
+      if (mx - mn <= 14 && mn > 180 && mn < 252) grey++;
+    }
+    return grey >= w * 0.9;
+  };
+  for (let y = h - 1; y >= 0 && isFloorRow(y); y--) {
+    for (let x = 0; x < w; x++) d[(y * w + x) * 4 + 3] = 0;
+  }
 
   const seen = new Uint8Array(w * h);
   const stack = [];
@@ -132,6 +152,63 @@ function normalizeToCell(cut) {
   const cell = createCanvas(CELL_W, CELL_H);
   cell.getContext('2d').drawImage(cut, x0, y0, bw, bh, Math.round((CELL_W - dw) / 2), GROUND_Y - ART_H, dw, ART_H);
   return cell;
+}
+
+/** 某角色是否有 8 张手绘/生成的逐帧成品立绘 */
+export function frameFilesFor(charId) {
+  const dir = path.join(FRAME_DIR, charId);
+  const files = FRAME_FILES.map((f) => path.join(dir, f));
+  return files.every((f) => fs.existsSync(f)) ? files : null;
+}
+
+/** 取 alpha 包围盒 + 上半身横向重心（头/躯干重心，腿怎么摆都不会把身体带偏） */
+function alphaBoxAndCenter(canvas, topFrac = 0.38) {
+  const w = canvas.width, h = canvas.height;
+  const d = canvas.getContext('2d').getImageData(0, 0, w, h).data;
+  let x0 = w, y0 = h, x1 = -1, y1 = -1;
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      if (d[(y * w + x) * 4 + 3] <= 24) continue;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+    }
+  }
+  if (x1 < 0) return null;
+  const bandTop = y0;
+  const bandBottom = y0 + Math.max(8, Math.round((y1 - y0 + 1) * topFrac));
+  let sx = 0, n = 0;
+  for (let y = bandTop; y <= bandBottom; y++) {
+    for (let x = x0; x <= x1; x++) {
+      if (d[(y * w + x) * 4 + 3] > 40) { sx += x; n++; }
+    }
+  }
+  return { x0, y0, x1, y1, centerX: n ? sx / n : (x0 + x1) / 2 };
+}
+
+/**
+ * 逐帧成品模式：8 张全身立绘直接拼成图集，不做任何切腿/蒙皮。
+ * 统一处理：抠白 → 按身高归一到 ART_H（每帧同高，腿张开也不会缩水）→ 脚底贴 GROUND_Y
+ *          → 上半身重心对到单元格中线（腿摆动不会让整个人左右跳）。
+ */
+async function buildFrameStrip(charId) {
+  const files = frameFilesFor(charId);
+  if (!files) return null;
+  const strip = createCanvas(CELL_W * WALK_FRAMES, CELL_H);
+  const sg = strip.getContext('2d');
+  for (let i = 0; i < files.length; i++) {
+    const cut = cutoutWhite(await loadImage(files[i]));
+    const box = alphaBoxAndCenter(cut);
+    if (!box) throw new Error(`${charId} 第 ${i + 1} 帧是空的`);
+    const bw = box.x1 - box.x0 + 1;
+    const bh = box.y1 - box.y0 + 1;
+    const s = ART_H / bh;
+    const dw = Math.max(1, Math.round(bw * s));
+    const dx = Math.round(CELL_W / 2 - (box.centerX - box.x0) * s);
+    sg.drawImage(cut, box.x0, box.y0, bw, bh, i * CELL_W + dx, GROUND_Y - ART_H, dw, ART_H);
+  }
+  return strip;
 }
 
 const cellCache = new Map();
@@ -362,6 +439,8 @@ function drawLeg(ctx, leg, pose, hipX, hipY) {
 }
 
 export async function buildWalkAtlas(charId) {
+  const framed = await buildFrameStrip(charId);
+  if (framed) return framed;              // 有逐帧成品立绘 → 直接拼，绕开所有切腿逻辑
   const cfg = WALK_CHAR_SPECS[charId];
   const cell = await loadSideCell(charId);
   const layers = splitLayers(cell, cfg);
@@ -424,6 +503,10 @@ export async function buildIdleAtlas(charId) {
     sg.drawImage(frame, f * CELL_W, 0);
   }
   return strip;
+}
+
+export function hasFrames(charId) {
+  return Boolean(frameFilesFor(charId));
 }
 
 export async function __debugLayers(charId) {
