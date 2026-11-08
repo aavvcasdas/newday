@@ -85,3 +85,21 @@ tools/day9制作/海底联动预览抽帧/
 /tools/mv_extra/encoded_frames/
 
 /.venv/
+
+# 2026-11-08 分支瘦身：这四个散落媒体曾被提交进 Git（仓库一度 1.1GB），
+# 现已从分支删除。需要时按下列来源取回，不要再直接 commit：
+#   《把回忆拼好给你》.mp4         ← Git blob b4a89ebc296054b96ca6d24ad5677903b85c31f5（tools/mv_extra/setup.py 校验）
+#   鲸鱼摇人_克隆配音_最终版.wav   ← commit 124e446（104.3s/40kHz/SHA256 4782532083e1…）
+#   我怀疑大禹治水治没了我的薪水.mp3 ← 按需向用户索取原音源
+#   assets/mv-extra/user_reference_audio.m4a ← 同上，随源视频一起归档
+/《把回忆拼好给你》.mp4
+/鲸鱼摇人_克隆配音_最终版.wav
+/我怀疑大禹治水治没了我的薪水.mp3
+/assets/mv-extra/user_reference_audio.m4a
+
+# 通用：根目录下随手放的音视频一律不入库（交付成片请放对应 Day/番外MV 目录）
+/*.mp4
+/*.wav
+/*.mp3
+/*.m4a
+/*.mov
