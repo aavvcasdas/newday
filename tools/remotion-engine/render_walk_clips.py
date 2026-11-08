@@ -206,6 +206,38 @@ def render_cycle(char, atlas_name, zoom=2):
     out = os.path.join(OUT, '%s_cycle.png' % char)
     frames[0].save(out, save_all=True, append_images=frames[1:],
                    duration=FRAME_MS, loop=0, optimize=True)
+    # 同一段循环再出一份动画 WebP：全彩、体积只有 APNG 的十分之一，浏览器直接能播
+    webp = os.path.join(OUT, '%s_cycle.webp' % char)
+    try:
+        frames[0].save(webp, save_all=True, append_images=frames[1:],
+                       duration=FRAME_MS, loop=0, quality=92, method=4)
+    except Exception as exc:      # 老 Pillow 没编 WebP 支持就跳过
+        print('skip webp', char, exc)
+    return out
+
+
+def render_all_cycle(names):
+    """3×3 汇总动画（WebP）：9 个角色同步循环，一眼看全体的迈步效果。"""
+    names = [n for n in names if n in CHARS][:9]
+    cols = 3
+    rows = (len(names) + cols - 1) // cols
+    frames = []
+    for f in range(8):
+        board = Image.new('RGB', (CELL_W * cols, CELL_H * rows), (16, 22, 38))
+        d = ImageDraw.Draw(board)
+        lab = font(14)
+        for idx, n in enumerate(names):
+            atlas = Image.open(os.path.join(ART, CHARS[n] + '.png')).convert('RGBA')
+            cell = atlas.crop((f * CELL_W, 0, (f + 1) * CELL_W, CELL_H))
+            cx = (idx % cols) * CELL_W
+            cy = (idx // cols) * CELL_H
+            board.paste(cell, (cx, cy), cell)
+            d.rectangle([cx, cy, cx + 96, cy + 22], fill=(10, 16, 30))
+            d.text((cx + 6, cy + 4), n, fill=(150, 190, 240), font=lab)
+        frames.append(board)
+    out = os.path.join(OUT, 'walk_all9_cycle.webp')
+    frames[0].save(out, save_all=True, append_images=frames[1:],
+                   duration=FRAME_MS, loop=0, quality=92, method=4)
     return out
 
 
@@ -281,6 +313,8 @@ def main():
         entries.append((n, os.path.join(OUT, '%s_walk.gif' % n)))
     if entries:
         print('wrote', render_sheet(entries))
+        if not args.native_only:
+            print('wrote', render_all_cycle([e[0] for e in entries]))
 
 
 if __name__ == '__main__':

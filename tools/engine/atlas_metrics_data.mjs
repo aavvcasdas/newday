@@ -58,7 +58,7 @@ export const ATLAS_CONTENT = Object.freeze({
   "qwen_idle_pet": {"topFrac":0.0793,"bottomFrac":0.9736,"leftFrac":0.2891,"rightFrac":0.7135,"cols":8},
   "qwen_reach_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.1875,"rightFrac":0.8073,"cols":16},
   "qwen_swim_full_retry_action": {"topFrac":0.3702,"bottomFrac":0.9712,"leftFrac":0.0286,"rightFrac":0.9688,"cols":16},
-  "qwen_walk_2leg": {"topFrac":0.0769,"bottomFrac":0.9784,"leftFrac":0.2839,"rightFrac":0.7474,"cols":8},
+  "qwen_walk_2leg": {"topFrac":0.0769,"bottomFrac":0.9808,"leftFrac":0.2656,"rightFrac":0.7448,"cols":8},
   "qwen_water_full_action": {"topFrac":0.0481,"bottomFrac":0.9639,"leftFrac":0.1224,"rightFrac":0.8542,"cols":16},
   "whale_bird": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.0417,"rightFrac":0.9531,"cols":16},
   "whale_camera_action": {"topFrac":0.024,"bottomFrac":0.9736,"leftFrac":0.0443,"rightFrac":0.9505,"cols":16},
