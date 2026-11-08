@@ -97,6 +97,11 @@ tools/day9制作/海底联动预览抽帧/
 /我怀疑大禹治水治没了我的薪水.mp3
 /assets/mv-extra/user_reference_audio.m4a
 
+# Day13 配音源（用户给定，17.7MB）：同 day5.wav 的处理，按需取回，不重复入库
+#   git show 034e2b7:鲸鱼MV画面_克隆配音_最终版.wav > 鲸鱼MV画面_克隆配音_最终版.wav
+#   SHA256 1891c4c7f9c08011ad420e85d1a5c08c343256bcd0a0c5044bd13c91d135bd4e / 110.62s
+/鲸鱼MV画面_克隆配音_最终版.wav
+
 # 通用：根目录下随手放的音视频一律不入库（交付成片请放对应 Day/番外MV 目录）
 /*.mp4
 /*.wav

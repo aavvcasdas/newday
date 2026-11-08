@@ -1,0 +1,1 @@
+import React from 'react';import {registerRoot,Composition} from 'remotion';import {Day13Film} from './day13-v2.jsx';registerRoot(()=> <Composition id="Day13" component={Day13Film} width={1920} height={1080} fps={30} durationInFrames={3319}/>);

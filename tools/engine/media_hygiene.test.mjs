@@ -27,13 +27,22 @@ const ALLOWED_FILES = [
 ];
 
 // 允许入库的归档目录：整支 MV 的成片与审看样片，按用户明确指示保留（不是新上传的散落文件）。
+// Day13 只放行成片与独立伴奏各文件；配音源 WAV 按需取回，见 .gitignore。
 const ALLOWED_PREFIXES = [
   '番外MV/我怀疑大禹治水/',
   '番外MV/把回忆拼好给你/',
 ];
 
+const DAY13_FILES = [
+  /^Day13\/成片\/Day13_鲸鱼MV画面_配音BGM_待审\.mp4$/,
+  /^Day13\/成片\/Day13_Day12鲸娘走动_待审\.mp4$/,
+  /^Day13\/配音\/Day13_伴奏\.flac$/,
+];
+
 const isAllowed = (f) =>
-  ALLOWED_FILES.some((re) => re.test(f)) || ALLOWED_PREFIXES.some((p) => f.startsWith(p));
+  ALLOWED_FILES.some((re) => re.test(f)) ||
+  DAY13_FILES.some((re) => re.test(f)) ||
+  ALLOWED_PREFIXES.some((p) => f.startsWith(p));
 
 function trackedMedia() {
   const out = execFileSync('git', ['ls-files', '-z'], { cwd: ROOT, encoding: 'utf8' });
@@ -55,7 +64,9 @@ test('媒体入库守卫：只有白名单里的交付媒体可以在库里', ()
 
 test('媒体入库守卫：白名单条目必须真实存在，避免规则腐化成空壳', () => {
   const tracked = trackedMedia();
-  const missing = ALLOWED_FILES.filter((re) => !tracked.some((f) => re.test(f))).map((re) => String(re));
+  const missing = [...ALLOWED_FILES, ...DAY13_FILES]
+    .filter((re) => !tracked.some((f) => re.test(f)))
+    .map((re) => String(re));
   assert.deepEqual(missing, [], `白名单里的媒体已不在库中，规则应同步更新：\n${missing.join('\n')}`);
 });
 
