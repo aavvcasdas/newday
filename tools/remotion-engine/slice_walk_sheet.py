@@ -209,6 +209,79 @@ def _box_mean(arr, mask, r):
     mean = np.where(den[..., None] > 0, num / np.maximum(den, 1e-6)[..., None], 0.0)
     return mean, den
 
+
+
+def white_holes(inside, rgb, min_area=1200, flat=246, ds=2):
+    """被人物包住的**大块纯白** = 背景（发辫/尾巴围出来的空洞），要从人物里去掉。
+
+    `background_mask()` 只认「连到画面边缘的白」，所以马尾和后背之间那块白、
+    龙娘尾巴圈起来的那块白都留在了身上 —— 贴到深色舞台上就是一块白斑
+    （gemini f5~f8、zai 全部、gpt 尾巴里都可复现）。
+
+    这里退一步用面积判据：小块的纯白是蕾丝/围裙高光（几百像素），
+    空洞是上千像素。阈值 1200 是在 9 个角色的 8 帧上量出来的：
+    空洞最小 1290（gemini f8），高光最大 750（qwen f3）。
+    """
+    h, w = inside.shape
+    hs, ws = max(1, h // ds), max(1, w // ds)
+    cand = (inside & (rgb.min(axis=2) >= flat))[:hs * ds, :ws * ds]
+    small = cand.reshape(hs, ds, ws, ds).all(axis=(1, 3))
+    seen = np.zeros_like(small)
+    holes = np.zeros_like(small)
+    for sy in range(hs):
+        for sx in range(ws):
+            if not small[sy, sx] or seen[sy, sx]:
+                continue
+            q = deque([(sx, sy)])
+            seen[sy, sx] = True
+            comp = []
+            while q:
+                x, y = q.popleft()
+                comp.append((x, y))
+                for nx, ny in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
+                    if 0 <= nx < ws and 0 <= ny < hs and small[ny, nx] and not seen[ny, nx]:
+                        seen[ny, nx] = True
+                        q.append((nx, ny))
+            if len(comp) * ds * ds >= min_area:
+                for x, y in comp:
+                    holes[y, x] = True
+    big = np.repeat(np.repeat(holes, ds, axis=0), ds, axis=1)
+    out = inside.copy()
+    out[:big.shape[0], :big.shape[1]] = inside[:big.shape[0], :big.shape[1]] & ~big
+    return out
+
+
+def _nearest_inner_colour(rgb, dist, band, radius=5):
+    """每个 band 内像素取**最近里层像素**的颜色（沿法线方向的那一个）。
+
+    早先用半径 2 的方框均值当里层颜色，窗口会同时吃到贴边的**墨线**（暗）
+    和再里层的**发色/裙色**（亮），均值就成了中间调 —— 换完边缘是一圈
+    「半亮」的环，深色底上照样看得见（gemini 的浅发最明显）。
+    这里改成找最近的一个 dist>band 的像素，原样搬它的颜色，墨线就还是墨线。
+    """
+    h, w = dist.shape
+    pad = radius + 1
+    dp = np.pad(dist, pad, mode='constant', constant_values=0)
+    cp = np.pad(rgb, ((pad, pad), (pad, pad), (0, 0)), mode='edge')
+    out = rgb.copy()
+    filled = np.zeros(dist.shape, bool)
+    offs = sorted(((dy, dx) for dy in range(-radius, radius + 1)
+                   for dx in range(-radius, radius + 1)
+                   if (dy or dx) and dy * dy + dx * dx <= radius * radius),
+                  key=lambda o: o[0] ** 2 + o[1] ** 2)
+    need = dist <= band
+    for dy, dx in offs:
+        src_d = dp[pad + dy:pad + dy + h, pad + dx:pad + dx + w]
+        src_c = cp[pad + dy:pad + dy + h, pad + dx:pad + dx + w]
+        ok = need & ~filled & (src_d > band)
+        if ok.any():
+            out[ok] = src_c[ok]
+            filled |= ok
+        if (need & ~filled).sum() == 0:
+            break
+    return out, filled
+
+
 def white_to_alpha(piece, inside=None, white=WHITE, soft=22.0, band=2, color_radius=2):
     """白底 → 透明，并且把边缘那一圈"被白底冲淡"的颜色换成里层颜色。
 
@@ -230,15 +303,12 @@ def white_to_alpha(piece, inside=None, white=WHITE, soft=22.0, band=2, color_rad
     rgb = piece.astype(np.float32)
     if inside is None:
         inside = rgb.min(axis=2) < white
+    inside = white_holes(inside, rgb)
     dist = _band_distance(inside, steps=band)
 
     # 里层颜色（dist > band），找不到就退回到更大掩码的均值
-    inner = dist > band
-    C, den = _box_mean(rgb, inner, r=color_radius)
-    if (den == 0).any():
-        C2, den2 = _box_mean(rgb, inside, r=color_radius + 2)
-        C = np.where((den > 0)[..., None], C, C2)
-        den = np.where(den > 0, den, den2)
+    C, filled = _nearest_inner_colour(rgb, dist, band, radius=5)
+    den = filled.astype(np.int32)
 
     edge = inside & (dist <= band)
     has_c = edge & (den > 0)

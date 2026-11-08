@@ -39,26 +39,26 @@ def load_helpers():
     return module
 
 
-def defringe(rgba, helper, band=2, radius=2):
+def defringe(rgba, helper, band=2, radius=2, fill_holes=True):
     rgb = rgba[..., :3].astype(np.float32)
     alpha = rgba[..., 3]
     inside = alpha > 0
     if not inside.any():
         return rgba
+    if fill_holes:
+        # 马尾/尾巴围出来的大块纯白其实是背景，先挖掉，再按新剪影去污
+        inside = helper.white_holes(inside, rgb)
+        alpha = np.where(inside, alpha, 0).astype(np.uint8)
     dist = helper._band_distance(inside, steps=band)
-    inner = dist > band
-    if not inner.any():
+    if not (dist > band).any():
         return rgba
-    C, den = helper._box_mean(rgb, inner, r=radius)
-    if (den == 0).any():
-        C2, den2 = helper._box_mean(rgb, inside, r=radius + 2)
-        C = np.where((den > 0)[..., None], C, C2)
-        den = np.where(den > 0, den, den2)
-    band_px = (dist <= band) & (den > 0)
+    C, filled = helper._nearest_inner_colour(rgb, dist, band, radius=5)
+    band_px = (dist <= band) & filled
     out = np.where(band_px[..., None], C, rgb)
     out = np.where(inside[..., None], out, rgb)
     res = rgba.copy()
     res[..., :3] = np.clip(out, 0, 255).astype(np.uint8)
+    res[..., 3] = alpha
     return res
 
 
@@ -69,6 +69,7 @@ def main():
     ap.add_argument('--dir', default=FRAME_ROOT)
     ap.add_argument('--band', type=int, default=2)
     ap.add_argument('--radius', type=int, default=2)
+    ap.add_argument('--no-holes', action='store_true', help='不挖白洞（默认会挖）')
     args = ap.parse_args()
 
     helper = load_helpers()
@@ -88,7 +89,8 @@ def main():
                 print('%s: 不是 RGBA（先跑 white_to_alpha_frames.py）' % path)
                 continue
             rgba = np.array(im)
-            out = defringe(rgba, helper, band=args.band, radius=args.radius)
+            out = defringe(rgba, helper, band=args.band, radius=args.radius,
+                           fill_holes=not args.no_holes)
             if not np.array_equal(out, rgba):
                 changed += 1
             Image.fromarray(out, 'RGBA').save(path)
