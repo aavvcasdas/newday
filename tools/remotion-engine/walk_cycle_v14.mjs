@@ -44,7 +44,8 @@ export const WALK_CHAR_SPECS = {
   zai: { source: 'zai.png', hemY: 340, legHalf: 44, stride: 1.0 },
   doubao: { source: 'doubao.png', hemY: 252, legHalf: 56, stride: 1.1 },
   // 双手推山（用力推）专用立绘：低重心、两腿前后蹬地，走"慢速发力"节奏
-  gpt_push: { source: 'gpt_push.png', hemY: 330, legHalf: 40, stride: 0.8 },
+  // 长裙盖到小腿：腿层上边界压到裙摆以下，避免把裙摆底部啃掉一条横边
+  gpt_push: { source: 'gpt_push.png', hemY: 330, legHalf: 40, stride: 0.8, legTop: 372 },
 };
 
 // ---------------------------------------------------------------------------

@@ -24,6 +24,7 @@ OUT = os.path.join(ART, 'preview')
 
 CELL_W, CELL_H = 384, 416
 ART_H = 372          # 图集里角色美术高度（脚底 = GROUND_Y）
+CELL_GROUND = 406    # 单格内的脚底基线，条带按这条线对齐
 FPS = 25
 DUR = 3.0
 STAGE_W, STAGE_H = 640, 400
@@ -154,7 +155,9 @@ def render_strip(char, atlas_name):
     f = font(13)
     d.line([(0, pad_top + chh), (cw * 8, pad_top + chh)], fill=(78, 106, 152))
     for i, (cell, bbox) in enumerate(cells):
-        art = scaled(cell, bbox, chh - 8)
+        # 底边一律取单元格基线，避免个别帧多出一两像素把"脚"顶高
+        tight = cell.crop((bbox[0], bbox[1], bbox[2], CELL_GROUND))
+        art = scaled(tight, (0, 0, tight.width, tight.height), chh - 8)
         # 让脚底落在统一地面线上
         x = i * cw + (cw - art.width) // 2
         y = pad_top + chh - art.height
