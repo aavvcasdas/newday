@@ -5,13 +5,13 @@
     "鲸鱼MV重看_克隆配音_最终版.wav": "86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3",
     "tools/day14制作/voice_alignment.json": "c5413335bf34ba221bbe49952a518c8a5428d64a71d04b271ceb84c536b9cd41",
     "tools/day14制作/subtitle_timing.json": "a59c2fb780ee294afe02cf9b3e2b8f5da48d9e12d30ce6fc4a5cf2ce63bb6d42",
-    "tools/day14制作/render_day14_video.py": "e60ff165a80f0328b0fb40af29466b820878f4abd708c5331e79e138d63ba722",
-    "Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4": "d319cc9d287f8406ef76e0e1c88fe65c3fe6283d2d3d99beeb96b8992464d869",
+    "tools/day14制作/render_day14_video.py": "d3177ddc4a845c3e63fb08edb736997e280a4f3bc96deeb697e291bbafdf64de",
+    "Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4": "efac05b1519284172b65059cc19102931cd94df3de9a5c1e49cbc9243338d903",
     "tools/engine/day14_plan.test.mjs": "dae8deee083cb17faeab93e2fd22de2ac56bddace8f650c5e183ed11bcefbd88"
   },
   "day": 14,
   "stage": "audio",
-  "timestamp": "2026-11-09T16:15:49.705471+00:00",
+  "timestamp": "2026-11-09T16:42:11.576591+00:00",
   "checks": [
     {
       "name": "实测轴/哈希/台词/字幕",
