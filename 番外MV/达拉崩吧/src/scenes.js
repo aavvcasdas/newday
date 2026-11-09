@@ -4,6 +4,7 @@ import { drawTextPx, measureTextPx } from './glyphs.js';
 import {
   getPortrait,
   drawWhaleHero,
+  drawMapWhaleHero,
   drawWhiteHorse,
   drawCastSprite,
   drawDoubaoInCage,
@@ -151,143 +152,462 @@ function drawThroneRoom(fb, t, camY = 0) {
   fb.tri(252, fy - 38, 286, fy - 38, 269, fy - 50, C.gold);
 }
 
+// Springy pop-up book fold-up helper (0 -> 1.09 -> 1.0)
+function foldUp(t, t0, dur = 0.72) {
+  const u = clamp((t - t0) / dur, 0, 1);
+  if (u <= 0) return 0;
+  if (u >= 1) return 1;
+  return 1 - Math.pow(1 - u, 3) + Math.sin(u * Math.PI) * 0.11;
+}
+
+// Medium Close-Up of the Castle's Rainbow Royal Balcony (used in S02b, S03a, S03d, S04)
+function drawRoyalBalconyCloseup(fb, t, { night = false, burning = false } = {}) {
+  fb.gradV(0, 0, W, H, burning
+    ? [C.umber, C.plum, C.crimson]
+    : night
+      ? [C.night, C.plum, C.dslate]
+      : [C.blue, C.cyan, C.white]);
+
+  if (!night && !burning) {
+    for (let i = 0; i < 3; i++) {
+      const cx = mod(Math.round(35 + i * 115 + t * 8), 360) - 20;
+      const cy = 22 + (i % 2) * 16;
+      fb.ellipse(cx, cy, 22, 7, C.white);
+      fb.ellipse(cx + 9, cy + 2, 14, 5, C.silver);
+    }
+  }
+
+  // Grand stone facade of the Central Keep
+  fb.rect(46, 0, 228, H, C.white);
+  fb.rect(46, 0, 16, H, C.silver);
+  fb.rect(258, 0, 16, H, C.silver);
+  fb.vline(46, 0, H, C.ink);
+  fb.vline(274, 0, H, C.ink);
+
+  // Twin fluttering crimson royal banners
+  for (const bx of [68, 232]) {
+    const sway = Math.round(Math.sin(t * 4.5 + bx) * 2);
+    fb.rect(bx, 8, 20, 68, C.scarf);
+    fb.vline(bx + 2, 8, 74, C.gold);
+    fb.vline(bx + 17, 8, 74, C.gold);
+    fb.tri(bx, 76, bx + 20, 76, bx + 10 + sway, 90, C.scarf);
+  }
+
+  // Rainbow Arch + Stained-Glass Rose Window above Balcony (homage to 达拉崩吧.mp4!)
+  const rx = 160, ry = 54;
+  const rainbowCols = [C.scarf, C.orange, C.goldL, C.lime, C.cyan];
+  rainbowCols.forEach((col, idx) => {
+    fb.ellipse(rx, ry + 34, 46 - idx * 3, 52 - idx * 3, col);
+  });
+  fb.ellipse(rx, ry + 36, 30, 36, C.night);
+  fb.rect(rx - 30, ry + 34, 60, 44, C.night);
+  // Rose window medallion
+  fb.disc(rx, ry - 4, 15, C.ink);
+  fb.disc(rx, ry - 4, 13, C.gold);
+  fb.tri(rx, ry - 4, rx - 11, ry - 10, rx - 4, ry - 15, C.scarf);
+  fb.tri(rx, ry - 4, rx + 11, ry - 10, rx + 4, ry - 15, C.cyan);
+  fb.tri(rx, ry - 4, rx - 11, ry + 2, rx - 4, ry + 7, C.lime);
+  fb.tri(rx, ry - 4, rx + 11, ry + 2, rx + 4, ry + 7, C.amber);
+
+  // Ornate Marble Balcony Terrace & Balustrade
+  fb.rect(88, 126, 144, 8, C.parchment);
+  fb.box(88, 126, 144, 8, C.ink);
+  fb.rect(94, 134, 132, 18, C.sand);
+  fb.box(94, 134, 132, 18, C.ink);
+  for (let x = 100; x <= 218; x += 10) {
+    fb.rect(x, 114, 4, 12, C.parchment);
+    fb.box(x, 114, 4, 12, C.ink);
+  }
+  // Balcony top handrail + crimson velvet drape
+  fb.rect(86, 110, 148, 5, C.goldL);
+  fb.box(86, 110, 148, 5, C.ink);
+  fb.tri(138, 134, 182, 134, 160, 156, C.scarf);
+  fb.line(138, 134, 160, 156, C.gold, 1);
+  fb.line(182, 134, 160, 156, C.gold, 1);
+
+  if (burning) {
+    const f12 = Math.floor(t * 12);
+    for (const [fx, fy] of [[62, 148], [104, 152], [218, 148], [254, 142]]) {
+      const fh = 10 + ((f12 + fx) % 4) * 3;
+      fb.tri(fx - 8, fy + 10, fx + 8, fy + 10, fx + ((f12 & 1) ? 3 : -3), fy - fh, C.red);
+      fb.tri(fx - 5, fy + 10, fx + 5, fy + 10, fx, fy - fh + 4, C.orange);
+      fb.disc(fx, fy + 4, 3, C.goldL);
+    }
+  }
+}
+
+// Animated Pop-Up Storybook Kingdom Diorama on the Wooden Desk (S02a: 8.05 – 15.80s)
+function drawPopupBookCastle(fb, t) {
+  // Warm candlelit desk + open hardcover spread
+  fb.gradV(0, 0, W, H, [C.umber, C.dbrown, C.brown]);
+  const zoom = eio(seg(t, 13.8, 15.8));
+  const padX = Math.round(lerp(18, 0, zoom));
+  const padY = Math.round(lerp(12, 0, zoom));
+
+  // Book crimson boards & cream open pages
+  if (padX > 0 || padY > 0) {
+    fb.rect(Math.max(0, padX - 4), Math.max(0, padY - 3), W - Math.max(0, padX - 4) * 2, H - Math.max(0, padY - 3) * 2, C.crimson);
+  }
+  const px0 = padX, py0 = padY, pw = W - padX * 2, ph = H - padY * 2;
+  // Sky backdrop painted on upper page + pop-up meadow base on lower page
+  fb.gradV(px0, py0, pw, ph, [C.blue, C.cyan, C.parchment]);
+  fb.gradV(px0, H - padY - 46, pw, 46, [C.lime, C.green, C.parchment]);
+  // Center book crease
+  fb.vline(160, py0, H - padY, C.tan);
+
+  const groundY = 142;
+
+  // Step 1 (8.15s): Distant snow-capped mountain cardboard cutouts fold upright!
+  const fMtn = foldUp(t, 8.15, 0.75);
+  if (fMtn > 0) {
+    const h1 = Math.round(58 * fMtn), h2 = Math.round(64 * fMtn);
+    fb.tri(28, groundY, 138, groundY, 83, groundY - h1, C.slate);
+    fb.tri(64, groundY - Math.round(h1 * 0.62), 102, groundY - Math.round(h1 * 0.62), 83, groundY - h1, C.uiW);
+    fb.tri(176, groundY, 294, groundY, 235, groundY - h2, C.dslate);
+    fb.tri(214, groundY - Math.round(h2 * 0.62), 256, groundY - Math.round(h2 * 0.62), 235, groundY - h2, C.uiW);
+  }
+
+  // Step 2 (9.05s): Rolling green hill + cobblestone road pop up!
+  const fHill = foldUp(t, 9.05, 0.70);
+  if (fHill > 0) {
+    const hh = Math.round(24 * fHill);
+    fb.ellipse(160, groundY + 4, 126, hh, C.green);
+    fb.tri(148, groundY - 4, 172, groundY - 4, 198, H - padY, C.sand);
+    fb.tri(148, groundY - 4, 122, H - padY, 198, H - padY, C.tan);
+  }
+
+  // Step 3 (9.95s): Outer Castle Curtain Wall & Gatehouse spring upright!
+  const fWall = foldUp(t, 9.95, 0.72);
+  if (fWall > 0) {
+    const wh = Math.round(38 * fWall);
+    const wy = groundY - wh;
+    fb.rect(68, wy, 184, wh, C.white);
+    fb.box(68, wy, 184, wh, C.ink);
+    for (let x = 70; x < 250; x += 8) fb.rect(x, wy - 3, 5, 3, C.white);
+    if (wh > 14) {
+      fb.ellipse(160, groundY - 6, 10, Math.min(12, wh - 6), C.ink);
+      fb.rect(150, groundY - 6, 20, 6, C.ink);
+    }
+  }
+
+  // Step 4 (10.90s): Four Blue-Roofed Fairy-Tale Side Spires pop up left & right!
+  const fSpires = foldUp(t, 10.90, 0.75);
+  if (fSpires > 0) {
+    const sideTowers = [[54, 52], [90, 66], [212, 66], [248, 52]];
+    for (const [tx, maxH] of sideTowers) {
+      const th = Math.round(maxH * fSpires);
+      const ty = groundY - th;
+      fb.rect(tx, ty, 18, th, C.silver);
+      fb.box(tx, ty, 18, th, C.ink);
+      const rh = Math.round(16 * fSpires);
+      fb.tri(tx - 3, ty, tx + 21, ty, tx + 9, ty - rh, C.blue);
+      fb.vline(tx + 9, ty - rh - 6, ty - rh, C.gold);
+      fb.tri(tx + 9, ty - rh - 6, tx + 15, ty - rh - 4, tx + 9, ty - rh - 2, C.scarf);
+    }
+  }
+
+  // Step 5 (11.90s): Grand Central Keep with Rainbow Arch & Rose Window pops up tall!
+  const fKeep = foldUp(t, 11.90, 0.80);
+  if (fKeep > 0) {
+    const kh = Math.round(88 * fKeep);
+    const ky = groundY - kh;
+    fb.rect(138, ky, 44, kh, C.white);
+    fb.rect(176, ky, 6, kh, C.silver);
+    fb.box(138, ky, 44, kh, C.ink);
+    const rh = Math.round(22 * fKeep);
+    fb.tri(134, ky, 186, ky, 160, ky - rh, C.scarf);
+    fb.vline(160, ky - rh - 8, ky - rh, C.goldL);
+    if (fKeep > 0.55) {
+      // Rainbow arch & stained-glass rose window!
+      fb.disc(160, ky + 22, 9, C.gold);
+      fb.disc(160, ky + 22, 7, C.scarf);
+      fb.disc(160, ky + 22, 4, C.cyan);
+      fb.rect(146, ky + 34, 28, 4, C.sand);
+      fb.box(146, ky + 34, 28, 4, C.ink);
+    }
+  }
+
+  // Step 6 (12.95s): Foreground Red-Roofed Cottages, Pine Trees & Strolling AI-Girls!
+  const fTown = foldUp(t, 12.95, 0.70);
+  if (fTown > 0) {
+    const ch = Math.round(20 * fTown);
+    for (const hx of [34, 78, 224, 266]) {
+      const hy = groundY + 12 - ch;
+      fb.rect(hx, hy, 20, ch, C.parchment);
+      fb.box(hx, hy, 20, ch, C.dbrown);
+      fb.tri(hx - 2, hy, hx + 22, hy, hx + 10, hy - Math.round(11 * fTown), C.rust);
+    }
+    if (fTown > 0.75) {
+      drawCastSprite(fb, 116 + Math.round((t - 13.0) * 8), 158, 'qwen', t, { pose: 'walk' });
+      drawCastSprite(fb, 206 - Math.round((t - 13.0) * 7), 160, 'gemini', t, { pose: 'walk', facing: -1 });
+      drawCastSprite(fb, 160, groundY - 50, 'doubao', t, { pose: 'cheer' });
+    }
+  }
+
+  // Step 7 (13.85s): Hanging Stage Sun & Clouds drop on Puppet Strings! (Direct 达拉崩吧.mp4 homage!)
+  const dropU = eo(seg(t, 13.85, 14.85));
+  if (dropU > 0) {
+    const props = [
+      { x: 64,  yEnd: 32, kind: 'cloud' },
+      { x: 118, yEnd: 24, kind: 'sun' },
+      { x: 208, yEnd: 26, kind: 'cloud' },
+      { x: 262, yEnd: 34, kind: 'cloud' },
+    ];
+    props.forEach((p, idx) => {
+      const py = Math.round(lerp(-18, p.yEnd, dropU) + Math.sin(t * 3.5 + idx) * 2);
+      fb.vline(p.x, py0, Math.max(py0, py - 8), C.dslate);
+      if (p.kind === 'sun') {
+        fb.disc(p.x, py, 12, C.goldL);
+        fb.disc(p.x, py, 9, C.gold);
+      } else {
+        fb.ellipse(p.x, py, 16, 6, C.white);
+        fb.ellipse(p.x - 6, py + 2, 10, 4, C.white);
+        fb.ellipse(p.x + 7, py + 2, 10, 4, C.silver);
+      }
+    });
+  }
+
+  if (padX > 0 || padY > 0) {
+    fb.box(px0, py0, pw, ph, C.goldD);
+  }
+}
+
 // —— Main Scene Dispatcher: returns { lut, lutB, pick, mosaicBlock, swirlU, texts } ——
 export function renderScene(fb, t) {
   const texts = [];
 
-  // S01 (0.00 – 8.05s): Candlelit Wood Desk + Crimson Grimoire Cartridge Boot Screen!
+  // S01 (0.00 – 8.05s): Dynamic Desk Push-In + Trotting Chibi Whale-Girl + Magic Spark Writing + 3D Cover Flip!
   if (t < 8.05) {
-    fb.gradV(0, 0, W, H, [C.umber, C.dbrown, C.brown]);
-    for (let y = 18; y < H; y += 22) fb.hline(0, W - 1, y, C.umber);
-    fb.glowDisc(160, 82, 54, 125);
+    fb.gradV(0, 0, W, H, [C.ink, C.umber, C.dbrown]);
+    for (let y = 16; y < H; y += 20) fb.hline(0, W - 1, y, C.umber);
 
-    // Ornate Hardcover Pixel Grimoire 《达拉崩吧》
-    const bx = 86, by = 16, bw = 148, bh = 122;
+    // Flickering warm candle on left of desk + golden light pool
+    const flicker = Math.round(Math.sin(t * 17) * 3);
+    fb.glowDisc(160, 84, 62 + flicker, 135);
+    fb.rect(22, 98, 12, 34, C.parchment);
+    fb.box(22, 98, 12, 34, C.ink);
+    fb.tri(25, 96, 31, 96, 28 + (flicker > 0 ? 1 : 0), 84, C.orange);
+    fb.disc(28, 93, 2.5, C.goldL);
+
+    // Camera zoom-in onto Grimoire over 0.00–2.20s, then 3D Cover Page-Turn over 7.38–8.05s!
+    const zoomU = eo(seg(t, 0.0, 2.0));
+    const bx = Math.round(lerp(100, 86, zoomU));
+    const by = Math.round(lerp(28, 14, zoomU));
+    const bw = Math.round(lerp(120, 148, zoomU));
+    const bh = Math.round(lerp(98, 122, zoomU));
+
+    // Cream page block underneath (revealed when crimson cover flips open at 7.38s!)
     fb.rect(bx + 3, by + 4, bw, bh, C.ink);
-    fb.rect(bx + bw - 3, by + 3, 5, bh - 4, C.parchment); // page block edge
-    fb.rect(bx, by, bw - 3, bh, C.crimson);
-    fb.rect(bx, by, 11, bh, C.scarfD); // leather spine
-    fb.box(bx + 6, by + 5, bw - 15, bh - 10, C.gold);
-    fb.box(bx + 9, by + 8, bw - 21, bh - 16, C.goldD);
-    // Bookmark ribbon
-    fb.rect(157, by + bh, 6, 14, C.scarf);
-    fb.tri(157, by + bh + 14, 163, by + bh + 14, 160, by + bh + 10, C.umber);
+    fb.rect(bx + 6, by + 3, bw - 6, bh - 4, C.parchment);
+    fb.box(bx + 6, by + 3, bw - 6, bh - 4, C.goldD);
 
-    // Radiant Sun Emblem + Title
-    fb.disc(160, 44, 11, C.goldL);
-    fb.disc(160, 44, 8, C.gold);
-    drawTextPx(fb, 110, 64, '达拉崩吧', { size: 12, scale: 2, color: C.goldL, outline: C.ink, tracking: 1 });
-    texts.push({ id: 'cover_title', text: '达拉崩吧', x0: 110 * 6, y0: 64 * 6, x1: 214 * 6, y1: 88 * 6 });
-
-    if (t >= 2.2) {
-      drawTextPx(fb, 99, 96, '斑得贝迪卜多比鲁翁', { size: 10, color: C.gold, shadow: C.ink, tracking: 2 });
-      texts.push({ id: 'cover_sub', text: '斑得贝迪卜多比鲁翁', x0: 99 * 6, y0: 96 * 6, x1: 225 * 6, y1: 108 * 6 });
+    const openU = eio(seg(t, 7.38, 8.03));
+    if (openU > 0.02) {
+      // Glowing magic burst from inside the opening storybook!
+      fb.glowDisc(bx + (bw >> 1), by + (bh >> 1), Math.round(20 + openU * 68), 180);
     }
-    // RPG Start Prompt
-    const flash = t >= 7.20 ? (Math.floor(t * 16) & 1) : true;
-    if (flash) {
-      const curBob = t < 7.20 ? (Math.floor(t * 4) & 1) * 2 : 0;
-      drawTextPx(fb, 112 + curBob, 152, '▶ START QUEST', { size: 10, color: C.uiW, outline: C.ink, tracking: 1 });
-    }
-    texts.push({ id: 'start_prompt', text: 'START QUEST', x0: 110 * 6, y0: 150 * 6, x1: 216 * 6, y1: 164 * 6 });
 
-    const mos = t >= 7.45 ? 1 + Math.round(seg(t, 7.45, 8.05) * 11) : 1;
+    // Front Crimson Hardcover (foreshortens horizontally around spine bx as it swings open!)
+    const coverW = Math.max(8, Math.round((bw - 3) * Math.cos(openU * Math.PI * 0.48)));
+    fb.rect(bx, by, coverW, bh, C.crimson);
+    fb.rect(bx, by, Math.min(11, coverW), bh, C.scarfD); // leather spine
+    if (coverW > 28) {
+      fb.box(bx + 6, by + 5, coverW - 12, bh - 10, C.gold);
+      fb.box(bx + 9, by + 8, coverW - 18, bh - 16, C.goldD);
+    }
+    // Swaying Bookmark Ribbon
+    const ribSway = Math.round(Math.sin(t * 4) * 2);
+    fb.rect(157 + ribSway, by + bh, 6, 13, C.scarf);
+
+    // Cover Emblem, Title & Magic Spark Writing (while cover is facing viewer: t < 7.42s)
+    if (t < 7.42) {
+      const cx = bx + (coverW >> 1);
+      fb.disc(cx, by + 28, 10, C.goldL);
+      fb.disc(cx, by + 28, 7, C.gold);
+
+      if (t >= 0.30) {
+        drawTextPx(fb, 110, by + 48, '达拉崩吧', { size: 12, scale: 2, color: C.goldL, outline: C.ink, tracking: 1 });
+        texts.push({ id: 'cover_title', text: '达拉崩吧', x0: 110 * 6, y0: (by + 48) * 6, x1: 214 * 6, y1: (by + 74) * 6 });
+      }
+
+      // Magic Spark Comet writes '斑得贝迪卜多比鲁翁' left-to-right (1.85s -> 3.35s), then stays solid to 7.42s (4.07s >= 3.50s)!
+      const subStr = '斑得贝迪卜多比鲁翁';
+      if (t >= 1.85) {
+        const writeU = clamp((t - 1.85) / 1.45, 0, 1);
+        const nChars = Math.max(1, Math.ceil(writeU * subStr.length));
+        const shown = subStr.slice(0, nChars);
+        drawTextPx(fb, 99, by + 82, shown, { size: 10, color: C.gold, shadow: C.ink, tracking: 2 });
+        if (writeU < 1) {
+          const sx = Math.round(99 + writeU * 118);
+          const sy = by + 87 + Math.round(Math.sin(t * 28) * 2);
+          fb.disc(sx, sy, 5, C.goldL);
+          fb.disc(sx, sy, 2.5, C.uiW);
+          for (let k = 1; k <= 5; k++) {
+            fb.px(sx - k * 4, sy + ((k & 1) ? -2 : 2), k < 3 ? C.goldL : C.orange);
+          }
+        } else {
+          texts.push({ id: 'cover_sub', text: subStr, x0: 99 * 6, y0: (by + 82) * 6, x1: 225 * 6, y1: (by + 94) * 6 });
+        }
+      }
+
+      // Chibi Whale-girl Heroine trots eagerly across the foreground desk & leaps into the book at 7.0s!
+      const heroWalkU = seg(t, 0.35, 6.85);
+      const hx = Math.round(lerp(36, 98, heroWalkU));
+      const hy = t >= 6.85 ? Math.round(lerp(164, 134, eo(seg(t, 6.85, 7.40)))) : 164;
+      drawMapWhaleHero(fb, hx, hy, t, { pose: t >= 6.6 ? 'sword' : 'run', scarfLen: 16 });
+
+      // RPG Start Prompt (solid 3.40s -> 7.15s, rapid confirm blink 7.15s -> 7.42s)
+      if (t >= 3.40) {
+        const flash = t >= 7.15 ? (Math.floor(t * 18) & 1) : true;
+        if (flash) {
+          const curBob = t < 7.15 ? (Math.floor(t * 5) & 1) * 2 : 0;
+          drawTextPx(fb, 114 + curBob, 152, '▶ START QUEST', { size: 10, color: C.uiW, outline: C.ink, tracking: 1 });
+        }
+        texts.push({ id: 'start_prompt', text: 'START QUEST', x0: 112 * 6, y0: 150 * 6, x1: 218 * 6, y1: 164 * 6 });
+      }
+    }
+
+    // Floating golden dust motes across the candlelit desk
+    for (let i = 0; i < 10; i++) {
+      const mx = mod(Math.round(i * 37 + t * (9 + (i % 4) * 3)), W);
+      const my = mod(Math.round(165 - t * (10 + (i % 3) * 4) - i * 19), H);
+      if ((i + Math.floor(t * 4)) % 3 !== 0) fb.px(mx, my, C.goldL);
+    }
+
+    const mos = t >= 7.75 ? 1 + Math.round(seg(t, 7.75, 8.05) * 6) : 1;
     return { lut: LUT.full, mosaicBlock: mos, texts };
   }
 
-  // S02 (8.05 – 20.08s): Book Opens → Era Palette Flood (4-col → 8-bit → 16-bit) + Doubao Princess on Balcony!
+  // S02 (8.05 – 20.08s): 2-Part Pop-Up Storybook Assembly (8.05–15.8s) -> Push-In to Doubao on Rainbow Balcony (15.8–20.08s)!
   if (t < 20.08) {
-    const tiltCamY = t < 16.5 ? lerp(32, 0, eio(seg(t, 8.2, 16.5))) : 0;
-    drawPixelCastle(fb, tiltCamY, t, { burning: false });
-    // Open book frame around castle during 8.05–15.8s (pulling in to full screen!)
-    if (t < 15.8) {
-      const zoomOut = eio(seg(t, 12.5, 15.8));
-      const padX = Math.round(lerp(24, 0, zoomOut));
-      const padY = Math.round(lerp(16, 0, zoomOut));
-      if (padX > 1) {
-        fb.rect(0, 0, padX, H, C.dbrown);
-        fb.rect(W - padX, 0, padX, H, C.dbrown);
-        fb.rect(0, 0, W, padY, C.dbrown);
-        fb.rect(0, H - padY, W, padY, C.dbrown);
-        fb.box(padX, padY, W - padX * 2, H - padY * 2, C.parchment);
+    if (t < 15.80) {
+      drawPopupBookCastle(fb, t);
+      const mos = t < 8.45 ? Math.max(1, Math.round(lerp(6, 1, seg(t, 8.05, 8.45)))) : 1;
+      if (t < 9.90) return { lut: LUT.gb4, mosaicBlock: mos, texts };
+      if (t < 11.90) return { lut: LUT.nes, texts };
+      if (t < 13.80) {
+        const r = seg(t, 11.90, 13.80) * 220;
+        return {
+          lut: LUT.nes,
+          lutB: LUT.full,
+          pick: (x, y) => Math.hypot(x - 160, y - 84) + bayer(x, y) * 18 < r,
+          texts,
+        };
       }
+      return { lut: LUT.full, texts };
     }
-    // Doubao Princess waving happily on balcony!
-    drawCastSprite(fb, 160, Math.round(80 - tiltCamY), 'doubao', t, { pose: 'cheer' });
-    // Villagers strolling peacefully below
-    drawCastSprite(fb, 118 + Math.round(Math.sin(t) * 6), Math.round(152 - tiltCamY), 'qwen', t);
-    drawCastSprite(fb, 202 - Math.round(Math.sin(t * 0.8) * 6), Math.round(154 - tiltCamY), 'gemini', t, { facing: -1 });
 
-    // Era colour flood: 8.05–10.5s gb4 → 10.5–13.5s nes → 13.5s+ dither-wave flood to full 16-bit!
-    const mos = t < 8.65 ? Math.max(1, Math.round(lerp(10, 1, seg(t, 8.05, 8.65)))) : 1;
-    if (t < 10.5) return { lut: LUT.gb4, mosaicBlock: mos, texts };
-    if (t < 13.2) return { lut: LUT.nes, texts };
-    if (t < 15.6) {
-      const r = seg(t, 13.2, 15.6) * 220;
-      return {
-        lut: LUT.nes,
-        lutB: LUT.full,
-        pick: (x, y) => Math.hypot(x - 160, y - 80) + bayer(x, y) * 18 < r,
-        texts,
-      };
+    // 15.80 – 20.08s (L01 很久很久以前): Lush Close-Up on Princess Doubao Waving on the Rainbow Balcony!
+    drawRoyalBalconyCloseup(fb, t, { night: false, burning: false });
+    drawCastSprite(fb, 160, 112, 'doubao', t, { pose: 'cheer', largeDoubao: true });
+    // Fluttering bluebirds & drifting pink flower petals!
+    for (let i = 0; i < 2; i++) {
+      const bx = Math.round(lerp(56, 256, mod((t - 15.8) * 0.22 + i * 0.45, 1)));
+      const by = 42 + i * 24 + Math.round(Math.sin(t * 9 + i) * 4);
+      const wing = (Math.floor(t * 12) & 1) ? -3 : 2;
+      fb.line(bx - 4, by + wing, bx, by, C.cyan, 2);
+      fb.line(bx + 4, by + wing, bx, by, C.uiW, 2);
+    }
+    for (let i = 0; i < 8; i++) {
+      const px = mod(Math.round(40 + i * 33 + t * 18), W);
+      const py = mod(Math.round((t - 15.8) * 26 + i * 23), H);
+      fb.rect(px, py, 2, 2, i & 1 ? C.pink : C.goldL);
     }
     return { lut: LUT.full, texts };
   }
 
-  // S03 (20.08 – 26.09s): GPT Dragon-Girl Sky Raid, Fireballs & Kidnapping Doubao Princess!
+  // S03 (20.08 – 26.09s): 4-Cut Rapid-Fire Dragon Raid Montage!
   if (t < 26.09) {
-    drawPixelCastle(fb, 0, t, { burning: t >= 22.1 });
-    // Swirling dark portal in upper-right sky
-    const px = 248, py = 36;
-    const pr = t < 25.8 ? 16 : Math.max(1, Math.round(lerp(16, 0, seg(t, 25.6, 26.08))));
-    fb.disc(px, py, pr + 3, C.gold);
-    fb.disc(px, py, pr, C.ink);
-    fb.disc(px, py, pr * 0.55, C.dragD);
-
-    // Rain of pixel fireballs (L03 带来灾难: 22.09–24.09s)
-    if (t >= 21.8 && t < 25.0) {
-      for (let i = 0; i < 5; i++) {
-        const u = mod((t - 21.8) * 0.9 + i * 0.23, 1);
-        const fx = Math.round(60 + i * 48 - u * 26);
-        const fy = Math.round(14 + u * 124);
-        fb.line(fx, fy, fx + 8, fy - 12, C.orange, 3);
-        fb.disc(fx, fy, 4, C.goldL);
-      }
+    // Cut 3A (20.08 – 21.55s, L02 巨龙突然出现): Balcony Darkens + Colossal Winged Shadow Sweeps Over Doubao!
+    if (t < 21.55) {
+      drawRoyalBalconyCloseup(fb, t, { night: true, burning: false });
+      drawCastSprite(fb, 160, 112, 'doubao', t, { pose: 'idle', largeDoubao: true });
+      // Giant dragon shadow sweeping diagonally across facade & Doubao!
+      const sx = Math.round(lerp(290, 40, seg(t, 20.08, 21.50)));
+      const sy = Math.round(lerp(20, 96, seg(t, 20.08, 21.50)));
+      fb.tri(sx, sy, sx + 78, sy - 44, sx + 48, sy + 18, C.ink);
+      fb.tri(sx, sy, sx - 64, sy - 38, sx - 32, sy + 16, C.ink);
+      // Urgent '!' alert above Doubao
+      fb.rect(175, 62, 11, 14, C.uiW);
+      fb.box(175, 62, 11, 14, C.ink);
+      drawTextPx(fb, 178, 64, '!', { size: 10, color: C.scarf });
+      return { lut: LUT.cataclysm, texts };
     }
 
-    // GPT Dragon-girl swoops in (20.2–24.2s) then snatches Doubao in cage into portal (24.1–25.9s)!
-    if (t < 24.1) {
-      drawCastSprite(fb, 160, 80, 'doubao', t, { pose: 'cheer' });
-      const dx = Math.round(lerp(310, 148, eo(seg(t, 20.15, 23.8))));
-      const dy = Math.round(lerp(20, 56, eio(seg(t, 20.15, 23.8))));
+    // Cut 3B (21.55 – 23.05s): Wide Castle Sky Torn Open by Crimson Portal + Diving GPT Dragon-Girl & Lightning!
+    if (t < 23.05) {
+      drawPixelCastle(fb, 0, t, { burning: true });
+      const px = 236, py = 36;
+      fb.disc(px, py, 22, C.goldL);
+      fb.disc(px, py, 18, C.ink);
+      fb.disc(px, py, 10, C.dragV);
+      if (Math.floor(t * 14) % 3 === 0) {
+        fb.line(px - 10, py + 12, 168, 72, C.goldL, 2);
+        fb.line(168, 72, 182, 92, C.uiW, 2);
+      }
+      const u = eo(seg(t, 21.55, 23.02));
+      drawFlyingGptDragon(fb, Math.round(lerp(244, 152, u)), Math.round(lerp(34, 62, u)), t);
+      return { lut: LUT.cataclysm, texts };
+    }
+
+    // Cut 3C (23.05 – 24.45s, L03 带来灾难): Town Courtyard Meteor Rain & Panicking Citizens!
+    if (t < 24.45) {
+      fb.gradV(0, 0, W, 128, [C.umber, C.plum, C.crimson]);
+      for (const [hx, hw] of [[10, 64], [84, 58], [186, 60], [254, 56]]) {
+        fb.rect(hx, 52, hw, 78, C.parchment);
+        fb.box(hx, 52, hw, 78, C.dbrown);
+        fb.tri(hx - 4, 52, hx + hw + 4, 52, hx + (hw >> 1), 28, C.rust);
+      }
+      fb.gradV(0, 128, W, 52, [C.dslate, C.night, C.ink]);
+      // Raining 12fps fireballs!
+      for (let i = 0; i < 6; i++) {
+        const u = mod((t - 23.0) * 1.35 + i * 0.19, 1);
+        const fx = Math.round(44 + i * 48 - u * 32);
+        const fy = Math.round(8 + u * 126);
+        fb.line(fx, fy, fx + 10, fy - 15, C.red, 4);
+        fb.line(fx, fy, fx + 7, fy - 11, C.orange, 2);
+        fb.disc(fx, fy, 4.5, C.goldL);
+      }
+      // Townsfolk sprinting in panic!
+      const runOff = Math.round((t - 23.05) * 48);
+      drawCastSprite(fb, 210 - runOff, 144, 'gemini', t, { pose: 'panic', facing: -1 });
+      drawCastSprite(fb, 92 + runOff, 146, 'qwen', t, { pose: 'panic', facing: 1 });
+      drawCastSprite(fb, 150 - Math.round(runOff * 0.6), 142, 'zai', t, { pose: 'panic', facing: -1 });
+      return { lut: LUT.cataclysm, texts };
+    }
+
+    // Cut 3D (24.45 – 26.09s, L04 带走了公主又消失不见): Balcony Snatch in Golden Birdcage -> Portal Vanish!
+    drawRoyalBalconyCloseup(fb, t, { night: true, burning: true });
+    const px = 262, py = 36;
+    const pr = t < 25.75 ? 19 : Math.max(1, Math.round(lerp(19, 0, seg(t, 25.75, 26.08))));
+    fb.disc(px, py, pr + 3, C.goldL);
+    fb.disc(px, py, pr, C.ink);
+    fb.disc(px, py, pr * 0.55, C.dragV);
+    if (t < 25.96) {
+      const u = eio(seg(t, 24.45, 25.92));
+      const dx = Math.round(lerp(142, px, u));
+      const dy = Math.round(lerp(66, py, u));
       drawFlyingGptDragon(fb, dx, dy, t);
-    } else if (t < 25.95) {
-      const u = eio(seg(t, 24.1, 25.9));
-      const dx = Math.round(lerp(156, px, u));
-      const dy = Math.round(lerp(64, py, u));
-      drawFlyingGptDragon(fb, dx, dy, t);
-      drawDoubaoInCage(fb, dx - 6, dy + 22, t, true, dy + 4);
+      drawDoubaoInCage(fb, dx - 4, dy + 28, t, true, dy + 6);
     }
     return { lut: LUT.cataclysm, texts };
   }
 
-  // S04 (26.09 – 28.10s): Kingdom in Danger — Claude Queen on Balcony with Alert `!`
+  // S04 (26.09 – 28.10s, L05 王国十分危险): Dramatic Balcony Close-Up on Distraught Queen Claude & Kimi!
   if (t < 28.10) {
-    drawPixelCastle(fb, -10, t, { burning: true });
-    drawCastSprite(fb, 160, 90, 'claude', t, { pose: 'cheer' });
-    // Pixel `!` speech badge
-    fb.rect(170, 58, 11, 14, C.uiW);
-    fb.box(170, 58, 11, 14, C.ink);
-    drawTextPx(fb, 173, 60, '!', { size: 10, color: C.scarf });
+    drawRoyalBalconyCloseup(fb, t, { night: false, burning: true });
+    drawCastSprite(fb, 126, 113, 'kimi', t, { pose: 'panic', facing: 1 });
+    drawCastSprite(fb, 166, 113, 'claude', t, { pose: 'cheer', facing: 1 });
+    drawRpgWindow(fb, 184, 52, 54, 24, { alert: true });
+    drawTextPx(fb, 192, 59, '危险!!', { size: 10, color: C.goldL, shadow: C.ink });
     return { lut: LUT.ember, texts };
   }
 
-  // S05 (28.10 – 34.11s): Town Recruitment Board + Golden Sunbeam + Whale-Girl Hero Arrival & Shout!
+  // S05 (28.10 – 34.11s): 4-Cut Plaza Recruitment -> Sunbeam Sprint -> Circular Spotlight Shout -> Wanted Poster Slash!
   if (t < 34.11) {
-    if (t < 32.35) {
-      // Town Square Wide Shot
-      fb.gradV(0, 0, W, 128, [C.slate, C.steel, C.silver]);
-      // Half-timbered medieval town houses
+    // Cuts 5A & 5B (28.10 – 32.15s): Town Square Noticeboard + Sunbeam Arrival of Whale-Girl!
+    if (t < 32.15) {
+      fb.gradV(0, 0, W, 128, t >= 30.08 ? [C.blue, C.cyan, C.silver] : [C.dslate, C.slate, C.steel]);
       for (const [hx, hw] of [[8, 62], [76, 56], [202, 58], [264, 52]]) {
         fb.rect(hx, 54, hw, 76, C.parchment);
         fb.box(hx, 54, hw, 76, C.dbrown);
@@ -295,129 +615,194 @@ export function renderScene(fb, t) {
         fb.hline(hx, hx + hw - 1, 88, C.dbrown);
         fb.tri(hx - 4, 54, hx + hw + 4, 54, hx + (hw >> 1), 30, C.rust);
       }
-      // Cobblestone plaza floor
       fb.gradV(0, 128, W, 52, [C.steel, C.slate, C.dslate]);
       for (let x = 8; x < W; x += 18) fb.hline(x, x + 10, 140, C.silver);
 
-      // Wooden Quest Recruitment Noticeboard (勇者招募 +999G)!
+      // Wooden Quest Recruitment Noticeboard (勇者招募 visible full 4.05s across Cuts 5A+5B!)
       fb.rect(142, 86, 4, 44, C.dbrown);
       fb.rect(182, 86, 4, 44, C.dbrown);
       drawRpgWindow(fb, 130, 54, 68, 40, { skin: 'parchment' });
       drawTextPx(fb, 140, 59, '勇者招募', { size: 10, color: C.scarf, tracking: 1 });
       drawTextPx(fb, 138, 74, '悬赏 999G', { size: 8, color: C.ink });
+      texts.push({ id: 'recruit_sign', text: '勇者招募', x0: 130 * 6, y0: 54 * 6, x1: 198 * 6, y1: 94 * 6 });
 
-      // Gemini & Zai waiting by the board
-      drawCastSprite(fb, 114, 138, 'gemini', t, { pose: t >= 30.2 ? 'cheer' : 'idle' });
-      drawCastSprite(fb, 210, 138, 'zai', t, { facing: -1 });
-
-      // At 30.10s (一位勇者赶来): Bayer-stepped golden sunbeam + Whale-girl dashes in!
-      if (t >= 30.05) {
-        const hx = Math.round(lerp(18, 86, eo(seg(t, 30.05, 31.8))));
-        fb.lightBeam(hx - 14, 24, hx, 52, 0, 148, true);
-        drawWhaleHero(fb, hx, 142, t, { pose: t < 31.75 ? 'run' : 'sword', scarfLen: 36 });
+      if (t < 30.08) {
+        // Cut 5A: Townsfolk pacing anxiously around the noticeboard!
+        const pace = Math.round(Math.sin(t * 5) * 8);
+        drawCastSprite(fb, 108 + pace, 138, 'gemini', t, { pose: 'walk', facing: Math.cos(t * 5) >= 0 ? 1 : -1 });
+        drawCastSprite(fb, 214 - pace, 138, 'zai', t, { pose: 'walk', facing: -1 });
+        drawCastSprite(fb, 68, 142, 'qwen', t, { pose: 'idle', facing: 1 });
+      } else {
+        // Cut 5B (L07 一位勇者赶来): Golden Sunbeam splits sky + Whale-Girl sprints in trailing dust puffs!
+        const runU = eo(seg(t, 30.08, 31.65));
+        const hx = Math.round(lerp(12, 118, runU));
+        fb.lightBeam(hx - 8, 28, hx + 4, 56, 0, 148, true);
+        drawCastSprite(fb, 84, 138, 'gemini', t, { pose: 'cheer', facing: 1 });
+        drawCastSprite(fb, 214, 138, 'zai', t, { pose: 'cheer', facing: -1 });
+        // Sprint dust puffs behind boots
+        if (runU < 0.95) {
+          for (let k = 1; k <= 3; k++) {
+            fb.disc(hx - k * 11, 141 - (k & 1) * 2, 3.5 - k * 0.7, C.uiW);
+          }
+        }
+        drawWhaleHero(fb, hx, 143, t, { pose: runU < 0.92 ? 'run' : 'sword', scarfLen: 40 });
       }
-    } else {
-      // Heroic 2× Close-Up Action Frame + Wanted Poster (32.35 – 34.11s, L08 大声喊!)
-      fb.gradV(0, 0, W, H, [C.navy, C.blue, C.cyan]);
-      // Speed lines!
-      for (let i = 0; i < 14; i++) {
-        const y = 12 + i * 11;
-        const x0 = mod(Math.round(t * 260 + i * 47), 320);
-        fb.hline(x0, Math.min(319, x0 + 48), y, C.white);
-      }
-      drawWhaleHero(fb, 96, 158, t, { pose: 'shout', scale: 2, scarfLen: 26 });
-      // Speech burst !!
-      drawRpgWindow(fb, 136, 22, 42, 26, { skin: 'parchment' });
-      drawTextPx(fb, 148, 28, '!!', { size: 12, color: C.scarf });
-      // Close-up Wanted Poster on right
-      drawRpgWindow(fb, 190, 26, 114, 118, { skin: 'parchment' });
-      drawTextPx(fb, 206, 35, '勇者招募', { size: 12, scale: 1, color: C.scarf, tracking: 2 });
-      drawFlyingGptDragon(fb, 244, 78, t);
-      drawTextPx(fb, 204, 106, '讨伐恶龙娘', { size: 10, color: C.ink });
-      drawTextPx(fb, 208, 122, '金币 ×999', { size: 10, color: C.goldD });
+      return { lut: LUT.full, texts };
     }
-    texts.push({ id: 'recruit_sign', text: '勇者招募', x0: 130 * 6, y0: 35 * 6, x1: 290 * 6, y1: 94 * 6 });
+
+    // Cut 5C (32.15 – 33.18s, L08 大声喊 Pt.1): Iconic Reference-MV Theatrical Spotlight Close-Up on Whale-Girl!
+    if (t < 33.18) {
+      fb.clear(C.night);
+      // Golden stage spotlight cone + bright floor ellipse (homage to 达拉崩吧.mp4 t=32s!)
+      fb.lightBeam(160, 44, 160, 116, 0, 168, true);
+      fb.ellipse(160, 156, 62, 12, C.gold);
+      fb.ellipse(160, 156, 48, 8, C.goldL);
+      // Radial anime action lines
+      for (let i = 0; i < 16; i++) {
+        const ang = (i / 16) * Math.PI * 2 + Math.floor(t * 16) * 0.12;
+        fb.line(160 + Math.cos(ang) * 74, 96 + Math.sin(ang) * 52, 160 + Math.cos(ang) * 165, 96 + Math.sin(ang) * 98, C.goldL, 1);
+      }
+      drawWhaleHero(fb, 160, 156, t, { pose: 'shout', scale: 2, scarfLen: 34 });
+      drawRpgWindow(fb, 206, 28, 46, 26, { alert: true });
+      drawTextPx(fb, 219, 35, '!!', { size: 12, color: C.goldL });
+      return { lut: LUT.full, texts };
+    }
+
+    // Cut 5D (33.18 – 34.11s, L08 大声喊 Pt.2): Whip-Pan Close-Up on Wanted Poster + Gleaming Sword Slash!
+    fb.gradV(0, 0, W, H, [C.navy, C.blue, C.cyan]);
+    for (let i = 0; i < 14; i++) {
+      const y = 10 + i * 12;
+      const x0 = mod(Math.round(t * 320 + i * 53), 320);
+      fb.hline(x0, Math.min(319, x0 + 64), y, C.uiW);
+    }
+    drawWhaleHero(fb, 76, 160, t, { pose: 'sword', scale: 2, scarfLen: 30 });
+    drawRpgWindow(fb, 154, 16, 146, 134, { skin: 'parchment' });
+    drawTextPx(fb, 184, 25, '讨伐恶龙娘', { size: 12, color: C.scarf, tracking: 1 });
+    drawFlyingGptDragon(fb, 227, 78, t);
+    drawTextPx(fb, 188, 118, '悬赏 999G', { size: 10, color: C.ink, shadow: C.goldL });
+    // Diagonal Holy Sword slash gleam across the poster!
+    const slashU = eo(seg(t, 33.45, 34.05));
+    if (slashU > 0) {
+      fb.line(162, 134, Math.round(lerp(162, 292, slashU)), Math.round(lerp(134, 24, slashU)), C.goldL, 3);
+      fb.line(162, 134, Math.round(lerp(162, 292, slashU)), Math.round(lerp(134, 24, slashU)), C.uiW, 1);
+    }
     return { lut: LUT.full, texts };
   }
 
-  // S06 (34.11 – 42.13s): Top-Down Parchment Quest Map (Sword → Mountain → Forest → Doubao Heart!)
+  // S06 (34.11 – 42.13s): Scrolling Parchment Quest Map with Chibi WHALE-GIRL Sprinting, Climbing & Slashing!
   if (t < 42.13) {
     fb.gradV(0, 0, W, H, [C.parchment, C.sand, C.tan]);
-    fb.box(6, 6, W - 12, H - 12, C.dbrown);
-    fb.box(9, 9, W - 18, H - 18, C.brown);
 
-    const prog = seg(t, 34.15, 41.3); // 0..1 across 4 waypoints
+    // Extended 460px wide parchment map so camera tracks Whale-girl smoothly left-to-right!
+    const prog = seg(t, 34.15, 41.35);
     const pts = [
-      [44, 116],  // 0: Castle & Best Sword
-      [122, 54],  // 1: Highest Snow Mountain
-      [196, 108], // 2: Deepest Pine Forest
-      [268, 66],  // 3: Dragon Peak & Doubao Heart
+      [54, 124],   // 0: Castle & Best Sword (L09 我要带上最好的剑)
+      [168, 58],   // 1: Highest Snow Mountain (L10 翻过最高的山)
+      [284, 118],  // 2: Deepest Pine Forest (L11 闯进最深的森林)
+      [362, 86],   // 3: Beside Dragon Peak & Doubao Pink Heart (L12 把公主带回到面前)
     ];
 
-    // Landmark 1: Castle + Gleaming Best Sword (34.11s+)
-    fb.rect(26, 104, 24, 18, C.silver);
-    fb.tri(24, 104, 52, 104, 38, 92, C.scarf);
-    if (t >= 34.25) {
-      fb.line(62, 116, 62, 92, C.uiW, 3);
-      fb.hline(56, 68, 108, C.gold);
-      drawTextPx(fb, 22, 128, '好剑', { size: 10, color: C.dbrown });
-    }
-
-    // Landmark 2: Highest Snow-Capped Mountain (36.12s+)
-    if (t >= 36.0) {
-      const pop = eo(seg(t, 36.0, 36.5));
-      const mh = Math.round(44 * pop);
-      fb.tri(88, 72, 156, 72, 122, 72 - mh, C.slate);
-      fb.tri(108, 72 - Math.round(mh * 0.58), 136, 72 - Math.round(mh * 0.58), 122, 72 - mh, C.uiW);
-      fb.vline(122, 72 - mh - 10, 72 - mh, C.gold);
-      fb.tri(122, 72 - mh - 10, 131, 72 - mh - 7, 122, 72 - mh - 4, C.scarf);
-      drawTextPx(fb, 104, 76, '高山', { size: 10, color: C.dbrown });
-    }
-
-    // Landmark 3: Deepest Pine Forest (38.12s+)
-    if (t >= 38.0) {
-      for (const [tx, ty] of [[178, 108], [194, 102], [210, 110], [186, 116], [202, 116]]) {
-        fb.tri(tx - 9, ty, tx + 9, ty, tx, ty - 18, C.dgreen);
-        fb.tri(tx - 7, ty - 8, tx + 7, ty - 8, tx, ty - 23, C.green);
-        fb.rect(tx - 2, ty, 4, 5, C.dbrown);
-      }
-      drawTextPx(fb, 182, 125, '深林', { size: 10, color: C.dbrown });
-    }
-
-    // Landmark 4: Dragon Peak + Doubao Princess in Big Pink Pixel Heart! (40.13s+)
-    if (t >= 40.0) {
-      fb.tri(238, 86, 298, 86, 268, 34, C.dragD);
-      if (t >= 40.7) {
-        // Big Pixel Pink Heart framing Doubao!
-        fb.disc(261, 60, 11, C.pink);
-        fb.disc(275, 60, 11, C.pink);
-        fb.tri(250, 64, 286, 64, 268, 86, C.pink);
-        drawCastSprite(fb, 268, 79, 'doubao', t, { pose: 'cheer' });
-      }
-    }
-
-    // Animated Red Dotted Route + Whale-Girl's Pixel Hand & Quill!
-    let penX = pts[0][0], penY = pts[0][1];
+    // Compute Whale-girl's live position along the 3 curved map segments!
+    let heroWX = pts[0][0], heroWY = pts[0][1];
     const totalSegs = 3;
+    const activeSeg = Math.min(totalSegs - 1, Math.floor(prog * totalSegs));
+    const activeU = clamp(prog * totalSegs - activeSeg, 0, 1);
+    {
+      const [x0, y0] = pts[activeSeg], [x1, y1] = pts[activeSeg + 1];
+      heroWX = lerp(x0, x1, activeU);
+      heroWY = lerp(y0, y1, activeU) - Math.sin(activeU * Math.PI) * 12;
+    }
+    const camX = Math.round(clamp(heroWX - 135, 0, 140));
+
+    // Subtle parchment compass grid lines scrolling with camX
+    for (let gx = 40; gx < 440; gx += 48) {
+      const sx = gx - camX;
+      if (sx > 8 && sx < W - 8) fb.vline(sx, 10, H - 10, C.sand);
+    }
+    // Winding azure river across the map
+    fb.line(112 - camX, 170, 142 - camX, 98, C.cyan, 5);
+    fb.line(142 - camX, 98, 224 - camX, 14, C.cyan, 4);
+
+    // Landmark 1: Royal Castle + Gleaming Best Sword (34.11s+)
+    {
+      const cx = 36 - camX;
+      fb.rect(cx, 102, 26, 20, C.silver);
+      fb.box(cx, 102, 26, 20, C.ink);
+      fb.tri(cx - 3, 102, cx + 29, 102, cx + 13, 88, C.scarf);
+      // Giant gleaming sword icon when she picks it up (34.15–35.4s)
+      if (t < 35.3) {
+        fb.line(cx + 38, 114, cx + 38, 86, C.ink, 5);
+        fb.line(cx + 38, 114, cx + 38, 86, C.goldL, 3);
+        fb.hline(cx + 31, cx + 45, 106, C.gold);
+      }
+      drawTextPx(fb, cx + 2, 128, '好剑', { size: 10, color: C.dbrown });
+    }
+
+    // Landmark 2: Highest Snow-Capped Mountain (pops up at 35.8s!)
+    if (t >= 35.6) {
+      const mh = Math.round(50 * foldUp(t, 35.6, 0.55));
+      const mx = 168 - camX;
+      fb.tri(mx - 38, 82, mx + 38, 82, mx, 82 - mh, C.slate);
+      fb.tri(mx - 16, 82 - Math.round(mh * 0.58), mx + 16, 82 - Math.round(mh * 0.58), mx, 82 - mh, C.uiW);
+      fb.vline(mx, 82 - mh - 10, 82 - mh, C.gold);
+      fb.tri(mx, 82 - mh - 10, mx + 9, 82 - mh - 7, mx, 82 - mh - 4, C.scarf);
+      drawTextPx(fb, mx - 18, 86, '高山', { size: 10, color: C.dbrown });
+    }
+
+    // Landmark 3: Deepest Pine Forest + Pop-up Slimes slashed aside! (37.8s+)
+    if (t >= 37.6) {
+      const fPop = foldUp(t, 37.6, 0.55);
+      const fx = 284 - camX;
+      for (const [ox, oy] of [[-22, 0], [-6, -8], [12, 2], [-14, 10], [6, 10], [24, -4]]) {
+        const th = Math.round(20 * fPop);
+        fb.tri(fx + ox - 9, 116 + oy, fx + ox + 9, 116 + oy, fx + ox, 116 + oy - th, C.dgreen);
+        fb.tri(fx + ox - 7, 108 + oy, fx + ox + 7, 108 + oy, fx + ox, 111 + oy - th, C.green);
+        fb.rect(fx + ox - 2, 116 + oy, 4, 5, C.dbrown);
+      }
+      drawMonster(fb, fx + 28, 122, 'slime', t, t >= 39.2);
+      drawTextPx(fb, fx - 14, 132, '深林', { size: 10, color: C.dbrown });
+    }
+
+    // Landmark 4: Dragon Peak + Doubao Princess in Big Pink Pixel Heart! (39.8s+)
+    if (t >= 39.7) {
+      const dx = 394 - camX;
+      fb.tri(dx - 34, 92, dx + 34, 92, dx, 34, C.dragD);
+      if (t >= 40.35) {
+        const beat = Math.round(Math.sin(t * 10) * 1.5);
+        fb.disc(dx - 7, 60 - beat, 12, C.pink);
+        fb.disc(dx + 7, 60 - beat, 12, C.pink);
+        fb.tri(dx - 19, 64 - beat, dx + 19, 64 - beat, dx, 88 - beat, C.pink);
+        drawCastSprite(fb, dx, 81 - beat, 'doubao', t, { pose: 'cheer' });
+      }
+    }
+
+    // Animated Red Dotted Quest Trail behind Whale-Girl!
     for (let s = 0; s < totalSegs; s++) {
       const segU = clamp(prog * totalSegs - s, 0, 1);
       if (segU <= 0) break;
       const [x0, y0] = pts[s], [x1, y1] = pts[s + 1];
-      const steps = 12;
+      const steps = 14;
       const maxK = Math.floor(segU * steps);
       for (let k = 0; k <= maxK; k++) {
         const u = k / steps;
-        const dx = Math.round(lerp(x0, x1, u));
-        const dy = Math.round(lerp(y0, y1, u) - Math.sin(u * Math.PI) * 8);
-        if (k % 2 === 0) fb.rect(dx - 1, dy - 1, 3, 2, C.scarf);
-        penX = dx; penY = dy;
+        const rx = Math.round(lerp(x0, x1, u)) - camX;
+        const ry = Math.round(lerp(y0, y1, u) - Math.sin(u * Math.PI) * 12);
+        if (k % 2 === 0) fb.rect(rx - 1, ry - 1, 3, 2, C.scarf);
       }
     }
-    // Hero's blue sleeve + pixel quill drawing the line!
-    fb.line(penX + 2, penY - 2, penX + 14, penY - 16, C.scarf, 2);
-    fb.line(penX, penY, penX - 24, penY + 34, C.whaleM, 8);
-    // Tiny Claude Queen cheering in bottom-right corner (homage to MV 00:36-00:42!)
-    drawCastSprite(fb, 294, 156, 'claude', t, { facing: -1 });
+
+    // PROTAGONIST WHALE-GIRL actively running, leaping & brandishing her Holy Sword across the Map!
+    const mapPose = (t < 35.1 || t >= 40.6) ? 'sword' : (t >= 36.2 && t < 37.6) ? 'jump' : 'run';
+    drawMapWhaleHero(fb, Math.round(heroWX - camX), Math.round(heroWY), t, {
+      pose: mapPose,
+      facing: 1,
+      scarfLen: 18,
+    });
+
+    // Ornate Map Border + Cheering Queen Claude Badge in bottom-right corner (homage to MV 00:36-00:42!)
+    fb.box(6, 6, W - 12, H - 12, C.dbrown);
+    fb.box(9, 9, W - 18, H - 18, C.brown);
+    drawCastSprite(fb, 294, 158, 'claude', t, { pose: 'cheer', facing: -1 });
     return { lut: LUT.full, texts };
   }
 
@@ -603,36 +988,49 @@ export function renderScene(fb, t) {
       return { lut: LUT.full, texts };
     }
 
-    // 78.21 – 85.23s: Full World Map Unfolds + Giant Red Seal Stamp + Animated Quest Trail!
+    // 78.21 – 85.23s: Full World Map Unfolds + Giant Red Seal Stamp + Chibi WHALE-GIRL Sprinting Along Quest Trail!
     fb.gradV(0, 0, W, H, [C.parchment, C.sand, C.tan]);
     fb.box(5, 5, W - 10, H - 10, C.dbrown);
-    // Winding river
+    // Winding river + stone bridge
     fb.line(96, 174, 152, 98, C.cyan, 5);
     fb.line(152, 98, 224, 10, C.cyan, 4);
+    fb.rect(128, 96, 16, 7, C.brown);
+    fb.box(128, 96, 16, 7, C.ink);
     // Map zones: Castle (left), Windmill Village (mid), Snow Peak (mid-top), Dragon Cave (right)
     fb.rect(38, 114, 18, 14, C.silver); fb.tri(36, 114, 58, 114, 47, 102, C.scarf);
-    fb.rect(144, 78, 14, 12, C.parchment); fb.tri(142, 78, 160, 78, 151, 68, C.rust);
+    fb.rect(148, 78, 14, 12, C.parchment); fb.tri(146, 78, 164, 78, 155, 68, C.rust);
     fb.tri(184, 58, 232, 58, 208, 22, C.slate); fb.tri(198, 38, 218, 38, 208, 22, C.uiW);
     fb.tri(252, 96, 304, 96, 278, 44, C.dragD); fb.disc(278, 82, 7, C.ink);
 
-    // Giant Red Circular Royal Seal stamped at 80.05s!
-    if (t >= 80.0) {
-      fb.disc(52, 62, 24, C.scarf);
-      fb.disc(52, 62, 21, C.parchment);
-      fb.disc(52, 62, 18, C.scarf);
-      drawTextPx(fb, 41, 52, '达拉', { size: 10, color: C.parchment });
-      drawTextPx(fb, 41, 64, '崩吧', { size: 10, color: C.parchment });
+    // Giant Red Circular Royal Seal stamped at 79.40s!
+    if (t >= 79.40) {
+      fb.disc(52, 56, 24, C.scarf);
+      fb.disc(52, 56, 21, C.parchment);
+      fb.disc(52, 56, 18, C.scarf);
+      drawTextPx(fb, 41, 46, '达拉', { size: 10, color: C.parchment });
+      drawTextPx(fb, 41, 58, '崩吧', { size: 10, color: C.parchment });
     }
-    // Animated quest trail
-    const mapProg = seg(t, 80.4, 84.5);
-    const route = [[50, 118], [108, 106], [150, 84], [208, 52], [274, 82]];
+
+    // Animated quest trail + PROTAGONIST WHALE-GIRL marching across all 4 zones!
+    const mapProg = seg(t, 78.60, 84.45);
+    const route = [[52, 122], [116, 104], [154, 86], [208, 56], [270, 84]];
+    let hx = route[0][0], hy = route[0][1];
     for (let s = 0; s < 4; s++) {
       const su = clamp(mapProg * 4 - s, 0, 1);
+      if (su <= 0) break;
       for (let k = 0; k <= Math.floor(su * 10); k += 2) {
         const u = k / 10;
         fb.rect(lerp(route[s][0], route[s + 1][0], u), lerp(route[s][1], route[s + 1][1], u), 3, 2, C.scarf);
       }
+      hx = lerp(route[s][0], route[s + 1][0], su);
+      hy = lerp(route[s][1], route[s + 1][1], su);
     }
+    drawMapWhaleHero(fb, Math.round(hx), Math.round(hy), t, {
+      pose: mapProg > 0.90 ? 'sword' : (mapProg > 0.55 && mapProg < 0.78) ? 'jump' : 'run',
+      facing: 1,
+      scarfLen: 16,
+    });
+
     const mos = t >= 84.65 ? 1 + Math.round(seg(t, 84.65, 85.23) * 10) : 1;
     return { lut: LUT.full, mosaicBlock: mos, texts };
   }

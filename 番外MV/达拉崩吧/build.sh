@@ -4,6 +4,7 @@ set -eu
 
 HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 export PATH="/home/user/bin:$PATH"
+export LD_LIBRARY_PATH="/home/user/bin/libs:${LD_LIBRARY_PATH:-}"
 export PLAYWRIGHT_CHROME="${PLAYWRIGHT_CHROME:-/home/user/bin/chrome-headless-shell}"
 export LEMO_OPUSCAR="${LEMO_OPUSCAR:-/home/user/lemo-opuscar}"
 PY="${LEMO_PYTHON:-$LEMO_OPUSCAR/.venv/bin/python}"
@@ -27,7 +28,7 @@ echo "[3/5] Mixing 48kHz stereo soundtrack + 83 16-bit RPG SFX & exporting dalab
 "$PY" "$HERE/mix.py" "$WORK/mix.wav"
 
 echo "[4/5] Rendering full 1920×1080 @ 24fps 16-bit Pixel RPG picture (3,186 frames)..."
-node "$LEMO_OPUSCAR/core/render/video.mjs" "$HERE" --fps 24 --workers 6 --out "$WORK/video.mp4" --size 1920x1080
+node "$LEMO_OPUSCAR/core/render/video.mjs" "$HERE" --fps 24 --workers 4 --out "$WORK/video.mp4" --size 1920x1080
 
 echo "[5/5] Mastering & muxing final film at -14 LUFS / grain=0 (mux.sh)..."
 sh "$LEMO_OPUSCAR/core/render/mux.sh" "$WORK/video.mp4" "$WORK/mix.wav" "$HERE/dalabengba.mp4" 24 0

@@ -1,9 +1,9 @@
-// cast.js — 16-bit Pixel RPG sprites & portraits pixelized from project AI-girls (assets/ai-girls/) + RPG props & Boss FX
+// cast.js — High-clarity 640×360 pixelized sprites & 64×64 portraits of all 8 project AI-girls + RPG props & Boss FX
 import { FB, C, T, CHARRED, clamp, mod } from './px.js';
 import { drawTextPx } from './glyphs.js';
 import { getBakedSprite } from './sprites_data.js';
 
-// —— 1. 32×32 Character Portraits (baked from project AI-girls + RPG mood accents) ——
+// —— 1. 64×64 High-Clarity Character Portraits (stored inside FB(32,32).hi for seamless UI integration) ——
 const portraitCache = new Map();
 
 function drawTinyTiara(fb, cx, topY, wide = false) {
@@ -24,7 +24,6 @@ export function getPortrait(who, mood = 'neutral') {
   const key = `${who}:${mood}`;
   if (portraitCache.has(key)) return portraitCache.get(key);
   const p = new FB(32, 32);
-  // Subtle dark-slate RPG portrait backdrop so dark hair silhouettes pop cleanly
   p.gradV(0, 0, 32, 32, [C.dslate, C.night, C.ink]);
 
   let bakeKey = `p_${who}`;
@@ -40,10 +39,10 @@ export function getPortrait(who, mood = 'neutral') {
     bakeKey = mood === 'petrified' ? 'p_claude_petri' : mood === 'dizzy' ? 'p_claude_dizzy' : 'p_claude_neutral';
   }
 
+  // Overlays drawn before or after 64×64 hi-res portrait
   const spr = getBakedSprite(bakeKey) || getBakedSprite('p_whale_neutral');
-  p.blitSprite(spr, 0, 0, false, (who === 'whale' && mood === 'charred') ? CHARRED : null);
+  p.blitSpriteHi(spr, 0, 0, false, (who === 'whale' && mood === 'charred') ? CHARRED : null);
 
-  // Signature RPG overlays
   if (who === 'whale') {
     if (mood === 'shock') {
       p.vline(26, 9, 13, C.cyan);
@@ -71,9 +70,9 @@ export function getPortrait(who, mood = 'neutral') {
   return p;
 }
 
-// —— 2. Full-Body Pixelized Sprites of All 8 Repo AI-Girls ——
+// —— 2. High-Clarity 640×360 Full-Body Sprites of All 8 Repo AI-Girls ——
 
-// Whale-girl Hero Sprite (native 44px & 74px close-up + Protected Red Scarf + Holy Sword!)
+// Whale-girl Hero Sprite (native 88px & 148px close-up in 640×360 space!)
 export function drawWhaleHero(fb, x, y, t, {
   pose = 'idle',      // idle | run | shout | think | happy | sword | ride | shock | charred
   facing = 1,         // 1 right, -1 left
@@ -85,7 +84,6 @@ export function drawWhaleHero(fb, x, y, t, {
   const isChar = pose === 'charred';
 
   let sprKey;
-  let naturalDir = 1; // +1 if baked sprite looks right/front-right, -1 if left
   if (scale >= 2) {
     if (pose === 'shout' || pose === 'sword') sprKey = 'whale_big_point';
     else if (pose === 'happy') sprKey = 'whale_big_wave';
@@ -109,13 +107,13 @@ export function drawWhaleHero(fb, x, y, t, {
     ? (step8 & 1 ? -1 : 0)
     : (Math.floor(t * 2.2) & 1 ? 0 : -1);
   const rideDrop = pose === 'ride' ? 9 : 0;
-  const flip = (facing * naturalDir) < 0;
+  const flip = facing < 0;
 
-  const dx = Math.round(x - (spr.w >> 1));
-  const dy = Math.round(y - spr.h + 1 + bob + rideDrop);
+  const hL = spr.h >> 1; // height in 320×180 logical coords
+  const dyL = Math.round(y - hL + 1 + bob + rideDrop);
 
   // 1) Dynamic Protected-Red Hero Scarf streaming behind Whale-girl!
-  const collarY = scale >= 2 ? (dy + 41) : (dy + 24);
+  const collarY = scale >= 2 ? (dyL + 41) : (dyL + 24);
   const dir = -facing;
   const anchorX = Math.round(x + dir * (scale >= 2 ? 4 : 2));
   const stepWave = Math.floor(t * 12);
@@ -131,42 +129,90 @@ export function drawWhaleHero(fb, x, y, t, {
     prevX = wx; prevY = wy;
   }
 
-  // 2) Blit pixelized Whale-girl sprite!
-  fb.blitSprite(spr, dx, dy, flip, isChar ? CHARRED : null);
-
-  // Subtle red scarf knot peeking only when charred (keeps her cute maid bow unobstructed!)
-  if (isChar) {
-    fb.rect(x - 3, collarY, 7, 2, C.scarf);
-  }
-
-  // 4) Gleaming Pixel Holy Sword in battle / riding / heroic poses!
-  if ((pose === 'sword' || pose === 'ride') && scale === 1) {
-    const slash = pose === 'sword' ? Math.sin(t * 12) * 0.35 - 0.55 : -0.75;
-    const hx = x + facing * 8;
-    const hy = collarY + 2;
-    const tx = hx + Math.round(Math.cos(slash) * 16) * facing;
-    const ty = hy + Math.round(Math.sin(slash) * 16);
-    fb.line(hx, hy, tx, ty, C.ink, 4);
-    fb.line(hx, hy, tx, ty, C.uiW, 2);
+  // 2) Gleaming Pixel Holy Sword (drawn behind or beside hand so sprite stays crisp!)
+  if (pose === 'sword' || pose === 'ride') {
+    const sc = scale >= 2 ? 1.65 : 1;
+    const slash = pose === 'sword' ? Math.sin(t * 12) * 0.35 - 0.65 : -0.75;
+    const hx = x + facing * Math.round(9 * sc);
+    const hy = collarY + Math.round(2 * sc);
+    const tx = hx + Math.round(Math.cos(slash) * 17 * sc) * facing;
+    const ty = hy + Math.round(Math.sin(slash) * 17 * sc);
+    fb.line(hx, hy, tx, ty, C.ink, scale >= 2 ? 5 : 4);
+    fb.line(hx, hy, tx, ty, C.uiW, scale >= 2 ? 3 : 2);
     fb.line(hx, hy, tx, ty, C.goldL, 1);
     fb.rect(hx - 2, hy - 2, 4, 4, C.gold);
   }
 
-  // 5) Shock sweatdrop or Charred blinking white eyes + rising smoke puff!
+  // 3) Blit 640×360 high-clarity Whale-girl sprite!
+  const dxHi = Math.round(x * 2 - (spr.w >> 1));
+  const dyHi = Math.round((y + 1 + bob + rideDrop) * 2 - spr.h);
+  fb.blitSpriteHi(spr, dxHi, dyHi, flip, isChar ? CHARRED : null);
+
+  // 4) Shock sweatdrop or Charred blinking white eyes + rising smoke puff!
   if (pose === 'shock') {
-    const sy = dy + (scale >= 2 ? 18 : 11);
-    const sx = x + facing * (scale >= 2 ? 16 : 10);
+    const sy = dyL + (scale >= 2 ? 18 : 11);
+    const sx = x + facing * (scale >= 2 ? 17 : 11);
     fb.vline(sx, sy, sy + 4, C.cyan);
     fb.px(sx, sy + 5, C.uiW);
   } else if (isChar) {
-    // Comic blinking white pixel eyes on soot-blackened Whale-girl + rising grey smoke!
+    fb.rect(x - 3, collarY, 7, 2, C.scarf);
     if (mod(Math.floor(t * 6), 5) !== 0) {
-      fb.rect(x - 5, dy + 14, 3, 3, C.uiW); fb.px(x - 4, dy + 15, C.ink);
-      fb.rect(x + 2, dy + 14, 3, 3, C.uiW); fb.px(x + 3, dy + 15, C.ink);
+      fb.rect(x - 5, dyL + 14, 3, 3, C.uiW); fb.px(x - 4, dyL + 15, C.ink);
+      fb.rect(x + 2, dyL + 14, 3, 3, C.uiW); fb.px(x + 3, dyL + 15, C.ink);
     }
-    const puffY = dy - 3 - mod(Math.round(t * 14), 10);
+    const puffY = dyL - 3 - mod(Math.round(t * 14), 10);
     fb.disc(x + Math.round(Math.sin(t * 7) * 3), puffY, 2.5, C.slate);
   }
+}
+
+// Chibi Map Whale-Girl Sprite (56px in 640×360 = 28px tall on 320×180 maps! Used on ALL World Maps & Desk Intro!)
+export function drawMapWhaleHero(fb, x, y, t, {
+  pose = 'run',       // run | sword | jump
+  facing = 1,
+  scarfLen = 14,
+} = {}) {
+  const step10 = Math.floor(t * 10);
+  const sprKey = pose === 'sword' ? 'whale_map_pt' : `whale_map_${mod(step10, 4)}`;
+  const spr = getBakedSprite(sprKey);
+  if (!spr) return;
+
+  const jumpOff = pose === 'jump' ? -Math.abs(Math.round(Math.sin(t * 9) * 5)) : (step10 & 1 ? -1 : 0);
+  const collarY = Math.round(y - 12 + jumpOff);
+  const dir = -facing;
+  let px = Math.round(x + dir * 2), py = collarY;
+  const segs = Math.max(3, Math.round(scarfLen / 3));
+  for (let i = 1; i <= segs; i++) {
+    const wx = Math.round(x + dir * (2 + i * 3));
+    const wy = collarY + Math.round(Math.sin(t * 14 - i * 0.8) * 2);
+    fb.line(px, py, wx, wy, C.ink, 3);
+    fb.line(px, py, wx, wy, i % 2 ? C.scarf : C.scarfL, 2);
+    px = wx; py = wy;
+  }
+
+  if (pose === 'sword') {
+    const hx = Math.round(x + facing * 6), hy = collarY;
+    fb.line(hx, hy, hx + facing * 8, hy - 9, C.ink, 3);
+    fb.line(hx, hy, hx + facing * 8, hy - 9, C.goldL, 1);
+  }
+
+  const dxHi = Math.round(x * 2 - (spr.w >> 1));
+  const dyHi = Math.round((y + 1 + jumpOff) * 2 - spr.h);
+  fb.blitSpriteHi(spr, dxHi, dyHi, facing < 0);
+}
+
+// Mini Whale-Girl Head Icon (for Adventure HUD Mini-Map!)
+export function drawMiniWhaleIcon(fb, cx, cy, t) {
+  const bob = Math.floor(t * 6) & 1;
+  const y = Math.round(cy - bob);
+  const x = Math.round(cx);
+  // Flowing mini red scarf tail behind icon
+  fb.line(x - 2, y + 1, x - 6, y + 2 + bob, C.scarf, 2);
+  // Crisp mini Whale-girl head (navy hair + white maid band + sapphire face dot)
+  fb.disc(x, y, 3.5, C.ink);
+  fb.disc(x, y, 2.6, C.whaleM);
+  fb.hline(x - 2, x + 2, y - 2, C.uiW); // maid headband!
+  fb.rect(x - 1, y, 3, 2, C.skin);
+  fb.px(x + 1, y, C.whaleD);
 }
 
 // Snow-White Pixel Steed (8fps gallop cycle)
@@ -195,17 +241,20 @@ export function drawWhiteHorse(fb, x, y, t, facing = 1) {
   fb.blit(spr, x - 26, y - 34, facing < 0, C.ink);
 }
 
-// Supporting Cast Pixelized Sprites (Claude Queen, Doubao Princess, Kimi, Gemini, Zai, Qwen, GPT mini)
-export function drawCastSprite(fb, x, y, who, t, { pose = 'idle', facing = 1, big = false } = {}) {
+// Supporting Cast High-Clarity Sprites (Claude Queen, Doubao Princess, Kimi, Gemini, Zai, Qwen, GPT mini)
+export function drawCastSprite(fb, x, y, who, t, { pose = 'idle', facing = 1, big = false, largeDoubao = false } = {}) {
   const blink = mod(Math.floor(t * 2.7 + x * 0.13), 10) === 0;
   const bob = pose === 'cheer'
     ? -Math.abs(Math.round(Math.sin(t * 8.5) * 2.5))
+    : (pose === 'walk' || pose === 'panic')
+    ? (Math.floor(t * 10) & 1 ? -1 : 0)
     : (Math.floor(t * 2) & 1 ? 0 : -1);
 
   let sprKey;
   let useSide = false;
   if (who === 'doubao') {
-    sprKey = blink ? 'doubao_sm_1' : 'doubao_sm_0';
+    if (largeDoubao) sprKey = blink ? 'doubao_cage_1' : 'doubao_cage_0';
+    else sprKey = blink ? 'doubao_sm_1' : 'doubao_sm_0';
   } else if (who === 'gpt') {
     sprKey = (Math.floor(t * 6) & 1) ? 'gpt_fly_1' : 'gpt_fly_0';
     useSide = true;
@@ -214,8 +263,8 @@ export function drawCastSprite(fb, x, y, who, t, { pose = 'idle', facing = 1, bi
     else if (pose === 'petrified') sprKey = 'claude_petri';
     else sprKey = blink ? 'claude_front_1' : 'claude_front_0';
   } else if (who === 'kimi' || who === 'gemini' || who === 'zai' || who === 'qwen') {
-    if (pose === 'scribe' || pose === 'walk') {
-      sprKey = `${who}_side_${Math.floor(t * 5) & 1}`;
+    if (pose === 'scribe' || pose === 'walk' || pose === 'panic') {
+      sprKey = `${who}_side_${Math.floor(t * (pose === 'panic' ? 12 : 6)) & 1}`;
       useSide = true;
     } else {
       sprKey = `${who}_front_${blink ? 1 : 0}`;
@@ -228,38 +277,43 @@ export function drawCastSprite(fb, x, y, who, t, { pose = 'idle', facing = 1, bi
   if (!spr) return;
 
   const flip = useSide ? (facing < 0) : (facing < 0 && who !== 'doubao');
-  const dx = Math.round(x - (spr.w >> 1));
-  const dy = Math.round(y - spr.h + 1 + bob);
-  fb.blitSprite(spr, dx, dy, flip);
+  const hL = spr.h >> 1;
+  const dyL = Math.round(y - hL + 1 + bob);
+
+  // Halberd behind/beside Zai
+  if (who === 'zai') {
+    const hx = Math.round(x + facing * 11);
+    fb.vline(hx, dyL + 4, Math.round(y), C.ink);
+    fb.vline(hx + 1, dyL + 4, Math.round(y), C.silver);
+    fb.tri(hx, dyL, hx - 3, dyL + 7, hx + 4, dyL + 6, C.uiW);
+  }
+
+  const dxHi = Math.round(x * 2 - (spr.w >> 1));
+  const dyHi = Math.round((y + 1 + bob) * 2 - spr.h);
+  fb.blitSpriteHi(spr, dxHi, dyHi, flip);
 
   // Royal crowns & RPG role props
   if (who === 'doubao') {
-    drawTinyTiara(fb, x, dy - 2, false);
+    drawTinyTiara(fb, Math.round(x), dyL - 2, false);
   } else if (who === 'claude') {
-    drawTinyTiara(fb, x, dy - 3, true);
+    drawTinyTiara(fb, Math.round(x), dyL - 3, true);
   } else if (who === 'kimi' && pose === 'scribe') {
-    const px = x + facing * 8, py = dy + 22;
+    const px = Math.round(x + facing * 8), py = dyL + 22;
     fb.rect(px - 3, py, 6, 5, C.parchment);
     fb.box(px - 4, py - 1, 8, 7, C.ink);
     if (t < 54.16) {
       fb.line(px, py - 1, px + facing * 5, py - 7, C.uiW);
     } else {
-      // Snapped quill gag after 13-character name shock!
       fb.line(px, py, px + facing * 3, py - 3, C.uiW);
       fb.line(px + facing * 4, py + 3, px + facing * 7, py + 6, C.uiW);
     }
-  } else if (who === 'zai') {
-    const hx = x + facing * 11;
-    fb.vline(hx, dy + 4, y, C.ink);
-    fb.vline(hx + 1, dy + 4, y, C.silver);
-    fb.tri(hx, dy, hx - 3, dy + 7, hx + 4, dy + 6, C.uiW);
   }
 }
 
 // Doubao Princess inside swinging Golden Birdcage!
 export function drawDoubaoInCage(fb, cx, cy, t, shout = false, chainTop = 0) {
   const swing = Math.round(Math.sin(t * 2.6) * 3);
-  const x = cx + swing, y = cy;
+  const x = Math.round(cx + swing), y = Math.round(cy);
   const compact = (cy - chainTop) < 24 && chainTop > 0;
 
   if (compact) {
@@ -267,8 +321,9 @@ export function drawDoubaoInCage(fb, cx, cy, t, shout = false, chainTop = 0) {
     fb.ellipse(x, y - 2, 11, 15, C.ink);
     const spr = getBakedSprite('doubao_sm_0');
     if (spr) {
-      fb.blitSprite(spr, x - (spr.w >> 1), y + 12 - spr.h, false);
-      drawTinyTiara(fb, x, y + 10 - spr.h, false);
+      const hL = spr.h >> 1;
+      fb.blitSpriteHi(spr, x * 2 - (spr.w >> 1), (y + 12) * 2 - spr.h, false);
+      drawTinyTiara(fb, x, y + 10 - hL, false);
     }
     fb.hline(x - 11, x + 11, y + 12, C.gold);
     fb.hline(x - 10, x + 10, y - 13, C.gold);
@@ -278,7 +333,6 @@ export function drawDoubaoInCage(fb, cx, cy, t, shout = false, chainTop = 0) {
     return;
   }
 
-  // Full Dragon-Cave Golden Birdcage framing 42px pixelized Doubao!
   if (y - 26 > chainTop) {
     fb.vline(x - 1, chainTop, y - 26, C.ink);
     fb.vline(x, chainTop, y - 26, C.gold);
@@ -288,11 +342,12 @@ export function drawDoubaoInCage(fb, cx, cy, t, shout = false, chainTop = 0) {
   const blink = mod(Math.floor(t * 3), 9) === 0;
   const spr = getBakedSprite(blink ? 'doubao_cage_1' : 'doubao_cage_0');
   if (spr) {
-    const sy = y + 17 - spr.h + bounce;
-    fb.blitSprite(spr, x - (spr.w >> 1), sy, false);
-    drawTinyTiara(fb, x, sy - 2, false);
+    const hL = spr.h >> 1;
+    const syL = y + 17 - hL + bounce;
+    fb.blitSpriteHi(spr, x * 2 - (spr.w >> 1), (y + 17 + bounce) * 2 - spr.h, false);
+    drawTinyTiara(fb, x, syL - 2, false);
   }
-  // Ornate Golden Cage Dome, Base & Bars (parted at center so Doubao's face is 100% clear!)
+  // Golden Cage Dome, Base & Parted Front Bars (auto-occlude hi-res Doubao cleanly!)
   fb.rect(x - 14, y + 16, 29, 3, C.goldD);
   fb.hline(x - 14, x + 14, y + 16, C.goldL);
   fb.hline(x - 13, x + 13, y - 19, C.gold);
@@ -304,11 +359,11 @@ export function drawDoubaoInCage(fb, cx, cy, t, shout = false, chainTop = 0) {
   fb.disc(x, y - 27, 2.5, C.goldL);
 }
 
-// —— 3. Towering Pixelized GPT Dragon-Girl Boss (88px AI-Girl + Wings + 13-Scale Coiled Tail + Flamethrower!) ——
+// —— 3. Towering High-Clarity GPT Dragon-Girl Boss (176px in 640×360 = 528px on 1080p!) ——
 const DRAGON_CHARS = [...'昆图库塔卡提考特苏瓦西拉松'];
 
 export function drawGptDragonBoss(fb, baseX, baseY, t, {
-  litScales = 0,       // 0..13 scales lit with golden characters!
+  litScales = 0,
   rage = false,
   breathingFire = false,
 } = {}) {
@@ -321,13 +376,13 @@ export function drawGptDragonBoss(fb, baseX, baseY, t, {
     fb.px(baseX - 38 + i * 5, baseY + 2 + (i % 3) * 2, C.goldL);
   }
 
-  // 2) Towering 88px Pixelized GPT Dragon-Girl Boss Sprite (with real pixelized wings, horns & coiled tail)!
+  // 2) Towering 176px High-Clarity GPT Dragon-Girl Boss Sprite!
   const blink = mod(Math.floor(t * 2.5), 11) === 0;
   let sprKey;
   let flip = false;
   if (breathingFire) {
     sprKey = (Math.floor(t * 8) & 1) ? 'gpt_boss_cast1' : 'gpt_boss_cast0';
-    flip = true; // Walk/push sprite faces right naturally -> flip=true faces LEFT toward Whale-girl!
+    flip = true; // Faces LEFT toward Whale-girl!
   } else if (rage) {
     sprKey = 'gpt_boss_rage';
   } else {
@@ -337,10 +392,10 @@ export function drawGptDragonBoss(fb, baseX, baseY, t, {
   const bx = baseX - 6;
   const by = baseY + 6 + breathe;
   if (bossSpr) {
-    fb.blitSprite(bossSpr, bx - (bossSpr.w >> 1), by - bossSpr.h, flip);
+    fb.blitSpriteHi(bossSpr, bx * 2 - (bossSpr.w >> 1), by * 2 - bossSpr.h, flip);
   }
 
-  // 3) Draw the 13 Lit Golden Scale Medallions (昆图库塔卡提考特苏瓦西拉松) arcing around her dragon aura!
+  // 3) 13 Lit Golden Scale Medallions arcing around her dragon aura!
   for (let i = 0; i < Math.min(13, litScales); i++) {
     const ang = Math.PI * 1.12 - (i / 12) * Math.PI * 1.24;
     const sx = Math.round(bx + Math.cos(ang) * 48);
@@ -350,7 +405,7 @@ export function drawGptDragonBoss(fb, baseX, baseY, t, {
     drawTextPx(fb, sx - 4, sy - 4, DRAGON_CHARS[i], { size: 8, color: C.ink });
   }
 
-  // 6) Roaring 12-fps Pixel Flamethrower unleashed straight from her outstretched hands!
+  // 4) Roaring 12-fps Pixel Flamethrower unleashed straight from her outstretched hands!
   if (breathingFire) {
     const fStep = Math.floor(t * 12);
     const originX = bx - 28;
@@ -367,10 +422,9 @@ export function drawGptDragonBoss(fb, baseX, baseY, t, {
   }
 }
 
-// Flying Sky-Raid Pixelized GPT Dragon-Girl for S03 & S05b Wanted Poster!
+// Flying Sky-Raid High-Clarity GPT Dragon-Girl for S03 & S05d Wanted Poster!
 export function drawFlyingGptDragon(fb, x, y, t) {
   const flap = Math.round(Math.sin(t * 9) * 8);
-  // Flapping dragon wings behind her
   fb.tri(x + 2, y - 6, x + 28, y - 24 + flap, x + 20, y + 4, C.ink);
   fb.tri(x + 2, y - 6, x + 26, y - 22 + flap, x + 18, y + 3, C.dragV);
   fb.line(x + 2, y - 6, x + 26, y - 22 + flap, C.dragS, 2);
@@ -378,12 +432,11 @@ export function drawFlyingGptDragon(fb, x, y, t) {
 
   const spr = getBakedSprite((Math.floor(t * 6) & 1) ? 'gpt_fly_1' : 'gpt_fly_0');
   if (spr) {
-    // Flip=true so she swoops leftward across the castle sky!
-    fb.blitSprite(spr, x - (spr.w >> 1), y - (spr.h >> 1), true);
+    fb.blitSpriteHi(spr, Math.round(x * 2 - (spr.w >> 1)), Math.round(y * 2 - (spr.h >> 1)), true);
   }
 }
 
-// Monsters (Pixel Slime & Shadow Bat) + Treasure Chest + 5 Inventory Gag Icons!
+// Monsters + Treasure Chest + 5 Inventory Gag Icons!
 export function drawMonster(fb, x, y, kind, t, ko = false) {
   if (ko && (Math.floor(t * 12) & 1)) return;
   if (kind === 'slime') {
@@ -412,7 +465,6 @@ export function drawChest(fb, x, y, opened = false) {
   }
 }
 
-// 5 Custom 20×20 Pixel Icons for L44: 昆特牌 | 提琴 | 烤蛋挞 | 苏打 | 马拉松
 export function drawGagItemIcon(fb, cx, cy, index, burning = 0) {
   if (burning > 0.75) {
     fb.ellipse(cx, cy + 5, 7, 3, C.dslate);

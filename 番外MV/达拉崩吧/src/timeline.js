@@ -65,7 +65,7 @@ export const SHAKES = [
   { t: 20.85, amp: 1 }, { t: 22.35, amp: 1 }, { t: 23.25, amp: 1 },
   { t: 56.80, amp: 1 },
   { t: 63.80, amp: 1 }, { t: 64.55, amp: 1 }, { t: 65.30, amp: 1 }, { t: 66.05, amp: 2 },
-  { t: 80.05, amp: 1 },
+  { t: 79.40, amp: 1 },
   { t: 94.00, amp: 1 }, { t: 94.65, amp: 1 },
   { t: 113.05, amp: 1 }, { t: 115.00, amp: 1 },
   { t: 128.45, amp: 2 },
@@ -74,31 +74,35 @@ export const SHAKES = [
 
 // 16-bit Chiptune SFX cue events exported via core/render/events.mjs → mix.py
 export const EV = [
-  // Intro book & cartridge start
+  // Intro book, magic spark writing, cover flip & pop-up castle assembly
   { t: 0.45, type: 'cursor' },
-  { t: 2.04, type: 'cursor' },
-  { t: 5.00, type: 'shimmer' },
-  { t: 7.20, type: 'start_confirm' },
-  { t: 8.05, type: 'book_open' },
-  { t: 10.06, type: 'palette_step', step: 1 },
-  { t: 12.06, type: 'palette_step', step: 2 },
-  { t: 14.07, type: 'palette_step', step: 3 },
+  { t: 1.88, type: 'shimmer' },
+  { t: 3.42, type: 'cursor' },
+  { t: 7.15, type: 'start_confirm' },
+  { t: 7.42, type: 'book_open' },
+  { t: 8.20, type: 'card_flip', n: 0 },
+  { t: 9.95, type: 'palette_step', step: 1 },
+  { t: 11.90, type: 'palette_step', step: 2 },
+  { t: 13.85, type: 'palette_step', step: 3 },
+  { t: 15.85, type: 'heart_chime' },
 
-  // Dragon raid
-  { t: 20.80, type: 'thunder_dive' },
-  { t: 22.35, type: 'fireball' },
-  { t: 23.25, type: 'fireball' },
+  // 4-cut Dragon raid
+  { t: 20.25, type: 'alert_ping' },
+  { t: 21.60, type: 'thunder_dive' },
+  { t: 23.15, type: 'fireball' },
+  { t: 23.75, type: 'fireball' },
   { t: 25.10, type: 'portal_warp' },
-  { t: 26.50, type: 'alert_ping' },
+  { t: 26.25, type: 'alert_ping' },
 
-  // Hero arrival & map route
-  { t: 30.15, type: 'holy_beam' },
-  { t: 32.30, type: 'sword_unsheathe' },
+  // 4-cut Plaza recruitment, spotlight shout & map route
+  { t: 30.12, type: 'holy_beam' },
+  { t: 32.18, type: 'confirm_ding' },
+  { t: 33.48, type: 'sword_unsheathe' },
   { t: 34.40, type: 'map_pin', n: 0 },
-  { t: 36.40, type: 'map_pin', n: 1 },
-  { t: 38.40, type: 'map_pin', n: 2 },
-  { t: 40.60, type: 'map_pin', n: 3 },
-  { t: 41.40, type: 'heart_chime' },
+  { t: 36.00, type: 'map_pin', n: 1 },
+  { t: 38.00, type: 'map_pin', n: 2 },
+  { t: 40.40, type: 'map_pin', n: 3 },
+  { t: 41.20, type: 'heart_chime' },
 
   // Throne room dialogue & name overflow
   { t: 44.30, type: 'window_open' },
@@ -125,8 +129,8 @@ export const EV = [
   { t: 75.80, type: 'card_flip', n: 2 },
   { t: 76.55, type: 'card_flip', n: 3 },
   { t: 77.35, type: 'confirm_ding' },
-  { t: 80.05, type: 'seal_stamp' },
-  { t: 81.20, type: 'map_pin', n: 0 },
+  { t: 79.40, type: 'seal_stamp' },
+  { t: 80.50, type: 'map_pin', n: 0 },
   { t: 82.20, type: 'map_pin', n: 1 },
   { t: 83.20, type: 'map_pin', n: 2 },
   { t: 84.20, type: 'map_pin', n: 3 },

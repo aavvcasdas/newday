@@ -1,7 +1,7 @@
 // ui.js — 16-bit RPG windows, portrait dialog boxes, bulging 12/8 name grid, action HUD, 5-slot item gag & pixel captions
 import { C, W, H, clamp, eo, seg } from './px.js';
 import { drawTextPx, measureTextPx } from './glyphs.js';
-import { getPortrait, drawGagItemIcon } from './cast.js';
+import { getPortrait, drawGagItemIcon, drawMiniWhaleIcon } from './cast.js';
 
 export function drawRpgWindow(fb, x, y, w, h, { skin = 'blue', alert = false } = {}) {
   x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
@@ -165,10 +165,10 @@ export function drawAdventureHud(fb, t, {
   fb.line(288, 21, 306, 12, C.brown);
   // Dragon cave skull mark at end
   fb.disc(306, 12, 2, C.plum);
-  // Blinking hero red dot along route
-  const mx = Math.round(258 + clamp(mapU, 0, 1) * 48);
+  // Animated mini Whale-girl icon marching along route!
+  const mx = Math.round(259 + clamp(mapU, 0, 1) * 45);
   const my = Math.round(22 - Math.sin(clamp(mapU, 0, 1) * Math.PI * 1.5) * 6);
-  if (Math.floor(t * 6) % 3 !== 0) fb.disc(mx, my, 2, C.scarf);
+  drawMiniWhaleIcon(fb, mx, my, t);
 }
 
 // S24–S25 Signature Gag: 5-Slot Wrong-Name Inventory Window (昆特牌 | 提琴 | 烤蛋挞 | 苏打 | 马拉松)

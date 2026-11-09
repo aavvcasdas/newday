@@ -5,6 +5,7 @@ import { drawTextPx } from './glyphs.js';
 import {
   getPortrait,
   drawWhaleHero,
+  drawMapWhaleHero,
   drawWhiteHorse,
   drawCastSprite,
   drawDoubaoInCage,
@@ -43,22 +44,23 @@ function renderModelSheet(t) {
     drawRpgWindow(fb, x, 15, 32, 34, { skin: 'dark' });
     fb.blit(getPortrait(who, 'neutral'), x, 16);
     if (who === 'whale') {
-      drawWhaleHero(fb, x + 16, 96, t, { pose: 'sword', scarfLen: 12 });
+      drawWhaleHero(fb, x + 16, 96, t, { pose: 'happy', scarfLen: 12 });
     } else {
       drawCastSprite(fb, x + 16, 96, who, t);
     }
     drawTextPx(fb, x + 2, 99, label, { size: 8, color: C.uiW, shadow: C.ink });
   });
 
-  // Bottom-Left RPG Props Panel: Mounted Steed + Caged Doubao + 5 Wrong-Name Gag Icons!
+  // Bottom-Left RPG Props Panel: Mounted Steed + Map Chibi Whale-girl + Caged Doubao + 5 Wrong-Name Gag Icons!
   drawRpgWindow(fb, 5, 110, 230, 66, { skin: 'parchment' });
-  drawWhiteHorse(fb, 36, 166, t, 1);
-  drawWhaleHero(fb, 34, 149, t, { pose: 'ride', scarfLen: 20 });
-  drawDoubaoInCage(fb, 92, 149, t, false, 113);
+  drawWhiteHorse(fb, 34, 166, t, 1);
+  drawWhaleHero(fb, 32, 149, t, { pose: 'ride', scarfLen: 18 });
+  drawMapWhaleHero(fb, 70, 162, t, { pose: 'sword', scarfLen: 12 });
+  drawDoubaoInCage(fb, 102, 149, t, false, 113);
   for (let i = 0; i < 5; i++) {
-    fb.rect(116 + i * 22, 138, 19, 19, C.sand);
-    fb.box(116 + i * 22, 138, 19, 19, C.dbrown);
-    drawGagItemIcon(fb, 125 + i * 22, 147, i, 0);
+    fb.rect(124 + i * 21, 138, 19, 19, C.sand);
+    fb.box(124 + i * 21, 138, 19, 19, C.dbrown);
+    drawGagItemIcon(fb, 133 + i * 21, 147, i, 0);
   }
 
   // Right Full-Height Final Boss Panel: GPT Dragon-Girl LV.99!

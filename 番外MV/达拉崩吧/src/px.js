@@ -201,18 +201,34 @@ export class FB {
     this.w = w;
     this.h = h;
     this.d = new Uint8Array(w * h);
+    this.hw = w * 2;
+    this.hh = h * 2;
+    this.hi = new Uint8Array(this.hw * this.hh);
+    this.hi.fill(T);
     this.clip = [0, 0, w, h];
   }
-  clear(c = C.ink) { this.d.fill(c); }
+  clear(c = C.ink) {
+    this.d.fill(c);
+    this.hi.fill(T);
+  }
   px(x, y, c) {
     x |= 0; y |= 0;
     const [cx, cy, cw, ch] = this.clip;
     if (x < cx || y < cy || x >= cw || y >= ch || c === T) return;
     this.d[y * this.w + x] = c;
+    const hx = x << 1, hy = y << 1, hw = this.hw;
+    const hr = hy * hw + hx;
+    this.hi[hr] = T; this.hi[hr + 1] = T;
+    this.hi[hr + hw] = T; this.hi[hr + hw + 1] = T;
+  }
+  pxHi(hx, hy, c) {
+    hx |= 0; hy |= 0;
+    if (hx < 0 || hy < 0 || hx >= this.hw || hy >= this.hh || c === T) return;
+    this.hi[hy * this.hw + hx] = c;
   }
   get(x, y) {
     x |= 0; y |= 0;
-    if (x < 0 || y < 0 || x >= this.w || x >= this.w || y >= this.h) return T;
+    if (x < 0 || y < 0 || x >= this.w || y >= this.h) return T;
     return this.d[y * this.w + x];
   }
   rect(x, y, w, h, c) {
@@ -224,6 +240,11 @@ export class FB {
     for (let py = y0; py < y1; py++) {
       const row = py * this.w;
       for (let px = x0; px < x1; px++) this.d[row + px] = c;
+      const hr0 = (py << 1) * this.hw;
+      const hr1 = hr0 + this.hw;
+      const hx0 = x0 << 1, hx1 = x1 << 1;
+      this.hi.fill(T, hr0 + hx0, hr0 + hx1);
+      this.hi.fill(T, hr1 + hx0, hr1 + hx1);
     }
   }
   box(x, y, w, h, c) {
@@ -375,47 +396,64 @@ export class FB {
         this.px(dx + x, dy + y, c);
       }
     }
+    if (src.hi) {
+      const hdx = dx * 2, hdy = dy * 2;
+      for (let hy = 0; hy < src.hh; hy++) {
+        const yy = hdy + hy;
+        if (yy < 0 || yy >= this.hh) continue;
+        for (let hx = 0; hx < src.hw; hx++) {
+          const xx = hdx + hx;
+          if (xx < 0 || xx >= this.hw) continue;
+          const hc = src.hi[hy * src.hw + (flip ? src.hw - 1 - hx : hx)];
+          if (hc !== T) this.hi[yy * this.hw + xx] = hc;
+        }
+      }
+    }
   }
-  blitSprite(src, dx, dy, flip = false, remap = null) {
+  // Blit a 640×360-scale sprite (2× resolution of 320×180 -> crisp 3×3 pixel blocks on 1080p!)
+  blitSpriteHi(src, dxHi, dyHi, flip = false, remap = null) {
     if (!src) return;
-    dx = Math.round(dx); dy = Math.round(dy);
+    dxHi = Math.round(dxHi); dyHi = Math.round(dyHi);
     for (let y = 0; y < src.h; y++) {
-      const yy = dy + y;
-      if (yy < 0 || yy >= this.h) continue;
+      const yy = dyHi + y;
+      if (yy < 0 || yy >= this.hh) continue;
       for (let x = 0; x < src.w; x++) {
-        const xx = dx + x;
-        if (xx < 0 || xx >= this.w) continue;
+        const xx = dxHi + x;
+        if (xx < 0 || xx >= this.hw) continue;
         const c = src.d[y * src.w + (flip ? src.w - 1 - x : x)];
         if (c === T) continue;
-        this.d[yy * this.w + xx] = remap ? remap[c] : c;
+        this.hi[yy * this.hw + xx] = remap ? remap[c] : c;
       }
     }
   }
 }
 
+const HW = W * 2, HH = H * 2, HSCALE = 3;
+
 export function makeOut(canvas) {
   const lo = document.createElement('canvas');
-  lo.width = W; lo.height = H;
+  lo.width = HW; lo.height = HH;
   const g = lo.getContext('2d');
-  const img = g.createImageData(W, H);
+  const img = g.createImageData(HW, HH);
   const u32 = new Uint32Array(img.data.buffer);
   const o = canvas.getContext('2d');
   o.imageSmoothingEnabled = false;
   return {
     lo, u32,
     present(fb, lut, lutB = null, pick = null, sx = 0, sy = 0) {
-      const d = fb.d;
-      if (sx === 0 && sy === 0) {
-        if (!lutB) for (let i = 0; i < d.length; i++) u32[i] = lut[d[i]];
-        else for (let y = 0, i = 0; y < H; y++) for (let x = 0; x < W; x++, i++) u32[i] = (pick(x, y) ? lutB : lut)[d[i]];
-      } else {
-        for (let y = 0; y < H; y++) {
-          const yy = clamp(y - sy, 0, H - 1);
-          for (let x = 0; x < W; x++) {
-            const xx = clamp(x - sx, 0, W - 1);
-            const idx = d[yy * W + xx];
-            u32[y * W + x] = lutB && pick(x, y) ? lutB[idx] : lut[idx];
-          }
+      const d = fb.d, hi = fb.hi;
+      const hsx = sx * 2, hsy = sy * 2;
+      for (let hy = 0; hy < HH; hy++) {
+        const shy = clamp(hy - hsy, 0, HH - 1);
+        const ly = shy >> 1;
+        const hrow = shy * HW;
+        const lrow = ly * W;
+        const outRow = hy * HW;
+        for (let hx = 0; hx < HW; hx++) {
+          const shx = clamp(hx - hsx, 0, HW - 1);
+          const hIdx = hi[hrow + shx];
+          const idx = hIdx !== T ? hIdx : d[lrow + (shx >> 1)];
+          u32[outRow + hx] = lutB && pick(shx >> 1, ly) ? lutB[idx] : lut[idx];
         }
       }
       g.putImageData(img, 0, 0);
@@ -423,21 +461,21 @@ export function makeOut(canvas) {
     post(fn) { fn(u32); g.putImageData(img, 0, 0); },
     show() {
       o.imageSmoothingEnabled = false;
-      o.drawImage(lo, 0, 0, W * SCALE, H * SCALE);
+      o.drawImage(lo, 0, 0, HW * HSCALE, HH * HSCALE);
     },
   };
 }
 
 export function mosaic(u32, n) {
-  n = Math.round(n);
-  if (n <= 1) return;
+  n = Math.round(n) * 2;
+  if (n <= 2) return;
   const src = u32.slice();
-  const ox = (W >> 1) % n, oy = (H >> 1) % n;
-  for (let y = 0; y < H; y++) {
-    const by = clamp(Math.floor((y - oy) / n) * n + oy, 0, H - 1);
-    for (let x = 0; x < W; x++) {
-      const bx = clamp(Math.floor((x - ox) / n) * n + ox, 0, W - 1);
-      u32[y * W + x] = src[by * W + bx];
+  const ox = (HW >> 1) % n, oy = (HH >> 1) % n;
+  for (let y = 0; y < HH; y++) {
+    const by = clamp(Math.floor((y - oy) / n) * n + oy, 0, HH - 1);
+    for (let x = 0; x < HW; x++) {
+      const bx = clamp(Math.floor((x - ox) / n) * n + ox, 0, HW - 1);
+      u32[y * HW + x] = src[by * HW + bx];
     }
   }
 }
@@ -445,21 +483,21 @@ export function mosaic(u32, n) {
 export function encounterSwirl(u32, u) {
   if (u <= 0) return;
   const src = u32.slice();
-  const cx = W * 0.5, cy = H * 0.5;
+  const cx = HW * 0.5, cy = HH * 0.5;
   const twist = Math.pow(u, 1.6) * 5.2;
-  const blk = Math.max(1, Math.round(1 + u * 8));
+  const blk = Math.max(2, Math.round(1 + u * 8) * 2);
   const whitePack = (255 << 24) | (255 << 16) | (255 << 8) | 255;
-  for (let y = 0; y < H; y++) {
-    for (let x = 0; x < W; x++) {
+  for (let y = 0; y < HH; y++) {
+    for (let x = 0; x < HW; x++) {
       const qx = Math.floor(x / blk) * blk, qy = Math.floor(y / blk) * blk;
       const dx = qx - cx, dy = qy - cy;
-      const r = Math.hypot(dx, dy) / 160;
+      const r = Math.hypot(dx, dy) / 320;
       const ang = twist * Math.max(0, 1.15 - r);
       const ca = Math.cos(ang), sa = Math.sin(ang);
-      const sx = clamp(Math.round(cx + dx * ca - dy * sa), 0, W - 1);
-      const sy = clamp(Math.round(cy + dx * sa + dy * ca), 0, H - 1);
-      if (u > 0.68 && bayer(x, y) < (u - 0.68) / 0.32) u32[y * W + x] = whitePack;
-      else u32[y * W + x] = src[sy * W + sx];
+      const sx = clamp(Math.round(cx + dx * ca - dy * sa), 0, HW - 1);
+      const sy = clamp(Math.round(cy + dx * sa + dy * ca), 0, HH - 1);
+      if (u > 0.68 && bayer(x >> 1, y >> 1) < (u - 0.68) / 0.32) u32[y * HW + x] = whitePack;
+      else u32[y * HW + x] = src[sy * HW + sx];
     }
   }
 }
