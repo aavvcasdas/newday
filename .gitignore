@@ -117,3 +117,10 @@ assets/ai-girls/walk-v14/preview/*_cycle.webp
 assets/ai-girls/walk-v14/preview/*_stage.webp
 assets/ai-girls/walk-v14/preview/*.mp4
 assets/ai-girls/walk-v14/preview/*_native.png
+
+# Day14 克隆配音版中间产物（可重生成，不入库）；成片与实测轴/字幕轴/渲染脚本入库
+/tools/day14制作/tv_frames/
+/tools/day14制作/review_frames/
+
+# 中文字体文件（制作环境按 google/fonts 取回，不入库）
+/video-fx/assets/fonts/

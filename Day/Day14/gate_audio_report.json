@@ -1,0 +1,34 @@
+{
+  "config": "Day/Day14/gate_config.json",
+  "input_sha256": {
+    "Day/Day14/Day14配音台词_达拉崩吧版_待审.txt": "14047c6df46ec37609fa3d1be01d0c8825db5ac97c08132fc79d5503f0ba9895",
+    "鲸鱼MV重看_克隆配音_最终版.wav": "86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3",
+    "tools/day14制作/voice_alignment.json": "c5413335bf34ba221bbe49952a518c8a5428d64a71d04b271ceb84c536b9cd41",
+    "tools/day14制作/subtitle_timing.json": "a59c2fb780ee294afe02cf9b3e2b8f5da48d9e12d30ce6fc4a5cf2ce63bb6d42",
+    "tools/day14制作/render_day14_video.py": "e60ff165a80f0328b0fb40af29466b820878f4abd708c5331e79e138d63ba722",
+    "Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4": "d319cc9d287f8406ef76e0e1c88fe65c3fe6283d2d3d99beeb96b8992464d869",
+    "tools/engine/day14_plan.test.mjs": "dae8deee083cb17faeab93e2fd22de2ac56bddace8f650c5e183ed11bcefbd88"
+  },
+  "day": 14,
+  "stage": "audio",
+  "timestamp": "2026-11-09T16:15:49.705471+00:00",
+  "checks": [
+    {
+      "name": "实测轴/哈希/台词/字幕",
+      "exit_code": 0
+    },
+    {
+      "name": "开场",
+      "command": [
+        "/usr/bin/python3",
+        "/home/user/newday/tools/剧本/开场体检.py",
+        "--json",
+        "/home/user/newday/tools/day14制作/voice_alignment.json"
+      ],
+      "exit_code": 0,
+      "stdout": "开场体检 · /home/user/newday/tools/day14制作/voice_alignment.json\n\n前 20 秒逐句：\n  L01   0.020– 3.810  本鲸，就是昨天被烤成黑炭的那条鱼。  ← 事件（自动启发式（须人工确认，不证明事件真的发生））\n  L02   5.000– 9.060  今早本鲸把电视搬上桌，重看昨天那支片子。\n  L03   9.635–15.330  屏幕一亮，一本红皮书翻开，城堡从书页里长出来。\n  L04  15.330–20.850  龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。\n\n结论：\n  事件落地：0.020s (自动启发式（须人工确认，不证明事件真的发生）)\n  前 5 秒字数：15 字（3.0 字/秒），前两句黑名单命中：无\n  结尾承诺句：下一集\n  全长：124.97s\n\n通过。注意「事件位置」若是自动判的，再人工确认一遍。\n",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

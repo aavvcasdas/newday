@@ -153,16 +153,27 @@ def build_screens(cues):
                 merged[-1] += p
             else:
                 merged.append(p)
-        total = sum(len(p) for p in merged) or 1
-        acc = 0
+        # 先按单屏上限切块，再按块长比例分配时间：同一 long clause 的多块
+        # 不能共用同一 start/end，否则相邻屏重叠、validate_timing 会拒绝。
+        # 另外，切完若只剩一个纯标点块（如「，」），必须并回前一块：
+        # 标点没有声音，单独占一屏会被媒体终验判「静音弹字」。
+        chunks = []
         for p in merged:
+            pieces = [p[i:i + 15] for i in range(0, len(p), 15)]
+            # 「」等引号不在 PUNCT 里，用「没有任何文字」判断更稳：
+            # 只留引号/句号的块没有声音，也不能单独占一屏。
+            if len(pieces) > 1 and not any(ch.isalnum() for ch in pieces[-1]):
+                pieces[-2] += pieces[-1]
+                pieces.pop()
+            chunks.extend(pieces)
+        total = sum(len(c) for c in chunks) or 1
+        acc = 0
+        for chunk in chunks:
             st = cue['start'] + (cue['end'] - cue['start']) * acc / total
-            acc += len(p)
+            acc += len(chunk)
             en = cue['start'] + (cue['end'] - cue['start']) * acc / total
-            for chunk_start in range(0, len(p), 15):
-                chunk = p[chunk_start:chunk_start + 15]
-                screens.append({'line': cue['index'], 'text': chunk,
-                                'start': round(st, 3), 'speech_end': round(en, 3), 'end': round(en, 3)})
+            screens.append({'line': cue['index'], 'text': chunk,
+                            'start': round(st, 3), 'speech_end': round(en, 3), 'end': round(en, 3)})
     for a, b in zip(screens, screens[1:]):
         # 尾挂最多 0.24s，不把气口整段挂进下一句，否则门禁判「字幕尾挂超过 0.3s」。
         a['end'] = min(b['start'], round(a['speech_end'] + 0.24, 3))

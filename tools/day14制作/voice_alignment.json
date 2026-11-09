@@ -1,0 +1,3388 @@
+{
+  "measured": true,
+  "method": "ASR word timestamps + RMS boundary refine (generic)",
+  "source_file": "鲸鱼MV重看_克隆配音_最终版.wav",
+  "source_duration_seconds": 124.97,
+  "source_sha256": "86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3",
+  "cue_count": 24,
+  "cues": [
+    {
+      "id": "L01",
+      "index": 1,
+      "start": 0.02,
+      "end": 3.81,
+      "text": "本鲸，就是昨天被烤成黑炭的那条鱼。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 0.03,
+          "end": 0.24,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 0.03,
+          "end": 0.24,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 0.24,
+          "end": 0.627,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "就",
+          "start": 0.84,
+          "end": 1.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 0.84,
+          "end": 1.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "昨",
+          "start": 1.29,
+          "end": 1.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 1.29,
+          "end": 1.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "被",
+          "start": 1.74,
+          "end": 1.89,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "烤",
+          "start": 1.89,
+          "end": 2.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "成",
+          "start": 1.89,
+          "end": 2.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "黑",
+          "start": 2.4,
+          "end": 2.632,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "炭",
+          "start": 2.632,
+          "end": 2.823,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 2.823,
+          "end": 2.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 2.94,
+          "end": 3.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "条",
+          "start": 3.15,
+          "end": 3.42,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鱼",
+          "start": 3.42,
+          "end": 3.81,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 3.42,
+          "end": 3.81,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L02",
+      "index": 2,
+      "start": 5.0,
+      "end": 9.06,
+      "text": "今早本鲸把电视搬上桌，重看昨天那支片子。",
+      "chars_timed": [
+        {
+          "ch": "今",
+          "start": 4.98,
+          "end": 5.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "早",
+          "start": 4.98,
+          "end": 5.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 5.43,
+          "end": 5.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 5.43,
+          "end": 5.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 5.94,
+          "end": 6.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "电",
+          "start": 6.15,
+          "end": 6.54,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "视",
+          "start": 6.15,
+          "end": 6.54,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "搬",
+          "start": 6.15,
+          "end": 6.54,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "上",
+          "start": 6.72,
+          "end": 6.99,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "桌",
+          "start": 6.99,
+          "end": 7.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 6.99,
+          "end": 7.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "重",
+          "start": 7.47,
+          "end": 7.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "看",
+          "start": 7.74,
+          "end": 7.92,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "昨",
+          "start": 7.92,
+          "end": 8.25,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 7.92,
+          "end": 8.25,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 8.25,
+          "end": 8.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "支",
+          "start": 8.37,
+          "end": 8.49,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "片",
+          "start": 8.49,
+          "end": 9.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "子",
+          "start": 8.49,
+          "end": 9.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 8.49,
+          "end": 9.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L03",
+      "index": 3,
+      "start": 9.635,
+      "end": 15.33,
+      "text": "屏幕一亮，一本红皮书翻开，城堡从书页里长出来。",
+      "chars_timed": [
+        {
+          "ch": "屏",
+          "start": 9.6,
+          "end": 10.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "幕",
+          "start": 9.6,
+          "end": 10.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 10.11,
+          "end": 10.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "亮",
+          "start": 10.11,
+          "end": 10.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 10.11,
+          "end": 10.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 10.89,
+          "end": 11.25,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 10.89,
+          "end": 11.25,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "红",
+          "start": 11.25,
+          "end": 11.46,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "皮",
+          "start": 11.46,
+          "end": 11.79,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "书",
+          "start": 11.46,
+          "end": 11.79,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "翻",
+          "start": 11.79,
+          "end": 12.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "开",
+          "start": 11.79,
+          "end": 12.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 11.79,
+          "end": 12.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "城",
+          "start": 12.54,
+          "end": 13.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "堡",
+          "start": 12.54,
+          "end": 13.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "从",
+          "start": 13.11,
+          "end": 13.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "书",
+          "start": 13.29,
+          "end": 13.673,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "页",
+          "start": 13.29,
+          "end": 13.673,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 13.673,
+          "end": 13.8,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "长",
+          "start": 13.8,
+          "end": 14.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "出",
+          "start": 14.01,
+          "end": 14.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 14.01,
+          "end": 14.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 15.12,
+          "end": 15.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L04",
+      "index": 4,
+      "start": 15.33,
+      "end": 20.85,
+      "text": "龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。",
+      "chars_timed": [
+        {
+          "ch": "龙",
+          "start": 15.12,
+          "end": 15.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "娘",
+          "start": 15.33,
+          "end": 15.78,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "扮",
+          "start": 15.33,
+          "end": 15.78,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 15.78,
+          "end": 15.958,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "恶",
+          "start": 15.958,
+          "end": 16.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "龙",
+          "start": 15.958,
+          "end": 16.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "俯",
+          "start": 16.35,
+          "end": 16.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "冲",
+          "start": 16.35,
+          "end": 16.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 16.83,
+          "end": 17.34,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 16.83,
+          "end": 17.34,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 16.83,
+          "end": 17.34,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 17.58,
+          "end": 17.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "豆",
+          "start": 17.73,
+          "end": 17.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "包",
+          "start": 17.94,
+          "end": 18.27,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "扮",
+          "start": 17.94,
+          "end": 18.27,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 18.27,
+          "end": 18.39,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "公",
+          "start": 18.39,
+          "end": 18.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "主",
+          "start": 18.39,
+          "end": 18.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "抓",
+          "start": 18.75,
+          "end": 18.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "走",
+          "start": 18.96,
+          "end": 19.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 18.96,
+          "end": 19.35,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 19.62,
+          "end": 19.86,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 19.872,
+          "end": 20.342,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 19.872,
+          "end": 20.342,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "子",
+          "start": 19.872,
+          "end": 20.342,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "暗",
+          "start": 19.872,
+          "end": 20.342,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 20.61,
+          "end": 20.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 20.61,
+          "end": 20.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L05",
+      "index": 5,
+      "start": 20.85,
+      "end": 27.0,
+      "text": "本鲸在里头应征，Gemini 和智谱在城门口送本鲸上马。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 21.24,
+          "end": 21.72,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 21.24,
+          "end": 21.72,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "在",
+          "start": 21.72,
+          "end": 21.9,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 21.9,
+          "end": 22.2,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "头",
+          "start": 21.9,
+          "end": 22.2,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "应",
+          "start": 22.2,
+          "end": 22.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "征",
+          "start": 22.2,
+          "end": 22.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 22.2,
+          "end": 22.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "G",
+          "start": 22.2,
+          "end": 22.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "e",
+          "start": 23.31,
+          "end": 23.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "m",
+          "start": 23.31,
+          "end": 23.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 23.31,
+          "end": 23.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "n",
+          "start": 23.31,
+          "end": 23.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 23.73,
+          "end": 23.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": " ",
+          "start": 23.73,
+          "end": 23.94,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "和",
+          "start": 23.94,
+          "end": 24.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "智",
+          "start": 24.12,
+          "end": 24.718,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "谱",
+          "start": 24.12,
+          "end": 24.718,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "在",
+          "start": 24.93,
+          "end": 25.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "城",
+          "start": 25.14,
+          "end": 25.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "门",
+          "start": 25.38,
+          "end": 25.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "口",
+          "start": 25.38,
+          "end": 25.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "送",
+          "start": 25.77,
+          "end": 26.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 26.01,
+          "end": 26.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 26.01,
+          "end": 26.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "上",
+          "start": 26.4,
+          "end": 27.0,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "马",
+          "start": 26.4,
+          "end": 27.0,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 26.4,
+          "end": 27.0,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L06",
+      "index": 6,
+      "start": 27.565,
+      "end": 33.505,
+      "text": "千问在风车村陪本鲸开了三只宝箱，一路走到山洞口。",
+      "chars_timed": [
+        {
+          "ch": "千",
+          "start": 27.54,
+          "end": 28.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "问",
+          "start": 27.54,
+          "end": 28.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "在",
+          "start": 28.14,
+          "end": 28.32,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "风",
+          "start": 28.32,
+          "end": 28.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "车",
+          "start": 28.32,
+          "end": 28.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "村",
+          "start": 28.77,
+          "end": 29.04,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "陪",
+          "start": 29.31,
+          "end": 29.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 29.55,
+          "end": 29.97,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 29.55,
+          "end": 29.97,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "开",
+          "start": 29.97,
+          "end": 30.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 30.18,
+          "end": 30.27,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "三",
+          "start": 30.27,
+          "end": 30.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "只",
+          "start": 30.27,
+          "end": 30.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "宝",
+          "start": 30.66,
+          "end": 31.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "箱",
+          "start": 30.66,
+          "end": 31.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 30.66,
+          "end": 31.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 31.8,
+          "end": 32.04,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "路",
+          "start": 32.04,
+          "end": 32.25,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "走",
+          "start": 32.25,
+          "end": 32.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "到",
+          "start": 32.43,
+          "end": 32.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "山",
+          "start": 32.55,
+          "end": 33.03,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "洞",
+          "start": 32.55,
+          "end": 33.03,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "口",
+          "start": 32.55,
+          "end": 33.03,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 33.03,
+          "end": 33.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L07",
+      "index": 7,
+      "start": 34.345,
+      "end": 42.51,
+      "text": "名字太长，塞不进那个框，大小姐扮的女王追着问了好几遍。",
+      "chars_timed": [
+        {
+          "ch": "名",
+          "start": 34.32,
+          "end": 34.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 34.62,
+          "end": 35.19,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "太",
+          "start": 34.62,
+          "end": 35.19,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "长",
+          "start": 34.62,
+          "end": 35.19,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 35.28,
+          "end": 35.67,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "塞",
+          "start": 36.33,
+          "end": 36.57,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 36.57,
+          "end": 36.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "进",
+          "start": 36.69,
+          "end": 36.93,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 36.69,
+          "end": 36.93,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "个",
+          "start": 37.11,
+          "end": 37.23,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "框",
+          "start": 37.23,
+          "end": 37.639,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 37.639,
+          "end": 37.8,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "大",
+          "start": 39.03,
+          "end": 39.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "小",
+          "start": 39.03,
+          "end": 39.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "姐",
+          "start": 39.03,
+          "end": 39.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "扮",
+          "start": 39.66,
+          "end": 39.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 39.84,
+          "end": 39.99,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "女",
+          "start": 39.99,
+          "end": 40.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "王",
+          "start": 39.99,
+          "end": 40.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "追",
+          "start": 40.41,
+          "end": 40.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "着",
+          "start": 40.62,
+          "end": 40.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "问",
+          "start": 40.74,
+          "end": 40.92,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 40.92,
+          "end": 41.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "好",
+          "start": 41.01,
+          "end": 41.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "几",
+          "start": 41.01,
+          "end": 41.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "遍",
+          "start": 41.01,
+          "end": 41.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L08",
+      "index": 8,
+      "start": 42.51,
+      "end": 47.88,
+      "text": "最黑的那段，Kimi 的月光照亮洞口；豆包在笼子里喊了一声「小心后面」。",
+      "chars_timed": [
+        {
+          "ch": "最",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "黑",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "K",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "m",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": " ",
+          "start": 42.12,
+          "end": 42.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 42.51,
+          "end": 42.63,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "月",
+          "start": 42.63,
+          "end": 43.2,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "光",
+          "start": 42.63,
+          "end": 43.2,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "照",
+          "start": 43.2,
+          "end": 43.56,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "亮",
+          "start": 43.2,
+          "end": 43.56,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "洞",
+          "start": 43.56,
+          "end": 43.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "口",
+          "start": 43.56,
+          "end": 43.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "；",
+          "start": 43.77,
+          "end": 44.16,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "豆",
+          "start": 44.67,
+          "end": 44.91,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "包",
+          "start": 44.91,
+          "end": 45.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "在",
+          "start": 45.18,
+          "end": 45.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "笼",
+          "start": 45.36,
+          "end": 45.72,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "子",
+          "start": 45.36,
+          "end": 45.72,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 45.72,
+          "end": 45.87,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "喊",
+          "start": 45.87,
+          "end": 46.17,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 46.17,
+          "end": 46.26,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 46.26,
+          "end": 46.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "声",
+          "start": 46.26,
+          "end": 46.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "「",
+          "start": 46.26,
+          "end": 46.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "小",
+          "start": 46.8,
+          "end": 47.34,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "心",
+          "start": 46.8,
+          "end": 47.34,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "后",
+          "start": 47.34,
+          "end": 47.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "面",
+          "start": 47.34,
+          "end": 47.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "」",
+          "start": 47.34,
+          "end": 47.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 47.34,
+          "end": 47.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L09",
+      "index": 9,
+      "start": 48.8,
+      "end": 55.32,
+      "text": "然后龙娘一口火，把本鲸喷成黑炭，石碑砸下来，片子就完了。",
+      "chars_timed": [
+        {
+          "ch": "然",
+          "start": 48.78,
+          "end": 49.26,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "后",
+          "start": 48.78,
+          "end": 49.26,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "龙",
+          "start": 49.26,
+          "end": 49.65,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "娘",
+          "start": 49.26,
+          "end": 49.65,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 49.65,
+          "end": 50.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "口",
+          "start": 49.65,
+          "end": 50.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "火",
+          "start": 50.01,
+          "end": 50.46,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 50.01,
+          "end": 50.46,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 50.61,
+          "end": 50.82,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 50.82,
+          "end": 51.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 50.82,
+          "end": 51.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "喷",
+          "start": 51.36,
+          "end": 51.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "成",
+          "start": 51.36,
+          "end": 51.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "黑",
+          "start": 51.75,
+          "end": 51.99,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "炭",
+          "start": 51.99,
+          "end": 52.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 51.99,
+          "end": 52.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "石",
+          "start": 52.68,
+          "end": 53.31,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "碑",
+          "start": 52.68,
+          "end": 53.31,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "砸",
+          "start": 53.31,
+          "end": 53.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 53.55,
+          "end": 54.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 53.55,
+          "end": 54.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 53.55,
+          "end": 54.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "片",
+          "start": 54.3,
+          "end": 54.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "子",
+          "start": 54.3,
+          "end": 54.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "就",
+          "start": 54.69,
+          "end": 54.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "完",
+          "start": 54.84,
+          "end": 55.08,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 55.08,
+          "end": 55.32,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 55.08,
+          "end": 55.32,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L10",
+      "index": 10,
+      "start": 56.165,
+      "end": 59.01,
+      "text": "本鲸摸摸自己，还是焦的。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 56.13,
+          "end": 56.652,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 56.13,
+          "end": 56.652,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "摸",
+          "start": 56.13,
+          "end": 56.652,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "摸",
+          "start": 56.822,
+          "end": 57.017,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "自",
+          "start": 57.06,
+          "end": 57.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "己",
+          "start": 57.06,
+          "end": 57.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 57.06,
+          "end": 57.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "还",
+          "start": 57.87,
+          "end": 58.44,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 57.87,
+          "end": 58.44,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "焦",
+          "start": 58.44,
+          "end": 58.8,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L11",
+      "index": 11,
+      "start": 59.01,
+      "end": 60.96,
+      "text": "可昨天谁在哪一步演了什么，纸上一个字都没有。",
+      "chars_timed": [
+        {
+          "ch": "可",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "昨",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "谁",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "在",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "哪",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "步",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "演",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "什",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "么",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 58.8,
+          "end": 59.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "纸",
+          "start": 59.4,
+          "end": 59.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "上",
+          "start": 59.4,
+          "end": 59.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 59.88,
+          "end": 60.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "个",
+          "start": 59.88,
+          "end": 60.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 59.88,
+          "end": 60.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "都",
+          "start": 60.3,
+          "end": 60.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "没",
+          "start": 60.45,
+          "end": 60.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "有",
+          "start": 60.45,
+          "end": 60.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 60.45,
+          "end": 60.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L12",
+      "index": 12,
+      "start": 61.625,
+      "end": 65.515,
+      "text": "本鲸按下暂停，倒回去，一段一段看。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 61.56,
+          "end": 61.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 61.83,
+          "end": 62.129,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "按",
+          "start": 62.129,
+          "end": 62.28,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 62.28,
+          "end": 62.52,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "暂",
+          "start": 62.52,
+          "end": 63.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "停",
+          "start": 62.52,
+          "end": 63.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 62.52,
+          "end": 63.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "倒",
+          "start": 63.36,
+          "end": 63.57,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "回",
+          "start": 63.571,
+          "end": 64.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "去",
+          "start": 63.571,
+          "end": 64.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 63.571,
+          "end": 64.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 64.41,
+          "end": 64.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 64.41,
+          "end": 64.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 64.83,
+          "end": 65.16,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 64.83,
+          "end": 65.16,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "看",
+          "start": 65.16,
+          "end": 65.52,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 65.16,
+          "end": 65.52,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L13",
+      "index": 13,
+      "start": 66.225,
+      "end": 71.04,
+      "text": "翻书那一段，是谁按下的开始？电视里没写。",
+      "chars_timed": [
+        {
+          "ch": "翻",
+          "start": 66.21,
+          "end": 66.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "书",
+          "start": 66.21,
+          "end": 66.75,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 66.75,
+          "end": 66.935,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 66.935,
+          "end": 67.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 66.935,
+          "end": 67.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 66.935,
+          "end": 67.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 67.56,
+          "end": 67.86,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "谁",
+          "start": 67.86,
+          "end": 68.07,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "按",
+          "start": 68.07,
+          "end": 68.223,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 68.223,
+          "end": 68.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 68.37,
+          "end": 68.46,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "开",
+          "start": 68.46,
+          "end": 69.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "始",
+          "start": 68.46,
+          "end": 69.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "？",
+          "start": 68.46,
+          "end": 69.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "电",
+          "start": 69.75,
+          "end": 70.17,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "视",
+          "start": 69.75,
+          "end": 70.17,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 70.17,
+          "end": 70.32,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "没",
+          "start": 70.32,
+          "end": 70.56,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "写",
+          "start": 70.56,
+          "end": 71.04,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 70.56,
+          "end": 71.04,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L14",
+      "index": 14,
+      "start": 71.605,
+      "end": 74.845,
+      "text": "龙娘抓走豆包那一段，本鲸记一行。",
+      "chars_timed": [
+        {
+          "ch": "龙",
+          "start": 71.58,
+          "end": 72.03,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "娘",
+          "start": 71.58,
+          "end": 72.03,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "抓",
+          "start": 72.03,
+          "end": 72.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "走",
+          "start": 72.03,
+          "end": 72.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "豆",
+          "start": 72.36,
+          "end": 72.51,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "包",
+          "start": 72.51,
+          "end": 72.72,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 72.72,
+          "end": 72.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 72.841,
+          "end": 73.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 72.841,
+          "end": 73.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 72.841,
+          "end": 73.29,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 73.68,
+          "end": 73.89,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 73.89,
+          "end": 74.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "记",
+          "start": 73.89,
+          "end": 74.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 73.89,
+          "end": 74.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "行",
+          "start": 73.89,
+          "end": 74.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 73.89,
+          "end": 74.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L15",
+      "index": 15,
+      "start": 74.845,
+      "end": 78.84,
+      "text": "追着问名字的是大小姐，喊「小心后面」的是豆包。",
+      "chars_timed": [
+        {
+          "ch": "追",
+          "start": 74.91,
+          "end": 75.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "着",
+          "start": 75.12,
+          "end": 75.24,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "问",
+          "start": 75.24,
+          "end": 75.449,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "名",
+          "start": 75.449,
+          "end": 76.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 75.449,
+          "end": 76.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 75.449,
+          "end": 76.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 75.449,
+          "end": 76.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "大",
+          "start": 76.2,
+          "end": 76.95,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "小",
+          "start": 76.2,
+          "end": 76.95,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "姐",
+          "start": 76.2,
+          "end": 76.95,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 77.16,
+          "end": 77.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "喊",
+          "start": 77.16,
+          "end": 77.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "「",
+          "start": 77.16,
+          "end": 77.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "小",
+          "start": 77.4,
+          "end": 77.79,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "心",
+          "start": 77.4,
+          "end": 77.79,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "后",
+          "start": 77.79,
+          "end": 78.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "面",
+          "start": 77.79,
+          "end": 78.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "」",
+          "start": 77.79,
+          "end": 78.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 78.18,
+          "end": 78.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 78.3,
+          "end": 78.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "豆",
+          "start": 78.3,
+          "end": 78.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "包",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L16",
+      "index": 16,
+      "start": 78.84,
+      "end": 80.37,
+      "text": "照亮山洞的那道月光是 Kimi 举的，一直没人提。",
+      "chars_timed": [
+        {
+          "ch": "照",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "亮",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "山",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "洞",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "道",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "月",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "光",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": " ",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "K",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "m",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "i",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": " ",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "举",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 78.45,
+          "end": 78.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 79.2,
+          "end": 79.56,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "直",
+          "start": 79.2,
+          "end": 79.56,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "没",
+          "start": 79.56,
+          "end": 79.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "人",
+          "start": 79.74,
+          "end": 79.92,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "提",
+          "start": 79.92,
+          "end": 80.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 79.92,
+          "end": 80.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L17",
+      "index": 17,
+      "start": 81.425,
+      "end": 85.5,
+      "text": "电视里全演过了，只是没人把它写下来。",
+      "chars_timed": [
+        {
+          "ch": "电",
+          "start": 81.39,
+          "end": 81.93,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "视",
+          "start": 81.39,
+          "end": 81.93,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 81.93,
+          "end": 82.08,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "全",
+          "start": 82.08,
+          "end": 82.59,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "演",
+          "start": 82.08,
+          "end": 82.59,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "过",
+          "start": 82.591,
+          "end": 82.83,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 82.83,
+          "end": 83.1,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 82.83,
+          "end": 83.1,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "只",
+          "start": 83.46,
+          "end": 84.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 83.46,
+          "end": 84.06,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "没",
+          "start": 84.09,
+          "end": 84.3,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "人",
+          "start": 84.3,
+          "end": 84.39,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 84.39,
+          "end": 84.57,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "它",
+          "start": 84.57,
+          "end": 84.69,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "写",
+          "start": 84.69,
+          "end": 84.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 84.96,
+          "end": 85.5,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 84.96,
+          "end": 85.5,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 84.96,
+          "end": 85.5,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L18",
+      "index": 18,
+      "start": 86.795,
+      "end": 90.44,
+      "text": "原来不用问人，一帧一帧看就够了。",
+      "chars_timed": [
+        {
+          "ch": "原",
+          "start": 86.76,
+          "end": 87.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 86.76,
+          "end": 87.18,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 87.18,
+          "end": 87.57,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "用",
+          "start": 87.18,
+          "end": 87.57,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "问",
+          "start": 87.57,
+          "end": 87.781,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "人",
+          "start": 87.781,
+          "end": 88.17,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 88.53,
+          "end": 88.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 89.038,
+          "end": 89.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "帧",
+          "start": 89.038,
+          "end": 89.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 89.038,
+          "end": 89.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "帧",
+          "start": 89.038,
+          "end": 89.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "看",
+          "start": 89.37,
+          "end": 89.67,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "就",
+          "start": 89.67,
+          "end": 89.849,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "够",
+          "start": 89.849,
+          "end": 90.12,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 90.12,
+          "end": 90.445,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 90.12,
+          "end": 90.445,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L19",
+      "index": 19,
+      "start": 91.165,
+      "end": 96.15,
+      "text": "本鲸把纸翻过来，按片子顺序，一段写一行。",
+      "chars_timed": [
+        {
+          "ch": "本",
+          "start": 91.11,
+          "end": 91.65,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 91.11,
+          "end": 91.65,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 91.65,
+          "end": 91.86,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "纸",
+          "start": 91.86,
+          "end": 92.07,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "翻",
+          "start": 92.07,
+          "end": 92.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "过",
+          "start": 92.07,
+          "end": 92.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 92.07,
+          "end": 92.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 92.07,
+          "end": 92.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "按",
+          "start": 93.18,
+          "end": 93.39,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "片",
+          "start": 93.39,
+          "end": 93.778,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "子",
+          "start": 93.39,
+          "end": 93.778,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "顺",
+          "start": 93.778,
+          "end": 94.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "序",
+          "start": 93.778,
+          "end": 94.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 93.778,
+          "end": 94.41,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 94.68,
+          "end": 95.105,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 94.68,
+          "end": 95.105,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "写",
+          "start": 95.105,
+          "end": 95.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 95.105,
+          "end": 95.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "行",
+          "start": 95.55,
+          "end": 96.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 95.55,
+          "end": 96.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L20",
+      "index": 20,
+      "start": 96.805,
+      "end": 100.98,
+      "text": "不替谁顶，也不把几段并成一段。",
+      "chars_timed": [
+        {
+          "ch": "不",
+          "start": 96.78,
+          "end": 96.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "替",
+          "start": 96.96,
+          "end": 97.23,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "谁",
+          "start": 97.23,
+          "end": 97.53,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "顶",
+          "start": 97.53,
+          "end": 97.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 97.74,
+          "end": 98.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "也",
+          "start": 98.22,
+          "end": 98.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 98.4,
+          "end": 98.55,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 98.55,
+          "end": 98.73,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "几",
+          "start": 98.73,
+          "end": 99.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 98.73,
+          "end": 99.15,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "并",
+          "start": 99.15,
+          "end": 99.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "成",
+          "start": 99.15,
+          "end": 99.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 99.529,
+          "end": 99.99,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "段",
+          "start": 99.529,
+          "end": 99.99,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 100.65,
+          "end": 100.98,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L21",
+      "index": 21,
+      "start": 100.98,
+      "end": 106.38,
+      "text": "烤焦那张单独夹起来，写「待补」，不写「修好了」。",
+      "chars_timed": [
+        {
+          "ch": "烤",
+          "start": 100.65,
+          "end": 100.98,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "焦",
+          "start": 100.65,
+          "end": 100.98,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 101.25,
+          "end": 101.46,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "张",
+          "start": 101.46,
+          "end": 101.7,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "单",
+          "start": 101.7,
+          "end": 102.09,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "独",
+          "start": 101.7,
+          "end": 102.09,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "夹",
+          "start": 102.09,
+          "end": 102.33,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "起",
+          "start": 102.33,
+          "end": 102.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "来",
+          "start": 102.33,
+          "end": 102.84,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 102.96,
+          "end": 103.53,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "写",
+          "start": 102.96,
+          "end": 103.53,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "「",
+          "start": 102.96,
+          "end": 103.53,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "待",
+          "start": 103.68,
+          "end": 104.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "补",
+          "start": 103.68,
+          "end": 104.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "」",
+          "start": 103.68,
+          "end": 104.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 103.68,
+          "end": 104.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 104.76,
+          "end": 105.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "写",
+          "start": 104.76,
+          "end": 105.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "「",
+          "start": 104.76,
+          "end": 105.45,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "修",
+          "start": 105.48,
+          "end": 106.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "好",
+          "start": 105.48,
+          "end": 106.11,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "」",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L22",
+      "index": 22,
+      "start": 106.38,
+      "end": 110.88,
+      "text": "电视关掉，那把歪伞收进抽屉，今天不拍雨了。",
+      "chars_timed": [
+        {
+          "ch": "电",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "视",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "关",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "掉",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 106.11,
+          "end": 106.38,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 106.77,
+          "end": 107.01,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 107.01,
+          "end": 107.22,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "歪",
+          "start": 107.22,
+          "end": 107.519,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "伞",
+          "start": 107.519,
+          "end": 107.82,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "收",
+          "start": 107.82,
+          "end": 108.09,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "进",
+          "start": 108.09,
+          "end": 108.27,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "抽",
+          "start": 108.27,
+          "end": 108.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "屉",
+          "start": 108.27,
+          "end": 108.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 108.27,
+          "end": 108.96,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "今",
+          "start": 109.41,
+          "end": 109.92,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 109.41,
+          "end": 109.92,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 109.92,
+          "end": 110.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "拍",
+          "start": 109.92,
+          "end": 110.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "雨",
+          "start": 109.92,
+          "end": 110.37,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "了",
+          "start": 110.377,
+          "end": 110.58,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 110.58,
+          "end": 110.88,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L23",
+      "index": 23,
+      "start": 112.145,
+      "end": 117.24,
+      "text": "昨天那碗白饭，还是老大买的，这句不改。",
+      "chars_timed": [
+        {
+          "ch": "昨",
+          "start": 112.14,
+          "end": 112.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "天",
+          "start": 112.14,
+          "end": 112.77,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 112.77,
+          "end": 112.95,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "碗",
+          "start": 112.95,
+          "end": 113.19,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "白",
+          "start": 113.19,
+          "end": 113.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "饭",
+          "start": 113.19,
+          "end": 113.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 113.19,
+          "end": 113.85,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "还",
+          "start": 114.21,
+          "end": 114.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "是",
+          "start": 114.21,
+          "end": 114.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "老",
+          "start": 114.66,
+          "end": 115.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "大",
+          "start": 114.66,
+          "end": 115.14,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "买",
+          "start": 115.14,
+          "end": 115.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 115.14,
+          "end": 115.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 115.14,
+          "end": 115.74,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "这",
+          "start": 116.19,
+          "end": 116.58,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "句",
+          "start": 116.19,
+          "end": 116.58,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 116.58,
+          "end": 117.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "改",
+          "start": 116.58,
+          "end": 117.047,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 117.047,
+          "end": 117.24,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    },
+    {
+      "id": "L24",
+      "index": 24,
+      "start": 118.445,
+      "end": 124.945,
+      "text": "下一集，本鲸要把那个装不下的名字，一个字一个字塞回框里。",
+      "chars_timed": [
+        {
+          "ch": "下",
+          "start": 118.47,
+          "end": 118.8,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 118.8,
+          "end": 119.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "集",
+          "start": 118.8,
+          "end": 119.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 118.8,
+          "end": 119.4,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "本",
+          "start": 120.12,
+          "end": 120.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "鲸",
+          "start": 120.12,
+          "end": 120.66,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "要",
+          "start": 120.66,
+          "end": 120.87,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "把",
+          "start": 120.87,
+          "end": 121.02,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "那",
+          "start": 121.02,
+          "end": 121.2,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "个",
+          "start": 121.2,
+          "end": 121.32,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "装",
+          "start": 121.32,
+          "end": 121.53,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "不",
+          "start": 121.53,
+          "end": 121.65,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "下",
+          "start": 121.65,
+          "end": 121.86,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "的",
+          "start": 121.86,
+          "end": 121.95,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "名",
+          "start": 121.95,
+          "end": 122.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 121.95,
+          "end": 122.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "，",
+          "start": 121.95,
+          "end": 122.43,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 122.67,
+          "end": 123.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "个",
+          "start": 122.67,
+          "end": 123.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 122.67,
+          "end": 123.36,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "一",
+          "start": 123.36,
+          "end": 123.9,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "个",
+          "start": 123.36,
+          "end": 123.9,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "字",
+          "start": 123.36,
+          "end": 123.9,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "塞",
+          "start": 123.9,
+          "end": 124.291,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "回",
+          "start": 123.9,
+          "end": 124.291,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "框",
+          "start": 123.9,
+          "end": 124.291,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "里",
+          "start": 124.291,
+          "end": 124.62,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        },
+        {
+          "ch": "。",
+          "start": 124.62,
+          "end": 124.945,
+          "timing_source": "ASR sequence alignment + RMS refine"
+        }
+      ]
+    }
+  ]
+}

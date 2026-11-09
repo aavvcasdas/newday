@@ -1,0 +1,9 @@
+{
+  "script": "Day/Day14/Day14配音台词_达拉崩吧版_待审.txt",
+  "voice": "鲸鱼MV重看_克隆配音_最终版.wav",
+  "alignment": "tools/day14制作/voice_alignment.json",
+  "subs": "tools/day14制作/subtitle_timing.json",
+  "renderer": "tools/day14制作/render_day14_video.py",
+  "video": "Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4",
+  "tests": ["tools/engine/day14_plan.test.mjs"]
+}

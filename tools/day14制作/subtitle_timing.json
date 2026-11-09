@@ -1,0 +1,448 @@
+{
+  "measured": true,
+  "method": "clauses from measured cues",
+  "source_sha256": "86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3",
+  "screens": [
+    {
+      "line": 1,
+      "text": "本鲸，就是昨天被烤成黑炭的那条",
+      "start": 0.02,
+      "speech_end": 3.364,
+      "end": 3.364
+    },
+    {
+      "line": 1,
+      "text": "鱼。",
+      "start": 3.364,
+      "speech_end": 3.81,
+      "end": 4.05
+    },
+    {
+      "line": 2,
+      "text": "今早本鲸把电视搬上桌，",
+      "start": 5.0,
+      "speech_end": 7.233,
+      "end": 7.233
+    },
+    {
+      "line": 2,
+      "text": "重看昨天那支片子。",
+      "start": 7.233,
+      "speech_end": 9.06,
+      "end": 9.3
+    },
+    {
+      "line": 3,
+      "text": "屏幕一亮，",
+      "start": 9.635,
+      "speech_end": 10.873,
+      "end": 10.873
+    },
+    {
+      "line": 3,
+      "text": "一本红皮书翻开，",
+      "start": 10.873,
+      "speech_end": 12.854,
+      "end": 12.854
+    },
+    {
+      "line": 3,
+      "text": "城堡从书页里长出来。",
+      "start": 12.854,
+      "speech_end": 15.33,
+      "end": 15.33
+    },
+    {
+      "line": 4,
+      "text": "龙娘扮的恶龙俯冲下来，",
+      "start": 15.33,
+      "speech_end": 17.499,
+      "end": 17.499
+    },
+    {
+      "line": 4,
+      "text": "把豆包扮的公主抓走，",
+      "start": 17.499,
+      "speech_end": 19.47,
+      "end": 19.47
+    },
+    {
+      "line": 4,
+      "text": "天一下子暗了。",
+      "start": 19.47,
+      "speech_end": 20.85,
+      "end": 20.85
+    },
+    {
+      "line": 5,
+      "text": "本鲸在里头应征，",
+      "start": 20.85,
+      "speech_end": 22.607,
+      "end": 22.607
+    },
+    {
+      "line": 5,
+      "text": "Gemini 和智谱在城门口送",
+      "start": 22.607,
+      "speech_end": 25.902,
+      "end": 25.902
+    },
+    {
+      "line": 5,
+      "text": "本鲸上马。",
+      "start": 25.902,
+      "speech_end": 27.0,
+      "end": 27.24
+    },
+    {
+      "line": 6,
+      "text": "千问在风车村陪本鲸开了三只宝箱，",
+      "start": 27.565,
+      "speech_end": 31.525,
+      "end": 31.525
+    },
+    {
+      "line": 6,
+      "text": "一路走到山洞口。",
+      "start": 31.525,
+      "speech_end": 33.505,
+      "end": 33.745
+    },
+    {
+      "line": 7,
+      "text": "名字太长，",
+      "start": 34.345,
+      "speech_end": 35.857,
+      "end": 35.857
+    },
+    {
+      "line": 7,
+      "text": "塞不进那个框，",
+      "start": 35.857,
+      "speech_end": 37.974,
+      "end": 37.974
+    },
+    {
+      "line": 7,
+      "text": "大小姐扮的女王追着问了好几遍。",
+      "start": 37.974,
+      "speech_end": 42.51,
+      "end": 42.51
+    },
+    {
+      "line": 8,
+      "text": "最黑的那段，",
+      "start": 42.51,
+      "speech_end": 43.405,
+      "end": 43.405
+    },
+    {
+      "line": 8,
+      "text": "Kimi 的月光照亮洞口；",
+      "start": 43.405,
+      "speech_end": 45.344,
+      "end": 45.344
+    },
+    {
+      "line": 8,
+      "text": "豆包在笼子里喊了一声「小心后面」。",
+      "start": 45.344,
+      "speech_end": 47.88,
+      "end": 48.12
+    },
+    {
+      "line": 9,
+      "text": "然后龙娘一口火，",
+      "start": 48.8,
+      "speech_end": 50.663,
+      "end": 50.663
+    },
+    {
+      "line": 9,
+      "text": "把本鲸喷成黑炭，",
+      "start": 50.663,
+      "speech_end": 52.526,
+      "end": 52.526
+    },
+    {
+      "line": 9,
+      "text": "石碑砸下来，",
+      "start": 52.526,
+      "speech_end": 53.923,
+      "end": 53.923
+    },
+    {
+      "line": 9,
+      "text": "片子就完了。",
+      "start": 53.923,
+      "speech_end": 55.32,
+      "end": 55.56
+    },
+    {
+      "line": 10,
+      "text": "本鲸摸摸自己，",
+      "start": 56.165,
+      "speech_end": 57.825,
+      "end": 57.825
+    },
+    {
+      "line": 10,
+      "text": "还是焦的。",
+      "start": 57.825,
+      "speech_end": 59.01,
+      "end": 59.01
+    },
+    {
+      "line": 11,
+      "text": "可昨天谁在哪一步演了什么，",
+      "start": 59.01,
+      "speech_end": 60.162,
+      "end": 60.162
+    },
+    {
+      "line": 11,
+      "text": "纸上一个字都没有。",
+      "start": 60.162,
+      "speech_end": 60.96,
+      "end": 61.2
+    },
+    {
+      "line": 12,
+      "text": "本鲸按下暂停，",
+      "start": 61.625,
+      "speech_end": 63.227,
+      "end": 63.227
+    },
+    {
+      "line": 12,
+      "text": "倒回去，",
+      "start": 63.227,
+      "speech_end": 64.142,
+      "end": 64.142
+    },
+    {
+      "line": 12,
+      "text": "一段一段看。",
+      "start": 64.142,
+      "speech_end": 65.515,
+      "end": 65.755
+    },
+    {
+      "line": 13,
+      "text": "翻书那一段，",
+      "start": 66.225,
+      "speech_end": 67.669,
+      "end": 67.669
+    },
+    {
+      "line": 13,
+      "text": "是谁按下的开始？",
+      "start": 67.669,
+      "speech_end": 69.596,
+      "end": 69.596
+    },
+    {
+      "line": 13,
+      "text": "电视里没写。",
+      "start": 69.596,
+      "speech_end": 71.04,
+      "end": 71.28
+    },
+    {
+      "line": 14,
+      "text": "龙娘抓走豆包那一段，",
+      "start": 71.605,
+      "speech_end": 73.63,
+      "end": 73.63
+    },
+    {
+      "line": 14,
+      "text": "本鲸记一行。",
+      "start": 73.63,
+      "speech_end": 74.845,
+      "end": 74.845
+    },
+    {
+      "line": 15,
+      "text": "追着问名字的是大小姐，",
+      "start": 74.845,
+      "speech_end": 76.756,
+      "end": 76.756
+    },
+    {
+      "line": 15,
+      "text": "喊「小心后面」的是豆包。",
+      "start": 76.756,
+      "speech_end": 78.84,
+      "end": 78.84
+    },
+    {
+      "line": 16,
+      "text": "照亮山洞的那道月光是 Kimi",
+      "start": 78.84,
+      "speech_end": 79.758,
+      "end": 79.758
+    },
+    {
+      "line": 16,
+      "text": " 举的，",
+      "start": 79.758,
+      "speech_end": 80.003,
+      "end": 80.003
+    },
+    {
+      "line": 16,
+      "text": "一直没人提。",
+      "start": 80.003,
+      "speech_end": 80.37,
+      "end": 80.61
+    },
+    {
+      "line": 17,
+      "text": "电视里全演过了，",
+      "start": 81.425,
+      "speech_end": 83.236,
+      "end": 83.236
+    },
+    {
+      "line": 17,
+      "text": "只是没人把它写下来。",
+      "start": 83.236,
+      "speech_end": 85.5,
+      "end": 85.74
+    },
+    {
+      "line": 18,
+      "text": "原来不用问人，",
+      "start": 86.795,
+      "speech_end": 88.39,
+      "end": 88.39
+    },
+    {
+      "line": 18,
+      "text": "一帧一帧看就够了。",
+      "start": 88.39,
+      "speech_end": 90.44,
+      "end": 90.68
+    },
+    {
+      "line": 19,
+      "text": "本鲸把纸翻过来，",
+      "start": 91.165,
+      "speech_end": 93.159,
+      "end": 93.159
+    },
+    {
+      "line": 19,
+      "text": "按片子顺序，",
+      "start": 93.159,
+      "speech_end": 94.655,
+      "end": 94.655
+    },
+    {
+      "line": 19,
+      "text": "一段写一行。",
+      "start": 94.655,
+      "speech_end": 96.15,
+      "end": 96.39
+    },
+    {
+      "line": 20,
+      "text": "不替谁顶，",
+      "start": 96.805,
+      "speech_end": 98.197,
+      "end": 98.197
+    },
+    {
+      "line": 20,
+      "text": "也不把几段并成一段。",
+      "start": 98.197,
+      "speech_end": 100.98,
+      "end": 100.98
+    },
+    {
+      "line": 21,
+      "text": "烤焦那张单独夹起来，",
+      "start": 100.98,
+      "speech_end": 103.23,
+      "end": 103.23
+    },
+    {
+      "line": 21,
+      "text": "写「待补」，",
+      "start": 103.23,
+      "speech_end": 104.58,
+      "end": 104.58
+    },
+    {
+      "line": 21,
+      "text": "不写「修好了」。",
+      "start": 104.58,
+      "speech_end": 106.38,
+      "end": 106.38
+    },
+    {
+      "line": 22,
+      "text": "电视关掉，",
+      "start": 106.38,
+      "speech_end": 107.451,
+      "end": 107.451
+    },
+    {
+      "line": 22,
+      "text": "那把歪伞收进抽屉，",
+      "start": 107.451,
+      "speech_end": 109.38,
+      "end": 109.38
+    },
+    {
+      "line": 22,
+      "text": "今天不拍雨了。",
+      "start": 109.38,
+      "speech_end": 110.88,
+      "end": 111.12
+    },
+    {
+      "line": 23,
+      "text": "昨天那碗白饭，",
+      "start": 112.145,
+      "speech_end": 114.022,
+      "end": 114.022
+    },
+    {
+      "line": 23,
+      "text": "还是老大买的，",
+      "start": 114.022,
+      "speech_end": 115.899,
+      "end": 115.899
+    },
+    {
+      "line": 23,
+      "text": "这句不改。",
+      "start": 115.899,
+      "speech_end": 117.24,
+      "end": 117.48
+    },
+    {
+      "line": 24,
+      "text": "下一集，",
+      "start": 118.445,
+      "speech_end": 119.374,
+      "end": 119.374
+    },
+    {
+      "line": 24,
+      "text": "本鲸要把那个装不下的名字，",
+      "start": 119.374,
+      "speech_end": 122.391,
+      "end": 122.391
+    },
+    {
+      "line": 24,
+      "text": "一个字一个字塞回框里。",
+      "start": 122.391,
+      "speech_end": 124.945,
+      "end": 125.185
+    }
+  ]
+}
