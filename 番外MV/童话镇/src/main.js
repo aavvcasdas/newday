@@ -29,9 +29,9 @@ const CAST = [
   ['gemini', 'Gemini', '爱丽丝'],
   ['kimi', 'Kimi', '灰姑娘'],
   ['qwen', '千问', '疯帽子'],
-  ['zai', '智谱', '竖琴杰克'],
+  ['zai', '智谱', '彼得潘'],
 ];
-const EMBLEM_FOR = { whale: 5, gpt: 5, claude: 4, doubao: 2, gemini: 0, kimi: 1, qwen: 3, zai: 3 };
+const EMBLEM_FOR = { whale: 5, gpt: 5, claude: 4, doubao: 2, gemini: 0, kimi: 1, qwen: 3, zai: 6 };
 
 function renderModelSheet(t) {
   fb.gradV(0, 0, W, H, [C.ink, C.navy, C.plum, C.dslate]);

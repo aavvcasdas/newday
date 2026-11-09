@@ -553,37 +553,31 @@ function wolfForest(fb, t, u) {
 }
 
 function teaGarden(fb, t, u) {
-  if (t >= 22.05) {
-    // Close prop cut: steam curls above the teapot while Alice and the Mad Hatter exchange a cup.
-    hillBackdrop(fb, t, { dream: true });
-    roundTree(fb, 32, 126, 0.78, true); roundTree(fb, 289, 130, 0.72, true);
-    fb.ellipse(160, 132, 76, 13, C.dbrown); fb.rect(87, 132, 146, 10, C.tan);
-    fb.vline(107, 139, 158, C.dbrown); fb.vline(213, 139, 158, C.dbrown);
-    fb.ellipse(160, 113, 25, 16, C.plum); fb.rect(142, 101, 35, 17, C.plum);
-    fb.disc(160, 101, 7, C.gold); fb.line(180, 111, 196, 108, C.gold, 3);
-    fb.ellipse(191, 109, 6, 4, C.parchment); fb.line(140, 112, 128, 107, C.gold, 2);
-    for (let i = 0; i < 5; i++) fb.px(153 + i * 5, 85 - mod(Math.floor(t * 5 + i), 11), C.uiW);
-    fb.rect(116, 121, 14, 8, C.cyan); fb.box(116, 121, 14, 8, C.dbrown);
-    fb.ellipse(199, 124, 12, 4, C.parchment); fb.disc(199, 121, 4, C.pink);
-    drawCastSprite(fb, 121, 144, 'qwen', t, { pose: 'cheer', role: 'hatter', facing: 1 });
-    drawCastSprite(fb, 205, 143, 'gemini', t, { pose: 'cheer', role: 'alice', facing: -1 });
-    drawWhaleHero(fb, 162 + Math.sin(t * 2) * 8, 154, t, { pose: 'happy', facing: 1, scarfLen: 14 });
-    magicParticles(fb, t, 160, 91, 50, 14, C.goldL, C.pink);
-    return;
-  }
-  hillBackdrop(fb, t);
-  roundTree(fb, 45, 123, 1, true); roundTree(fb, 281, 126, 0.95, false);
-  bridge(fb, 263, 140, 77, 10, false);
-  teaTable(fb, 158, 121, t);
-  drawCastSprite(fb, 112, 129, 'qwen', t, { pose: 'cheer', role: 'hatter', facing: 1 });
-  drawCastSprite(fb, 202, 130, 'gemini', t, { pose: 'idle', role: 'alice', facing: -1 });
-  // A blue teacup and tiny pocket-watch, arranged like a storybook tea-party prop tableau.
-  fb.rect(137, 112, 8, 7, C.cyan); fb.box(137, 112, 8, 7, C.dbrown); fb.line(145, 114, 148, 114, C.dbrown);
+  hillBackdrop(fb, t, { dream: t >= 22.05 });
+  roundTree(fb, 35, 126, 0.78, true); roundTree(fb, 287, 130, 0.72, true);
+  fb.ellipse(160, 132, 76, 13, C.dbrown); fb.rect(87, 132, 146, 10, C.tan);
+  fb.vline(107, 139, 158, C.dbrown); fb.vline(213, 139, 158, C.dbrown);
+  fb.ellipse(160, 113, 25, 16, C.plum); fb.rect(142, 101, 35, 17, C.plum);
+  fb.disc(160, 101, 7, C.gold); fb.line(180, 111, 196, 108, C.gold, 3);
+  fb.ellipse(191, 109, 6, 4, C.parchment); fb.line(140, 112, 128, 107, C.gold, 2);
   clock(fb, 176, 108, 5, t, C.goldL);
-  drawWhaleHero(fb, 158 + Math.sin(u * Math.PI) * 30, 150, t, { pose: 'happy', facing: 1, scarfLen: 14 });
-  magicParticles(fb, t, 160, 78, 60, 12, C.pink, C.goldL);
+  for (let i = 0; i < 5; i++) fb.px(153 + i * 5, 85 - mod(Math.floor(t * 5 + i), 11), C.uiW);
+  const cueU = clamp((t - 20.40) / (23.75 - 20.40), 0, 1);
+  const close = t >= 22.05;
+  const qwenX = close ? lerp(134, 149, u) : lerp(108, 134, u);
+  const geminiX = close ? lerp(211, 184, u) : 205;
+  const cupX = close ? lerp(157, 184, u) : lerp(126, 157, u);
+  // The blue cup travels across the table as Qwen steps forward and Gemini closes in to receive it.
+  fb.line(126, 125, cupX - 5, 125, C.cyan, 1);
+  fb.rect(cupX - 4, 119, 9, 7, C.cyan); fb.box(cupX - 4, 119, 9, 7, C.dbrown);
+  fb.line(cupX + 5, 121, cupX + 8, 121, C.dbrown); fb.px(cupX - 1, 120, C.uiW);
+  for (let i = 0; i < 4; i++) fb.px(cupX - 1 + i * 2, 113 - ((Math.floor(t * 4 + i) % 5)), C.goldL);
+  drawCastSprite(fb, qwenX, 144, 'qwen', t, { pose: 'walk', role: 'hatter', facing: 1 });
+  drawCastSprite(fb, geminiX, 143, 'gemini', t, { pose: close ? 'walk' : 'idle', role: 'alice', facing: -1 });
+  const whaleX = close ? lerp(180, 159, u) : lerp(157, 180, u);
+  drawWhaleHero(fb, whaleX, 154, t, { pose: 'run', facing: close ? -1 : 1, scarfLen: 14 });
+  magicParticles(fb, t, cupX, 94, 42 + cueU * 9, 12, C.goldL, C.pink);
 }
-
 function swanRiver(fb, t, u) {
   if (t >= 25.40) {
     // Second cut lands on the transformed swan and its moonlit river reflection.
@@ -604,48 +598,34 @@ function swanRiver(fb, t, u) {
 }
 
 function peterClocktower(fb, t, u) {
-  if (t >= 28.90) {
-    // Cut to the clock face and flight path; Zai remains the Neverland flyer and Whale leads the scene.
-    hillBackdrop(fb, t, { dream: true });
-    river(fb, t, 151, { rainbow: true, width: 10 });
-    fb.rect(225, 25, 72, 112, C.slate); fb.box(225, 25, 72, 112, C.ink);
-    fb.tri(217, 26, 305, 26, 261, 1, C.plum);
-    clock(fb, 261, 64, 24, t, C.goldL);
-    for (let i = 0; i < 5; i++) {
-      const x = 39 + i * 34;
-      fb.px(x, 57 + Math.sin(t * 3 + i) * 12, i % 2 ? C.goldL : C.uiW);
-      fb.line(x, 57, x + 8, 49 + i % 3 * 4, C.cyan);
-    }
-    drawCastSprite(fb, 203, 126, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
-    fb.tri(193, 98, 209, 98, 201, 88, C.lime);
-    fb.tri(191, 118, 179, 109 + Math.sin(t * 10) * 3, 190, 128, C.cyan);
-    fb.tri(215, 118, 227, 109 - Math.sin(t * 10) * 3, 216, 128, C.cyan);
-    drawWhaleHero(fb, lerp(81, 160, u), 135 - Math.sin(t * 4) * 10, t, { pose: 'happy', facing: 1, scarfLen: 17 });
-    drawPaperBoat(fb, 145, 145, t, { scale: 0.58, withWhale: true, chibiWhale: true, reflection: false });
-    magicParticles(fb, t, 194, 71, 61, 14, C.goldL, C.cyan);
-    return;
-  }
+  const firstAngle = t < 28.90;
   hillBackdrop(fb, t, { dream: true });
-  river(fb, t, 145, { width: 12, rainbow: u > 0.5 });
-  // Tall Neverland clocktower, roof pennants, flying paper stars.
-  fb.rect(239, 37, 54, 100, C.slate); fb.box(239, 37, 54, 100, C.ink);
-  fb.tri(232, 38, 300, 38, 266, 9, C.plum); fb.line(266, 2, 266, 12, C.gold);
-  clock(fb, 266, 61, 14, t, C.goldL);
-  fb.rect(255, 83, 23, 54, C.dslate); fb.box(255, 83, 23, 54, C.ink);
-  for (let i = 0; i < 3; i++) fb.rect(259 + i * 6, 90, 3, 15, C.cyan);
-  drawCastSprite(fb, 220, 130, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
-  // Leaf hat and miniature paper wings mark Zai's Peter Pan flight-role without changing his identity.
-  fb.tri(211, 99, 226, 99, 219, 91, C.lime); fb.px(216, 91, C.goldL);
-  fb.tri(207, 122, 196, 114 + Math.sin(t * 10) * 3, 204, 132, C.cyan);
-  fb.tri(230, 122, 241, 114 - Math.sin(t * 10) * 3, 233, 132, C.cyan);
-  drawWhaleHero(fb, lerp(88, 156, u), 133 - Math.sin(t * 4) * 7, t, { pose: 'happy', facing: 1, scarfLen: 18 });
-  drawPaperBoat(fb, 150, 141, t, { scale: 0.55, withWhale: true, chibiWhale: true, reflection: false });
-  magicParticles(fb, t, 180, 75, 62, 12, C.goldL, C.cyan);
+  river(fb, t, 145, { width: 12, rainbow: true });
+  const towerX = firstAngle ? 266 : 261;
+  const towerTop = firstAngle ? 37 : 25;
+  fb.rect(towerX - 27, towerTop, 54, 111, C.slate); fb.box(towerX - 27, towerTop, 54, 111, C.ink);
+  fb.tri(towerX - 34, towerTop + 1, towerX + 34, towerTop + 1, towerX, towerTop - 28, C.plum);
+  clock(fb, towerX, firstAngle ? 61 : 64, firstAngle ? 14 : 24, t, C.goldL);
+  // Zai remains in the established character sprite: Peter Pan is expressed by a clocktower leap and a curved flight path,
+  // never by a leaf hat, paper wings, or any other costume add-on.
+  const zaiX = firstAngle ? lerp(229, 185, u) : lerp(204, 157, u);
+  const zaiY = (firstAngle ? 128 : 126) - Math.sin(u * Math.PI) * (firstAngle ? 24 : 29);
+  drawCastSprite(fb, zaiX, zaiY, 'zai', t, { pose: 'walk', role: 'default', facing: -1 });
+  const trailCount = 12;
+  for (let i = 0; i < trailCount; i++) {
+    const p = Math.max(0, u - i * 0.055);
+    const tx = (firstAngle ? lerp(229, 185, p) : lerp(204, 157, p)) + 7;
+    const ty = (firstAngle ? 128 : 126) - Math.sin(p * Math.PI) * (firstAngle ? 24 : 29) + 5;
+    fb.px(tx, ty, i % 3 === 0 ? C.uiW : i % 2 ? C.goldL : C.cyan);
+  }
+  drawWhaleHero(fb, firstAngle ? lerp(88, 156, u) : lerp(81, 160, u), 135 - Math.sin(u * Math.PI) * 10, t, { pose: 'happy', facing: 1, scarfLen: 17 });
+  drawPaperBoat(fb, firstAngle ? 150 + u * 22 : 145 + u * 19, 145 - u * 7, t, { scale: firstAngle ? 0.55 : 0.58, withWhale: true, chibiWhale: true, reflection: false });
+  magicParticles(fb, t, zaiX, zaiY - 20, 42, 12, C.goldL, C.cyan);
 }
 
 function beanstalkHarp(fb, t, u) {
   if (t >= 32.25) {
-    // Close musical insert: gold harp strings catch the light while Qwen plays above the cloud line.
+    // Close musical insert: gold harp strings answer Zai’s plucks above the cloud line.
     hillBackdrop(fb, t, { dream: true });
     fb.gradV(0, 112, W, 68, [C.blue, C.cyan, C.navy]);
     for (let i = 0; i < 6; i++) clouds(fb, t + i * 3, false, 20 + i % 2 * 7);
@@ -653,7 +633,7 @@ function beanstalkHarp(fb, t, u) {
     fb.line(200, 61, 197, 17, C.gold, 3); fb.line(200, 61, 224, 57, C.gold, 3);
     fb.line(197, 17, 224, 57, C.goldL, 2);
     for (let i = 0; i < 7; i++) fb.line(198 + i * 3, 21 + i * 2, 198 + i * 3, 62 - i, i % 2 ? C.uiW : C.goldL);
-    drawCastSprite(fb, 213, 63, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
+    drawCastSprite(fb, lerp(229, 210, u), 63, 'zai', t, { pose: 'walk', role: 'harp', facing: -1 });
     drawWhaleHero(fb, lerp(101, 171, u), 139, t, { pose: 'run', facing: 1, scarfLen: 17 });
     fb.line(81, 148, 104, 114, C.green, 7); fb.line(104, 114, 81, 81, C.lime, 7); fb.line(81, 81, 116, 48, C.green, 7);
     magicParticles(fb, t, 213, 45, 43, 17, C.goldL, C.pink);
@@ -667,94 +647,99 @@ function beanstalkHarp(fb, t, u) {
   fb.line(70, 35, 107, 8, C.green, 10);
   for (let i = 0; i < 8; i++) fb.px(68 + (i % 3) * 9, 120 - i * 13, i % 2 ? C.pink : C.goldL);
   fb.rect(179, 66, 93, 8, C.tan); fb.box(179, 66, 93, 8, C.dbrown);
-  drawCastSprite(fb, 220, 65, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
+  drawCastSprite(fb, lerp(235, 215, u), 65, 'zai', t, { pose: 'walk', role: 'harp', facing: -1 });
   // Oversized harp strings glitter on every pluck.
   for (let i = 0; i < 6; i++) {
     fb.vline(232 + i * 3, 52 + i, 78 - i, (Math.floor(t * 9 + i) & 1) ? C.goldL : C.uiW);
+    const noteX = mod(226 + i * 15 - t * (5 + i % 2), 286), noteY = 42 - mod(Math.floor(t * 9 + i * 7), 38);
+    fb.disc(noteX, noteY, 2, i % 2 ? C.goldL : C.cyan); fb.vline(noteX + 2, noteY - 7, noteY, C.goldL);
+    fb.line(noteX + 2, noteY - 7, noteX + 7, noteY - 5, C.goldL);
   }
   drawWhaleHero(fb, lerp(109, 167, u), 136, t, { pose: 'run', facing: 1, scarfLen: 17 });
   magicParticles(fb, t, 222, 49, 43, 13, C.goldL, C.pink);
 }
 
 function candyForest(fb, t, u) {
-  if (t >= 35.60) {
-    // Cut inside the candy cottage: jars, striped cake rolls and a warm counter fill the foreground.
-    fb.gradV(0, 0, W, H, [C.rose, C.plum, C.brown]);
-    for (let y = 20; y < 157; y += 22) fb.hline(0, W - 1, y, y % 2 ? C.dbrown : C.scarfD);
-    fb.rect(0, 118, W, 40, C.tan); fb.hline(0, W - 1, 118, C.goldL);
-    for (let i = 0; i < 7; i++) {
-      const x = 16 + i * 47, y = 43 + (i % 3) * 13;
-      fb.rect(x, y, 33, 51, C.parchment); fb.box(x, y, 33, 51, C.dbrown);
-      fb.rect(x + 4, y + 7, 25, 24, [C.pink, C.cyan, C.gold][i % 3]);
-      fb.box(x + 4, y + 7, 25, 24, C.white);
-      for (let k = 0; k < 3; k++) fb.px(x + 9 + k * 7, y + 15, C.uiW);
-      fb.disc(x + 16, y + 40, 5, i % 2 ? C.goldL : C.scarf);
+  const close = t >= 35.60;
+  const cueU = clamp((t - 34.0) / (37.25 - 34.0), 0, 1);
+  if (!close) {
+    hillBackdrop(fb, t);
+    river(fb, t, 151, { width: 13 });
+    for (const [x, y, s] of [[40, 134, 0.8], [83, 138, 0.65], [280, 137, 0.85]]) roundTree(fb, x, y, s, true);
+    candyHouse(fb, 164, 136, 1.1);
+    for (let x = 112; x < 217; x += 13) { fb.vline(x, 137, 151, C.tan); fb.px(x, 136, C.goldL); }
+    fb.hline(110, 219, 142, C.dbrown); fb.hline(110, 219, 148, C.dbrown);
+    const doubaoX = lerp(126, 145, u);
+    drawCastSprite(fb, doubaoX, 145, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+    drawCastSprite(fb, 198, 145, 'gemini', t, { pose: 'walk', role: 'alice', facing: -1 });
+    // Sweets leave the cottage's jar and land one by one in Red Hood's basket.
+    for (let i = 0; i < 5; i++) {
+      const p = clamp(u * 1.5 - i * 0.19, 0, 1);
+      const sx = 187 + (i % 2) * 11, sy = 85 + (i % 3) * 5;
+      const ex = doubaoX + 9, ey = 136;
+      const x = lerp(sx, ex, p), y = lerp(sy, ey, p) - Math.sin(p * Math.PI) * 20;
+      fb.disc(x, y, 3, [C.pink, C.cyan, C.goldL][i % 3]); fb.px(x, y - 1, C.uiW);
     }
-    for (let x = 8; x < W; x += 18) {
-      fb.rect(x, 121, 13, 18, C.scarf); fb.hline(x, x + 12, 121, C.goldL);
-      fb.disc(x + 6, 119, 3, C.uiW);
-    }
-    drawCastSprite(fb, 108, 150, 'doubao', t, { pose: 'cheer', role: 'redhood', facing: 1 });
-    drawCastSprite(fb, 211, 150, 'gemini', t, { pose: 'cheer', role: 'alice', facing: -1 });
-    drawWhaleHero(fb, lerp(147, 177, u), 157, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 16 });
-    magicParticles(fb, t, 157, 90, 76, 16, C.goldL, C.cyan);
+    for (let i = 0; i < 8; i++) fb.disc(127 + i * 9, 82 - Math.sin(t * 3 + i) * 3, 3, [C.pink, C.cyan, C.goldL][i % 3]);
+    drawWhaleHero(fb, lerp(76, 238, u), 148, t, { pose: 'run', facing: 1, scarfLen: 17 });
     return;
   }
-  hillBackdrop(fb, t);
-  river(fb, t, 151, { width: 13 });
-  for (const [x, y, s] of [[40, 134, 0.8], [83, 138, 0.65], [280, 137, 0.85]]) roundTree(fb, x, y, s, true);
-  candyHouse(fb, 164, 136, 1.1);
-  // Candy fence, peppermint sign-shapes and gumdrop bushes (no text-only scenery).
-  for (let x = 112; x < 217; x += 13) {
-    fb.vline(x, 137, 151, C.tan); fb.px(x, 136, C.goldL);
-  }
-  fb.hline(110, 219, 142, C.dbrown); fb.hline(110, 219, 148, C.dbrown);
-  for (let i = 0; i < 8; i++) fb.disc(127 + i * 9, 82 - Math.sin(t * 3 + i) * 3, 3, [C.pink, C.cyan, C.goldL][i % 3]);
-  drawCastSprite(fb, 135, 145, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
-  drawCastSprite(fb, 192, 145, 'gemini', t, { pose: 'cheer', role: 'alice', facing: -1 });
-  drawWhaleHero(fb, lerp(76, 238, u), 148, t, { pose: 'run', facing: 1, scarfLen: 17 });
-}
 
+  fb.gradV(0, 0, W, H, [C.rose, C.plum, C.brown]);
+  for (let y = 20; y < 157; y += 22) fb.hline(0, W - 1, y, y % 2 ? C.dbrown : C.scarfD);
+  fb.rect(0, 118, W, 40, C.tan); fb.hline(0, W - 1, 118, C.goldL);
+  for (let i = 0; i < 7; i++) {
+    const x = 16 + i * 47, y = 43 + (i % 3) * 13;
+    fb.rect(x, y, 33, 51, C.parchment); fb.box(x, y, 33, 51, C.dbrown);
+    fb.rect(x + 4, y + 7, 25, 24, [C.pink, C.cyan, C.gold][i % 3]); fb.box(x + 4, y + 7, 25, 24, C.white);
+    for (let k = 0; k < 3; k++) fb.px(x + 9 + k * 7, y + 15, C.uiW);
+    fb.disc(x + 16, y + 40, 5, i % 2 ? C.goldL : C.scarf);
+  }
+  for (let x = 8; x < W; x += 18) { fb.rect(x, 121, 13, 18, C.scarf); fb.hline(x, x + 12, 121, C.goldL); fb.disc(x + 6, 119, 3, C.uiW); }
+  const doubaoX = lerp(108, 137, u), geminiX = lerp(211, 190, u);
+  drawCastSprite(fb, doubaoX, 150, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+  drawCastSprite(fb, geminiX, 150, 'gemini', t, { pose: 'walk', role: 'alice', facing: -1 });
+  for (let i = 0; i < 5; i++) {
+    const p = clamp(cueU * 1.1 - i * 0.17, 0, 1);
+    const x = lerp(44 + i * 38, doubaoX + 8, p), y = 54 + i * 13 - Math.sin(p * Math.PI) * 17;
+    fb.disc(x, y, 3, [C.pink, C.cyan, C.goldL][i % 3]);
+  }
+  drawWhaleHero(fb, lerp(147, 177, u), 157, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 16 });
+  magicParticles(fb, t, 157, 90, 76, 16, C.goldL, C.cyan);
+}
 function glassSlipper(fb, t, u) {
-  if (t >= 39.15) {
-    // Cut down to the crystal shoe as the midnight clock turns; Kimi searches while Whale lights the stair.
-    hillBackdrop(fb, t, { night: true });
-    river(fb, t, 153, { night: true, width: 9 });
-    for (let i = 0; i < 5; i++) {
-      fb.rect(30 + i * 19, 134 - i * 9, 24, 9, i % 2 ? C.silver : C.white);
-      fb.hline(30 + i * 19, 53 + i * 19, 134 - i * 9, C.goldL);
-    }
-    clock(fb, 251, 51, 22, t, C.goldL);
-    drawCastSprite(fb, 189, 138, 'kimi', t, { pose: 'panic', role: 'cinderella', facing: 1 });
-    drawWhaleHero(fb, 99, 149, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 15 });
-    const sx = 146 + Math.sin(t * 3) * 3, sy = 127;
+  const close = t >= 39.15;
+  const cueU = clamp((t - 37.30) / (41.05 - 37.30), 0, 1);
+  const shoe = (sx, sy) => {
     fb.ellipse(sx, sy + 4, 25, 5, C.blue);
     fb.line(sx - 17, sy + 2, sx + 15, sy + 2, C.cyan, 4);
     fb.line(sx - 8, sy, sx + 5, sy - 17, C.uiW, 4);
     fb.line(sx - 8, sy - 1, sx + 5, sy - 18, C.cyan, 2);
-    fb.vline(sx - 15, sy - 1, sy + 6, C.cyan);
-    fb.px(sx + 15, sy + 1, C.goldL);
-    magicParticles(fb, t, sx, sy - 9, 34, 13, C.goldL, C.cyan);
+    fb.vline(sx - 15, sy - 1, sy + 6, C.cyan); fb.px(sx + 15, sy + 1, C.goldL);
+  };
+  hillBackdrop(fb, t, { night: close });
+  river(fb, t, close ? 153 : 145, { night: close, width: 10 });
+  castle(fb, 157, 132, close ? 0.58 : 0.82, close, false);
+  for (let i = 0; i < 6; i++) {
+    const x = 34 + i * 19, y = 134 - i * 8;
+    fb.rect(x, y, 24, 8, i % 2 ? C.silver : C.white); fb.hline(x, x + 23, y, C.goldL);
+  }
+  clock(fb, close ? 251 : 267, close ? 51 : 58, close ? 20 : 17, t, C.goldL);
+  if (!close) {
+    const kimiX = lerp(214, 176, u);
+    drawCastSprite(fb, kimiX, 131, 'kimi', t, { pose: 'walk', role: 'cinderella', facing: -1 });
+    drawWhaleHero(fb, lerp(119, 157, u), 143, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 13 });
+    const sx = lerp(199, 146, cueU), sy = 77 + cueU * 50;
+    shoe(sx, sy);
+    magicParticles(fb, t, sx, sy - 9, 25, 9, C.goldL, C.cyan);
     return;
   }
-  hillBackdrop(fb, t, { sunset: true });
-  castle(fb, 157, 132, 0.82, false);
-  // Ballroom staircase with crystal rails and midnight clock.
-  for (let i = 0; i < 6; i++) {
-    fb.rect(44 + i * 18, 132 - i * 6, 22, 7, i % 2 ? C.silver : C.white);
-    fb.hline(44 + i * 18, 65 + i * 18, 132 - i * 6, C.goldL);
-  }
-  clock(fb, 267, 58, 17, t, C.goldL);
-  drawCastSprite(fb, 184, 131, 'kimi', t, { pose: 'panic', role: 'cinderella', facing: 1 });
-  drawWhaleHero(fb, 119 + Math.sin(u * Math.PI) * 13, 143, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 13 });
-  // Slipper is left behind on the stair, catching a precise blue-white gleam.
-  const sx = 139 + Math.sin(t * 3) * 2, sy = 126;
-  fb.line(sx - 7, sy + 2, sx + 5, sy + 2, C.cyan, 2); fb.line(sx - 4, sy + 1, sx + 1, sy - 6, C.uiW, 2);
-  fb.vline(sx - 5, sy, sy + 4, C.cyan); fb.px(sx + 5, sy + 2, C.goldL);
-  magicParticles(fb, t, sx, sy - 3, 23, 9, C.goldL, C.cyan);
+  const kimiX = lerp(222, 181, u);
+  drawCastSprite(fb, kimiX, 138, 'kimi', t, { pose: 'walk', role: 'cinderella', facing: -1 });
+  drawWhaleHero(fb, lerp(99, 120, u), 149, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 15 });
+  shoe(146, 127);
+  magicParticles(fb, t, 146, 116, 34, 13, C.goldL, C.cyan);
 }
-
-// --- Pre-chorus one: truth revealed beneath the wise river, then a full crimson cloak-vortex. ---
 function wiseRiver(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 102, { night: true, rainbow: true, width: 41, phase: 0.8 });
@@ -762,11 +747,15 @@ function wiseRiver(fb, t, u) {
   fb.ellipse(160, 99, 69, 25, C.navy); fb.ellipse(160, 100, 60, 18, C.cyan);
   fb.ellipse(160, 102, 44, 11, C.blue); fb.ellipse(160, 102, 28, 6, C.goldL);
   for (let i = 0; i < 7; i++) fb.px(87 + i * 24, 92 + Math.sin(t * 2 + i) * 9, i % 2 ? C.goldL : C.uiW);
-  drawCastSprite(fb, 205, 139, 'kimi', t, { pose: 'idle', role: 'sage', facing: -1 });
+  const kimiX = lerp(220, 177, u);
+  drawCastSprite(fb, kimiX, 139, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
   drawWhaleHero(fb, lerp(114, 153, u), 136, t, { pose: 'swim', facing: 1, mermaidGlow: true, lantern: true, scarfLen: 14 });
   for (let i = 0; i < 12; i++) fb.disc(99 + i * 18, 70 + Math.sin(t * 3 + i) * 12, 1.7, C.cyan);
+  const currentX = 118 + u * 72;
+  fb.line(currentX, 105, currentX + 10, 105, C.uiW, 2);
+  fb.line(currentX + 10, 105, currentX + 5, 101, C.uiW, 2);
+  fb.line(currentX + 10, 105, currentX + 5, 109, C.uiW, 2);
 }
-
 function butterflyGarden(fb, t, u) {
   hillBackdrop(fb, t);
   castle(fb, 74, 133, 0.72, false);
@@ -788,23 +777,25 @@ function cloakVortex(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   for (let i = 0; i < 8; i++) pine(fb, i * 45 - 7, 141 + (i % 2) * 8, 0.82, true);
   river(fb, t, 152, { night: true, width: 10 });
-  // A giant red cloak curls into a protective spiral around Doubao; GPT's wolf-dragon shadow stays outside it.
-  const cx = 166, cy = 96, r = 46 + 10 * u;
-  fb.ellipse(cx, cy, r + 4, r * 0.66 + 3, C.ink);
-  fb.ellipse(cx, cy, r, r * 0.66, C.scarfD);
-  fb.ellipse(cx, cy, r - 7, r * 0.66 - 5, C.scarf);
-  fb.ellipse(cx, cy, r - 16, r * 0.66 - 11, C.night);
+  const progress = clamp((t - 47.90) / (54.85 - 47.90), 0, 1);
+  const cx = 166 + Math.sin(progress * Math.PI) * 9;
+  const r = progress < 0.48 ? 42 + progress * 34 : 59 - (progress - 0.48) * 42;
+  fb.ellipse(cx, 96, r + 4, r * 0.66 + 3, C.ink);
+  fb.ellipse(cx, 96, r, r * 0.66, C.scarfD);
+  fb.ellipse(cx, 96, r - 7, r * 0.66 - 5, C.scarf);
+  fb.ellipse(cx, 96, r - 16, r * 0.66 - 11, C.night);
   for (let i = 0; i < 7; i++) {
     const a = t * 2.2 + i * Math.PI * 2 / 7;
-    fb.line(cx + Math.cos(a) * 17, cy + Math.sin(a) * 12, cx + Math.cos(a) * r, cy + Math.sin(a) * r * 0.66, i % 2 ? C.scarfL : C.goldL, 2);
+    fb.line(cx + Math.cos(a) * 17, 96 + Math.sin(a) * 12, cx + Math.cos(a) * r, 96 + Math.sin(a) * r * 0.66, i % 2 ? C.scarfL : C.goldL, 2);
   }
-  drawCastSprite(fb, 151, 130, 'doubao', t, { pose: 'cheer', role: 'redhood', facing: 1, big: true });
-  drawWhaleHero(fb, 97 + Math.sin(t * 2) * 6, 143, t, { pose: 'shout', facing: 1, lantern: true, scarfLen: 18 });
-  drawGptDragonBoss(fb, 276, 127, t, { shadowMode: true, hoard: false });
-  magicParticles(fb, t, cx, cy, r + 9, 22, C.goldL, C.scarfL);
+  const doubaoX = progress < 0.48 ? lerp(199, 156, progress / 0.48) : lerp(156, 120, (progress - 0.48) / 0.52);
+  const whaleX = progress < 0.48 ? lerp(91, 116, progress / 0.48) : lerp(116, 145, (progress - 0.48) / 0.52);
+  const bossX = progress < 0.48 ? lerp(266, 251, progress / 0.48) : lerp(251, 292, (progress - 0.48) / 0.52);
+  drawCastSprite(fb, doubaoX, 132, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1, big: true });
+  drawWhaleHero(fb, whaleX, 143, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 18 });
+  drawGptDragonBoss(fb, bossX, 127, t, { shadowMode: true, hoard: false });
+  magicParticles(fb, t, cx, 96, r + 9, 22, C.goldL, C.scarfL);
 }
-
-// --- Chorus one: map route + seven fast escalating river/showcase compositions. ---
 function rainbowMap(fb, t, u) {
   // Hand-painted green parchment, with broken contour strokes rather than a screen-filling grid.
   fb.gradV(0, 0, W, H, [C.parchment, C.sand, C.lime, C.green]);
@@ -871,7 +862,6 @@ function rainbowBridge(fb, t, u) {
 function heartIsland(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 123, { rainbow: true, width: 33, phase: 0.7 });
-  // Heart-shaped island outlined with flowering trees, surrounded by current.
   const cx = 164, cy = 92, scale = 1.25;
   fb.ellipse(cx - 18, cy - 3, 26 * scale, 23 * scale, C.lime);
   fb.ellipse(cx + 18, cy - 3, 26 * scale, 23 * scale, C.green);
@@ -881,11 +871,19 @@ function heartIsland(fb, t, u) {
     roundTree(fb, cx + Math.cos(a) * 46, cy + 2 + Math.sin(a) * 29, 0.36, i % 2 === 0);
   }
   castle(fb, cx, cy + 21, 0.36, false, true);
-  drawCastSprite(fb, 150, 126, 'claude', t, { pose: 'cheer', role: 'princess', facing: 1 });
-  drawWhaleHero(fb, lerp(111, 202, u), 132, t, { pose: 'happy', facing: 1, scarfLen: 17 });
+  // Claude walks a loop around the gazebo and sends a heart-light out into the winding current.
+  const princessX = 151 + Math.sin(u * Math.PI * 2) * 17;
+  drawCastSprite(fb, princessX, 126, 'claude', t, { pose: 'walk', role: 'princess', facing: Math.cos(u * Math.PI * 2) < 0 ? -1 : 1 });
+  const heartX = 151 + u * 61, heartY = 92 + Math.sin(u * Math.PI * 2) * 14;
+  fb.line(princessX + 7, 108, heartX, heartY, C.pink, 2);
+  fb.disc(heartX - 3, heartY, 4, C.pink); fb.disc(heartX + 3, heartY, 4, C.pink);
+  fb.tri(heartX - 7, heartY + 1, heartX + 7, heartY + 1, heartX, heartY + 10, C.rose);
+  fb.px(heartX, heartY, C.uiW);
+  const whaleX = lerp(111, 202, u), whaleY = 132 + Math.sin(u * Math.PI * 2) * 7;
+  drawWhaleHero(fb, whaleX, whaleY, t, { pose: 'run', facing: u < 0.52 ? 1 : -1, scarfLen: 17 });
   for (let i = 0; i < 10; i++) fb.disc(mod(i * 37 + t * 28, W), 141 + (i % 3) * 6, 2, C.goldL);
+  magicParticles(fb, t, heartX, heartY - 8, 24, 9, C.goldL, C.pink);
 }
-
 function millSpray(fb, t, u) {
   hillBackdrop(fb, t);
   river(fb, t, 128, { rainbow: true, width: 27, phase: 2.2 });
@@ -898,13 +896,11 @@ function millSpray(fb, t, u) {
     fb.px(226 + Math.cos(a) * r, 99 + Math.sin(a) * r, i % 3 ? C.cyan : C.uiW);
   }
   drawWhaleHero(fb, lerp(96, 154, u), 138, t, { pose: 'run', facing: 1, scarfLen: 15 });
-  drawCastSprite(fb, 265, 144, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+  drawCastSprite(fb, lerp(273, 238, u), 144, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
 }
-
 function waterfallOfTime(fb, t, u) {
   hillBackdrop(fb, t, { dream: true });
   river(fb, t, 145, { rainbow: true, width: 20 });
-  // Clockwork cliff, hourglass gears, falling page leaves and music-note droplets.
   fb.tri(177, 111, 275, 30, 329, 139, C.dslate);
   fb.tri(190, 106, 272, 39, 310, 133, C.slate);
   timeFalls(fb, t, 250, 52, 132);
@@ -912,13 +908,16 @@ function waterfallOfTime(fb, t, u) {
     const yy = 64 + mod(t * 18 + i * 23, 72);
     const xx = 212 + i * 12;
     fb.tri(xx, yy, xx + 9, yy - 3, xx + 5, yy + 8, C.parchment);
-    fb.px(xx + 15, yy + 3, C.goldL);
-    fb.vline(xx + 16, yy - 2, yy + 7, C.ink);
+    fb.px(xx + 15, yy + 3, C.goldL); fb.vline(xx + 16, yy - 2, yy + 7, C.ink);
   }
-  drawWhaleHero(fb, lerp(79, 166, u), 140, t, { pose: 'shout', facing: 1, lantern: true, scarfLen: 19 });
-  drawPaperBoat(fb, 123 + u * 25, 144, t, { scale: 0.5, withWhale: true, chibiWhale: true });
+  drawWhaleHero(fb, lerp(79, 166, u), 140, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 19 });
+  drawPaperBoat(fb, lerp(123, 148, u), 144, t, { scale: 0.5, withWhale: true, chibiWhale: true });
+  // Kimi crosses the cliff path, turns back toward the plunging clock-pages, and leads the boat into the time-fall.
+  drawCastSprite(fb, lerp(263, 215, u), 137, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  const page = 76 + u * 83;
+  fb.rect(page, 84 - Math.sin(u * Math.PI) * 17, 11, 15, C.parchment); fb.box(page, 84 - Math.sin(u * Math.PI) * 17, 11, 15, C.dbrown);
+  fb.px(page + 3, 88 - Math.sin(u * Math.PI) * 17, C.goldL);
 }
-
 function sunsetFleet(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 114, { rainbow: true, width: 38, phase: 1.5 });
@@ -939,24 +938,58 @@ function sunsetFleet(fb, t, u) {
 function castleHarborCast(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 132, { rainbow: true, width: 24, phase: 0.8 });
-  castle(fb, 159, 126, 1.02, false);
-  bridge(fb, 89, 133, 65, 12, true);
-  // Full eight-girl ensemble at the castle harbor; Claude is the sole Princess, Doubao stays Red Hood.
-  drawCastSprite(fb, 50, 147, 'doubao', t, { pose: 'cheer', role: 'redhood', facing: 1 });
-  drawCastSprite(fb, 88, 146, 'gemini', t, { pose: 'cheer', role: 'alice', facing: 1 });
-  drawCastSprite(fb, 126, 147, 'claude', t, { pose: 'cheer', role: 'princess', facing: 1 });
-  drawCastSprite(fb, 195, 146, 'qwen', t, { pose: 'cheer', role: 'hatter', facing: -1 });
-  drawCastSprite(fb, 231, 147, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
-  drawCastSprite(fb, 272, 146, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
-  drawWhaleHero(fb, lerp(158, 178, u), 141, t, { pose: 'happy', facing: 1, scarfLen: 19 });
-  drawFlyingGptDragon(fb, 166, 36 + Math.sin(t * 3) * 5, t, -1);
+  castle(fb, 159, 126, 1.02, false); bridge(fb, 89, 133, 65, 12, true);
+  const x = [lerp(42, 56, u), lerp(81, 94, u), lerp(119, 135, u), lerp(198, 187, u), lerp(237, 224, u), lerp(279, 264, u)];
+  drawCastSprite(fb, x[0], 147, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+  drawCastSprite(fb, x[1], 146, 'gemini', t, { pose: 'walk', role: 'alice', facing: 1 });
+  drawCastSprite(fb, x[2], 147, 'claude', t, { pose: 'walk', role: 'princess', facing: 1 });
+  drawCastSprite(fb, x[3], 146, 'qwen', t, { pose: 'walk', role: 'hatter', facing: -1 });
+  drawCastSprite(fb, x[4], 147, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  drawCastSprite(fb, x[5], 146, 'zai', t, { pose: 'walk', role: 'default', facing: -1 });
+  drawWhaleHero(fb, lerp(151, 180, u), 141, t, { pose: 'run', facing: 1, scarfLen: 19 });
+  drawFlyingGptDragon(fb, lerp(210, 143, u), 36 + Math.sin(t * 3) * 5, t, -1);
+  const sparkX = x[2] + 12, sparkY = 114;
+  fb.line(x[2] + 7, 132, sparkX, sparkY, C.gold, 2); fb.px(sparkX, sparkY, C.uiW);
+  for (let burst = 0; burst < 3; burst++) {
+    const bx = [69, 160, 251][burst], by = [53, 39, 58][burst];
+    const pulse = 7 + 8 * (0.5 + 0.5 * Math.sin(t * 5 + burst));
+    for (let ray = 0; ray < 8; ray++) {
+      const a = ray * Math.PI / 4 + t * 0.18;
+      fb.line(bx + Math.cos(a) * 3, by + Math.sin(a) * 3, bx + Math.cos(a) * pulse, by + Math.sin(a) * pulse, ray % 2 ? C.pink : C.goldL);
+    }
+    fb.disc(bx, by, 2, C.uiW);
+  }
   for (let i = 0; i < 18; i++) {
-    const x = mod(i * 31 + t * 20, W), y = 55 + mod(i * 17, 46);
-    fb.px(x, y, i % 3 ? C.goldL : C.pink);
+    const px = mod(i * 31 + t * 20, W), py = 55 + mod(i * 17, 46);
+    fb.px(px, py, i % 3 ? C.goldL : C.pink);
   }
 }
+function harborHomecoming(fb, t, u) {
+  hillBackdrop(fb, t, { sunset: true });
+  river(fb, t, 116, { rainbow: true, width: 34, phase: 2.2 });
+  castle(fb, 278, 102, 0.52, false, true); bridge(fb, 279, 108, 69, 12, true);
+  drawPaperBoat(fb, lerp(102, 222, u), 124, t, { scale: 0.92, withWhale: true, chibiWhale: true, facing: 1, reflection: false });
+  fb.rect(0, 137, W, 43, C.dbrown); fb.hline(0, W - 1, 137, C.goldL);
+  for (let y = 145; y < 180; y += 9) fb.hline(0, W - 1, y, y % 2 ? C.brown : C.umber);
+  for (let x = 12; x < W; x += 44) fb.vline(x, 138, 179, C.umber);
+  const claudeX = lerp(107, 126, u), doubaoX = lerp(153, 180, u);
+  drawCastSprite(fb, 48, 157, 'gemini', t, { pose: 'walk', role: 'alice', facing: 1 });
+  drawCastSprite(fb, claudeX, 157, 'claude', t, { pose: 'walk', role: 'princess', facing: 1 });
+  drawCastSprite(fb, doubaoX, 157, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+  drawCastSprite(fb, 213, 157, 'qwen', t, { pose: 'walk', role: 'hatter', facing: -1 });
+  drawCastSprite(fb, 249, 157, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  drawCastSprite(fb, 286, 157, 'zai', t, { pose: 'walk', role: 'default', facing: -1 });
+  drawFlyingGptDragon(fb, lerp(270, 198, u), 38 + Math.sin(t * 3) * 4, t, -1);
+  const badgeX = lerp(claudeX + 8, lerp(142, 203, u), u);
+  const badgeY = 131 - Math.sin(u * Math.PI) * 13;
+  fb.glowDisc(badgeX, badgeY, 7, 20); fb.disc(badgeX, badgeY, 6, C.gold);
+  drawStoryEmblem(fb, badgeX, badgeY, 5);
+  fb.line(claudeX + 8, 139, badgeX, badgeY, C.goldL, 1);
+  fb.line(doubaoX + 7, 139, badgeX, badgeY, C.pink, 1);
+  magicParticles(fb, t, badgeX, badgeY - 7, 20, 9, C.goldL, C.cyan);
+}
 
-// --- Night interlude: lantern street, gear-lock canal and moonlit stone bridge. ---
+
 function lanternStreet(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 140, { night: true, width: 18 });
@@ -1011,57 +1044,59 @@ function moonBridge(fb, t, u) {
 // --- Verse two: nocturnal legends with clear roles, objects and foreground movement. ---
 function sleepingRoseTower(fb, t, u) {
   if (t >= 99.10) {
-    // Inside the rose tower: one rose window, a winding stair, and Claude waking from the spell.
-    fb.gradV(0, 0, W, H, [C.plum, C.night, C.dslate]);
+    hillBackdrop(fb, t, { night: true });
     stars(fb, t, 30, C.goldL, 85);
     fb.rect(18, 28, 284, 126, C.dslate); fb.box(18, 28, 284, 126, C.dbrown);
     fb.rect(29, 39, 262, 104, C.navy);
     fb.ellipse(244, 74, 34, 43, C.rose); fb.ellipse(244, 74, 23, 33, C.pink); fb.ellipse(244, 74, 13, 21, C.plum);
     for (let i = 0; i < 6; i++) {
-      const x = 41 + i * 18;
-      fb.line(x, 148, x + 18, 122 - i * 5, C.tan, 4);
+      const x = 41 + i * 18; fb.line(x, 148, x + 18, 122 - i * 5, C.tan, 4);
     }
-    // Soft rose-bed, thorns loosened by dawn; the scene suggests escape, not burial.
     fb.ellipse(204, 138, 48, 9, C.rose); fb.rect(158, 136, 92, 8, C.parchment);
-    for (let i = 0; i < 6; i++) fb.px(169 + i * 14, 130 + (i % 2) * 2, C.goldL);
-    drawCastSprite(fb, 225, 126, 'claude', t, { pose: 'cheer', role: 'princess', facing: -1 });
+    const wakeU = u;
+    drawCastSprite(fb, lerp(229, 190, wakeU), 126, 'claude', t, { pose: 'walk', role: 'princess', facing: -1 });
     drawWhaleHero(fb, lerp(84, 143, u), 150, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 18 });
+    for (let i = 0; i < 8; i++) {
+      const x = 220 + i * 9 + Math.sin(t * 2 + i) * 5;
+      fb.px(x, 102 - i * 2 - wakeU * 8, i % 2 ? C.pink : C.goldL);
+    }
     clock(fb, 77, 63, 16, t, C.goldL);
-    magicParticles(fb, t, 239, 82, 53, 16, C.goldL, C.pink);
+    magicParticles(fb, t, 239 - wakeU * 25, 82, 53, 16, C.goldL, C.pink);
     return;
   }
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 145, { night: true, width: 11 });
-  // Rose tower surrounded by thorn lattice and an illuminated stair; fairy-tale sleep is a reversible spell.
   fb.rect(220, 42, 50, 94, C.plum); fb.box(220, 42, 50, 94, C.goldD);
   fb.tri(214, 43, 276, 43, 245, 13, C.rose);
   fb.rect(235, 77, 21, 59, C.navy); fb.box(235, 77, 21, 59, C.dbrown);
   fb.ellipse(245, 86, 17, 23, C.pink); fb.ellipse(245, 86, 11, 17, C.rose);
+  fb.ellipse(246, 132, 36, 8, C.rose); fb.rect(210, 132, 72, 7, C.parchment);
   for (let i = 0; i < 6; i++) {
     const x = 204 + i * 14;
     fb.line(x, 137, x + Math.sin(i + t) * 6, 65, C.dgreen, 2);
     fb.px(x + Math.sin(i + t) * 6, 70 + i * 4, C.scarf);
   }
-  drawCastSprite(fb, 249, 122, 'claude', t, { pose: 'idle', role: 'princess', facing: -1 });
+  // Claude's existing closed-eye sprite is used as a sleep pose; it changes no clothes or accessories.
+  drawCastSprite(fb, 249, 126, 'claude', t, { pose: 'sleep', role: 'princess', facing: -1 });
   drawWhaleHero(fb, lerp(91, 170, u), 146, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 17 });
+  for (let i = 0; i < 8; i++) fb.px(230 + i * 4, 108 + Math.sin(t * 2 + i) * 4, i % 2 ? C.pink : C.goldL);
   clock(fb, 64, 60, 14, t, C.goldL);
   magicParticles(fb, t, 244, 82, 34, 12, C.goldL, C.pink);
 }
-
 function mermaidPalace(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 103, { night: true, rainbow: true, width: 47, phase: 2.1 });
   palace(fb, 249, 123, t, true);
   for (let i = 0; i < 7; i++) {
     const x = 35 + i * 42, y = 76 + (i % 3) * 16;
-    fb.ellipse(x, y, 13, 5, C.cyan); fb.line(x - 11, y, x + 11, y, C.white);
-    fb.disc(x, y, 2.8, C.goldL);
+    fb.ellipse(x, y, 13, 5, C.cyan); fb.line(x - 11, y, x + 11, y, C.white); fb.disc(x, y, 2.8, C.goldL);
   }
-  drawCastSprite(fb, 230, 130, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+  drawCastSprite(fb, lerp(254, 215, u), 132, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
   drawWhaleHero(fb, lerp(90, 179, u), 119 + Math.sin(t * 2.5) * 4, t, { pose: 'swim', facing: 1, mermaidGlow: true, lantern: true, scarfLen: 18 });
+  const glintX = lerp(221, 171, u), glintY = 103 + Math.sin(t * 4) * 8;
+  fb.line(glintX - 7, glintY, glintX + 7, glintY, C.uiW, 2); fb.vline(glintX, glintY - 5, glintY + 5, C.goldL);
   magicParticles(fb, t, 200, 76, 65, 16, C.cyan, C.goldL);
 }
-
 function goldenSunbirdShot(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   sun(fb, 163, 70, 29, C.goldL);
@@ -1076,18 +1111,16 @@ function goldenSunbirdShot(fb, t, u) {
 
 function tigerPlain(fb, t, u) {
   if (t >= 109.65) {
-    // Low grassland insert: three distinct saber-toothed tigers cross the foreground in alternating strides.
     hillBackdrop(fb, t, { dream: true });
     river(fb, t, 158, { width: 8 });
     for (let i = 0; i < 17; i++) {
-      const x = i * 20 - 3;
-      fb.line(x, 150, x - 4, 112 - (i % 5) * 7, i % 3 ? C.green : C.lime, 2);
+      const x = i * 20 - 3; fb.line(x, 150, x - 4, 112 - (i % 5) * 7, i % 3 ? C.green : C.lime, 2);
     }
     drawSaberTiger(fb, 75 + Math.sin(t * 2) * 10, 132, t, 0);
     drawSaberTiger(fb, 171 + Math.sin(t * 2.4 + 1) * 9, 120, t + 0.6, 1);
     drawSaberTiger(fb, 261 - Math.sin(t * 2.2) * 11, 137, t + 1.2, 2);
     drawWhaleHero(fb, lerp(100, 197, u), 146, t, { pose: 'run', facing: 1, scarfLen: 18 });
-    drawCastSprite(fb, 245, 148, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+    drawCastSprite(fb, lerp(260, 225, u), 148, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
     for (let i = 0; i < 11; i++) fb.px(24 + i * 27, 93 + Math.sin(t * 2 + i) * 8, i % 2 ? C.goldL : C.pink);
     return;
   }
@@ -1095,75 +1128,67 @@ function tigerPlain(fb, t, u) {
   river(fb, t, 152, { width: 12 });
   for (let i = 0; i < 10; i++) {
     const x = mod(i * 43 + t * 17, 360) - 20;
-    fb.line(x, 144, x - 5, 105 - (i % 4) * 11, C.green, 2);
-    fb.px(x - 4, 105 - (i % 4) * 11, C.goldL);
+    fb.line(x, 144, x - 5, 105 - (i % 4) * 11, C.green, 2); fb.px(x - 4, 105 - (i % 4) * 11, C.goldL);
   }
   for (let i = 0; i < 3; i++) drawSaberTiger(fb, mod(31 + i * 103 + t * (19 + i * 4), 380) - 25, 125 + i * 7, t + i, i);
   drawWhaleHero(fb, lerp(95, 198, u), 143, t, { pose: 'run', facing: 1, scarfLen: 17 });
-  drawCastSprite(fb, 255, 145, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+  drawCastSprite(fb, lerp(253, 231, u), 145, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
   flowers(fb, 151, 24, t, C.goldL);
 }
-
 function puppetTheater(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 148, { night: true, width: 12 });
-  // Floating marionette theater: gilded proscenium, curtains, stringed wooden puppet.
   fb.rect(195, 44, 100, 90, C.brown); fb.box(195, 44, 100, 90, C.gold);
   fb.rect(203, 52, 84, 75, C.navy); fb.box(203, 52, 84, 75, C.scarf);
-  fb.tri(204, 54, 245, 54, 204, 122, C.scarfD);
-  fb.tri(286, 54, 245, 54, 286, 122, C.scarfD);
+  fb.tri(204, 54, 245, 54, 204, 122, C.scarfD); fb.tri(286, 54, 245, 54, 286, 122, C.scarfD);
   fb.rect(215, 91, 60, 27, C.plum); fb.hline(217, 273, 89, C.goldL);
-  // Pinocchio puppet body/long nose + visible strings
-  for (let i = 0; i < 4; i++) fb.line(227 + i * 13, 14, 230 + i * 9, 71, C.silver);
-  fb.disc(247, 68, 8, C.tan); fb.line(251, 69, 261, 68, C.orange, 2);
+  // Pinocchio's nose extends in visible beats as the strings are tugged; Gemini steps along the stage edge.
+  const noseLen = 4 + Math.round(17 * seg(u, 0.13, 0.92));
+  for (let i = 0; i < 4; i++) fb.line(227 + i * 13, 14, 230 + i * 9, 71 + Math.sin(t * 5 + i) * 2, C.silver);
+  fb.disc(247, 68, 8, C.tan); fb.line(251, 69, 251 + noseLen, 68, C.orange, 2);
   fb.rect(241, 75, 13, 20, C.parchment); fb.line(244, 94, 237, 110, C.dbrown, 2); fb.line(251, 94, 260, 109, C.dbrown, 2);
   fb.tri(239, 61, 255, 61, 247, 51, C.scarf);
-  drawCastSprite(fb, 183, 138, 'gemini', t, { pose: 'cheer', role: 'alice', facing: 1 });
-  drawWhaleHero(fb, lerp(97, 151, u), 143, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 17 });
+  const geminiX = lerp(172, 194, u);
+  drawCastSprite(fb, geminiX, 138, 'gemini', t, { pose: 'walk', role: 'alice', facing: 1 });
+  drawWhaleHero(fb, lerp(97, 151, u), 143, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 17 });
   for (let i = 0; i < 12; i++) fb.px(201 + i * 8, 39 + Math.sin(t * 4 + i) * 4, C.goldL);
+  fb.px(251 + noseLen, 67, C.goldL);
 }
-
 function gemHoard(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
-  // Cave gallery with crystal seams and a giant open gem chest.
-  fb.tri(-12, 124, 52, 37, 128, 130, C.dslate);
-  fb.tri(187, 133, 272, 32, 339, 134, C.navy);
-  for (let i = 0; i < 18; i++) {
-    const x = 18 + i * 17, y = 40 + (i * 29 % 75);
-    fb.tri(x, y, x - 5, y + 10, x + 5, y + 10, i % 3 ? C.cyan : C.pink);
-    fb.px(x, y + 4, C.uiW);
-  }
+  fb.tri(-12, 124, 52, 37, 128, 130, C.dslate); fb.tri(187, 133, 272, 32, 339, 134, C.navy);
   fb.rect(78, 114, 128, 27, C.brown); fb.box(78, 114, 128, 27, C.gold);
   fb.tri(72, 115, 145, 115, 102, 88, C.gold); fb.tri(145, 115, 213, 115, 178, 88, C.goldL);
   fb.rect(85, 121, 114, 17, C.plum); fb.box(85, 121, 114, 17, C.scarfD);
-  for (let i = 0; i < 7; i++) fb.disc(92 + i * 16, 117 - Math.sin(t * 4 + i) * 3, 4, [C.cyan, C.pink, C.goldL, C.lime][i % 4]);
-  drawCastSprite(fb, 82, 138, 'zai', t, { pose: 'cheer', role: 'default', facing: 1 });
+  const zaiX = lerp(74, 113, u);
+  drawCastSprite(fb, zaiX, 138, 'zai', t, { pose: 'walk', role: 'default', facing: 1 });
   drawGptDragonBoss(fb, 249, 126, t, { shadowMode: false, hoard: true });
   drawWhaleHero(fb, lerp(101, 141, u), 148, t, { pose: 'walk', facing: 1, lantern: true, scarfLen: 17 });
+  for (let i = 0; i < 9; i++) {
+    const p = clamp(u * 1.35 - i * 0.105, 0, 1);
+    const sx = 104 + (i % 5) * 18, sy = 115 - (i % 3) * 4;
+    const x = lerp(sx, 152 + Math.sin(t * 2 + i) * 17, p);
+    const y = lerp(sy, 53 + (i % 3) * 11, p) - Math.sin(p * Math.PI) * 15;
+    fb.disc(x, y, 4 + (i % 2), [C.cyan, C.pink, C.goldL, C.lime][i % 4]); fb.px(x, y - 1, C.uiW);
+  }
   magicParticles(fb, t, 149, 100, 75, 16, C.cyan, C.goldL);
 }
-
 function lifeTree(fb, t, u) {
   hillBackdrop(fb, t, { dream: true });
   river(fb, t, 151, { rainbow: true, width: 13 });
-  // Cliffside tree of life: luminous roots reach the river; a winding stone stair enters from foreground.
-  fb.tri(183, 155, 265, 44, 337, 154, C.dslate);
-  fb.tri(194, 148, 264, 62, 327, 151, C.slate);
+  fb.tri(183, 155, 265, 44, 337, 154, C.dslate); fb.tri(194, 148, 264, 62, 327, 151, C.slate);
   fb.rect(250, 80, 13, 74, C.brown);
   for (let i = 0; i < 8; i++) {
     const ang = i * Math.PI / 4;
     fb.line(256, 100, 256 + Math.cos(ang) * (22 + (i % 3) * 8), 84 + Math.sin(ang) * (24 + (i % 2) * 9), C.gold, 4);
   }
   fb.disc(256, 77, 20, C.lime); fb.disc(240, 83, 15, C.green); fb.disc(272, 83, 16, C.cyan);
-  for (let i = 0; i < 10; i++) fb.px(236 + (i * 13 % 39), 70 + i * 3, C.goldL);
-  for (let i = 0; i < 6; i++) {
-    fb.line(202 + i * 9, 148 - i * 10, 220 + i * 8, 143 - i * 10, C.tan, 3);
-  }
-  drawCastSprite(fb, 226, 138, 'kimi', t, { pose: 'idle', role: 'sage', facing: 1 });
+  for (let i = 0; i < 10; i++) if (i <= Math.floor(u * 10)) fb.px(236 + (i * 13 % 39), 100 - i * 3, C.goldL);
+  for (let i = 0; i < 6; i++) fb.line(202 + i * 9, 148 - i * 10, 220 + i * 8, 143 - i * 10, C.tan, 3);
+  drawCastSprite(fb, lerp(229, 197, u), 138 - u * 9, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
   drawWhaleHero(fb, lerp(105, 197, u), 143, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 19 });
   fireflies(fb, t, 18, 65);
 }
-
 function redShoesDance(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 149, { night: true, rainbow: true, width: 11 });
@@ -1190,28 +1215,22 @@ function redShoesDance(fb, t, u) {
 
 // --- Pre-chorus two: underwater truth and Whale-girl's sunset-makeup/foam release. ---
 function deepSeaTruth(fb, t, u) {
-  hillBackdrop(fb, t, { night: true });
-  fb.gradV(0, 72, W, 108, [C.blue, C.navy, C.ink]);
+  hillBackdrop(fb, t, { night: true }); fb.gradV(0, 72, W, 108, [C.blue, C.navy, C.ink]);
   for (let i = 0; i < 13; i++) {
-    const x = (i * 31 + 22) % W;
-    fb.line(x, 22, x + Math.sin(t + i) * 17, 141, C.cyan, i % 3 === 0 ? 2 : 1);
+    const x = (i * 31 + 22) % W; fb.line(x, 22, x + Math.sin(t + i) * 17, 141, C.cyan, i % 3 === 0 ? 2 : 1);
   }
-  // A quiet pearl-current arch; Kimi guides the whale through the deep without replacing her as protagonist.
   fb.ellipse(162, 109, 101, 40, C.navy); fb.ellipse(162, 112, 86, 31, C.blue); fb.ellipse(162, 114, 65, 21, C.cyan);
   for (let i = 0; i < 12; i++) {
     const x = 64 + i * 17, y = 92 + Math.sin(t * 2 + i) * 12;
     fb.disc(x, y, 3 + (i % 2), C.goldL); fb.px(x, y - 1, C.uiW);
   }
-  drawCastSprite(fb, 229, 135, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+  drawCastSprite(fb, lerp(244, 204, u), 135, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
   drawWhaleHero(fb, lerp(108, 166, u), 135, t, { pose: 'swim', facing: 1, mermaidGlow: true, lantern: true, scarfLen: 17 });
   for (let i = 0; i < 15; i++) {
-    const x = 10 + i * 22 + Math.sin(t * 4 + i) * 5;
-    const y = 50 + mod(i * 17 + t * 20, 93);
-    fb.disc(x, y, i % 5 === 0 ? 3 : 2, C.cyan);
-    fb.px(x, y - 2, C.uiW);
+    const x = 10 + i * 22 + Math.sin(t * 4 + i) * 5, y = 50 + mod(i * 17 + t * 20, 93);
+    fb.disc(x, y, i % 5 === 0 ? 3 : 2, C.cyan); fb.px(x, y - 2, C.uiW);
   }
 }
-
 function alarmClockEscape(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 149, { night: true, width: 10 });
@@ -1233,24 +1252,24 @@ function alarmClockEscape(fb, t, u) {
 }
 
 function whaleEyeshadow(fb, t, u) {
-  // Whale-girl close-up on the 640×360 character layer, backed by giant watery sunrise pearls.
   fb.gradV(0, 0, W, H, [C.night, C.navy, C.blue, C.cyan]);
   for (let i = 0; i < 5; i++) {
     const x = 44 + i * 59, y = 52 + Math.sin(t * 2 + i) * 10;
-    fb.ellipse(x, y, 27, 8, C.cyan); fb.ellipse(x, y - 2, 15, 4, C.goldL);
-    fb.px(x, y - 4, C.uiW);
+    fb.ellipse(x, y, 27, 8, C.cyan); fb.ellipse(x, y - 2, 15, 4, C.goldL); fb.px(x, y - 4, C.uiW);
   }
   fb.glowDisc(160, 91, 21, 78);
-  drawWhaleHero(fb, 160, 151, t, { pose: 'happy', facing: 1, scale: 2, mermaidGlow: true, scarfLen: 20 });
-  // Delicate sunlight/eyeshadow color appears as two luminous ocean-gold arcs around her eyes.
-  fb.line(136, 69, 149, 63, C.goldL, 2); fb.line(172, 63, 185, 69, C.cyan, 2);
-  fb.px(136, 69, C.uiW); fb.px(185, 69, C.uiW);
+  const facing = u < 0.48 ? 1 : -1;
+  drawWhaleHero(fb, lerp(155, 165, u), 151, t, { pose: 'happy', facing, scale: 2, mermaidGlow: true, scarfLen: 20 });
+  // Sunlight travels from the waterline to her face, then sweeps across the eye-line like a brush of light.
+  const swipeX = lerp(133, 187, u);
+  fb.line(266 - u * 105, 36, swipeX, 59, C.goldL, 2);
+  fb.px(swipeX, 59, C.uiW); fb.glowDisc(swipeX, 62, 4 + u * 2, 14);
+  fb.line(136, 69, swipeX, 63, C.goldL, 2);
+  fb.line(172, 63, 185, 69, C.cyan, 2);
   for (let i = 0; i < 13; i++) {
-    const x = 23 + i * 23;
-    fb.px(x, 111 + Math.sin(t * 3 + i) * 6, i % 2 ? C.cyan : C.goldL);
+    const x = 23 + i * 23; fb.px(x, 111 + Math.sin(t * 3 + i) * 6, i % 2 ? C.cyan : C.goldL);
   }
 }
-
 function pearlFoam(fb, t, u) {
   hillBackdrop(fb, t, { night: true });
   river(fb, t, 132, { night: true, rainbow: true, width: 35, phase: 2.3 });
@@ -1299,57 +1318,61 @@ function bridgeDuet(fb, t, u) {
   river(fb, t, 125, { rainbow: true, width: 34, phase: 0.5 });
   bridge(fb, 161, 120, 150, 34, true);
   for (let i = 0; i < 6; i++) {
-    const x = 70 + i * 37;
-    fb.vline(x, 120 - (i % 3) * 2, 132, C.dbrown);
-    fb.disc(x, 113 - (i % 3) * 2, 3, C.goldL);
+    const x = 70 + i * 37; fb.vline(x, 120 - (i % 3) * 2, 132, C.dbrown); fb.disc(x, 113 - (i % 3) * 2, 3, C.goldL);
   }
-  drawCastSprite(fb, 200, 125, 'gemini', t, { pose: 'cheer', role: 'alice', facing: -1 });
+  const starX = lerp(284, 158, u), starY = lerp(43, 116, u);
+  drawFlyingGptDragon(fb, lerp(285, 211, u), 45 + Math.sin(t * 5) * 6, t, -1);
+  fb.disc(starX, starY, 5, C.gold); fb.disc(starX, starY, 2, C.uiW);
+  fb.line(starX + 4, starY, starX + 13, starY + 6, C.goldL, 2);
+  drawCastSprite(fb, lerp(204, 224, u), 125, 'gemini', t, { pose: 'walk', role: 'alice', facing: -1 });
   drawWhaleHero(fb, lerp(83, 235, u), 116 - Math.sin(u * Math.PI) * 19, t, { pose: 'run', facing: 1, scarfLen: 20 });
-  drawFlyingGptDragon(fb, 264, 48 + Math.sin(t * 5) * 6, t, -1);
+  for (let i = 0; i < 5; i++) {
+    const x = starX - i * 11, y = starY + i * 2;
+    fb.px(x, y, i % 2 ? C.cyan : C.goldL);
+  }
   magicParticles(fb, t, 161, 77, 64, 19, C.goldL, C.cyan);
 }
-
 function heartBend(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 122, { rainbow: true, width: 36, phase: 2.8 });
-  // Wider heart meander in the river; a tiny Claude Princess picnic gazebo stands at its center.
   fb.ellipse(127, 90, 47, 24, C.green); fb.ellipse(192, 90, 47, 24, C.lime);
   fb.tri(81, 92, 239, 92, 160, 143, C.green);
   for (let i = 0; i < 6; i++) roundTree(fb, 108 + i * 21, 96 + (i % 2) * 7, 0.4, i % 2 === 0);
-  fb.rect(146, 82, 28, 17, C.parchment); fb.box(146, 82, 28, 17, C.gold);
-  fb.tri(143, 82, 177, 82, 160, 65, C.scarf);
-  drawCastSprite(fb, 144, 121, 'claude', t, { pose: 'cheer', role: 'princess', facing: 1 });
-  drawWhaleHero(fb, lerp(86, 239, u), 132, t, { pose: 'happy', facing: 1, scarfLen: 18 });
+  fb.rect(146, 82, 28, 17, C.parchment); fb.box(146, 82, 28, 17, C.gold); fb.tri(143, 82, 177, 82, 160, 65, C.scarf);
+  const princessX = lerp(142, 177, u);
+  drawCastSprite(fb, princessX, 121, 'claude', t, { pose: 'walk', role: 'princess', facing: 1 });
+  // A heart token follows the river bend while Whale runs the opposite curve past the gazebo.
+  const heartX = 86 + u * 148, heartY = 105 + Math.sin(u * Math.PI * 2) * 16;
+  fb.disc(heartX - 3, heartY, 4, C.pink); fb.disc(heartX + 3, heartY, 4, C.pink);
+  fb.tri(heartX - 7, heartY + 1, heartX + 7, heartY + 1, heartX, heartY + 10, C.rose);
+  fb.px(heartX, heartY, C.uiW);
+  drawWhaleHero(fb, lerp(86, 239, u), 132 + Math.sin(u * Math.PI * 2) * 6, t, { pose: 'run', facing: u < 0.5 ? 1 : -1, scarfLen: 18 });
   for (let i = 0; i < 16; i++) fb.px(mod(i * 23 + t * 22, W), 72 + (i * 11 % 49), C.goldL);
+  magicParticles(fb, t, heartX, heartY - 8, 22, 8, C.goldL, C.pink);
 }
-
 function watermillReturn(fb, t, u) {
-  hillBackdrop(fb, t);
-  river(fb, t, 126, { rainbow: true, width: 32, phase: 1.9 });
-  watermill(fb, 101, 126, t + 2, 0.88);
-  bridge(fb, 227, 128, 79, 14, true);
-  roundTree(fb, 270, 126, 0.78, true);
+  hillBackdrop(fb, t); river(fb, t, 126, { rainbow: true, width: 32, phase: 1.9 });
+  watermill(fb, 101, 126, t + 2, 0.88); bridge(fb, 227, 128, 79, 14, true); roundTree(fb, 270, 126, 0.78, true);
   for (let i = 0; i < 19; i++) {
-    const x = 97 + Math.sin(t * 3 + i) * (12 + i % 4 * 3);
-    const y = 100 + mod(i * 13 + t * 24, 52);
+    const x = 97 + Math.sin(t * 3 + i) * (12 + i % 4 * 3), y = 100 + mod(i * 13 + t * 24, 52);
     fb.px(x, y, i % 3 ? C.cyan : C.white);
   }
   drawWhaleHero(fb, lerp(147, 230, u), 144, t, { pose: 'run', facing: 1, scarfLen: 17 });
-  drawCastSprite(fb, 47, 141, 'kimi', t, { pose: 'cheer', role: 'sage', facing: 1 });
+  drawCastSprite(fb, lerp(43, 96, u), 141, 'kimi', t, { pose: 'walk', role: 'sage', facing: 1 });
 }
-
 function timeWaterfallReturn(fb, t, u) {
-  hillBackdrop(fb, t, { dream: true });
-  river(fb, t, 145, { rainbow: true, width: 21 });
-  timeFalls(fb, t, 93, 52, 132);
-  fb.tri(26, 126, 89, 33, 151, 131, C.dslate);
-  for (let i = 0; i < 6; i++) {
-    clock(fb, 38 + i * 27, 54 + i % 2 * 24, 6 + i % 2, t + i, i % 2 ? C.goldL : C.silver);
-  }
-  drawPaperBoat(fb, lerp(146, 226, u), 143, t, { scale: 0.71, withWhale: true, chibiWhale: true });
-  drawWhaleHero(fb, lerp(137, 240, u), 133, t, { pose: 'shout', facing: 1, scarfLen: 18 });
+  hillBackdrop(fb, t, { dream: true }); river(fb, t, 145, { rainbow: true, width: 21 });
+  timeFalls(fb, t, 93, 52, 132); fb.tri(26, 126, 89, 33, 151, 131, C.dslate);
+  for (let i = 0; i < 6; i++) clock(fb, 38 + i * 27, 54 + i % 2 * 24, 6 + i % 2, t + i, i % 2 ? C.goldL : C.silver);
+  clock(fb, 81, 57, 12, -t, C.cyan);
+  const kimiX = lerp(176, 225, u);
+  drawCastSprite(fb, kimiX, 134, 'kimi', t, { pose: 'walk', role: 'sage', facing: u < 0.65 ? 1 : -1 });
+  const chainEndX = kimiX - 10;
+  for (let i = 0; i < 6; i++) fb.ellipse(chainEndX - i * 4, 93 + i * 6, 2, 3, i % 2 ? C.goldL : C.silver);
+  const boatX = lerp(146, 226, u);
+  drawPaperBoat(fb, boatX, 143, t, { scale: 0.71, withWhale: true, chibiWhale: true });
+  drawWhaleHero(fb, lerp(137, 240, u), 133, t, { pose: 'run', facing: 1, scarfLen: 18 });
 }
-
 function armada(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 111, { rainbow: true, width: 42, phase: 1.1 });
@@ -1364,15 +1387,23 @@ function armada(fb, t, u) {
 }
 
 function fullCastCelebration(fb, t, u) {
-  castleHarborCast(fb, t + 2.7, u);
-  // Add a foreground parade of ribboned boats and warm lanterns, giving the repeat chorus new foreground motion.
-  for (let i = 0; i < 4; i++) {
-    drawPaperBoat(fb, mod(27 + i * 91 + t * 9, 370) - 25, 153 + (i % 2) * 6, t + i, { scale: 0.53, withWhale: i === 1, chibiWhale: true });
-  }
+  hillBackdrop(fb, t, { sunset: true }); river(fb, t, 124, { rainbow: true, width: 33, phase: 1.4 });
+  castle(fb, 159, 119, 0.78, false); bridge(fb, 161, 120, 128, 20, true);
+  const doubaoX = lerp(35, 53, u), geminiX = lerp(76, 91, u), claudeX = lerp(117, 133, u);
+  const qwenX = lerp(204, 191, u), kimiX = lerp(245, 228, u), zaiX = lerp(284, 265, u);
+  drawCastSprite(fb, doubaoX, 143, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+  drawCastSprite(fb, geminiX, 142, 'gemini', t, { pose: 'walk', role: 'alice', facing: 1 });
+  drawCastSprite(fb, claudeX, 141, 'claude', t, { pose: 'walk', role: 'princess', facing: 1 });
+  drawCastSprite(fb, qwenX, 142, 'qwen', t, { pose: 'walk', role: 'hatter', facing: -1 });
+  drawCastSprite(fb, kimiX, 143, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  drawCastSprite(fb, zaiX, 142, 'zai', t, { pose: 'walk', role: 'default', facing: -1 });
+  drawWhaleHero(fb, lerp(80, 240, u), 136, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 21 });
+  drawFlyingGptDragon(fb, lerp(282, 157, u), 35 + Math.sin(t * 4) * 7, t, -1);
+  const relayX = lerp(doubaoX + 10, zaiX - 9, u), relayY = 97 - Math.sin(u * Math.PI) * 13;
+  fb.glowDisc(relayX, relayY, 5, 18); fb.disc(relayX, relayY, 3, C.goldL); fb.tri(relayX - 4, relayY + 3, relayX + 4, relayY + 3, relayX, relayY + 9, C.gold);
+  for (let i = 0; i < 4; i++) drawPaperBoat(fb, mod(27 + i * 91 + t * 9, 370) - 25, 154 + (i % 2) * 6, t + i, { scale: 0.53, withWhale: i === 1, chibiWhale: true });
   for (let i = 0; i < 5; i++) lamp(fb, 32 + i * 62, 143, t + i, 0.52);
 }
-
-// --- Chorus three: ideal fairytale heights reflected against real neon city, then a converging mountain pass. ---
 function dreamIslands(fb, t, u) {
   if (t >= 169.25) {
     // Second chorus-3 angle descends to a single floating village and its waterfall underside.
@@ -1410,38 +1441,23 @@ function dreamIslands(fb, t, u) {
 }
 
 function idealVsReality(fb, t, u) {
-  // Split composition is a visual river reflection, not a loading/KPI split screen.
-  fb.gradV(0, 0, W, 88, [C.lavender, C.cyan, C.white]);
-  clouds(fb, t, false, 3);
+  fb.gradV(0, 0, W, 88, [C.lavender, C.cyan, C.white]); clouds(fb, t, false, 3);
   for (let i = 0; i < 3; i++) {
-    const x = 29 + i * 106;
-    fb.ellipse(x, 72, 34, 10, C.lime); fb.tri(x - 32, 72, x + 32, 72, x, 101, C.green);
-    roundTree(fb, x, 69, 0.46, i === 1);
-    fb.vline(x - 25, 76, 112, C.cyan);
+    const x = 29 + i * 106; fb.ellipse(x, 72, 34, 10, C.lime); fb.tri(x - 32, 72, x + 32, 72, x, 101, C.green);
+    roundTree(fb, x, 69, 0.46, i === 1); fb.vline(x - 25, 76, 112, C.cyan);
   }
-  fb.hline(0, W - 1, 88, C.goldL);
-  fb.gradV(0, 91, W, 89, [C.navy, C.dslate, C.ink]);
-  // Neon skyline is seen in the water's reflection; no readable logos or text.
+  fb.hline(0, W - 1, 88, C.goldL); fb.gradV(0, 91, W, 89, [C.navy, C.dslate, C.ink]);
   for (let i = 0; i < 9; i++) {
-    const x = i * 38 - 4, hh = 25 + (i * 17 % 47);
-    fb.rect(x, 177 - hh, 28, hh, i % 2 ? C.dslate : C.navy);
-    fb.box(x, 177 - hh, 28, hh, C.ink);
-    for (let yy = 180 - hh; yy < 175; yy += 9) {
-      fb.hline(x + 4, x + 7, yy, i % 3 === 0 ? C.pink : C.cyan);
-      fb.hline(x + 15, x + 19, yy + 2, C.goldL);
-    }
+    const x = i * 38 - 4, hh = 25 + (i * 17 % 47); fb.rect(x, 177 - hh, 28, hh, i % 2 ? C.dslate : C.navy); fb.box(x, 177 - hh, 28, hh, C.ink);
+    for (let yy = 180 - hh; yy < 175; yy += 9) { fb.hline(x + 4, x + 7, yy, i % 3 === 0 ? C.pink : C.cyan); fb.hline(x + 15, x + 19, yy + 2, C.goldL); }
   }
-  for (let i = 0; i < 4; i++) {
-    const x = mod(i * 86 + t * 16, W);
-    fb.hline(x, x + 35, 124 + i * 12, i % 2 ? C.cyan : C.pink);
-  }
-  // Whale-girl stands across the magical/real reflection on a narrow mountain ridge.
+  for (let i = 0; i < 4; i++) { const x = mod(i * 86 + t * 16, W); fb.hline(x, x + 35, 124 + i * 12, i % 2 ? C.cyan : C.pink); }
   fb.tri(96, 97, 167, 67, 226, 97, C.slate);
-  drawWhaleHero(fb, lerp(126, 173, u), 90, t, { pose: 'walk', facing: 1, lantern: true, scarfLen: 17 });
-  fb.line(0, 89, W, 91, C.white);
-  magicParticles(fb, t, 158, 88, 51, 12, C.goldL, C.cyan);
+  // Kimi walks along the border and turns between the ideal island above and its city reflection below.
+  drawCastSprite(fb, lerp(216, 183, u), 97, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  drawWhaleHero(fb, lerp(126, 173, u), 90, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 17 });
+  fb.line(0, 89, W, 91, C.white); magicParticles(fb, t, 158, 88, 51, 12, C.goldL, C.cyan);
 }
-
 function mountainConvergence(fb, t, u) {
   hillBackdrop(fb, t, { dream: true });
   // Two winding river arms arrive from opposing valleys and visibly merge beneath one golden pass.
@@ -1484,6 +1500,37 @@ function sakuraRiver(fb, t, u) {
   drawSwanMorph(fb, 263, 142, t, 0.9);
 }
 
+function mirrorTimeDive(fb, t, u) {
+  hillBackdrop(fb, t, { night: true });
+  river(fb, t, 140, { night: true, rainbow: true, width: 25, phase: 2.7 });
+  timeFalls(fb, t, 160, 42, 130);
+  fb.tri(183, 123, 249, 33, 321, 128, C.dslate);
+  const clockX = 157, clockY = 132;
+  fb.ellipse(clockX, clockY, 37, 15, C.blue); fb.ellipse(clockX, clockY, 29, 11, C.cyan);
+  fb.disc(clockX, clockY, 19, C.silver); fb.disc(clockX, clockY, 15, C.parchment);
+  for (let i = 0; i < 12; i++) {
+    const a = i * Math.PI / 6 + t * 0.8;
+    fb.px(clockX + Math.cos(a) * 17, clockY + Math.sin(a) * 8, i % 3 ? C.gold : C.ink);
+  }
+  const handA = t * 2.4;
+  fb.line(clockX, clockY, clockX + Math.cos(handA) * 13, clockY + Math.sin(handA) * 6, C.dbrown, 2);
+  const kimiX = lerp(251, 191, u);
+  drawCastSprite(fb, kimiX, 134, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  // Kimi pulls the hanging clock-chain; its links swing as Whale crosses from the bank into the mirrored water.
+  const gripX = kimiX - 12, gripY = 104;
+  for (let i = 0; i < 8; i++) {
+    const x = gripX - Math.sin(t * 2 + i * 0.3) * (3 + i * 0.35);
+    const y = 38 + i * 9;
+    fb.ellipse(x, y, 2, 4, i % 2 ? C.goldL : C.silver);
+  }
+  fb.line(gripX, gripY, gripX + 7, gripY - 8, C.goldL, 2);
+  const whaleX = lerp(83, 218, u), whaleY = lerp(127, 147, u);
+  drawWhaleHero(fb, whaleX, whaleY, t, { pose: u < 0.58 ? 'run' : 'swim', facing: 1, mermaidGlow: u >= 0.58, scarfLen: 18 });
+  for (let i = 0; i < 8; i++) {
+    const x = 24 + i * 40 + mod(t * (3 + i % 3), 26);
+    fb.px(x, 154 + (i % 3) * 5, i % 2 ? C.uiW : C.cyan);
+  }
+}
 function twilightFleet(fb, t, u) {
   hillBackdrop(fb, t, { sunset: true });
   river(fb, t, 113, { rainbow: true, width: 39, phase: 1.7 });
@@ -1494,73 +1541,81 @@ function twilightFleet(fb, t, u) {
 }
 
 function castleBlessing(fb, t, u) {
-  castleHarborCast(fb, t + 5.8, u);
-  // Gold paper garlands and a cart of story props fill the newly framed foreground.
-  for (let i = 0; i < 5; i++) {
-    const x = 18 + i * 69;
-    fb.line(x, 71, x + 35, 84, C.goldL, 2);
-    for (let j = 0; j < 4; j++) fb.px(x + 5 + j * 9, 73 + j * 2, j % 2 ? C.pink : C.cyan);
+  hillBackdrop(fb, t, { night: true });
+  river(fb, t, 132, { night: true, rainbow: true, width: 26, phase: 1.8 });
+  castle(fb, 274, 112, 0.60, true, true);
+  // A moonlit gate/portal sits off-center; the procession climbs diagonally into it, unlike L19's pier arrival.
+  fb.ellipse(158, 79, 39, 49, C.goldD); fb.ellipse(158, 79, 34, 44, C.goldL);
+  fb.ellipse(158, 79, 29, 39, C.night); fb.ellipse(158, 78, 19, 29, C.blue);
+  fb.ellipse(158, 77, 12, 22, C.cyan);
+  fb.line(24, 156, 143, 115, C.dbrown, 10); fb.line(24, 153, 143, 112, C.goldL, 3);
+  fb.line(177, 112, 306, 154, C.dbrown, 10); fb.line(177, 109, 306, 151, C.goldL, 3);
+  const doubaoX = lerp(36, 55, u), geminiX = lerp(74, 91, u), claudeX = lerp(109, 128, u);
+  const qwenX = lerp(210, 194, u), kimiX = lerp(247, 233, u), zaiX = lerp(286, 268, u);
+  drawCastSprite(fb, doubaoX, 151, 'doubao', t, { pose: 'walk', role: 'redhood', facing: 1 });
+  drawCastSprite(fb, geminiX, 140, 'gemini', t, { pose: 'walk', role: 'alice', facing: 1 });
+  drawCastSprite(fb, claudeX, 127, 'claude', t, { pose: 'walk', role: 'princess', facing: 1 });
+  drawCastSprite(fb, qwenX, 127, 'qwen', t, { pose: 'walk', role: 'hatter', facing: -1 });
+  drawCastSprite(fb, kimiX, 140, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  drawCastSprite(fb, zaiX, 151, 'zai', t, { pose: 'walk', role: 'default', facing: -1 });
+  drawWhaleHero(fb, lerp(30, 184, u), 163, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 20 });
+  drawFlyingGptDragon(fb, lerp(300, 124, u), 27 + Math.sin(t * 3.2) * 7, t, -1);
+  const emblemIds = [0, 1, 2, 3, 4, 5];
+  for (let i = 0; i < emblemIds.length; i++) {
+    const p = mod(u * 1.7 + i / emblemIds.length, 1);
+    const ex = lerp(42, 158, p), ey = lerp(151, 78, p) + Math.sin(p * Math.PI * 2) * 8;
+    fb.glowDisc(ex, ey, 5, 14); drawStoryEmblem(fb, ex, ey, emblemIds[i]);
   }
-  for (let i = 0; i < 6; i++) drawStoryEmblem(fb, 31 + i * 51, 162, i);
+  const sparkX = claudeX + 13, sparkY = 99;
+  fb.line(claudeX + 7, 114, sparkX, sparkY, C.gold, 2); fb.px(sparkX, sparkY, C.uiW);
+  for (let i = 0; i < 8; i++) {
+    const a = i * Math.PI / 4 + t * 0.35;
+    fb.line(sparkX, sparkY, sparkX + Math.cos(a) * 13, sparkY + Math.sin(a) * 13, i % 2 ? C.pink : C.goldL);
+  }
 }
-
 function parchmentReveal(fb, t, u) {
-  // Parchment ink-wash restages the river and cast as a living illustration, rather than a text card.
   fb.gradV(0, 0, W, H, [C.parchment, C.sand, C.tan]);
   for (let y = 13; y < H; y += 29) fb.hline(8, 312, y, y % 2 ? C.tan : C.sand);
-  river(fb, t, 124, { rainbow: true, width: 24, phase: 2.4 });
-  castle(fb, 245, 125, 0.61, false, true);
+  river(fb, t, 124, { rainbow: true, width: 24, phase: 2.4 + u * 0.6 }); castle(fb, 245, 125, 0.61, false, true);
   for (let i = 0; i < 4; i++) roundTree(fb, 31 + i * 56, 137, 0.54, true);
-  drawWhaleHero(fb, 154 + Math.sin(t * 2) * 9, 140, t, { pose: 'think', facing: 1, lantern: true, scarfLen: 16 });
-  drawCastSprite(fb, 219, 143, 'claude', t, { pose: 'idle', role: 'princess', facing: -1 });
+  const whaleX = lerp(126, 194, u), claudeX = lerp(238, 199, u);
+  drawWhaleHero(fb, whaleX, 140, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 16 });
+  drawCastSprite(fb, claudeX, 143, 'claude', t, { pose: 'walk', role: 'princess', facing: -1 });
   for (let i = 0; i < 9; i++) {
-    const x = 65 + i * 24;
-    fb.line(x, 96, x + Math.sin(t + i) * 9, 69 + (i % 3) * 7, C.brown);
-    fb.px(x + 2, 68 + (i % 3) * 7, C.scarf);
+    const x = 65 + i * 24 + u * 15;
+    fb.line(x, 96, x + Math.sin(t + i) * 9, 69 + (i % 3) * 7, C.brown); fb.px(x + 2, 68 + (i % 3) * 7, C.scarf);
   }
-  magicParticles(fb, t, 165, 84, 75, 13, C.brown, C.goldL);
+  const foldX = 282 - u * 96;
+  fb.tri(foldX, 9, 311, 9, 311, 41 + u * 13, C.white); fb.line(foldX, 9, 311, 41 + u * 13, C.goldL, 2);
+  magicParticles(fb, t, lerp(165, 203, u), 84, 75, 13, C.brown, C.goldL);
 }
-
-// --- Vocal climax: six headline images, each split into subshots to keep the long vocal alive. ---
 function sketchBridge(fb, t, u) {
-  hillBackdrop(fb, t, { night: true });
-  river(fb, t, 151, { night: true, width: 13 });
-  // Rough sketch strokes rise from a hand-drawn book page and become a luminous arch.
+  const progress = clamp((t - 195.75) / (203.00 - 195.75), 0, 1);
+  hillBackdrop(fb, t, { night: true }); river(fb, t, 151, { night: true, width: 13 });
   fb.rect(31, 124, 112, 31, C.parchment); fb.box(31, 124, 112, 31, C.dbrown);
   for (let i = 0; i < 5; i++) fb.line(45 + i * 17, 143, 53 + i * 14, 131 - (i % 3) * 4, C.brown);
-  const arch = 22 + u * 32;
-  fb.line(124, 124, 159, 124 - arch, C.goldL, 2);
-  fb.line(159, 124 - arch, 194, 124, C.cyan, 2);
+  const arch = 22 + progress * 32;
+  fb.line(124, 124, 159, 124 - arch, C.goldL, 2); fb.line(159, 124 - arch, 194, 124, C.cyan, 2);
   for (let i = 0; i < 8; i++) fb.line(128 + i * 8, 122 - Math.sin(i / 7 * Math.PI) * arch, 128 + i * 8, 121 - Math.sin(i / 7 * Math.PI) * arch, [C.scarf, C.orange, C.gold, C.lime, C.cyan, C.blue, C.lavender, C.pink][i]);
-  drawWhaleHero(fb, lerp(93, 177, u), 144 - u * 24, t, { pose: 'shout', facing: 1, lantern: true, scarfLen: 20 });
+  drawWhaleHero(fb, lerp(93, 177, progress), 144 - progress * 24, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 20 });
   magicParticles(fb, t, 159, 103, 73, 18, C.goldL, C.cyan);
 }
-
 function observatoryLantern(fb, t, u) {
-  hillBackdrop(fb, t, { night: true });
-  stars(fb, t, 80, C.goldL, 130);
-  // Mountain observatory with brass dome, telescope, stairway and rows of launched lanterns.
-  fb.tri(-7, 143, 79, 58, 168, 143, C.dslate);
-  fb.tri(116, 145, 225, 36, 335, 145, C.navy);
+  const progress = clamp((t - 203.0) / 7.0, 0, 1);
+  hillBackdrop(fb, t, { night: true }); stars(fb, t, 80, C.goldL, 130);
+  fb.tri(-7, 143, 79, 58, 168, 143, C.dslate); fb.tri(116, 145, 225, 36, 335, 145, C.navy);
   fb.rect(70, 103, 112, 37, C.slate); fb.box(70, 103, 112, 37, C.goldD);
   fb.ellipse(126, 104, 56, 17, C.silver); fb.ellipse(126, 102, 48, 13, C.plum);
-  fb.rect(121, 80, 10, 22, C.gold); fb.disc(126, 79, 13, C.goldL);
-  fb.line(132, 96, 171, 74, C.uiW, 3); fb.disc(173, 73, 5, C.cyan);
-  for (let i = 0; i < 7; i++) {
-    const x = 93 + i * 12, y = 127 - i * 3;
-    fb.rect(x, y, 10, 3, C.tan); fb.hline(x, x + 10, y, C.goldL);
-  }
-  drawCastSprite(fb, 189, 131, 'qwen', t, { pose: 'cheer', role: 'hatter', facing: -1 });
-  drawWhaleHero(fb, 152, 137, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 19 });
+  fb.rect(121, 80, 10, 22, C.gold); fb.disc(126, 79, 13, C.goldL); fb.line(132, 96, 171, 74, C.uiW, 3); fb.disc(173, 73, 5, C.cyan);
+  for (let i = 0; i < 7; i++) { const x = 93 + i * 12, y = 127 - i * 3; fb.rect(x, y, 10, 3, C.tan); fb.hline(x, x + 10, y, C.goldL); }
+  drawCastSprite(fb, lerp(220, 187, progress), 131, 'qwen', t, { pose: 'walk', role: 'hatter', facing: -1 });
+  drawWhaleHero(fb, lerp(143, 168, progress), 137, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 19 });
   for (let i = 0; i < 12; i++) {
-    const x = mod(219 + i * 18 + t * 8, W);
-    const y = 106 - mod(t * (7 + i % 3) + i * 13, 91);
+    const x = mod(219 + i * 18 + t * 8, W), y = 106 - mod(t * (7 + i % 3) + i * 13, 91);
     fb.rect(x - 3, y - 5, 7, 9, i % 2 ? C.gold : C.scarf);
-    fb.tri(x - 4, y + 3, x + 4, y + 3, x, y + 9, C.goldL);
-    fb.px(x, y - 2, C.uiW);
+    fb.tri(x - 4, y + 3, x + 4, y + 3, x, y + 9, C.goldL); fb.px(x, y - 2, C.uiW);
   }
 }
-
 function milkyBoat(fb, t, u) {
   hillBackdrop(fb, t, { dream: true });
   stars(fb, t, 95, C.goldL, 145);
@@ -1577,66 +1632,67 @@ function milkyBoat(fb, t, u) {
 }
 
 function emblemOrbs(fb, t, u) {
+  const progress = clamp((t - 217.0) / 6.0, 0, 1);
   hillBackdrop(fb, t, { dream: true });
-  // Six story emblems appear as prop silhouettes inside separate luminous orbs, not as counters.
   const centers = [[66, 59], [160, 49], [254, 59], [66, 119], [160, 126], [254, 119]];
+  const emblemIds = [0, 1, 2, 3, 4, 5];
   for (let i = 0; i < centers.length; i++) {
-    const [x, y] = centers[i];
-    const grow = 7 + seg(u, i * 0.12, i * 0.12 + 0.38) * 14;
-    fb.disc(x, y, grow + 6, C.blue);
-    fb.disc(x, y, grow + 2, i % 2 ? C.pink : C.goldL);
-    fb.disc(x, y, grow - 2, C.night);
-    drawStoryEmblem(fb, x, y, i);
-    magicParticles(fb, t + i * 0.3, x, y, grow + 12, 6, C.goldL, C.cyan);
+    const [x, y] = centers[i], grow = 7 + seg(progress, i * 0.12, i * 0.12 + 0.38) * 14;
+    fb.disc(x, y, grow + 6, C.blue); fb.disc(x, y, grow + 2, i % 2 ? C.pink : C.goldL); fb.disc(x, y, grow - 2, C.night);
+    drawStoryEmblem(fb, x, y, emblemIds[i]); magicParticles(fb, t + i * 0.3, x, y, grow + 12, 6, C.goldL, C.cyan);
   }
-  drawWhaleHero(fb, 160, 153, t, { pose: 'shout', facing: 1, scarfLen: 19 });
+  drawWhaleHero(fb, lerp(180, 145, progress), 153, t, { pose: 'run', facing: -1, scarfLen: 19 });
 }
-
 function constellationLinks(fb, t, u) {
-  hillBackdrop(fb, t, { night: true });
-  stars(fb, t, 100, C.goldL, 145);
+  const progress = clamp((t - 223.0) / 7.0, 0, 1);
+  hillBackdrop(fb, t, { night: true }); stars(fb, t, 100, C.goldL, 145);
   const p = [[58, 50], [93, 78], [132, 53], [166, 82], [208, 52], [253, 77], [277, 119], [221, 137], [160, 132], [102, 132], [43, 111]];
   const edges = [[0,1],[1,2],[2,3],[3,4],[4,5],[5,6],[6,7],[7,8],[8,9],[9,10],[10,0],[1,9],[3,8],[5,7]];
-  const n = Math.floor(u * edges.length);
-  for (let i = 0; i < n; i++) {
-    const [a, b] = edges[i];
-    fb.line(p[a][0], p[a][1], p[b][0], p[b][1], C.goldL);
-  }
-  p.forEach(([x, y], i) => {
-    fb.disc(x, y, 3 + (i % 3 === 0 ? 1 : 0), C.goldL);
-    fb.px(x - 1, y - 1, C.uiW);
-  });
-  drawWhaleHero(fb, lerp(87, 160, u), 151, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 19 });
-  drawCastSprite(fb, 225, 144, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
+  const n = Math.floor(progress * edges.length);
+  for (let i = 0; i < n; i++) { const [a, b] = edges[i]; fb.line(p[a][0], p[a][1], p[b][0], p[b][1], C.goldL); }
+  p.forEach(([x, y], i) => { fb.disc(x, y, 3 + (i % 3 === 0 ? 1 : 0), C.goldL); fb.px(x - 1, y - 1, C.uiW); });
+  drawWhaleHero(fb, lerp(87, 160, progress), 151, t, { pose: 'run', facing: 1, lantern: true, scarfLen: 19 });
+  drawCastSprite(fb, lerp(252, 225, progress), 144, 'kimi', t, { pose: 'walk', role: 'sage', facing: -1 });
+  const beacon = Math.floor(progress * (edges.length - 1)), [a, b] = edges[beacon];
+  const pulse = progress * (edges.length - 1) - beacon;
+  const starX = lerp(p[a][0], p[b][0], pulse), starY = lerp(p[a][1], p[b][1], pulse);
+  fb.glowDisc(starX, starY, 4, 16); fb.disc(starX, starY, 2, C.uiW);
   magicParticles(fb, t, 159, 87, 94, 23, C.goldL, C.cyan);
 }
-
 function cosmicCast(fb, t, u) {
-  hillBackdrop(fb, t, { night: true });
-  stars(fb, t, 140, C.goldL, 151);
-  // A cosmic river loops round the whole cast; the only crown belongs to Princess Claude.
-  fb.ellipse(159, 91, 153, 42, C.blue); fb.ellipse(159, 91, 147, 34, C.cyan);
-  fb.ellipse(159, 91, 132, 27, C.night);
+  const progress = clamp((t - 230.0) / 10.0, 0, 1);
+  const closeU = clamp((t - 236.5) / 3.5, 0, 1);
+  hillBackdrop(fb, t, { night: true }); stars(fb, t, 140, C.goldL, 151);
+  fb.ellipse(159, 91, 153 - closeU * 32, 42 - closeU * 10, C.blue);
+  fb.ellipse(159, 91, 147 - closeU * 31, 34 - closeU * 8, C.cyan);
+  fb.ellipse(159, 91, 132 - closeU * 28, 27 - closeU * 6, C.night);
   for (let i = 0; i < 30; i++) {
-    const a = i * Math.PI * 2 / 30 + t * 0.4;
-    fb.px(159 + Math.cos(a) * 144, 91 + Math.sin(a) * 32, i % 3 ? C.goldL : C.uiW);
+    const a = i * Math.PI * 2 / 30 + t * 0.4, rX = 144 - closeU * 30, rY = 32 - closeU * 7;
+    fb.px(159 + Math.cos(a) * rX, 91 + Math.sin(a) * rY, i % 3 ? C.goldL : C.uiW);
   }
-  drawCastSprite(fb, 48, 135, 'doubao', t, { pose: 'cheer', role: 'redhood', facing: 1 });
-  drawCastSprite(fb, 86, 139, 'gemini', t, { pose: 'cheer', role: 'alice', facing: 1 });
-  drawCastSprite(fb, 125, 137, 'claude', t, { pose: 'cheer', role: 'princess', facing: 1 });
-  drawCastSprite(fb, 195, 138, 'qwen', t, { pose: 'cheer', role: 'hatter', facing: -1 });
-  drawCastSprite(fb, 233, 137, 'kimi', t, { pose: 'cheer', role: 'sage', facing: -1 });
-  drawCastSprite(fb, 272, 136, 'zai', t, { pose: 'cheer', role: 'harp', facing: -1 });
-  drawWhaleHero(fb, 160 + Math.sin(t * 1.4) * 11, 133, t, { pose: 'happy', facing: 1, lantern: true, scarfLen: 19 });
-  drawFlyingGptDragon(fb, 160, 34 + Math.sin(t * 2.1) * 5, t, -1);
+  // At the end, the cast turns toward a physical storybook while the star-ring contracts into the page.
+  if (closeU > 0) book(fb, 160, 145, lerp(44, 138, closeU), lerp(22, 50, closeU), false);
+  const x = [lerp(48, 79, progress), lerp(86, 106, progress), lerp(125, 139, progress), lerp(195, 181, progress), lerp(233, 210, progress), lerp(272, 238, progress)];
+  const y = (i) => 137 + Math.sin(t * 2.2 + i) * 2;
+  drawCastSprite(fb, x[0], y(0), 'doubao', t, { pose: closeU > 0.72 ? 'cheer' : 'walk', role: 'redhood', facing: closeU > 0.72 ? -1 : 1 });
+  drawCastSprite(fb, x[1], y(1), 'gemini', t, { pose: 'walk', role: 'alice', facing: closeU > 0.45 ? -1 : 1 });
+  drawCastSprite(fb, x[2], y(2), 'claude', t, { pose: 'walk', role: 'princess', facing: closeU > 0.45 ? -1 : 1 });
+  drawCastSprite(fb, x[3], y(3), 'qwen', t, { pose: 'walk', role: 'hatter', facing: closeU > 0.45 ? 1 : -1 });
+  drawCastSprite(fb, x[4], y(4), 'kimi', t, { pose: 'walk', role: 'sage', facing: closeU > 0.45 ? 1 : -1 });
+  drawCastSprite(fb, x[5], y(5), 'zai', t, { pose: 'walk', role: 'default', facing: closeU > 0.45 ? 1 : -1 });
+  drawWhaleHero(fb, 160 + Math.sin(t * 1.4) * 8, 132, t, { pose: closeU > 0.45 ? 'happy' : 'run', facing: closeU > 0.72 ? -1 : 1, lantern: true, scarfLen: 19 });
+  const dragonA = t * 0.5 + Math.PI;
+  drawFlyingGptDragon(fb, 159 + Math.cos(dragonA) * (108 - closeU * 34), 34 + Math.sin(dragonA) * (15 - closeU * 4), t, -1);
+  for (let i = 0; i < 6; i++) {
+    const handoff = mod(progress * 1.25 + i / 6, 1);
+    const ex = lerp(55, 264, handoff), ey = 93 + Math.sin(handoff * Math.PI * 2 + t * 0.2) * 20;
+    fb.glowDisc(ex, ey, 5, 15); fb.disc(ex, ey, 3, C.goldL); drawStoryEmblem(fb, ex, ey, i);
+  }
   for (let i = 0; i < 8; i++) {
-    const x = 30 + i * 37;
-    fb.line(x, 158, x + Math.sin(t + i) * 6, 151 - (i % 3) * 8, C.goldL);
-    fb.px(x, 151 - (i % 3) * 8, C.uiW);
+    const sx = 30 + i * 37, sy = 158 - (i % 3) * 8;
+    fb.line(sx, 158, sx + Math.sin(t + i) * 6, sy, C.goldL); fb.px(sx, sy, C.uiW);
   }
 }
-
-// --- Closing: return to the same desk, close the crimson-gold storybook, then clean black. ---
 function closingDesk(fb, t, u) {
   fb.gradV(0, 0, W, H, [C.night, C.dbrown, C.umber, C.brown]);
   for (let y = 27; y < H; y += 17) fb.hline(0, W - 1, y, y % 34 === 0 ? C.dbrown : C.brown);
@@ -1674,7 +1730,7 @@ function closingCover(fb, t, u, texts) {
 }
 
 // Shot list is deliberately frequent: lyric cues are surrounded by several visual beats, never a slow blank lead-in.
-const SHOTS = [
+export const SHOTS = [
   [0.00, 1.75, shotDesk],
   [1.75, 4.80, shotHarbor],
   [4.80, 8.80, shotMarket],
@@ -1696,7 +1752,7 @@ const SHOTS = [
   [54.95, 58.15, rainbowMap], [58.15, 61.35, rainbowMap],
   [61.45, 64.85, rainbowBridge], [64.95, 68.35, heartIsland],
   [68.45, 71.65, millSpray], [71.75, 75.15, waterfallOfTime],
-  [75.25, 78.65, sunsetFleet], [78.75, 82.10, castleHarborCast], [82.10, 85.60, castleBlessing],
+  [75.25, 78.65, sunsetFleet], [78.75, 82.10, castleHarborCast], [82.10, 85.60, harborHomecoming],
 
   [85.60, 89.40, lanternStreet], [89.40, 93.20, gearLock], [93.20, 97.40, moonBridge],
 
@@ -1716,7 +1772,7 @@ const SHOTS = [
 
   [165.95, 169.25, dreamIslands], [169.25, 172.55, dreamIslands], [172.65, 176.55, idealVsReality],
   [176.65, 179.85, mountainConvergence], [179.95, 183.05, sakuraRiver],
-  [183.15, 186.65, waterfallOfTime], [186.75, 190.05, twilightFleet],
+  [183.15, 186.65, mirrorTimeDive], [186.75, 190.05, twilightFleet],
   [190.15, 193.05, castleBlessing], [193.10, 195.65, parchmentReveal],
 
   [195.75, 199.25, sketchBridge], [199.25, 203.00, sketchBridge],

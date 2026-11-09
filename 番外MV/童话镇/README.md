@@ -8,7 +8,8 @@
 - `tonghuazhen.srt` — 与 `src/timeline.js` 歌词 cue 同源。
 - `poster.jpg`、`character_sheet.jpg` — 主海报和八角色像素设定表。
 - `封面/童话镇MV_封面_3比4.png`、`封面/童话镇MV_封面_4比3.png` — 无水印双比例发布封面；`封面_验收.json` 保存尺寸、文本安全区与哈希信息。
-- `TREATMENT.md` — 完整角色映射、节奏原则与分镜设计。
+- `TREATMENT.md` — 完整角色映射、节奏原则与逐句 50 行歌词动作/场景表。
+- `src/lyric_choreography.js` / `src/lyric_choreography.test.mjs` — 逐句演员、动作参考、道具与实际场景覆盖映射；检查角色身份、Peter Pan 造型和竖琴的歌词专属使用。
 - `src/` — 双分辨率像素画引擎、角色精灵、场景、字幕和唯一时间轴。
 
 参考音视频为仓库根目录的 `童话镇.mp4`。本目录不自动发布，也不合并 PR。
@@ -23,11 +24,11 @@ node .claude/skills/pixel-mv-remake/scripts/bake_glyphs.mjs "番外MV/童话镇"
 sh "番外MV/童话镇/build.sh"
 ```
 
-`build.sh` 先跑 `readcheck.mjs` 字幕可读性门禁，再导出音效 cue、封面和设定表，混音至 `out/mix.wav`，渲染母版并以 `grain=0` 完成封装。独立运行 `mix.py` 也会从时间轴读取歌词与音效 cue，并写出 `tonghuazhen.srt`。
+`build.sh` 先跑 50 条逐句动作/角色/场景映射测试，再跑 `readcheck.mjs` 字幕可读性门禁；随后导出音效 cue、封面和设定表，混音至 `out/mix.wav`，渲染母版并以 `grain=0` 完成封装。独立运行 `mix.py` 也会从时间轴读取歌词与音效 cue，并写出 `tonghuazhen.srt`。
 
 ## 节奏与视觉约束
 
 - 开场不到两秒即入书，主角从第一帧起就运动。
-- 八十一个短镜头贯穿全部段落；纯音乐间奏和长吟唱同样拆镜推进。
+- 八十一个短镜头贯穿全部段落；纯音乐间奏和长吟唱同样拆镜推进。每次重制必须重新查阅研究并按歌词匹配角色、动作和道具，禁止直接搬用旧 MV 镜头编排。
 - 场景使用河流、建筑、花木、船、怀表瀑布、齿轮、水闸、灯笼、剧场和星座等多层道具；地图主角始终是鲸鱼娘。
 - 不绘制水印、持久角标、播放/点赞/粉丝数、KPI、进度/加载/音量条或频道式结束卡。

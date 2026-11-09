@@ -270,7 +270,8 @@ export function drawCastSprite(fb, x, y, who, t, {
     sprKey = (Math.floor(t * 6) & 1) ? 'gpt_fly_1' : 'gpt_fly_0';
     useSide = true;
   } else if (who === 'claude') {
-    sprKey = blink ? 'claude_front_1' : 'claude_front_0';
+    // The baked closed-eye frame is used as a sleeping pose only when the story calls for it.
+    sprKey = pose === 'sleep' ? 'claude_front_1' : (blink ? 'claude_front_1' : 'claude_front_0');
   } else if (who === 'kimi' || who === 'gemini' || who === 'zai' || who === 'qwen') {
     if (pose === 'walk' || pose === 'panic') {
       sprKey = `${who}_side_${Math.floor(t * (pose === 'panic' ? 11 : 6)) & 1}`;
@@ -456,7 +457,8 @@ export function drawGoldenSunbird(fb, cx, cy, t) {
   for (const lx of [-3, 0, 3]) fb.line(cx + lx, cy + 4, cx + lx - 1, cy + 11, C.orange, 1);
 }
 
-// 6 Fairytale Emblem Medallions (Apple, Glass Slipper, Red Cloak, Magic Harp, Royal Crown, Whale Crest)
+// Story emblems (Apple, Glass Slipper, Red Cloak, Star, Royal Crown, Whale Crest, Gear).
+// The harp is a lyric-specific prop and is intentionally not part of recurring cast/celebration emblems.
 export function drawStoryEmblem(fb, cx, cy, index) {
   const x = Math.round(cx), y = Math.round(cy);
   if (index === 0) {
@@ -476,19 +478,27 @@ export function drawStoryEmblem(fb, cx, cy, index) {
     fb.tri(x, y - 2, x - 5, y + 4, x + 5, y + 4, C.scarf);
     fb.px(x, y - 1, C.goldL);
   } else if (index === 3) {
-    // Jack's Golden Harp
-    fb.vline(x - 3, y - 4, y + 4, C.goldL);
-    fb.hline(x - 3, x + 3, y + 4, C.gold);
-    fb.line(x - 3, y - 4, x + 3, y - 1, C.goldL);
-    fb.vline(x, y - 2, y + 3, C.uiW);
+    // A generic story-star, not a harp silhouette.
+    fb.line(x, y - 5, x, y + 5, C.goldL, 2);
+    fb.line(x - 5, y, x + 5, y, C.goldL, 2);
+    fb.line(x - 3, y - 3, x + 3, y + 3, C.uiW);
+    fb.line(x + 3, y - 3, x - 3, y + 3, C.gold);
   } else if (index === 4) {
     // Princess Claude's Royal Crown
     drawTinyTiara(fb, x, y - 2, true);
-  } else {
+  } else if (index === 5) {
     // Protagonist Whale Emblem
     fb.ellipse(x - 1, y + 1, 4.5, 3, C.whaleL);
     fb.tri(x + 3, y + 1, x + 6, y - 2, x + 6, y + 3, C.whaleM);
     fb.px(x - 3, y, C.ink);
     fb.px(x - 1, y - 3, C.cyan);
+  } else {
+    // Peter Pan's clocktower/neverland route marker: a simple gear, not costume.
+    fb.disc(x, y, 5, C.goldD);
+    fb.disc(x, y, 2, C.cyan);
+    for (let a = 0; a < 8; a++) {
+      const ang = a * Math.PI / 4;
+      fb.px(x + Math.round(Math.cos(ang) * 6), y + Math.round(Math.sin(ang) * 6), C.goldL);
+    }
   }
 }

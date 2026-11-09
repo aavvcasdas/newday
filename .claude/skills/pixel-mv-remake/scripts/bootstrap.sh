@@ -8,8 +8,25 @@ LEMO_DIR="${LEMO_OPUSCAR:-/home/user/lemo-opuscar}"
 BIN_DIR="/home/user/bin"
 mkdir -p "$BIN_DIR"
 
-# 1. Clone or verify lemo-opuscar
-sh "$REPO_ROOT/.claude/skills/lemo-opuscar/scripts/setup.sh" >/dev/null || true
+# 1. Clone or verify lemo-opuscar. Use the shared helper when present; the pixel-MV skill
+# remains self-contained in repositories that only install this skill.
+if [ -f "$REPO_ROOT/.claude/skills/lemo-opuscar/scripts/setup.sh" ]; then
+  sh "$REPO_ROOT/.claude/skills/lemo-opuscar/scripts/setup.sh" >/dev/null
+elif [ ! -f "$LEMO_DIR/core/render/video.mjs" ]; then
+  if [ -e "$LEMO_DIR" ] && [ -n "$(ls -A "$LEMO_DIR" 2>/dev/null)" ]; then
+    echo "lemo-opuscar path exists but is not initialized: $LEMO_DIR" >&2
+    exit 2
+  fi
+  echo "[bootstrap] Cloning lemo-opuscar..."
+  git clone --quiet --depth 1 --filter=blob:none --sparse --branch main \
+    https://github.com/lemomo-ai/lemo-opuscar.git "$LEMO_DIR"
+  (
+    cd "$LEMO_DIR"
+    git sparse-checkout set --no-cone '/*' '!/styles/*/demo/' '!/styleboard/' \
+      '!/docs/frames/' '!/docs/cover.jpg' '!/docs/opuscar98.jpg' '!/styles/*/poster.jpg'
+    git config lemo.managed true
+  )
+fi
 
 # 2. Install lemo-opuscar Node packages (playwright-core, three)
 if [ ! -d "$LEMO_DIR/node_modules/playwright-core" ]; then

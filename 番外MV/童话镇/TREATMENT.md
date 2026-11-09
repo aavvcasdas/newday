@@ -20,7 +20,7 @@
 | 爱丽丝、木偶剧场搭档 | Gemini `gemini` | 蓝色蝴蝶结和奇境茶会/剧场动作。 |
 | 灰姑娘、睿智河水与长生树智者 | Kimi `kimi` | 月色/水晶/星光视觉道具。 |
 | 疯帽子、观星台导师 | 千问 `qwen` | 高礼帽、茶桌、观星台。 |
-| 竖琴杰克、彼得潘钟楼飞行者、水闸机关师 | 智谱 `zai` | 金色竖琴、飞行叶帽和齿轮水闸。 |
+| 彼得潘钟楼飞行者、竖琴杰克、水闸机关师 | 智谱 `zai` | 既定黑发角色精灵；彼得潘身份仅由钟楼走位、跃落飞行路径与星点表达，不加叶帽或纸翅。竖琴只在 L06「杰克他有竖琴和魔法」镜头使用。 |
 
 ## 分镜节拍
 
@@ -37,7 +37,7 @@
 - **小红帽担心大灰狼**：豆包披红袍提篮穿过深林，GPT 的龙狼暗影藏在松树后，鲸鱼娘举起提灯陪她通过。
 - **疯帽与爱丽丝**：Qwen 疯帽茶桌、Gemini 爱丽丝、蒸汽茶壶、怀表与蓝杯组成一组近景互动。
 - **丑小鸭变白天鹅**：鲸鱼娘沿河游过，鸭群在金色粒子中完成由灰羽到白天鹅的显性变化。
-- **彼得潘总长不大**：永无乡钟楼与钟面占据后景；Zai 扮演钟楼飞行者，鲸鱼娘带着小纸船穿过云层。
+- **彼得潘总长不大**：永无乡钟楼与钟面占据后景；Zai 保持既定造型，沿钟楼平台跃落并横移，以星点轨迹表达彼得潘飞行；不加叶帽或纸翅。鲸鱼娘带着小纸船穿过云层。
 - **杰克的竖琴和魔法**：豆茎盘上高云、金色竖琴、弹奏弦光和攀藤的鲸鱼娘填满画面。
 - **森林糖果屋**：红白糖果屋、彩色围栏与软糖树；豆包和 Gemini 探屋，鲸鱼娘先到门口。
 - **灰姑娘的玻璃鞋**：午夜钟、王城阶梯和一只在台阶闪烁的水晶鞋；Kimi 扮演灰姑娘，鲸鱼娘提灯照亮鞋面。
@@ -84,7 +84,7 @@
 
 ### 2:17.95–2:45.85 — Chorus 2：白昼再临，河湾展开
 
-河流地图以水上纸船而非普通标记重返；之后快速切过魔法桥、爱心河湾、水车水花、怀表瀑布、纸船舰队和八人王城庆典。每个重复副歌都更换机位、道具和角色动作，不直接复用静止空镜。
+河流地图以水上纸船而非普通标记重返；之后快速切过魔法桥、爱心河湾、水车水花、怀表瀑布、纸船舰队和八人王城庆典。每个重复副歌都更换机位、道具和角色动作，不直接复用静止空镜。L19「幸福结局」先切烟火港湾，再落到贴水码头迎宾、徽记传递；L45「幸福结局」另用城门纵深队列与河环徽记巡行，两段不可合并成重复群像静帧。
 
 ### 2:45.95–3:15.65 — Chorus 3：理想与现实在山口相会
 
@@ -98,13 +98,71 @@
 
 ### 3:15.75–4:00.00 — 啊声高潮：从纸上草图到星座
 
-长吟唱拆为十个推进子镜：手绘线稿变成彩虹桥；观星台揭开铜顶；鲸鱼娘和 Qwen 放飞灯笼；折纸船升入银河，GPT 龙娘伴飞；六枚苹果、玻璃鞋、红袍、金竖琴、王冠、鲸鱼徽记依次变成光球；最后由星点连成河流般的星座，八位角色在星环下仰望。
+长吟唱拆为十个推进子镜：手绘线稿变成彩虹桥；观星台揭开铜顶；鲸鱼娘和 Qwen 放飞灯笼；折纸船升入银河，GPT 龙娘伴飞；六枚苹果、玻璃鞋、红袍、星标、王冠、鲸鱼徽记依次变成光球；最后由星点连成河流般的星座，八位角色在星环下仰望。
 
 ### 4:00.00–4:09.58 — 合书尾声
 
 - **4:00.00–4:05.50**：回到最初书桌，白饭碗、烛台、羽毛笔位置呼应开场；鲸鱼娘在书页中挥手。
 - **4:05.50–4:09.30**：深红金边童话书合上，书封只留故事名《童话镇》，不出现频道信息或推荐卡片。
 - **4:09.30–4:09.58**：干净切黑。
+
+## 逐句歌词动作重编（50 句）
+
+每句均对照 `src/timeline.js` 的原始时间；场景列是实际渲染处理函数，不是概念性草案。注册动作仅作为运动语义参考，造型仍使用本片角色精灵；与角色身份不符的图集服饰不套用。自定义动作以本片身份锁定和现有道具实现。
+
+| ID / 时间 | 歌词 | 实际镜头 | 出场角色 | 动作 / 结果 | 道具 / 互动 | 动作参考 |
+| --- | --- | --- | --- | --- | --- | --- |
+| L01 13.55–16.95s | 听说白雪公主在逃跑 | snowGate | claude、whale | Claude侧跑出城门越过苹果，鲸鱼娘从后追上；两镜保持同向。 | 城门、苹果、蝴蝶 | claude_walk_2leg |
+| L02 17.00–20.35s | 小红帽在担心大灰狼 | wolfForest | doubao、gpt、whale | 豆包沿林道急行，听见狼影后退向鲸鱼娘并以篮子护身；GPT隔树逼近。 | 红披风、篮子、提灯、狼影 | doubao_step_in |
+| L03 20.40–23.75s | 听说疯帽喜欢爱丽丝 | teaGarden | gemini、qwen、whale | 千问转身递杯，蓝杯沿桌滑向Gemini；她跨近接杯，鲸鱼娘从前景穿过。 | 茶壶、蓝杯、怀表 | 自定义 tea-cup-pass |
+| L04 23.80–27.25s | 丑小鸭会变成白天鹅 | swanRiver | whale | 鲸鱼娘贴水横游；灰鸭在她身后逐只变成白天鹅，近景回身见证。 | 河流、灰鸭、白天鹅 | 自定义 duck-to-swan |
+| L05 27.30–30.55s | 听说彼得潘总长不大 | peterClocktower | zai、whale | Zai沿钟楼平台起步、跃下并横移；不加叶帽/翅膀，鲸鱼娘乘纸船穿云。 | 钟楼、星点、纸船 | 自定义 clocktower-glide |
+| L06 30.60–33.95s | 杰克他有竖琴和魔法 | beanstalkHarp | zai、whale | Zai转向豆茎高台逐弦拨奏；弦光音符上弹，鲸鱼娘沿藤蔓跑上平台。 | 豆茎、金竖琴、音符 | zai_reach |
+| L07 34.00–37.25s | 听说森林里有糖果屋 | candyForest | doubao、gemini、whale | 豆包和Gemini走到糖果屋门边；糖果从糖罐飞入篮子，鲸鱼娘跑进屋。 | 糖果屋、糖罐、篮子 | doubao_step_in |
+| L08 37.30–41.05s | 灰姑娘丢了心爱的玻璃鞋 | glassSlipper | kimi、whale | Kimi沿阶梯下行，玻璃鞋滑落；她回头追看，鲸鱼娘提灯跑近照鞋。 | 阶梯、午夜钟、玻璃鞋 | kimi_walk_story |
+| L09 41.15–44.25s | 只有睿智的河水知道 | wiseRiver | whale、kimi | 鲸鱼娘游过河底拱门指向水流；Kimi沿岸移动、转向水纹回应。 | 河底拱门、泡泡、流线 | whale_point_at |
+| L10 44.30–47.85s | 白雪是因为贪玩跑出了城堡 | butterflyGarden | claude、whale | Claude追蝶跑出城门，鲸鱼娘跟随；两人越过花径。 | 城门、花径、蝴蝶 | claude_walk_2leg |
+| L11 47.90–51.15s | 小红帽有件抑制自己 | cloakVortex | doubao、whale、gpt | 豆包旋身展开大红披风形成护弧；鲸鱼娘提灯守在弧外，龙狼被挡住。 | 红披风、提灯、林间龙影 | 自定义 red-cloak-shield |
+| L12 51.20–54.85s | 变成狼的大红袍 | cloakVortex | gpt、doubao、whale | GPT探爪逼近，披风旋涡收紧并把狼影推回树后；鲸鱼娘随披风边缘移动。 | 旋转披风、龙狼眼光、火花 | 自定义 wolf-shadow-contained |
+| L13 54.95–61.35s | 总有一条蜿蜒在童话镇里七彩的河 | rainbowMap | whale | 地图鲸鱼娘沿弯河跑向港湾、转向并登上纸船；地图主控仍只有鲸鱼娘。 | 手绘河道、城堡、纸船 | whale_point_at |
+| L14 61.45–64.85s | 沾染魔法的乖张气息 | rainbowBridge | gpt、whale | GPT掠过彩虹桥掷出星火，河道随火花弯折；鲸鱼娘跑过桥面。 | 彩虹桥、龙翼、星火 | gpt_toss_star |
+| L15 64.95–68.35s | 却又在爱里曲折 | heartIsland | claude、whale | Claude沿心形岛走动、转身递出光带；鲸鱼娘乘船接近并随河湾转向。 | 心形岛、亭子、光带 | 自定义 princess-heart-ribbon |
+| L16 68.45–71.65s | 川流不息扬起水花 | millSpray | whale、kimi | 鲸鱼娘跑过水车前桥面，水轮抛起水花；Kimi从对岸转身跟随。 | 水车、桥、水花 | whale_rain_walk |
+| L17 71.75–75.15s | 又卷入一帘时光入水 | waterfallOfTime | kimi、whale | Kimi沿瀑布侧岸靠近并回身引路；鲸鱼娘乘纸船卷入翻页水帘。 | 怀表、翻页、音符、纸船 | kimi_walk_story |
+| L18 75.25–78.65s | 让所有很久很久以前 | sunsetFleet | whale | 鲸鱼娘沿暮色河湾挥手领航；纸船队穿桥而过，镜头从船头推向灯火。 | 折纸船、桥灯、河面 | whale_greet_wave |
+| L19 78.75–85.60s | 都走到幸福结局的时刻 | castleHarborCast → harborHomecoming | claude、whale、doubao、gemini、qwen、kimi、zai、gpt | Claude点亮港湾烟火；贴水码头切镜后，她与小红帽把徽记递向鲸鱼娘。 | 王城、烟花、迎宾队、码头徽记 | claude_light_firework |
+| L20 97.45–100.85s | 听说睡美人被埋葬 | sleepingRoseTower | claude、whale | Claude用既有闭眼姿势在花床边静卧，花瓣轻覆；咒语褪去后睁眼走出，鲸鱼娘接应。 | 玫瑰塔、花床、时钟 | 自定义 rose-spell-wake |
+| L21 100.95–104.35s | 小人鱼在眺望金殿堂 | mermaidPalace | whale、kimi | 鲸鱼娘横游珍珠河，转身望金殿并追逐反光；Kimi在拱门旁引路。 | 珍珠河、金殿、气泡 | 自定义 mermaid-turn-to-palace |
+| L22 104.45–107.85s | 听说阿波罗变成金乌 | goldenSunbirdShot | gpt、whale | 金乌展翼升起；GPT保持龙娘外观沿光环绕飞，鲸鱼娘仰头指向金乌。 | 金乌、日轮、龙翼 | 自定义 dragon-sunbird-orbit |
+| L23 107.95–111.35s | 草原有奔跑的剑齿虎 | tigerPlain | whale、kimi | 三只剑齿虎交错奔跑；鲸鱼娘沿坡追赶，Kimi走近并指向虎群。 | 剑齿虎、草叶、坡路 | kimi_walk_story |
+| L24 111.45–114.65s | 听说匹诺曹总说着谎 | puppetTheater | gemini、whale | Gemini拉动木偶线；匹诺曹说谎时鼻子分拍伸长，鲸鱼娘经过台前。 | 木偶、吊线、长鼻 | 自定义 puppet-string-lie |
+| L25 114.75–118.05s | 侏儒怪拥有宝石满箱 | gemHoard | zai、gpt、whale | Zai走近并托出跃起的宝石；GPT守洞，鲸鱼娘提灯探入。 | 宝石箱、浮起的宝石、提灯 | zai_reach |
+| L26 118.15–121.45s | 听说悬崖有棵长生树 | lifeTree | kimi、whale | Kimi沿石阶上行并回身招呼；长生树由根至冠依次亮起开花。 | 悬崖阶梯、长生树 | kimi_walk_story |
+| L27 121.55–125.05s | 红鞋子不知疲倦地在跳舞 | redShoesDance | doubao、whale | 豆包保持小红帽红披风，踏步转圈；独立红舞鞋交替旋转，鲸鱼娘加入。 | 音乐盒、红舞鞋、舞台灯圈 | 自定义 red-shoe-twirl |
+| L28 125.15–128.35s | 只有睿智的河水知道 | deepSeaTruth | whale、kimi | 鲸鱼娘穿过水流，Kimi沿拱门游移、回身指向水纹；两人轨迹持续变化。 | 珍珠拱门、泡泡 | kimi_swim |
+| L29 128.45–131.85s | 睡美人逃避了生活的煎熬 | alarmClockEscape | claude、whale | Claude沿摇摆钟阵反向奔跑并回身越过卷轴；鲸鱼娘迎面接应。 | 时钟、卷轴、提灯 | claude_walk_2leg |
+| L30 131.95–134.85s | 小人鱼把阳光抹成眼影 | whaleEyeshadow | whale | 鲸鱼娘抬手接住日光，把金色光痕从眼尾抹过；转头时光痕跟随。 | 水面日光、金色眼侧光痕 | 自定义 sunlight-eyeshadow |
+| L31 134.95–137.85s | 投进泡沫的怀抱 | pearlFoam | whale | 鲸鱼娘上浮并转向宫殿，泡沫从脚边围至肩侧后散开。 | 泡沫、宫殿、上升气泡 | 自定义 foam-embrace-rise |
+| L32 137.95–145.05s | 总有一条蜿蜒在童话镇里七彩的河 | daylightMapReturn | whale | 纸船鲸鱼娘走另一条河弯；切低机位掠过桥灯水花，不复刻首段地图。 | 地图纸船、桥灯、水花 | whale_point_at |
+| L33 145.15–148.65s | 沾染魔法的乖张气息 | bridgeDuet | gpt、gemini、whale | GPT将星火掷入断桥水面，涟漪弯折河流；Gemini转身接火花，鲸鱼娘跑过。 | 断桥、镜像水面、星火 | gpt_toss_star |
+| L34 148.75–152.35s | 却又在爱里曲折 | heartBend | claude、whale | Claude走出亭子转身递出发光心形；鲸鱼娘跑过弯流，心形落水漂走。 | 心形亭、弯流、心形光点 | 自定义 princess-heart-current |
+| L35 152.45–155.65s | 川流不息扬起水花 | watermillReturn | whale、kimi | 鲸鱼娘从近景水车下跑过；Kimi沿相反岸线走近，形成交叉动线。 | 水轮、水滴、石桥 | whale_rain_walk |
+| L36 155.75–159.15s | 又卷入一帘时光入水 | timeWaterfallReturn | kimi、whale | Kimi沿另一侧峭壁走近倒转怀表并回身招手；鲸鱼娘驾船切入时间缝隙。 | 倒转怀表、侧瀑布、纸船 | kimi_walk_story |
+| L37 159.25–162.65s | 让所有很久很久以前 | armada | whale | 鲸鱼娘领船队横穿河面；船只绕城堡从近景散向远处。 | 城堡、纸船舰队、故事徽记 | whale_greet_wave |
+| L38 162.75–165.85s | 都走到幸福结局的时刻 | fullCastCelebration | whale、gpt、claude、doubao、gemini、qwen、kimi、zai | 八位角色分组步行传灯，Claude烟火收束队伍；鲸鱼娘穿行中央。 | 灯笼、前景船队、城堡河湾 | claude_light_firework |
+| L39 165.95–172.55s | 总有一条蜿蜒在童话镇里梦幻的河 | dreamIslands | whale、gpt | 鲸鱼娘沿浮空岛河岸跑向村庄；GPT龙娘掠过并俯冲穿过瀑布。 | 浮空岛、瀑布、龙影 | whale_rain_walk |
+| L40 172.65–176.55s | 分隔了理想分隔现实 | idealVsReality | kimi、whale | Kimi沿理想/现实边界走过并回身对照；鲸鱼娘横穿倒影山脊。 | 浮岛、霓虹倒影、山脊 | kimi_walk_story |
+| L41 176.65–179.85s | 又在前方的山口汇合 | mountainConvergence | whale | 鲸鱼娘跑向山口；两股异色河流随她前进汇合。 | 双河、山口、金色光路 | whale_rain_walk |
+| L42 179.95–183.05s | 川流不息扬起水花 | sakuraRiver | whale | 鲸鱼娘骑行过桥，车轮随横移转动，花瓣逆风掠过并落水。 | 自行车、樱花、白天鹅 | 自定义 bicycle-sakura-crossing |
+| L43 183.15–186.65s | 又卷入一帘时光入水 | mirrorTimeDive | kimi、whale | Kimi拉动倒悬时钟链，水面翻成镜像钟盘；鲸鱼娘由岸跑转为潜水。 | 镜面钟盘、时钟链、水帘 | kimi_walk_story |
+| L44 186.75–190.05s | 让所有很久很久以前 | twilightFleet | whale | 低机位中鲸鱼娘挥手领航；纸船沿暮色反向河道驶向王城。 | 暮色、逆向纸船、河纹 | whale_greet_wave |
+| L45 190.15–193.05s | 都走到幸福结局的时刻 | castleBlessing | claude、whale、doubao、gemini、qwen、kimi、zai、gpt | 群像沿城门纵深行进并把徽记送入河环；Claude点亮收束光，GPT高处绕飞。 | 城门、徽记、发光河环 | 自定义 storybook-emblem-procession |
+| L46 193.10–195.65s | 又陌生 | parchmentReveal | whale、claude | 鲸鱼娘翻转旧地图后起步；Claude沿页边走远，河流墨迹改向。 | 羊皮地图、墨迹河道、尘光 | 自定义 parchment-turn-reveal |
+| L47 195.80–208.40s | 啊～～ | sketchBridge → observatoryLantern | whale、qwen | 鲸鱼娘逐段点亮手绘桥线；观星台切镜后千问与鲸鱼娘抬灯目送首批灯升空。 | 书页、桥线、观星台、孔明灯 | whale_point_at |
+| L48 208.50–222.40s | 啊～～  啊～～ | observatoryLantern → milkyBoat → emblemOrbs | qwen、whale、gpt | 千问和鲸鱼娘放灯；纸船载鲸鱼娘与GPT升入银河，六枚徽记跃成光球。 | 孔明灯、银河纸船、故事徽记 | 自定义 lantern-to-galaxy |
+| L49 222.50–236.40s | 啊～～  啊～～  啊～～ | emblemOrbs → constellationLinks → cosmicCast | whale、kimi、gpt、claude、doubao、gemini、qwen、zai | Kimi与鲸鱼娘连起河形星座；群像移步传递徽记，GPT沿星环飞行。 | 星座连线、星环、移动徽记 | gpt_toss_star |
+| L50 236.50–240.00s | 啊～～  啊～～  啊～～  啊～～ | cosmicCast | whale、gpt、claude、doubao、gemini、qwen、kimi、zai | 群像错落转向传递徽记；鲸鱼娘挥别，星河收束回书页，不定格合照。 | 星环、童话徽记、书页方向 | 自定义 constellation-storybook-handoff |
+
 
 ## 画面与声音实现
 
