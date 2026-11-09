@@ -26,6 +26,8 @@ Day12当前指定原音源版入口为 `Day/Day12/README.md`、`Day/Day12/Day12�
 
 ## 独立歌词MV现行入口（覆盖下方 v2 历史记录）
 
+- **16-bit 轻像素立体书/RPG 番外MV复刻超越（《达拉崩吧》《童话镇》等）**：统一调用 `.claude/skills/pixel-mv-remake/SKILL.md`（环境初始化 `sh .claude/skills/pixel-mv-remake/scripts/bootstrap.sh`，像素中文字库自动烘焙 `node .claude/skills/pixel-mv-remake/scripts/bake_glyphs.mjs`）。强制规则：主角与全部地图小人用**鲸鱼娘 (`whale`)**、恶龙/巨兽用 **GPT 龙娘 (`gpt`)**、**公主必须用 Claude 大小姐 (`claude`) 严禁豆包演公主**；角色采用 `640×360` 轻像素层保证清晰辨识度；开场 1–2 秒闪电跃入立体书，前奏/间奏/吟唱段高频多场景切镜并配齐语义道具，遵循零水印新规。
+
 《把回忆拼好给你》以 v13 为进行中返工，保留 v8 原背景与原曲，主角使用新版 Day12 鲸娘，七位配角须按歌词有实质动作；不是 Day 正片，也未通过人工全片动态验收。当前入口 `番外MV/把回忆拼好给你/README_v13制作状态.md`，素材进度 `assets/ai-girls/lyric-action-v13/生成进度.md`。不要把 v13 动作/字幕风格规则强加到 Day 正片。
 
 ## 独立歌词MV v2 历史记录（已被上文覆盖）

@@ -1,0 +1,47 @@
+{
+  "project": "童话镇",
+  "covers": [
+    {
+      "file": "封面/童话镇MV_封面_3比4.png",
+      "width": 1080,
+      "height": 1440,
+      "ratio": "3:4",
+      "watermark": false,
+      "persistentCornerBadge": false,
+      "progressBar": false,
+      "arabicNumeralsInArtwork": false,
+      "textSafe": true,
+      "texts": [
+        {
+          "text": "《童话镇》",
+          "x0": 348,
+          "y0": 120,
+          "x1": 732,
+          "y1": 198
+        }
+      ],
+      "sha256": "17ea1fbb992fe72588c1da9f3f86ab9413f064672701e3d70f0757b371386590"
+    },
+    {
+      "file": "封面/童话镇MV_封面_4比3.png",
+      "width": 1440,
+      "height": 1080,
+      "ratio": "4:3",
+      "watermark": false,
+      "persistentCornerBadge": false,
+      "progressBar": false,
+      "arabicNumeralsInArtwork": false,
+      "textSafe": true,
+      "texts": [
+        {
+          "text": "《童话镇》",
+          "x0": 528,
+          "y0": 96,
+          "x1": 912,
+          "y1": 174
+        }
+      ],
+      "sha256": "fbbf4164a6216348172863125d90233ac2c78f5dc455056fa5986587bfb5d1af"
+    }
+  ]
+}
