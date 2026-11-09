@@ -11,24 +11,34 @@ sys.path[:0] = [str(ROOT / 'tools/agent'), str(ROOT / 'tools/剧本')]
 from persona import AGENT_ID, CHARACTER_ID, PERSONA_ID, VISUAL_ID
 from provider import ProviderError, from_env
 from runtime import build_messages
-from 剧情 import GUESTS, check
+from 剧情 import check
 
 SKILL = '00_运营总览/skills/剧情生成'
 REFERENCES = ('persona.md', 'beats.md', 'research.md')
+
+
+def prev_script(root, day):
+    """上一集锁定口播：与 gate.py 一致，标准名优先、用户确认版次之。"""
+    base = Path(root) / 'Day' / f'Day{day - 1}'
+    for name in (f'Day{day - 1}配音台词.txt', f'Day{day - 1}配音台词_用户版.txt'):
+        candidate = base / name
+        if candidate.is_file():
+            return f'Day/Day{day - 1}/{name}', candidate
+    raise ValueError(f'缺上一集锁定口播：{base}')
 
 
 def prepare(root, day, guest):
     """读取必需上下文全文；缺任何文件就失败，不降级为只读标题。"""
     if day < 12:
         raise ValueError('创作入口用于 Day12 起的新稿，不改历史锁定稿')
-    if guest not in GUESTS:
-        raise ValueError('客人未注册')
+    # 2026-11-09：一天一客门禁已删除，guest 只是自由文本标签，不再校验注册名单。
     root = Path(root)
+    prev_rel, _ = prev_script(root, day)
     paths = [
         'agent.md', f'{SKILL}/SKILL.md',
         *(f'{SKILL}/references/{name}' for name in REFERENCES),
-        f'Day{day - 1}/Day{day - 1}配音台词.txt',
-        f'Day{day}/Day{day}方向.md',
+        prev_rel,
+        f'Day/Day{day}/Day{day}方向.md',
     ]
     sources, sections = [], []
     for rel in paths:
@@ -43,10 +53,13 @@ def prepare(root, day, guest):
         sources.append({'path': rel, 'sha256': hashlib.sha256(raw).hexdigest()})
         sections.append(f'--- 项目材料：{rel} ---\n{text}')
     task = (
-        f'写 Day{day} 待审核纯口播，今天只来{guest}。开头找新朋友来帮忙，'
-        '请人处理上一集未完成的任务；求职梗制造障碍，主角追问并动手纠正，'
-        '最后把具体未完成项留给下集。保留大肥鱼身份、现行外形和本鲸称呼，只移植魔丸人格。'
+        f'写 Day{day} 待审核纯口播，本轮标签：{guest}。'
+        '从上一集留下的具体缺口起戏，结构、请几位客人、梗放在哪一段都由故事决定；'
+        '主角抓漏洞、追问并动手纠正，让工作向前一步，最后把具体未完成项留给下集。'
+        '保留大肥鱼身份、现行外形和本鲸称呼，只移植魔丸人格。'
         '当集方向是待审核方案，不是已发生事实。创作演出不冒充真实招聘结果。'
+        '2026-11-09 起不再有「三拍顺序 / 一天一客 / 逐字接上集原句 / 零句尾语气词 / 零阿拉伯数字」门禁；'
+        '数字若出现必须可回溯、不编造。'
         '仅输出逐行口播，不输出 Markdown、分镜、标题、解释或检查报告。'
     )
     messages = build_messages(task, '\n\n'.join(sections), {'hits': []}, 'creation', '')
@@ -70,7 +83,8 @@ def generate(root, day, guest, provider=None):
     except ProviderError as exc:
         return dict(public, ok=False, code=exc.code, error=str(exc))
     lines = [line.strip() for line in reply.splitlines() if line.strip()]
-    prev = (Path(root) / f'Day{day-1}/Day{day-1}配音台词.txt').read_text(encoding='utf-8').splitlines()
+    _rel, prev_path = prev_script(root, day)
+    prev = prev_path.read_text(encoding='utf-8').splitlines()
     errors, notes = check(lines, prev, guest)
     if any(line.startswith(('#', '```', '- ')) for line in lines):
         errors.append('创作输出不是逐行纯口播')
@@ -85,7 +99,7 @@ def generate(root, day, guest, provider=None):
 def main(argv=None):
     parser = argparse.ArgumentParser(description='大肥鱼角色 / 魔丸人格的剧情创作')
     parser.add_argument('--day', type=int, required=True)
-    parser.add_argument('--guest', required=True, choices=GUESTS)
+    parser.add_argument('--guest', required=True, help='自由文本标签；已删除一天一客门禁')
     parser.add_argument('--prepare-only', action='store_true', help='仅组装可审查请求包，不调用模型')
     args = parser.parse_args(argv)
     try:

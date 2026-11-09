@@ -4,8 +4,10 @@
 
 红线见 `00_运营总览/画面红线_不要出现的东西_2026-10-29.md`：
   · 画面不写粉丝数、播放量、目标值（`2,108 / 10,000` 这种）；
-  · 不画进度条 / 音量条 / 加载条 / 数据曲线 / 账本表；
-  · 口播不念阿拉伯数字。
+  · 不画进度条 / 音量条 / 加载条 / 数据曲线 / 账本表。
+
+2026-11-09：**「口播零阿拉伯数字」门禁已按用户要求删除**，
+配音 TXT / 字幕 JSON 不再因数字被判违规；其余画面红线继续生效。
 
 用法：
   python3 tools/剧本/画面红线体检.py            # 有违规 → 退出码 1
@@ -19,7 +21,6 @@
 from __future__ import annotations
 
 import argparse
-import json
 import re
 import sys
 from pathlib import Path
@@ -66,20 +67,13 @@ CHECKS = [
      "片尾卡整张都不做：最后一句说完就结束（见 00_运营总览/画面红线_…_2026-10-29.md 第二节）"),
 ]
 
-# 口播数字：只查 LINES 里汉字句中的阿拉伯数字（字幕/卡片里的秒数不算）
-LINES_BLOCK = re.compile(r"const LINES = \[(.*?)\n\];", re.S)
-ARABIC = re.compile(r"\d")
-
-
 def scan_file(path: Path) -> list[tuple[str, int, str, str]]:
     out = []
     text = path.read_text(encoding="utf-8", errors="replace")
-    if path.suffix == '.txt':
-        return [("口播数字", i, ln, "口播零阿拉伯数字") for i,ln in enumerate(text.splitlines(),1) if ARABIC.search(ln)]
-    if path.suffix == '.json':
-        data = json.loads(text)
-        screens = data.get('screens', [])
-        return [("口播数字", i, sc['text'], "外置字幕口播数字") for i,sc in enumerate(screens,1) if ARABIC.search(sc.get('text',''))]
+    # 2026-11-09：口播/字幕的「零阿拉伯数字」门禁已删除；TXT 与字幕 JSON
+    # 不再有专门判定，只保留下方对渲染源码的画面红线检查。
+    if path.suffix in ('.txt', '.json'):
+        return out
     lines = text.splitlines()
     for name, rx, hint in CHECKS:
         for i, ln in enumerate(lines, 1):
@@ -88,13 +82,6 @@ def scan_file(path: Path) -> list[tuple[str, int, str, str]]:
                 continue                       # 注释里写「不许画进度条」不算违规
             if rx.search(ln):
                 out.append((name, i, ln.strip()[:120], hint))
-    m = LINES_BLOCK.search(text)
-    if m:
-        head_line = text[: m.start()].count("\n") + 1
-        for k, ln in enumerate(m.group(1).splitlines()):
-            if ARABIC.search(ln):
-                out.append(("口播数字", head_line + k + 1, ln.strip()[:120],
-                            "口播不许念数字：换成「一大堆」这种口语量词"))
     return out
 
 

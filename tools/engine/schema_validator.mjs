@@ -24,11 +24,11 @@ export { assertOpenerUncrowded, assertShotDensity, frame0StaticProps } from './c
 
 const VERBS = new Set(['drop_bonk', 'slap_deflect', 'tug_grab', 'knock_bowl', 'unroll_scroll', 'sink_drop', 'mark_strike', 'handoff']);
 const NEEDS_AT = new Set(['tug_grab', 'knock_bowl', 'mark_strike', 'handoff', 'unroll_scroll']);
-const ARABIC = /\d/;
+// 2026-11-09：「零阿拉伯数字」文案门禁已按用户要求删除；文案可含数字，
+// 但事实仍须可回溯（见 agent.md 第 2、3、4 条）。画面上的粉丝数/进度条等红线不变。
 
 function checkHookText(label, s) {
   if (typeof s !== 'string' || !s.trim()) throw new Error(`${label} 不能为空`);
-  if (ARABIC.test(s)) throw new Error(`${label} 不得含阿拉伯数字：${s}`);
   if (s.length > 22) throw new Error(`${label} 过长（>22 字）：${s}`);
 }
 
@@ -218,7 +218,7 @@ export function validateSpec(spec, opts = {}) {
       if (it.verb === 'sink_drop' && !Array.isArray(it.land) && !Array.isArray(it.at)) throw new Error(`${where}.interactions[${j}] sink_drop 必须声明 land 落点`);
       if (NEEDS_AT.has(it.verb) && !Array.isArray(it.at) && !Array.isArray(it.land)) throw new Error(`${where}.interactions[${j}] ${it.verb} 必须声明 at 落点`);
       if (it.verb === 'handoff' && !Number.isInteger(it.toActor)) throw new Error(`${where}.interactions[${j}] handoff 必须声明 toActor`);
-      if (it.text && ARABIC.test(it.text)) throw new Error(`${where}.interactions[${j}] 道具文案不得含阿拉伯数字`);
+      // 2026-11-09：道具文案的阿拉伯数字门禁已删除，不再校验。
       if (cueCount != null && opts.cues) {
         const lineNo = it.wordLine ?? shot.fromLine;
         const text = opts.cues[lineNo - 1]?.text || '';

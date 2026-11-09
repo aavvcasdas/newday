@@ -55,7 +55,10 @@ class CreationSkillTests(unittest.TestCase):
         self.assertIn((ROOT / 'Day/Day12/Day12方向.md').read_text().rstrip(), user)
         self.assertIn('先把不确定的', provider.reply)
         self.assertIn('name: 剧情生成', user)
-        self.assertIn('三拍是一条因果链', user)
+        # 2026-11-09：三拍顺序 / 一天一客等门禁已删除，beats.md 改为历史样例。
+        self.assertIn('Day12 写法样例（历史笔记，非门禁）', user)
+        self.assertIn('2026-11-09 用户删除五类文案门禁', user)
+        self.assertIn('已删除的口径', user)
         self.assertIn('角色不换，移植人格', user)
         self.assertIn('本轮通过 GitHub API 实读的 skill', user)
         self.assertEqual(len(result['sources']), 7)
@@ -71,12 +74,16 @@ class CreationSkillTests(unittest.TestCase):
 
     def test_missing_required_context_fails_closed(self):
         with tempfile.TemporaryDirectory() as tmp:
-            with self.assertRaises(OSError):
+            # 缺任一必需上下文都要 fail-closed；先缺上集口播就报 ValueError，
+            # 其余缺文件报 OSError，两者都算「没有降级成只读标题」。
+            with self.assertRaises((OSError, ValueError)):
                 creation.prepare(tmp, 12, '豆包')
         with self.assertRaises(ValueError):
             creation.prepare(ROOT, 11, '豆包')
-        with self.assertRaises(ValueError):
-            creation.prepare(ROOT, 12, '未注册客人')
+        # 2026-11-09：一天一客门禁已删除，任意 guest 标签都不再被拒。
+        packet = creation.prepare(ROOT, 12, '未注册客人')
+        self.assertEqual(packet['guest'], '未注册客人')
+        self.assertTrue(packet['messages'])
 
     def test_unconfigured_mock_and_failed_model_are_not_success(self):
         with patch.dict(os.environ, {}, clear=True):
@@ -90,35 +97,36 @@ class CreationSkillTests(unittest.TestCase):
         result = creation.generate(ROOT, 12, '豆包', CaptureProvider('  '))
         self.assertEqual(result['code'], 'empty')
 
-    def test_unrelated_or_markdown_model_output_rejected(self):
-        for text in ('任务做完了。', '# 剧情\n' + CaptureProvider().reply):
-            result = creation.generate(ROOT, 12, '豆包', CaptureProvider(text))
-            self.assertFalse(result['ok'], result)
-            self.assertEqual(result['code'], 'draft_invalid')
+    def test_markdown_model_output_rejected_but_free_prose_is_not(self):
+        # 2026-11-09：五类文案门禁已删除，短稿不再因结构被拒；只挡 Markdown 形状。
+        result = creation.generate(ROOT, 12, '豆包', CaptureProvider('任务做完了。'))
+        self.assertTrue(result['ok'], result)
+        result = creation.generate(ROOT, 12, '豆包', CaptureProvider('# 剧情\n' + CaptureProvider().reply))
+        self.assertFalse(result['ok'], result)
+        self.assertEqual(result['code'], 'draft_invalid')
 
     def test_old_plot_may_motivate_invitation_before_meme(self):
         prev = plot.load_lines(ROOT / 'Day/Day11/Day11配音台词.txt')
         curr = plot.load_lines(ROOT / 'Day/Day12/Day12配音台词.txt')
-        # 这个完全合法的动机，在旧版里会被误当作第三拍起点，把求职梗切掉。
+        # 三拍顺序门禁已删除；这里只确认插入任意动机行都不会再被退稿。
         curr.insert(1, '老大可能换新工作。')
         self.assertFalse(plot.check(curr, prev, '豆包')[0])
 
-    def test_meme_before_invitation_cannot_count_and_guest_not_late(self):
+    def test_meme_before_invitation_and_late_guest_are_allowed_now(self):
         prev = plot.load_lines(ROOT / 'Day/Day11/Day11配音台词.txt')
         curr = ['豆包开了录取通知。', '找新朋友来帮忙。', *prev]
-        errors, _ = plot.check(curr, prev, '豆包')
-        self.assertTrue(any('求职梗' in error for error in errors))
+        self.assertFalse(plot.check(curr, prev, '豆包')[0])
         curr = plot.load_lines(ROOT / 'Day/Day12/Day12配音台词.txt')
         curr = [line.replace('豆包', '朋友') for line in curr] + ['豆包来了。']
-        errors, _ = plot.check(curr, prev, '豆包')
-        self.assertTrue(any('不要埋到旧剧情后面' in error for error in errors))
+        self.assertFalse(plot.check(curr, prev, '豆包')[0])
 
-    def test_single_guest_and_no_speaking_benyu(self):
+    def test_multiple_guests_allowed_but_benyu_still_silent(self):
         curr = plot.load_lines(ROOT / 'Day/Day12/Day12配音台词.txt')
         prev = plot.load_lines(ROOT / 'Day/Day11/Day11配音台词.txt')
-        for extra, signal in [('千问也来了。', '一个客人'), ('笨鱼说：录取了。', '笨鱼不新增对白')]:
-            errors, _ = plot.check(curr + [extra], prev, '豆包')
-            self.assertTrue(any(signal in error for error in errors))
+        # 一天一客门禁已删除：多位客人不再报错。
+        self.assertFalse(plot.check(curr + ['千问也来了。'], prev, '豆包')[0])
+        errors, _ = plot.check(curr + ['笨鱼说：录取了。'], prev, '豆包')
+        self.assertTrue(any('笨鱼不新增对白' in error for error in errors))
 
     def test_markdown_and_txt_are_same_current_script(self):
         text = (ROOT / 'Day/Day12/Day12配音台词.txt').read_text()

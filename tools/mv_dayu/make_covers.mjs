@@ -147,7 +147,7 @@ async function main() {
     ctx.fillStyle = '#231F20';
     ctx.fillRect(0, dstY + dstH - 4, w, h - (dstY + dstH - 4));
 
-    // 顶部剧名胶囊签（无任何阿拉伯数字、无任何水印）
+    // 顶部剧名胶囊签（封面版式约定：标题文字不写阿拉伯数字；非 Day 正传剧本门禁，见 agent.md 文首 2026-11-09 覆盖条）
     drawPill(ctx, w / 2 - 228, 54, 456, 56, 28, 'rgba(15, 23, 38, 0.82)', 'rgba(255, 224, 130, 0.62)', 2.2);
     drawCoverText(ctx, '我怀疑大禹治水 · 番外MV', w / 2, 92, 31, '#FFE7A3', {
       stroke: null,

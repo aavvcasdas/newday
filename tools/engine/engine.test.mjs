@@ -67,8 +67,9 @@ test('合法 spec 通过；缺配套物/越界道具/数字横幅被拒', () => 
   assert.throws(() => validateSpec(noCompanion, { cueCount: 2 }), /配套物/);
   const over = goodSpec(); over.opener.foregroundProps[0].y = 590;
   assert.throws(() => validateSpec(over, { cueCount: 2 }), /600/);
+  // 2026-11-09：零阿拉伯数字门禁已删除，含数字的文案不再被拒。
   const digits = goodSpec(); digits.opener.headlineHighlight = '涨了100呀';
-  assert.throws(() => validateSpec(digits, { cueCount: 2 }), /阿拉伯数字/);
+  assert.equal(validateSpec(digits, { cueCount: 2 }).day, 11);
   const idleShot = goodSpec();
   idleShot.shots[0].actors = [{ pose: 'idle', x: 400, y: 600 }, { pose: 'idle', x: 800, y: 600 }];
   assert.throws(() => validateSpec(idleShot, { cueCount: 2 }), /静立|同姿|罚站/);

@@ -82,10 +82,9 @@ test('Day14：规划时间轴必须是未实测，不许被当成对齐结果', 
   }
 });
 
-test('Day14：口播零阿拉伯数字，且不出现进度条/账本类禁词', () => {
+// 2026-11-09：「口播零阿拉伯数字」门禁已按用户要求删除；只保留画面红线禁词。
+test('Day14：口播不出现进度条/账本类画面禁词（数字门禁已删除）', () => {
   const lines = read(SCRIPT).split('\n').filter((l) => l.trim());
-  const withDigits = lines.filter((l) => /\d/.test(l));
-  assert.deepEqual(withDigits, [], `口播里出现了阿拉伯数字：\n${withDigits.join('\n')}`);
   for (const bad of ['进度条', '余额条', '粉丝数', '播放量']) {
     assert.ok(!lines.some((l) => l.includes(bad)), `口播里出现了画面禁词：${bad}`);
   }

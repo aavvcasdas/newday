@@ -67,16 +67,17 @@ const r = spawnSync('node', [engine, '--spec', spec, ...process.argv.slice(2)], 
 process.exit(r.status ?? 1);
 """
 
-SCRIPT_TEMPLATE = "（待填。先读 agent.md。开头说找新朋友来帮忙，再写求职梗，再接上一集留在桌上的事。）\n"
+SCRIPT_TEMPLATE = "（待填。先读 agent.md 文首覆盖条。结构、客人数、语气与数字写法自由；事实与数字仍须可回溯。）\n"
 COPY_TEMPLATE = """# Day{day} 文案：{title}
 
 先读 `agent.md`。不读不写。
 
-以后每一集都从这一句开始。锁定口播、事实和不能改的字，以 `agent.md` 为准。
+锁定口播、事实和不能改的字，以 `agent.md` 为准。
+2026-11-09 起三拍顺序 / 一天一客 / 逐字接上集原句 / 零句尾语气词 / 零阿拉伯数字五项门禁已删除。
 
 ## 这一集
 
-待填。三拍：开头说找新朋友来帮忙，再写听得懂的求职梗，再接上一集留在桌上的事。
+待填。从上一集留下的具体缺口起戏，让主角抓漏洞、追问、动手纠正，把工作向前推一步。
 """
 
 
@@ -87,8 +88,7 @@ def main(argv=None):
     args = ap.parse_args(argv)
     if args.day < 1:
         raise SystemExit('day 必须为正整数')
-    if any(ch.isdigit() for ch in args.title):
-        raise SystemExit('标题不得含阿拉伯数字（画面/口播红线）')
+    # 2026-11-09：标题含阿拉伯数字不再被拒（零阿拉伯数字门禁已删除）。
     day_dir = ROOT / f'Day{args.day}'
     make_dir = ROOT / 'tools' / f'day{args.day}制作'
     if day_dir.exists() or make_dir.exists():

@@ -1,4 +1,4 @@
-"""剧情承接：接上一日，不按字数退稿。"""
+"""剧情.py 回归：2026-11-09 五类文案门禁已删除，只留少量底线。"""
 
 import subprocess
 import sys
@@ -20,67 +20,67 @@ PREV = """老大可能换新工作。
 本鲸绝不摸鱼
 """
 
-HOOKED = """找新朋友来帮忙。
-这是一句故意写得很长的话，用来证明剧情生成不再因为超过二十个字就退稿，不能为了门禁把这件事切碎。
-新朋友只来了一个。豆包。
-有人问：这个岗，没经验，能去吗。她答：录取信，办好了。
-昨天敲代码的，先划掉。太远的也还在。
-老大可能换新工作。
-先吃一口饭。
+# 故意同时踩中全部五类已删除的门禁：没有「找新朋友来帮忙」、
+# 没有求职梗顺序、多位客人同台、句尾语气词、阿拉伯数字、
+# 而且完全不复述上一集开头/结尾的原句。
+FREE = """诶？书一合上，本鲸还是焦的呢。
+龙娘把两只沙漏往桌上一放呀。
+大小姐、千问、Kimi、Gemini、智谱、豆包，全挤到工作台前啦。
+26 镜、96 处音效、185 张补画，谁把数字加成一锅了嘛？
+本鲸没接这锅，先把那张焦的单独夹起来吧。
 """
 
 
 class PlotSkillTests(unittest.TestCase):
+    def test_deleted_gates_are_not_failures(self):
+        errors, notes = plot.check(FREE.strip().splitlines(), PREV.strip().splitlines(), "任意标签")
+        self.assertFalse(errors, errors)
+        self.assertTrue(any("已删除门禁" in note for note in notes))
+        for word in ("三拍顺序", "一天一客", "零句尾语气词", "零阿拉伯数字"):
+            self.assertTrue(any(word in note for note in notes))
+
+    def test_no_prev_no_guest_still_ok(self):
+        self.assertFalse(plot.check(["门响了呀。", "来了 8 位。"])[0])
+
     def test_retired_lengths_are_not_failures(self):
-        errors, notes = plot.check(HOOKED.strip().splitlines(), PREV.strip().splitlines(), "豆包")
+        long_line = "这是一句故意写得很长的话，用来证明剧情生成不再因为超过二十个字就退稿，也不能为了门禁把事情切碎。"
+        errors, notes = plot.check([long_line], PREV.strip().splitlines())
         self.assertFalse(errors, errors)
         self.assertTrue(any("句长门禁不启用" in note for note in notes))
-        self.assertGreater(max(plot.han_len(line) for line in HOOKED.splitlines()), 20)
+        self.assertGreater(plot.han_len(long_line), 20)
 
-    def test_cold_open_fails_without_mentioning_length(self):
-        cold = ["门响了。", "只有豆包。", "对不起，已经写上。"]
-        errors, _notes = plot.check(cold, PREV.strip().splitlines(), "豆包")
-        self.assertTrue(errors)
-        self.assertFalse(any("字" in item and "超过" in item for item in errors))
-        self.assertTrue(any("找新朋友" in item for item in errors))
+    def test_bottom_lines_still_enforced(self):
+        for line, signal in [
+            ("本鱼回来了。", "自称口径"),
+            ("笨鱼说：录取了。", "笨鱼不新增对白"),
+            ("狗屁不通。", "黑名单"),
+        ]:
+            errors, _ = plot.check([line])
+            self.assertTrue(any(signal in item for item in errors), (line, errors))
 
-    def test_plot_before_friend_fails(self):
-        late = ["敲代码的，先划掉。", "太远的还在。", "老大可能换新工作。", "豆包才来。"]
-        errors, _notes = plot.check(late, PREV.strip().splitlines(), "豆包")
-        self.assertTrue(any("找新朋友" in item for item in errors))
-
-    def test_particle_digit_and_second_guest(self):
-        base = HOOKED.strip().splitlines()
-        particle = plot.check(base + ["本鲸不收呀。"], PREV.strip().splitlines(), "豆包")[0]
-        self.assertTrue(any("语气词" in item for item in particle))
-        digit = plot.check(base + ["护照办了100张。"], PREV.strip().splitlines(), "豆包")[0]
-        self.assertTrue(any("数字" in item for item in digit))
-        extra = plot.check(base + ["大小姐也进门。"], PREV.strip().splitlines(), "豆包")[0]
-        self.assertTrue(any("一个客人" in item for item in extra))
-
-    def test_day12_hooks_day11(self):
+    def test_day12_locked_script_still_passes(self):
         prev = plot.load_lines(ROOT / "Day/Day11/Day11配音台词.txt")
         curr = plot.load_lines(ROOT / "Day/Day12/Day12配音台词.txt")
         errors, notes = plot.check(curr, prev, "豆包")
         self.assertFalse(errors, errors)
-        joined = "\n".join(notes)
-        self.assertIn("老大可能换新工作", joined)
-        self.assertIn("敲代码的", joined)
+        self.assertTrue(any("已删除门禁" in note for note in notes))
 
-    def test_gate_script_uses_plot_not_cute(self):
+    def test_gate_script_stage_uses_plot_not_cute(self):
         with tempfile.TemporaryDirectory() as tmp:
             report = Path(tmp) / "gate_script_report.json"
             result = subprocess.run(
-                [sys.executable, ROOT / "tools/gate.py", "--day", "12", "--stage", "script", "--report", str(report)],
+                [sys.executable, ROOT / "tools/gate.py", "--day", "14", "--stage", "script", "--report", str(report)],
                 cwd=ROOT,
                 capture_output=True,
                 text=True,
             )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertIn("剧情承接", result.stdout)
+        self.assertIn("文案底线检查", result.stdout)
+        self.assertIn("已删除门禁", result.stdout)
         self.assertNotIn("呆萌体检", result.stdout)
+        self.assertNotIn("开头没有说找新朋友来帮忙", result.stdout)
 
-    def test_card_does_not_need_a_draft(self):
+    def test_card_is_reference_only(self):
         with tempfile.TemporaryDirectory() as tmp:
             prev = Path(tmp) / "prev.txt"
             prev.write_text(PREV, encoding="utf-8")
@@ -89,9 +89,9 @@ class PlotSkillTests(unittest.TestCase):
                 capture_output=True,
                 text=True,
             )
-            self.assertEqual(result.returncode, 0, result.stderr)
-            self.assertIn("老大可能换新工作", result.stdout)
-            self.assertIn("句长门禁不启用", result.stdout)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("参考卡（非门禁", result.stdout)
+        self.assertIn("已删除门禁", result.stdout)
 
 
 if __name__ == "__main__":

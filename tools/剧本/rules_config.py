@@ -8,12 +8,11 @@ EVENT_SIGNALS = ['没','不','被','抢','摔','翻车','错','忘','扣','超',
 BAN_WORDS = ['擦屁股','屁股','屎','拉屎','撒尿','尿','粪便','排泄','放屁','狗屁']
 
 def text_redlines(lines):
+    """2026-11-09：零阿拉伯数字门禁已按用户要求删除；只保留自称口径。"""
     errors = []
     joined='\n'.join(lines)
     quoted=re.sub(r'「[^」]*」|“[^”]*”|『[^』]*』',lambda m:'\n'*m.group().count('\n'),joined).split('\n')
     for i, (text, plain) in enumerate(zip(lines,quoted), 1):
-        if re.search(r'\d', text):
-            errors.append(f'L{i} 口播数字：{text}')
         # 只剥离完整引述；“大肥鱼”可为称呼，不将所有提及误判成自称。
         if '本鱼' in plain or re.search(r'(?:我是|我叫|自称|本小姐是|本鲸是)(?:一只)?大肥鱼', plain):
             errors.append(f'L{i} 自称口径：默认本鲸，旧称须明确引述')
