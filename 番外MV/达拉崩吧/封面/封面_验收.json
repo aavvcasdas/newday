@@ -1,0 +1,106 @@
+{
+  "passed": true,
+  "watermark": false,
+  "covers": [
+    {
+      "ratio": "3:4",
+      "width": 1080,
+      "height": 1440,
+      "watermark": false,
+      "texts": [
+        {
+          "text": "达拉崩吧 · 番外MV",
+          "size": 31,
+          "bounds": {
+            "left": 398,
+            "top": 60,
+            "right": 682,
+            "bottom": 96
+          }
+        },
+        {
+          "text": "勇者名字装不下",
+          "size": 96,
+          "bounds": {
+            "left": 196,
+            "top": 133,
+            "right": 884,
+            "bottom": 242
+          }
+        },
+        {
+          "text": "把恶龙念成烤蛋挞",
+          "size": 98,
+          "bounds": {
+            "left": 140,
+            "top": 258,
+            "right": 940,
+            "bottom": 371
+          }
+        },
+        {
+          "text": "本鲸拔剑救豆包 · 结局直接烤焦啦",
+          "size": 36,
+          "bounds": {
+            "left": 259,
+            "top": 1333,
+            "right": 821,
+            "bottom": 1375
+          }
+        }
+      ],
+      "file": "番外MV/达拉崩吧/封面/达拉崩吧MV_封面_3比4.png",
+      "sha256": "a677641fd9c92fc19d5a3d1636db41388747011530bab2b5b2cf90e858fff4ae"
+    },
+    {
+      "ratio": "4:3",
+      "width": 1440,
+      "height": 1080,
+      "watermark": false,
+      "texts": [
+        {
+          "text": "达拉崩吧 · 番外MV",
+          "size": 29,
+          "bounds": {
+            "left": 141,
+            "top": 52,
+            "right": 407,
+            "bottom": 86
+          }
+        },
+        {
+          "text": "勇者名字装不下",
+          "size": 88,
+          "bounds": {
+            "left": 67,
+            "top": 111,
+            "right": 697,
+            "bottom": 211
+          }
+        },
+        {
+          "text": "把恶龙念成烤蛋挞",
+          "size": 92,
+          "bounds": {
+            "left": 67,
+            "top": 220,
+            "right": 817,
+            "bottom": 326
+          }
+        },
+        {
+          "text": "本鲸拔剑救豆包 · 结局直接烤焦啦",
+          "size": 34,
+          "bounds": {
+            "left": 454,
+            "top": 992,
+            "right": 986,
+            "bottom": 1032
+          }
+        }
+      ],
+      "file": "番外MV/达拉崩吧/封面/达拉崩吧MV_封面_4比3.png",
+      "sha256": "39b9dbfae901709ff61012531ec8d3c67cdabeba68c97ae4f0534e5de30697c1"
+    }
+  ]
+}
