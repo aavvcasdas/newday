@@ -4,7 +4,7 @@ set -eu
 
 HERE="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 export PATH="/home/user/bin:$PATH"
-export LD_LIBRARY_PATH="/home/user/bin/libs:${LD_LIBRARY_PATH:-}"
+export LD_LIBRARY_PATH="/home/user/bin/libs/lib:/home/user/bin/libs:/home/user/bin:${LD_LIBRARY_PATH:-}"
 export PLAYWRIGHT_CHROME="${PLAYWRIGHT_CHROME:-/home/user/bin/chrome-headless-shell}"
 export LEMO_OPUSCAR="${LEMO_OPUSCAR:-/home/user/lemo-opuscar}"
 PY="${LEMO_PYTHON:-$LEMO_OPUSCAR/.venv/bin/python}"

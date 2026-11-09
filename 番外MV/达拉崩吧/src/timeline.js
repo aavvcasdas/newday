@@ -62,10 +62,11 @@ export const SUBS = [
 
 // Screen-shake hit timestamps
 export const SHAKES = [
+  { t: 1.25, amp: 1 }, { t: 9.75, amp: 1 }, { t: 13.65, amp: 1 }, { t: 14.75, amp: 1 },
   { t: 20.85, amp: 1 }, { t: 22.35, amp: 1 }, { t: 23.25, amp: 1 },
   { t: 56.80, amp: 1 },
   { t: 63.80, amp: 1 }, { t: 64.55, amp: 1 }, { t: 65.30, amp: 1 }, { t: 66.05, amp: 2 },
-  { t: 79.40, amp: 1 },
+  { t: 71.40, amp: 1 }, { t: 79.10, amp: 1 },
   { t: 94.00, amp: 1 }, { t: 94.65, amp: 1 },
   { t: 113.05, amp: 1 }, { t: 115.00, amp: 1 },
   { t: 128.45, amp: 2 },
@@ -74,17 +75,21 @@ export const SHAKES = [
 
 // 16-bit Chiptune SFX cue events exported via core/render/events.mjs → mix.py
 export const EV = [
-  // Intro book, magic spark writing, cover flip & pop-up castle assembly
-  { t: 0.45, type: 'cursor' },
-  { t: 1.88, type: 'shimmer' },
-  { t: 3.42, type: 'cursor' },
-  { t: 7.15, type: 'start_confirm' },
-  { t: 7.42, type: 'book_open' },
-  { t: 8.20, type: 'card_flip', n: 0 },
-  { t: 9.95, type: 'palette_step', step: 1 },
-  { t: 11.90, type: 'palette_step', step: 2 },
-  { t: 13.85, type: 'palette_step', step: 3 },
-  { t: 15.85, type: 'heart_chime' },
+  // v4 Opening: 1.15–1.75s Lightning Book Entry + 5-Scene Kingdom Tour!
+  { t: 0.25, type: 'cursor' },
+  { t: 1.08, type: 'start_confirm' },
+  { t: 1.18, type: 'book_open' },
+  { t: 1.82, type: 'shimmer' },
+  { t: 2.35, type: 'palette_step', step: 3 },
+  { t: 5.88, type: 'coin_get' },
+  { t: 7.40, type: 'confirm_ding' },
+  { t: 9.22, type: 'window_open' },
+  { t: 9.70, type: 'sword_slash' },
+  { t: 10.60, type: 'sword_slash' },
+  { t: 11.50, type: 'ko_blink' },
+  { t: 12.65, type: 'dragon_eyes' },
+  { t: 14.72, type: 'thunder_dive' },
+  { t: 15.95, type: 'heart_chime' },
 
   // 4-cut Dragon raid
   { t: 20.25, type: 'alert_ping' },
@@ -104,10 +109,13 @@ export const EV = [
   { t: 40.40, type: 'map_pin', n: 3 },
   { t: 41.20, type: 'heart_chime' },
 
-  // Throne room dialogue & name overflow
+  // Throne room fanfare march, registration ledger, name brainstorm & overflow
+  { t: 42.20, type: 'confirm_ding' },
+  { t: 43.35, type: 'chest_open', n: 0 },
   { t: 44.30, type: 'window_open' },
   { t: 44.70, type: 'blip_queen' }, { t: 44.95, type: 'blip_queen' },
-  { t: 47.40, type: 'think_dot' }, { t: 48.10, type: 'think_dot' }, { t: 48.80, type: 'think_bulb' },
+  { t: 46.75, type: 'think_dot' }, { t: 47.68, type: 'think_dot' }, { t: 48.58, type: 'think_bulb' },
+  { t: 49.72, type: 'sword_unsheathe' },
   { t: 50.10, type: 'blip_whale' },
   { t: 51.75, type: 'rapid_type_whale' },
   { t: 53.35, type: 'overflow_buzz' },
@@ -121,23 +129,25 @@ export const EV = [
   { t: 65.30, type: 'stone_slam' },
   { t: 66.05, type: 'stone_slam_big' },
 
-  // Break interlude: scarf dash, tarot cards, seal stamp
-  { t: 67.00, type: 'dash_whoosh' },
-  { t: 70.75, type: 'chapter_gong' },
-  { t: 74.30, type: 'card_flip', n: 0 },
+  // Break interlude: Royal Forge, Stables Mount, Diagonal Showdown Crest, War-Table Tarot, World Map
+  { t: 66.85, type: 'sword_slash' },
+  { t: 67.85, type: 'confirm_ding' },
+  { t: 69.35, type: 'horse_neigh' },
+  { t: 71.38, type: 'chapter_gong' },
+  { t: 74.35, type: 'card_flip', n: 0 },
   { t: 75.05, type: 'card_flip', n: 1 },
-  { t: 75.80, type: 'card_flip', n: 2 },
-  { t: 76.55, type: 'card_flip', n: 3 },
-  { t: 77.35, type: 'confirm_ding' },
-  { t: 79.40, type: 'seal_stamp' },
+  { t: 75.75, type: 'card_flip', n: 2 },
+  { t: 76.45, type: 'card_flip', n: 3 },
+  { t: 77.25, type: 'confirm_ding' },
+  { t: 79.10, type: 'seal_stamp' },
   { t: 80.50, type: 'map_pin', n: 0 },
-  { t: 82.20, type: 'map_pin', n: 1 },
+  { t: 82.00, type: 'map_pin', n: 1 },
   { t: 83.20, type: 'map_pin', n: 2 },
   { t: 84.20, type: 'map_pin', n: 3 },
 
-  // Verse 2: Horseback, monster battle, +12 coins, level up, 3 chests, blizzard & moonlight
-  { t: 87.55, type: 'horse_neigh' },
-  { t: 91.50, type: 'gate_open' },
+  // Verse 2: Courtyard departure, drawbridge charge, monster battle, +12 coins, level up, 3 chests, blizzard & moonlight
+  { t: 86.75, type: 'horse_neigh' },
+  { t: 89.30, type: 'gate_open' },
   { t: 93.65, type: 'sword_slash' },
   { t: 94.35, type: 'sword_slash' },
   { t: 94.85, type: 'ko_blink' },
@@ -153,9 +163,9 @@ export const EV = [
   // 109.6 – 110.5s: deliberate quiet organic breath before entering the dark cave (DIRECTOR.md §6)
   { t: 109.85, type: 'hero_breath' },
 
-  // Cave encounter, giant eyes, VS, dragon name & inventory burn
+  // Cave hoard encounter, giant eyes, VS, dragon name & inventory burn
   { t: 110.55, type: 'encounter_swirl' },
-  { t: 112.65, type: 'alert_ping' },
+  { t: 112.20, type: 'alert_ping' },
   { t: 113.05, type: 'dragon_eyes' },
   { t: 114.70, type: 'sword_unsheathe' },
   { t: 115.05, type: 'vs_clash' },
