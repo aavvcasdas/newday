@@ -72,7 +72,9 @@ def scan_file(path: Path) -> list[tuple[str, int, str, str]]:
     text = path.read_text(encoding="utf-8", errors="replace")
     # 2026-11-09：口播/字幕的「零阿拉伯数字」门禁已删除；TXT 与字幕 JSON
     # 不再有专门判定，只保留下方对渲染源码的画面红线检查。
-    if path.suffix in ('.txt', '.json'):
+    # .md 是文档不是渲染源码：分镜/剧本里写「不画进度条／音量条」是合规声明，
+    # 不是组件本身，用 --file 点查文档时不应被误判。默认 discover() 本来也只扫 .mjs。
+    if path.suffix in ('.txt', '.json', '.md'):
         return out
     lines = text.splitlines()
     for name, rx, hint in CHECKS:
