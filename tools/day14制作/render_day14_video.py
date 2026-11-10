@@ -1,37 +1,23 @@
 #!/usr/bin/env python3
-"""Day14《重看昨天那支片子》成片渲染器 v4 —— 电视机锁死 / 主画面按词点跟台词互动。
+"""Day14《重看昨天那支片子》成片渲染器 v5 —— lemo-opuscar 导演流程 / 样片歌词驱动主画面。
 
-用户 2026-11-09 第四次反馈：「为什么主视频没有和台词互动对应上啊，请重新生成分镜，
-电视机不动，就主视频的分镜，现在就一堆人物在走动像动物园一样，请查看前面的day
-然后加入mv和背景台词的动从新生成分镜保持电视机内容不变。」
+用户 2026-11-09 第五次反馈：「整体的人物交互太垃圾了，和样片以及歌词不符合啊，
+我让你根据歌词或者样片来。背景为什么没变，人物为什么一直原地踏步？！请全面重新修改分镜
+调用 lemo-opuscar skill 来生成分镜。」
 
-先看前面的 Day 怎么做的：
-  · `Day/Day12/Day12分镜_导演版.md`：**固定镜头是合法选择**（C01–C08 不自动推镜），
-    双栏「音频台词 | 景别与一个主运镜 | 画面：准备→触发/结果→反应→停留」；
-    逐镜导演卡写「第一视觉／入镜／词点／结果锚点／出镜／下一镜／continuity state」。
-  · `Day/Day13/Day13分镜_制作版.md`：「音频约秒 | 内容 | 背景和人物事件」，
-    **按姓名/词点依次出现**，复用既有图集，道具与景色跟着话意入画。
-  · `agent.md` 24(e)：每镜记录 focus/entry/action/词点/result/reaction/hold/exit/
-    transition/continuity；24(c) 结果至少留 0.35 秒。
-  · 番外 `TREATMENT.md` §5 `S01–S26` 的 MV 镜头语言：硬切、闪白、划像、三连快切、定格。
+本版按 `.claude/skills/lemo-opuscar/SKILL.md` 拉取 `github.com/lemomo-ai/lemo-opuscar`，
+读 `AGENTS.md` / `DIRECTOR.md` / `styles/pixel-rpg/STYLE.md`，先写
+`Day/Day14/opuscar-day14/TREATMENT.md`，再按 46 行 `dalabengba.srt` 与 `S01–S26` 重排主画面：
 
-v3 的毛病：电视外塞了 2–8 个人全场巡游（「像动物园」），人物走位和当句台词无关；
-全画面推拉/震屏还让电视机在画面里忽大忽小。v4 的规则：
-
-  1. **电视机完全不动**：机身 `440×276`、屏幕 `380×214`、右上角 `(1400,96)–(1840,372)`
-     一律不变；`tv_at()` 的片段、行内换段、定格、黑屏、三连快切与 v3 **逐帧一致**；
-     不再有天线抖/旋钮转/光晕呼吸，也不再做全画面镜头推拉、平移、震屏。
-     切镜特效只作用在主画面，电视矩形在特效后原样贴回，保证电视像素不被特效碰到。
-  2. **主画面一句一个动作，动作发生在实测词点上**：`voice_alignment.json` 每字带
-     `chars_timed`，取当句触发词的实测秒（如「翻开」11.79s、「黑炭」2.40s、
-     「不拍雨」109.92s），动作在该词前 0.2s 起势、词后约 0.9s 成形，然后停住留结果；
-     一句里多个词点依次触发多个细节，见 `SCENES[].words` 与 Day14分镜_台词匹配版_待审.md。
-  3. **不再有一群人巡游**：主画面只有本鲸一位，站定在桌左，做当句那一个具体动作
-     （指、翻、按、写、摸、回头、收伞……）；番外里谁演了什么由电视内真帧承担，
-     其余七位本名用**签名道具**在词点上出现（王冠／缎带／长戟／星屑／宝箱／月光／金笼／龙焰）。
-  4. **背景跟台词动**：天暗、龙焰、月光、雨停、白饭热气、书页长出城塔、桌面水纹/光带/
-     海草/气泡持续视差；MV 真帧以胶片条形式进主画面（「一帧一帧看」），硬切/闪白/划像/
-     三连快切保留。结果成形后按 Day12 口径留 ≥0.35s 停留，不改动实测轴。
+  1. **背景真的换**：主画面直接铺 `dalabengba.mp4` 的 5fps / 640×360 整数缩真帧，
+     按 SRT 歌词秒与 S01–S26 镜头窗取帧，最近邻 ×3 成 1080p；城堡、王座厅、羊皮地图、
+     风车村、月光林、龙穴、终局石碑逐句切换，配 push/pull/pan/tilt/shake 等摄影机运动。
+  2. **人物按姓名交互**：前景每镜只上 2–3 位本名，动作图集按实测词点走
+     「准备→接触/触发→结果→反应→停留」，成形后冻结关键姿态，不再循环踏步、不再八人巡游。
+  3. **电视仍锁死**：机身 / 屏幕 / 片段 / 定格 / 黑屏 / 三连 / 开机渐亮沿用 v3，
+     `tv_at()` 与 `CLIP_SECOND` / `TRIPLE` 一字未改；背景变换、人物、特效之后电视矩形贴回。
+  4. **音画轴不变**：WAV、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕均不改；
+     词点仍全部来自 `voice_alignment.json` 的 `chars_timed`，不按句长估造。
 
 字幕层仍固定绘制、不随镜头/电视缩放（`agent.md` 17(f)）；电视内仍是番外成片真帧
 按比例缩小的完整场景、静音画中画；不画任何界面控件、不做数字看板/角标/水印/说完之后的收尾卡。
@@ -44,7 +30,7 @@ v3 的毛病：电视外塞了 2–8 个人全场巡游（「像动物园」）�
 
 用法：
   python3 tools/day14制作/render_day14_video.py --out Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-  python3 tools/day14制作/render_day14_video.py --stills 12     # 只出抽查静帧，不编码
+  python3 tools/day14制作/render_day14_video.py --stills 9      # 只出 6–9 张关键帧，不编码
 """
 from __future__ import annotations
 
@@ -55,6 +41,7 @@ import json
 import math
 import os
 import random
+import re
 import shutil
 import subprocess
 import sys
@@ -85,57 +72,274 @@ DAY2_TAG_FILL = (30, 64, 175, 255)
 DAY2_TAG_STROKE = (250, 204, 21, 255)
 DAY2_TAG_TEXT = (253, 230, 138, 255)
 
-# ---- 本鲸动作图集（之前那批人物，仍复用，不新生图）----
+
+# ---- v5：样片真帧、歌词轴、人物动作图集 ----------------------------------
+SAMPLE_FPS = 5
+SAMPLE_DIR = ROOT / 'tools/day14制作/sample_frames'
+SAMPLE_FILES = sorted(SAMPLE_DIR.glob('*.jpg'))
+if not SAMPLE_FILES:
+    raise RuntimeError('缺样片真帧：先从 番外MV/达拉崩吧/dalabengba.mp4 抽 5fps/640x360 到 tools/day14制作/sample_frames/')
+
+
+def parse_srt() -> list[tuple[float, float, str]]:
+    txt = (ROOT / '番外MV/达拉崩吧/dalabengba.srt').read_text(encoding='utf-8')
+    pat = re.compile(r'(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})')
+    out = []
+    blocks = re.split(r'\n\s*\n', txt.strip())
+    for b in blocks:
+        m = pat.search(b)
+        if not m:
+            continue
+        g = list(map(int, m.groups()))
+        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
+        c = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
+        lines = [x.strip() for x in b.splitlines() if x.strip() and not x.strip().isdigit() and '-->' not in x]
+        out.append((a, c, ' '.join(lines)))
+    assert len(out) == 46, f'歌词轴应是 46 行，实得 {len(out)}'
+    return out
+
+
+SRT_TIMES = parse_srt()
+
+
+def lyric_range(a: int, b: int) -> tuple[float, float]:
+    assert 1 <= a <= b <= len(SRT_TIMES)
+    return SRT_TIMES[a - 1][0], SRT_TIMES[b - 1][1]
+
+
+# 图集：横向 384×416 / 帧；walk-v14 8 帧，lyric-action-v13 多为 16 帧，actions-v12 11 帧。
 SHEETS = {
-    'idle': ('assets/ai-girls/walk-v14/whale_idle_side_pet.png', 8),
-    'happy': ('assets/ai-girls/walk-v14/whale_idle_happy_pet.png', 8),
-    'walk': ('assets/ai-girls/walk-v14/whale_walk_side_2leg.png', 8),
-    'point': ('assets/ai-girls/lyric-action-v13/whale_point.png', 16),
-    'read': ('assets/ai-girls/lyric-action-v13/whale_read_action.png', 16),
-    'wipe': ('assets/ai-girls/lyric-action-v13/whale_wipe_tear_action.png', 16),
-    'blink': ('assets/ai-girls/lyric-action-v13/whale_sit_blink_action.png', 16),
-    'crouch': ('assets/ai-girls/lyric-action-v13/whale_side_crouch_action.png', 16),
-    'selfkind': ('assets/ai-girls/lyric-action-v13/whale_selfkind_retry_action.png', 16),
-    'reach': ('assets/ai-girls/lyric-action-v13/whale_rain_reach_action.png', 16),
-    'camera': ('assets/ai-girls/lyric-action-v13/whale_camera_action.png', 16),
-    'gather': ('assets/ai-girls/lyric-action-v13/whale_gather_retry_action.png', 16),
-    'letter': ('assets/ai-girls/actions-v12/whale_letter.png', 11),
+    'whale_idle': ('assets/ai-girls/walk-v14/whale_idle_side_pet.png', 8),
+    'whale_walk': ('assets/ai-girls/walk-v14/whale_walk_side_2leg.png', 8),
+    'whale_point': ('assets/ai-girls/lyric-action-v13/whale_point.png', 16),
+    'whale_read': ('assets/ai-girls/lyric-action-v13/whale_read_action.png', 16),
+    'whale_wipe': ('assets/ai-girls/lyric-action-v13/whale_wipe_tear_action.png', 16),
+    'whale_crouch': ('assets/ai-girls/lyric-action-v13/whale_side_crouch_action.png', 16),
+    'whale_selfkind': ('assets/ai-girls/lyric-action-v13/whale_selfkind_retry_action.png', 16),
+    'whale_reach': ('assets/ai-girls/lyric-action-v13/whale_rain_reach_action.png', 16),
+    'whale_camera': ('assets/ai-girls/lyric-action-v13/whale_camera_action.png', 16),
+    'whale_gather': ('assets/ai-girls/lyric-action-v13/whale_gather_retry_action.png', 16),
+    'whale_ribbon': ('assets/ai-girls/lyric-action-v13/whale_ribbon_hold_action.png', 16),
+    'whale_letter': ('assets/ai-girls/actions-v12/whale_letter.png', 11),
+    'gpt_idle': ('assets/ai-girls/walk-v14/gpt_idle_pet.png', 8),
+    'gpt_push': ('assets/ai-girls/lyric-action-v13/gpt_push_final_action.png', 16),
+    'gpt_think': ('assets/ai-girls/lyric-action-v13/gpt_think_action.png', 16),
+    'gpt_sweep': ('assets/ai-girls/lyric-action-v13/gpt_sweep_action.png', 16),
+    'doubao_idle': ('assets/ai-girls/walk-v14/doubao_idle_side_pet.png', 8),
+    'doubao_lantern': ('assets/ai-girls/lyric-action-v13/doubao_lantern_action.png', 16),
+    'doubao_comfort': ('assets/ai-girls/lyric-action-v13/doubao_comfort_action.png', 16),
+    'doubao_step': ('assets/ai-girls/lyric-action-v13/doubao_step_action.png', 16),
+    'doubao_umbrella': ('assets/ai-girls/lyric-action-v13/doubao_rain_umbrella_action.png', 16),
+    'doubao_shared': ('assets/ai-girls/lyric-action-v13/doubao_shared_umbrella_action.png', 16),
+    'claude_idle': ('assets/ai-girls/walk-v14/claude_idle_pet.png', 8),
+    'claude_place': ('assets/ai-girls/lyric-action-v13/claude_place_action.png', 16),
+    'claude_collect': ('assets/ai-girls/lyric-action-v13/claude_collect_action.png', 16),
+    'claude_letter': ('assets/ai-girls/actions-v12/claude_letter.png', 11),
+    'kimi_idle': ('assets/ai-girls/walk-v14/kimi_idle_pet.png', 8),
+    'kimi_lantern': ('assets/ai-girls/lyric-action-v13/kimi_lantern_action.png', 16),
+    'kimi_stargaze': ('assets/ai-girls/lyric-action-v13/kimi_stargaze_seated_action.png', 16),
+    'kimi_pull': ('assets/ai-girls/lyric-action-v13/kimi_swim_pull_action.png', 16),
+    'gemini_idle': ('assets/ai-girls/walk-v14/gemini_idle_pet.png', 8),
+    'gemini_star': ('assets/ai-girls/lyric-action-v13/gemini_star_toss_action.png', 16),
+    'gemini_flower': ('assets/ai-girls/lyric-action-v13/gemini_flower_action.png', 16),
+    'zai_idle': ('assets/ai-girls/walk-v14/zai_idle_pet.png', 8),
+    'zai_reach': ('assets/ai-girls/lyric-action-v13/zai_reach_action.png', 16),
+    'zai_clock': ('assets/ai-girls/lyric-action-v13/zai_clock_action.png', 16),
+    'qwen_idle': ('assets/ai-girls/walk-v14/qwen_idle_pet.png', 8),
+    'qwen_reach': ('assets/ai-girls/lyric-action-v13/qwen_reach_action.png', 16),
 }
 
-# ---- 词点：每句要触发的台词词（必须是当句原文的子串）------------------------
+CAST = {
+    '本鲸': dict(size=(350, 379), idle='whale_idle'),
+    '龙娘': dict(size=(290, 314), idle='gpt_idle'),
+    '豆包': dict(size=(260, 282), idle='doubao_idle'),
+    '大小姐': dict(size=(285, 309), idle='claude_idle'),
+    'Kimi': dict(size=(275, 298), idle='kimi_idle'),
+    'Gemini': dict(size=(275, 298), idle='gemini_idle'),
+    '智谱': dict(size=(270, 293), idle='zai_idle'),
+    '千问': dict(size=(270, 293), idle='qwen_idle'),
+}
+IDLE_SHEET = {k: v['idle'] for k, v in CAST.items()}
+
+# 实测词点：每个词都必须是当句原文子串；word_times() 会逐字校验。
 WORD_TRIGGERS = {
-    1: ['黑炭', '那条鱼'],
-    2: ['搬', '重看'],
-    3: ['翻开', '长出'],
-    4: ['俯冲', '抓走', '暗'],
-    5: ['应征', '送'],
-    6: ['宝箱', '山洞口'],
-    7: ['塞不进', '追着问'],
-    8: ['月光', '笼子', '小心后面'],
-    9: ['一口火', '黑炭', '完了'],
+    1: ['黑炭', '那条鱼', '昨天'],
+    2: ['搬', '重看', '电视', '片子'],
+    3: ['屏幕', '翻开', '长出', '城堡'],
+    4: ['恶龙', '俯冲', '抓走', '暗'],
+    5: ['应征', '送', '城门口', '上马'],
+    6: ['风车村', '宝箱', '山洞口'],
+    7: ['名字', '塞不进', '大小姐', '追着问'],
+    8: ['最黑', '月光', '笼子', '小心后面'],
+    9: ['一口火', '黑炭', '石碑', '完了'],
     10: ['摸摸', '焦的'],
-    11: ['一个字都没有'],
-    12: ['暂停', '倒回去'],
-    13: ['开始', '没写'],
-    14: ['记一行'],
-    15: ['大小姐', '豆包'],
-    16: ['举'],
+    11: ['谁', '一个字都没有'],
+    12: ['暂停', '倒回去', '一段一段'],
+    13: ['翻书', '开始', '没写'],
+    14: ['龙娘', '抓走', '记一行'],
+    15: ['大小姐', '小心后面', '豆包'],
+    16: ['月光', '举', '没人提'],
     17: ['全演过了', '写下来'],
-    18: ['一帧一帧'],
-    19: ['翻过来', '一段写一行'],
+    18: ['不用问人', '一帧一帧'],
+    19: ['翻过来', '片子顺序', '一段写一行'],
     20: ['不替谁顶', '并成一段'],
-    21: ['单独夹起来', '待补'],
+    21: ['烤焦', '单独夹起来', '待补'],
     22: ['关掉', '收进抽屉', '不拍雨'],
     23: ['白饭', '不改'],
-    24: ['一个字一个字', '塞回框'],
+    24: ['下一集', '一个字一个字', '塞回框'],
 }
 
-# 墨线落笔时刻：全部取自实测词点，不伪造时间（按片序一段写一行）。
 INK_WORDS = [
     (14, '记一行'), (17, '全演过了'), (17, '写下来'), (18, '一帧一帧'),
     (19, '翻过来'), (19, '一段写一行'), (20, '不替谁顶'), (20, '并成一段'),
     (21, '单独夹起来'), (21, '待补'),
 ]
+
+
+def A(who, sheet, x0, x1, trigger, note='', flip=None, z=1, charred=False, dy=0, size=None):
+    """一位前景人物：x0→x1 是一次有目的位移；trigger 是实测词点；成形后冻结。"""
+    return dict(who=who, sheet=sheet, x0=x0, x1=x1, trigger=trigger, note=note,
+                flip=flip, z=z, charred=charred, dy=dy, size=size)
+
+
+# 每镜 2–3 位本名，动作是「谁对谁做了什么 / 对方怎么反应」，不是人群巡游。
+INTERACTIONS = {
+    1: [A('龙娘', 'gpt_sweep', 1320, 760, '昨天', '龙焰从右扫到左，落在焦黑本鲸身上', dy=45, z=2),
+        A('本鲸', 'whale_crouch', 250, 310, '黑炭', '本鲸缩肩、低头看焦痕，不再循环点头', charred=True, z=3),
+        A('豆包', 'doubao_comfort', 1150, 980, '那条鱼', '豆包上前扶，被本鲸用鳍轻轻挡住', z=2)],
+    2: [A('本鲸', 'whale_gather', 210, 360, '搬', '本鲸把电视搬上桌，落定后停手', z=3),
+        A('Gemini', 'gemini_star', 980, 850, '电视', 'Gemini 递上片子，星屑落在机脚', z=2),
+        A('智谱', 'zai_reach', 1280, 1120, '重看', '智谱伸手按开始，随后退半步', z=2)],
+    3: [A('本鲸', 'whale_point', 240, 360, '屏幕', '本鲸指向亮起的屏幕', z=3),
+        A('大小姐', 'claude_place', 1050, 880, '翻开', '大小姐把城塔放进书页', z=2),
+        A('豆包', 'doubao_step', 1280, 1120, '长出', '豆包在露台挥手，城塔停在书页上', z=2)],
+    4: [A('龙娘', 'gpt_push', 1320, 700, '恶龙', '龙娘自右上俯冲，翼影掠过画面', dy=70, z=3),
+        A('豆包', 'doubao_step', 300, 520, '抓走', '豆包被带向左，王冠缎带掉在桌沿', z=2),
+        A('本鲸', 'whale_wipe', 820, 770, '暗', '本鲸缩肩抹泪一次后停住', z=2)],
+    5: [A('本鲸', 'whale_ribbon', 200, 470, '应征', '本鲸拖红围巾跑进招募广场', z=3),
+        A('Gemini', 'gemini_star', 900, 760, '送', 'Gemini 把星屑塞进本鲸手里', z=2),
+        A('智谱', 'zai_reach', 1250, 1080, '上马', '智谱扶本鲸上马，三人分开停住', z=2)],
+    6: [A('千问', 'qwen_reach', 1120, 880, '风车村', '千问递钥匙，风车开始转', z=2),
+        A('本鲸', 'whale_read', 240, 420, '宝箱', '本鲸依次开三只箱，不追着箱子跑', z=3),
+        A('豆包', 'doubao_lantern', 1300, 1160, '山洞口', '豆包举灯照亮洞口弧线', z=2)],
+    7: [A('大小姐', 'claude_letter', 1120, 820, '名字', '大小姐拿着信追问，越靠越近', z=2),
+        A('本鲸', 'whale_letter', 260, 420, '塞不进', '本鲸后退，字迹从框里溢出', z=3),
+        A('Kimi', 'kimi_pull', 1320, 1180, '追着问', 'Kimi 的笔被长名字折住，停在半空', z=2)],
+    8: [A('Kimi', 'kimi_lantern', 1100, 900, '月光', 'Kimi 举月灯，光柱扫进洞口', z=2),
+        A('豆包', 'doubao_lantern', 1300, 1140, '笼子', '豆包在金笼里抬手喊', z=2),
+        A('本鲸', 'whale_reach', 260, 430, '小心后面', '本鲸听到那一声才转身回头', z=3)],
+    9: [A('龙娘', 'gpt_sweep', 1320, 720, '一口火', '龙娘一口火横扫，火舌压到前景', dy=55, z=3),
+        A('本鲸', 'whale_wipe', 300, 380, '黑炭', '本鲸被喷焦，缩肩后站定', charred=True, z=3),
+        A('大小姐', 'claude_collect', 1300, 1140, '石碑', '大小姐护住纸，石碑砸下后停住', z=2)],
+    10: [A('本鲸', 'whale_selfkind', 280, 350, '摸摸', '本鲸摸脸，焦屑落下', charred=True, z=3),
+         A('豆包', 'doubao_comfort', 980, 830, '焦的', '豆包递布，本鲸没擦掉焦痕', z=2)],
+    11: [A('本鲸', 'whale_read', 250, 360, '谁', '本鲸看空白纸，不落笔', z=3),
+         A('大小姐', 'claude_place', 980, 840, '一个字都没有', '大小姐把空册摊开，三人看纸', z=2),
+         A('Kimi', 'kimi_stargaze', 1300, 1160, '一个字都没有', 'Kimi 的笔悬停，纸上仍无线条', z=2)],
+    12: [A('本鲸', 'whale_reach', 250, 380, '暂停', '本鲸按住旋钮，动作停住', z=3),
+         A('Gemini', 'gemini_star', 950, 820, '倒回去', 'Gemini 把胶片条倒退一格', z=2),
+         A('智谱', 'zai_clock', 1300, 1160, '一段一段', '智谱扶住反向转的旋钮', z=2)],
+    13: [A('本鲸', 'whale_point', 250, 380, '翻书', '本鲸指向红皮书：谁按的开始', z=3),
+         A('龙娘', 'gpt_think', 1120, 900, '开始', '龙娘摊手，表示不是自己', z=2),
+         A('大小姐', 'claude_place', 1320, 1160, '没写', '大小姐摊开空册，电视里没写', z=2)],
+    14: [A('龙娘', 'gpt_push', 1220, 700, '龙娘', '龙娘再俯冲抓走豆包', dy=60, z=3),
+         A('豆包', 'doubao_step', 300, 500, '抓走', '豆包被带向左，停在笼影边', z=2),
+         A('本鲸', 'whale_read', 820, 760, '记一行', '本鲸低头写下第一条墨线', z=3)],
+    15: [A('大小姐', 'claude_letter', 1100, 830, '大小姐', '大小姐立起王冠名牌', z=2),
+         A('豆包', 'doubao_lantern', 1300, 1100, '小心后面', '豆包立起缎带名牌，喊那一声', z=2),
+         A('本鲸', 'whale_point', 250, 380, '豆包', '本鲸依次点两张名牌，不合成一张', z=3)],
+    16: [A('Kimi', 'kimi_lantern', 1100, 900, '举', 'Kimi 把月灯举高，光晕张开', z=2),
+         A('本鲸', 'whale_read', 250, 380, '月光', '本鲸看纸，不补写这一行', z=3),
+         A('Gemini', 'gemini_flower', 1300, 1160, '没人提', 'Gemini 注意到空行，停住不说', z=2)],
+    17: [A('本鲸', 'whale_gather', 240, 420, '全演过了', '本鲸拉开胶片条，真帧露出来', z=3),
+         A('龙娘', 'gpt_push', 1100, 900, '全演过了', '龙娘在胶片里俯冲，前景收住', z=2),
+         A('大小姐', 'claude_collect', 1320, 1160, '写下来', '大小姐指着仍空的一行', z=2)],
+    18: [A('本鲸', 'whale_camera', 240, 420, '不用问人', '本鲸俯身逐格看胶片', z=3),
+         A('Gemini', 'gemini_star', 950, 820, '一帧一帧', 'Gemini 把亮框挪一格停住', z=2),
+         A('智谱', 'zai_reach', 1300, 1160, '一帧一帧', '智谱扶住胶片，不再连续拉', z=2)],
+    19: [A('本鲸', 'whale_letter', 240, 420, '翻过来', '本鲸把纸翻面，按片序落第一行', z=3),
+         A('千问', 'qwen_reach', 1100, 900, '片子顺序', '千问递下一页，站定', z=2),
+         A('豆包', 'doubao_step', 1320, 1160, '一段写一行', '豆包按住纸角，每行分开', z=2)],
+    20: [A('本鲸', 'whale_read', 240, 420, '不替谁顶', '本鲸把两行之间留出空档', z=3),
+         A('大小姐', 'claude_letter', 1100, 900, '并成一段', '大小姐想连线，被本鲸挡住', z=2),
+         A('智谱', 'zai_reach', 1320, 1160, '并成一段', '智谱把夹子扣在两行之间', z=2)],
+    21: [A('本鲸', 'whale_letter', 240, 420, '烤焦', '本鲸把焦纸单独抽出', charred=True, z=3),
+         A('豆包', 'doubao_comfort', 950, 820, '单独夹起来', '豆包夹好焦纸，不擦焦痕', z=2),
+         A('龙娘', 'gpt_sweep', 1320, 1160, '待补', '龙娘收火，本鲸写下「待补」', z=2)],
+    22: [A('本鲸', 'whale_reach', 240, 380, '关掉', '本鲸按电视开关，屏幕按 v3 转黑', z=3),
+         A('智谱', 'zai_reach', 950, 820, '收进抽屉', '智谱把歪伞收拢放进抽屉', z=2),
+         A('豆包', 'doubao_umbrella', 1300, 1100, '不拍雨', '豆包把伞骨按住，雨线停', z=2)],
+    23: [A('千问', 'qwen_reach', 1100, 900, '白饭', '千问放下饭盆，热气升起', z=2),
+         A('本鲸', 'whale_read', 240, 380, '不改', '本鲸看纸上那行，不擦不改', z=3),
+         A('大小姐', 'claude_collect', 1320, 1160, '不改', '大小姐把笔收走，停住', z=2)],
+    24: [A('大小姐', 'claude_letter', 1100, 850, '下一集', '大小姐扶住昵称框', z=2),
+         A('本鲸', 'whale_point', 240, 420, '一个字一个字', '本鲸把字逐笔送回框里', z=3),
+         A('豆包', 'doubao_step', 1320, 1160, '塞回框', '豆包合上框口，说完即停', z=2)],
+}
+
+
+def seg_bounds(seg: dict) -> tuple[float, float]:
+    if 'secs' in seg:
+        return seg['secs']
+    return lyric_range(*seg['lyrics'])
+
+
+# 主画面背景：每段绑到样片 S 镜 / SRT 歌词行；word 是 Day14 实测词点，不是估时。
+MAIN_BG = {
+    1: [dict(word=None, lyrics=(45, 46), shot='S25–S26', framing='wide', move='pull', why='龙焰与石碑收尾，先交代「昨天被烤成黑炭」'),
+        dict(word='黑炭', lyrics=(46, 46), shot='S26', framing='wide+shake', move='shake', why='石碑砸落，前景本鲸焦黑')],
+    2: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='红皮书 / START QUEST 启动'),
+        dict(word='重看', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='书页展开为王城')],
+    3: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='屏幕亮起前是红皮书'),
+        dict(word='翻开', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='城堡从书页长出'),
+        dict(word='长出', lyrics=(1, 1), shot='S02', framing='medium', move='push', why='「很久很久以前」露台')],
+    4: [dict(word=None, lyrics=(2, 3), shot='S03', framing='wide', move='pan_r', why='巨龙突然出现 / 带来灾难'),
+        dict(word='抓走', lyrics=(4, 4), shot='S03', framing='two_shot', move='push', why='带走公主又消失不见'),
+        dict(word='暗', secs=(26.09, 28.10), shot='S04', framing='medium', move='static', why='王国十分危险 / 天暗')],
+    5: [dict(word=None, lyrics=(6, 8), shot='S05', framing='wide', move='pan_r', why='世间谁最勇敢 / 勇者赶来 / 大声喊'),
+        dict(word='上马', secs=(85.23, 93.25), shot='S15', framing='wide', move='pan_r', why='英雄骑上最快的马 / 从城堡出发')],
+    6: [dict(word=None, lyrics=(32, 33), shot='S18', framing='wide', move='pan_r', why='偏远美丽村庄 / 打开所有宝箱'),
+        dict(word='山洞口', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='闯入山洞 / 公主和巨龙')],
+    7: [dict(word=None, lyrics=(17, 18), shot='S09–S10', framing='medium', move='push', why='十二字真名冲破对话框 / 再说一次'),
+        dict(word='追着问', lyrics=(19, 23), shot='S10–S11', framing='two_shot', move='pan_l', why='是不是 / 啊对对 / 石砖砸落')],
+    8: [dict(word=None, lyrics=(34, 35), shot='S19', framing='wide', move='tilt_up', why='一路风霜 / 指引前路的圣月光'),
+        dict(word='小心后面', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='笼中公主喊「小心后面」')],
+    9: [dict(word=None, lyrics=(44, 45), shot='S24–S25', framing='wide', move='shake', why='错误道具栏 / 不对是 / 龙焰'),
+        dict(word='黑炭', lyrics=(46, 46), shot='S26', framing='wide', move='shake', why='焦黑本鲸 / 石碑砸下'),
+        dict(word='完了', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='片子完了，定格')],
+    10: [dict(word=None, lyrics=(45, 45), shot='S25', framing='close', move='pull', why='焦黑搞笑帧'),
+         dict(word='焦的', lyrics=(46, 46), shot='S26', framing='medium', move='static', why='终局定格，焦痕不擦')],
+    11: [dict(word=None, lyrics=(13, 14), shot='S07', framing='wide', move='static', why='国王高兴 / 忙问姓名，空册'),
+        dict(word='一个字都没有', lyrics=(15, 16), shot='S08', framing='insert', move='push', why='年轻人想了想，纸仍空')],
+    12: [dict(word=None, secs=(78.21, 85.23), shot='S14', framing='overworld', move='pan_l', why='世界地图盖章 / 远征路线'),
+        dict(word='倒回去', lyrics=(9, 12), shot='S06', framing='overworld', move='pan_r', why='地图四站倒回去一段一段看')],
+    13: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='红皮书再启动'),
+        dict(word='开始', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='谁按下的开始')],
+    14: [dict(word=None, lyrics=(2, 4), shot='S03', framing='wide', move='pan_r', why='龙娘抓走豆包那段'),
+        dict(word='记一行', lyrics=(9, 12), shot='S06', framing='insert', move='static', why='按片序记一行')],
+    15: [dict(word=None, lyrics=(13, 14), shot='S07', framing='two_shot', move='static', why='追着问名字的是大小姐'),
+        dict(word='豆包', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='喊小心后面的是豆包')],
+    16: [dict(word=None, lyrics=(34, 34), shot='S19', framing='wide', move='tilt_up', why='一路风霜伴随'),
+        dict(word='举', lyrics=(35, 35), shot='S19', framing='medium', move='push', why='Kimi 举的圣月光')],
+    17: [dict(word=None, secs=(66.69, 78.21), shot='S13', framing='wide', move='pan_r', why='章回卡 / 四张角色卡'),
+        dict(word='写下来', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='全演过了，纸却空着')],
+    18: [dict(word=None, lyrics=(28, 29), shot='S16', framing='side_scroll', move='pan_r', why='战胜魔兽 / 获得十二金币'),
+        dict(word='一帧一帧', lyrics=(30, 31), shot='S17', framing='side_scroll', move='pan_r', why='伤痕 / 升级，逐格看')],
+    19: [dict(word=None, lyrics=(9, 10), shot='S06', framing='overworld', move='pan_r', why='最好的剑 / 最高的山'),
+        dict(word='一段写一行', lyrics=(11, 12), shot='S06', framing='insert', move='push', why='最深的森林 / 带回面前，逐行写')],
+    20: [dict(word=None, lyrics=(44, 44), shot='S24', framing='insert', move='static', why='五格道具栏'),
+        dict(word='并成一段', lyrics=(44, 44), shot='S24', framing='insert', move='shake', why='不并段，两行分开')],
+    21: [dict(word=None, lyrics=(45, 45), shot='S25', framing='medium', move='shake', why='不对是 / 龙焰烧穿'),
+        dict(word='待补', lyrics=(46, 46), shot='S26', framing='insert', move='static', why='焦纸单独夹起写待补')],
+    22: [dict(word=None, lyrics=(46, 46), shot='S26', framing='wide', move='pull', why='终局定格 / 关电视'),
+        dict(word='不拍雨', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='收伞 / 雨停')],
+    23: [dict(word=None, lyrics=(32, 33), shot='S18', framing='wide', move='static', why='风车村 / 白饭'),
+        dict(word='不改', lyrics=(32, 33), shot='S18', framing='medium', move='push', why='那句不改')],
+    24: [dict(word=None, lyrics=(17, 18), shot='S09–S10', framing='medium', move='push', why='长名字 / 再说一次'),
+        dict(word='塞回框', lyrics=(19, 23), shot='S10–S11', framing='insert', move='static', why='一个字一个字塞回昵称框')],
+}
+
+# 保留 v4 的逐句导演字段（tv/tv_mode/fx/stage 等）用于电视锁死与文档生成。
 
 # ---- 逐句主画面分镜（M01–M24，v4 重生成）----------------------------------
 # tv/tv_mode/fx 与 v3 逐帧一致 → 电视机内容不变；其余全是主画面导演字段。
@@ -401,27 +605,25 @@ def sheet_image(rel: str) -> Image.Image:
 
 
 @lru_cache(maxsize=320)
-def sprite_frame(sheet: str, idx: int, flip: bool) -> Image.Image:
-    """本鲸逐帧：轻焦黑调色（保留蓝发辨识度），保留 alpha。"""
+
+@lru_cache(maxsize=420)
+def sprite_frame(sheet: str, idx: int, size: tuple[int, int], flip: bool,
+                 charred: bool) -> Image.Image:
     rel, n = SHEETS[sheet]
     fr = sheet_image(rel).crop((idx % n * 384, 0, (idx % n + 1) * 384, 416))
-    fr = fr.resize(BEN_SIZE, Image.LANCZOS)
+    fr = fr.resize(size, Image.LANCZOS)
     if flip:
         fr = fr.transpose(Image.Transpose.FLIP_LEFT_RIGHT)
-    rgb = ImageEnhance.Color(fr.convert('RGB')).enhance(0.88)
-    rgb = ImageEnhance.Brightness(rgb).enhance(0.92)
-    out = rgb.convert('RGBA')
-    out.putalpha(fr.getchannel('A'))
-    return out
+    if charred:
+        rgb = ImageEnhance.Color(fr.convert('RGB')).enhance(0.88)
+        rgb = ImageEnhance.Brightness(rgb).enhance(0.90)
+        out = rgb.convert('RGBA')
+        out.putalpha(fr.getchannel('A'))
+        fr = out
+    return fr
 
 
-@lru_cache(maxsize=320)
-def sprite_tilt(sheet: str, idx: int, flip: bool, ang: int) -> Image.Image:
-    fr = sprite_frame(sheet, idx, flip)
-    return fr.rotate(ang, resample=Image.BICUBIC, expand=False) if ang else fr
 
-
-@lru_cache(maxsize=128)
 def subtitle_layer(text: str) -> Image.Image:
     """复刻项目统一的 Day2 字幕条（深蓝底 + #48C8FF 青描边 + 说话人小标签）。"""
     layer = Image.new('RGBA', (W, 150), (0, 0, 0, 0))
@@ -457,84 +659,68 @@ def progress(t: float, wt: dict[str, float], word: str, lead: float = 0.22,
     return clamp01((t - (wt[word] - lead)) / (dur + lead))
 
 
-def background(t: float, line: int, wt: dict[str, float], rain_stop: float) -> Image.Image:
-    """海底房间 + 浅青桌面 + 静态电视外壳；背景各层按不同速度逐帧漂移。"""
+
+@lru_cache(maxsize=96)
+def sample_frame(idx: int) -> Image.Image:
+    idx = max(1, min(len(SAMPLE_FILES), idx))
+    return Image.open(SAMPLE_FILES[idx - 1]).convert('RGB')
+
+
+def sample_time_for(t: float, cue: dict, line: int, wt: dict) -> tuple[float, float, dict]:
+    """把 Day14 实测词点映射到样片 SRT 秒；返回 (sample_t, 段内进度, 段)。"""
+    segs = MAIN_BG[line]
+    lead = 0.15
+    bounds = []
+    for i, sg in enumerate(segs):
+        st = float(cue['start']) if i == 0 else max(float(cue['start']), wt[segs[i]['word']] - lead)
+        en = float(cue['end']) if i == len(segs) - 1 else max(st + 0.05, wt[segs[i + 1]['word']] - lead)
+        bounds.append((st, en))
+    idx = 0
+    for i in range(1, len(segs)):
+        if t >= bounds[i][0]:
+            idx = i
+    st, en = bounds[idx]
+    u = min(0.999, max(0.0, (t - st) / max(0.05, en - st)))
+    s0, s1 = seg_bounds(segs[idx])
+    sample_t = s0 + (s1 - s0) * u
+    sample_t = max(0.0, min(132.7, sample_t))
+    return sample_t, u, segs[idx]
+
+
+def apply_sample_camera(im: Image.Image, move: str, u: float, t: float) -> Image.Image:
+    """只变换主画面真帧；电视矩形随后固定贴上，不跟着推拉。"""
+    scale, cx, cy = 1.0, W / 2, H / 2
+    if move == 'push':
+        scale = 1.0 + 0.18 * u
+    elif move == 'pull':
+        scale = 1.18 - 0.18 * u
+    elif move == 'pan_r':
+        cx = 760 + 380 * u
+    elif move == 'pan_l':
+        cx = 1160 - 380 * u
+    elif move == 'tilt_up':
+        cy = 720 - 240 * u
+    elif move == 'shake':
+        cx += 7 * math.sin(t * 39.0)
+        cy += 6 * math.sin(t * 47.0 + 1.1)
+        scale = 1.04
+    cw, ch = W / scale, H / scale
+    x0 = int(round(min(max(cx - cw / 2, 0), W - cw)))
+    y0 = int(round(min(max(cy - ch / 2, 0), H - ch)))
+    return im.crop((x0, y0, x0 + int(cw), y0 + int(ch))).resize((W, H), Image.NEAREST)
+
+
+def top_glow(im: Image.Image, t: float) -> Image.Image:
+    arr = np.asarray(im).astype(np.float32)
     yy = np.arange(H, dtype=np.float32)[:, None]
-    p = yy / H
-    top = np.array([9, 33, 58], np.float32)
-    bot = np.array([24, 88, 112], np.float32)
-    grad = top[None, None, :] * (1 - p[:, :, None]) + bot[None, None, :] * p[:, :, None]
-    light = np.array([126, 196, 214], np.float32)
     glow = np.clip((190 - yy) / 140.0, 0, 1) ** 0.8
     glow = glow * (0.97 + 0.03 * math.sin(t * 1.7))
-    grad = grad * (1 - glow[:, :, None]) + light[None, None, :] * glow[:, :, None]
-    im = Image.fromarray(np.repeat(grad, W, axis=1).astype(np.uint8), 'RGB')
-    d = ImageDraw.Draw(im)
-    da = ImageDraw.Draw(im, 'RGBA')
+    light = np.array([126, 196, 214], np.float32)
+    arr = arr * (1 - glow[:, :, None]) + light[None, None, :] * glow[:, :, None]
+    return Image.fromarray(np.clip(arr, 0, 255).astype(np.uint8), 'RGB')
 
-    # 四层斜向光带 / 五道水纹 / 书架 / 烛焰 / 吊灯 / 海草 / 桌面涟漪 / 气泡
-    for k in range(4):
-        base = 110 + k * 470 + 125 * math.sin(t * (0.15 + k * 0.035) + k * 1.7)
-        da.polygon([(base, 0), (base + 130, 0), (base + 400, 760), (base + 225, 760)],
-                   fill=(152, 222, 238, 14 + k * 3))
-    for k in range(5):
-        pts = [(x, int(120 + k * 105 + 18 * math.sin(x / 150.0 + t * 0.85 + k)))
-               for x in range(0, W + 80, 80)]
-        da.line(pts, fill=(120, 210, 225, 24), width=3)
-    d.rectangle((60, 212, 470, 224), fill=(58, 90, 104))
-    book_colors = [(176, 92, 96), (198, 156, 88), (92, 138, 172),
-                   (128, 168, 132), (160, 112, 168), (204, 132, 96)]
-    for i in range(6):
-        sx = 82 + i * 58
-        wob = round(2.0 * math.sin(t * 1.25 + i * 0.9))
-        d.rounded_rectangle((sx, 156 + wob, sx + 38, 212), radius=3,
-                            fill=book_colors[i], outline=(38, 62, 74), width=2)
-        d.line((sx + 8, 168 + wob, sx + 30, 168 + wob), fill=(236, 228, 204), width=2)
-    fx, fy = 505, 190
-    d.rectangle((fx - 9, fy, fx + 9, fy + 24), fill=(232, 226, 204))
-    fh = 14 + 5 * math.sin(t * 9.0) + 2 * math.sin(t * 15.0)
-    da.polygon([(fx - 7, fy), (fx + 7, fy), (fx + 2 * math.sin(t * 6), fy - fh)],
-               fill=(255, 206, 104, 230))
-    da.ellipse((fx - 34, fy - 36, fx + 34, fy + 30), fill=(255, 214, 132, 16))
-    ang = 0.11 * math.sin(t * 1.35)
-    lx, ly = 700 + 70 * math.sin(ang), 60
-    d.line((700, 0, lx, ly), fill=(112, 148, 160), width=4)
-    d.rounded_rectangle((lx - 26, ly, lx + 26, ly + 44), radius=9,
-                        fill=(220, 196, 126), outline=(108, 88, 52), width=3)
-    da.ellipse((lx - 92, ly - 50, lx + 92, ly + 96), fill=(255, 226, 150, 20))
-    for k in range(10):
-        bx = (k % 2) * 1780 + (k // 2) * 44 + 20
-        col = (36 + k * 3, 108 + k * 4, 116 + k * 3, 150)
-        pts = [(bx + int(16 * math.sin(t * 0.9 + k + j * 0.45) * (j / 6.0)),
-                760 - j * 46) for j in range(7)]
-        da.line(pts, fill=col, width=9 - k % 3)
-    d.rectangle((0, 760, W, H), fill=(150, 214, 216))
-    d.rectangle((0, 756, W, 772), fill=(102, 172, 181))
-    d.line((0, 772, W, 772), fill=(72, 140, 154), width=3)
-    for k in range(4):
-        pts = [(x, int(812 + k * 52 + 6 * math.sin(x / 120.0 + t * 1.1 + k)))
-               for x in range(0, W + 60, 60)]
-        da.line(pts, fill=(214, 246, 246, 42), width=3)
-    rng = np.random.default_rng(14)
-    for k in range(46):
-        x = int(rng.integers(20, W - 20))
-        y0 = int(rng.integers(60, 740))
-        r = int(rng.integers(3, 13))
-        speed = 9 + (k % 5) * 5
-        y = int((y0 - t * speed) % 780) - 20
-        da.ellipse((x - r, y - r, x + r, y + r), outline=(150, 214, 228, 130), width=2)
-        da.arc((x - r + 1, y - r + 1, x + r - 1, y + r - 1), 200, 280,
-               fill=(236, 252, 255, 120), width=2)
 
-    # 雨线在「不拍雨」词点停：背景跟着台词动，不是常驻装饰
-    if t < rain_stop:
-        fade = clamp01((rain_stop - t) / 0.6)
-        for k in range(38):
-            rx = int(rng.integers(0, W))
-            ry = int((rng.integers(0, 760) + t * (170 + k % 4 * 30)) % 760)
-            da.line((rx, ry, rx - 9, ry + 34), fill=(190, 224, 236, int(80 * fade)), width=2)
-
-    # 电视机身：v3 尺寸/位置，静态绘制，无任何机身动画
+def draw_tv_body(d: ImageDraw.ImageDraw) -> None:
     d.rounded_rectangle(TV_OUTER, radius=22, fill=(42, 60, 74), outline=(16, 28, 38), width=5)
     d.rounded_rectangle((TV_OUTER[0] + 8, TV_OUTER[1] + 8, TV_OUTER[2] - 8, TV_OUTER[3] - 8),
                         radius=18, fill=(64, 86, 100), outline=(104, 132, 146), width=3)
@@ -545,66 +731,31 @@ def background(t: float, line: int, wt: dict[str, float], rain_stop: float) -> I
                         radius=4, fill=(36, 50, 60))
     d.rounded_rectangle((TV_OUTER[2] - 115, TV_OUTER[3] - 2, TV_OUTER[2] - 40, TV_OUTER[3] + 12),
                         radius=4, fill=(36, 50, 60))
-    ax, ay = TV_OUTER[0] + 150, TV_OUTER[1]
-    bx, by = TV_OUTER[2] - 150, TV_OUTER[1]
-    d.line((ax, ay, ax - 62, ay - 58), fill=(150, 180, 190), width=5)
-    d.line((bx, by, bx + 62, ay - 58), fill=(150, 180, 190), width=5)
-    for tx, ty in ((ax - 62, ay - 58), (bx + 62, ay - 58)):
-        d.ellipse((tx - 7, ty - 7, tx + 7, ty + 7), fill=(220, 190, 104), outline=(90, 74, 42), width=2)
-    cx = SCREEN[2] + 16
-    for cy in (166, 214):
-        d.ellipse((cx - 11, cy - 11, cx + 11, cy + 11),
-                  fill=(28, 42, 52), outline=(128, 158, 170), width=2)
-        d.line((cx, cy, cx + 7, cy - 4), fill=(190, 210, 216), width=2)
+
+
+
+def background(t: float, cue: dict, line: int, wt: dict) -> Image.Image:
+    """主画面 = 样片真帧（按歌词秒取帧）+ 整数像素摄影机 + 固定电视外壳。"""
+    sample_t, u, seg = sample_time_for(t, cue, line, wt)
+    idx = int(sample_t * SAMPLE_FPS) + 1
+    im = sample_frame(idx).resize((W, H), Image.NEAREST)
+    im = apply_sample_camera(im, seg.get('move', 'static'), u, t)
+    im = top_glow(im, t)
+    d = ImageDraw.Draw(im)
+    # 下方固定舞台带：让 Day2 字幕检测稳定，也给前景人物一条落地线。
+    d.rectangle((0, 760, W, H), fill=(18, 32, 46))
+    d.rectangle((0, 756, W, 764), fill=(72, 120, 140))
+    for k in range(4):
+        d.line((0, 800 + k * 48, W, 800 + k * 48), fill=(28, 48, 62), width=2)
+    draw_tv_body(d)
     return im
 
 
-def mood_grade(im: Image.Image, t: float, scene: dict, wt: dict[str, float]) -> Image.Image:
-    """背景按台词换状态：天暗、龙焰、月光、雨停、白饭热气……都从词点起势。
-
-    氛围压色只作用在桌面以上（y<900）：浅青桌面与字幕带保持原色，
-    否则「月光」冷色会把桌面压成接近字幕青描边的颜色，被字幕抽样误判为在屏。
-    """
-    top = im.crop((0, 0, W, 900))
-    full = im
-    im = top
-    mood, line = scene['mood'], int(scene['id'][1:])
-    overlay = None
-    strength = 0.0
-    if mood == 'dark' and '暗' in wt:
-        strength = 0.52 * progress(t, wt, '暗', 0.12, 0.8)
-        overlay = (6, 14, 28)
-    elif mood == 'fire' and '一口火' in wt:
-        s1 = progress(t, wt, '一口火', 0.12, 0.9)
-        s2 = progress(t, wt, '完了', 0.12, 0.6) if '完了' in wt else 0.0
-        overlay = (78, 30, 18) if s1 > 0 else None
-        strength = 0.30 * s1
-        if s2 > 0:
-            im = Image.blend(im, Image.new('RGB', (W, 900), (6, 12, 24)), 0.45 * s2)
-    elif mood == 'moon':
-        key = '月光' if '月光' in wt else ('举' if '举' in wt else '')
-        if key:
-            strength = 0.24 * progress(t, wt, key, 0.15, 0.9)
-            overlay = (78, 116, 190)
-    elif mood == 'off' and '关掉' in wt:
-        strength = 0.46 * progress(t, wt, '关掉', 0.12, 0.8)
-        overlay = (8, 16, 28)
-    elif mood == 'rice' and '白饭' in wt:
-        strength = 0.16 * progress(t, wt, '白饭', 0.12, 0.9)
-        overlay = (196, 168, 112)
-    elif mood in ('charred', 'soot'):
-        strength = 0.10 * progress(t, wt, scene['trigger'], 0.2, 0.9)
-        overlay = (24, 22, 24)
-    elif mood == 'reveal' and '全演过了' in wt:
-        strength = 0.10 * progress(t, wt, '全演过了', 0.15, 0.9)
-        overlay = (176, 196, 214)
-    if overlay and strength > 0:
-        im = Image.blend(im, Image.new('RGB', (W, 900), overlay), strength)
-    full.paste(im, (0, 0))
-    return full
+def mood_grade(im: Image.Image, t: float, scene: dict, wt: dict) -> Image.Image:
+    """v5 不再用气氛压色冒充背景变化；样片真帧本身换景/换调色板。"""
+    return im
 
 
-# ---- 桌面基础：纸、笔迹、羽毛笔 ---------------------------------------------
 def _quill(d: ImageDraw.ImageDraw, x: float, y: float, t: float) -> None:
     ang = 0.32 * math.sin(t * 4.1)
     dx, dy = math.sin(ang), math.cos(ang)
@@ -1079,99 +1230,47 @@ def set_tv(im: Image.Image, t: float, wt: dict[str, float]) -> None:
                250, 320, fill=(250, 226, 140, int(180 * pr)), width=5)
 
 
-def draw_actor(im: Image.Image, t: float, line: int, frac: float, wt: dict[str, float]) -> None:
-    """主画面只有本鲸一位：站定，做当句那一个动作；不再全场巡游。"""
-    scene = SCENES[line - 1]
-    sheet = scene['pose']
-    n = SHEETS[sheet][1]
-    idx = int(t * ACT_FPS) % n
-    # 各句在词点上有一次有目的的位移/倾斜/转身，而不是循环走路
-    tw = scene['trigger']
-    p = progress(t, wt, tw, 0.2, 0.9)
-    dx = int(26 * p)
-    dy = int(3 * math.sin(t * 2.0))
-    ang = int(round(5 * math.sin(math.pi * min(1.0, p * 1.3))))
-    flip = False
-    if line == 8 and t >= wt.get('小心后面', 1e9):
-        flip = True                       # 听到那一声才回头
-    if line == 2:
-        dx = int(46 * p)                  # 只走一步，把电视「搬」上桌
-    if line == 9:
-        dx = -int(22 * p)                 # 被喷焦退半步
-    if line == 12:
-        dx = int(52 * p)                  # 伸手按旋钮
-    if line in (14, 19, 20, 21):
-        dy += int(6 * math.sin(t * 6.0))  # 写字的手上起伏
-    sp = sprite_tilt(sheet, idx, flip, ang)
-    x, y = BEN[0] + dx, BEN[1] + dy
+def draw_interactions(im: Image.Image, t: float, line: int, wt: dict) -> None:
+    """2–3 位本名：实测词点触发动作→位移→结果，成形后冻结关键帧，不循环踏步。"""
     da = ImageDraw.Draw(im, 'RGBA')
-    half = BEN_SIZE[0] * 0.31 + 5 * math.sin(t * 4.0)
-    da.ellipse((x + BEN_SIZE[0] / 2 - half, y + BEN_SIZE[1] - 12,
-                x + BEN_SIZE[0] / 2 + half, y + BEN_SIZE[1] + 4), fill=(18, 50, 62, 72))
-    im.paste(sp, (x, y), sp)
+    for e in sorted(INTERACTIONS[line], key=lambda x: x['z']):
+        size = e['size'] or CAST[e['who']]['size']
+        p = progress(t, wt, e['trigger'], 0.18, 0.92)
+        k = p * p * (3 - 2 * p)
+        x = e['x0'] + (e['x1'] - e['x0']) * k
+        y = 760 - size[1] - abs(math.sin(math.pi * p)) * e['dy'] + 1.2 * math.sin(t * 1.7 + e['z'])
+        rel, n = SHEETS[e['sheet']]
+        frame = min(n - 1, int(p * n))
+        flip = e['flip'] if e['flip'] is not None else (e['x1'] < e['x0'])
+        sp = sprite_frame(e['sheet'], frame, size, flip, e['charred'])
+        xi, yi = int(round(x)), int(round(y))
+        half = size[0] * 0.30
+        da.ellipse((xi + size[0] / 2 - half, 744, xi + size[0] / 2 + half, 766),
+                   fill=(8, 18, 26, 90))
+        im.paste(sp, (xi, yi), sp)
+
 
 
 def draw_stage(im: Image.Image, t: float, line: int, frac: float,
                wt: dict[str, float], inks: list[float]) -> None:
     stage = SCENES[line - 1]['stage']
-    # 纸面先铺底，墨线按实测词点落笔（L11 之前一条也没有）
-    draw_paper(im, t, wt, inks)
-    if line in (1, 10):
-        p = progress(t, wt, SCENES[line - 1]['trigger'], 0.2, 0.9)
-        mirror_tile(im, t, p)
-        soot_flakes(im, t, p, seed=line)
-    if stage == 'set_tv':
-        set_tv(im, t, wt)
-    elif stage == 'book_open':
-        book_open(im, t, wt)
-    elif stage == 'dragon_swoop':
-        dragon_shadow(im, t, wt)
-    elif stage == 'signup':
-        map_scroll(im, t, wt)
-    elif stage == 'chests':
-        chests(im, t, wt)
-    elif stage == 'namebox':
-        namebox(im, t, wt)
-    elif stage == 'moon_cage':
-        moon_cage(im, t, wt)
-    elif stage == 'fire':
-        fire(im, t, wt)
-    elif stage == 'blank':
-        quill_hover(im, t)
-    elif stage == 'dial':
-        dial(im, t, wt)
-    elif stage == 'lens':
-        lens(im, t, wt)
-        quill_hover(im, t)
-    elif stage == 'two_cards':
-        two_cards(im, t, wt)
-    elif stage == 'raise_moon':
-        moon_cage(im, t, wt, raise_lamp=True)
-    elif stage == 'reveal':
-        reveal(im, t, wt)
-    elif stage == 'frames':
-        frames_advance(im, t, wt)
-    elif stage == 'paper_flip':
-        paper_flip(im, t, wt)
-    elif stage == 'separate':
-        separate(im, t, wt)
-    elif stage == 'clip_charred':
-        charred_clip(im, t, wt)
-    elif stage == 'off_umbrella':
-        umbrella(im, t, wt)
-    elif stage == 'rice':
-        rice(im, t, wt)
-    elif stage == 'hook':
+    # 写字/记录类镜头保留前景纸与实测墨线；其余镜头由样片真帧承担场景细节。
+    if stage in ('blank', 'write_one', 'paper_flip', 'separate', 'clip_charred',
+                 'hook', 'review', 'frames', 'reveal', 'off_umbrella', 'rice'):
+        draw_paper(im, t, wt, inks)
+    if stage in ('reveal', 'frames'):
+        strip(im, t, 'FIRE', step=int(max(0, t - wt.get('一帧一帧', t)) * 5), compact=True)
+    if stage == 'hook':
         namebox(im, t, wt, returning=True)
-    draw_actor(im, t, line, frac, wt)
-    # 前景浮尘：与背景不同速度的视差
+    draw_interactions(im, t, line, wt)
+    # 少量前景浮尘：与背景不同速度，不覆盖电视与字幕。
     da = ImageDraw.Draw(im, 'RGBA')
-    rng = np.random.default_rng(77)
-    for k in range(28):
-        x = int(rng.integers(0, W)) + int(9 * math.sin(t * 0.7 + k))
-        y = int((rng.integers(80, 980) - t * (5 + k % 4 * 4)) % 1000)
-        r = int(rng.integers(1, 4))
-        da.ellipse((x - r, y - r, x + r, y + r), fill=(226, 248, 255, 42))
+    rng = np.random.default_rng(91)
+    for k in range(18):
+        x = int(rng.integers(0, W)) + int(7 * math.sin(t * 0.7 + k))
+        y = int((rng.integers(80, 740) - t * (4 + k % 3 * 3)) % 720)
+        r = int(rng.integers(1, 3))
+        da.ellipse((x - r, y - r, x + r, y + r), fill=(226, 248, 255, 36))
 
 
 def tv_at(scene: dict, cue: dict, t: float, frac: float) -> tuple[str, str, int]:
@@ -1232,7 +1331,7 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
     wt = wt_all[line]
     frac = min(0.999, max(0.0, (t - cue['start']) / max(0.01, cue['end'] - cue['start'])))
 
-    im = background(t, line, wt, rain_stop)
+    im = background(t, cue, line, wt)
     clip, mode, idx = tv_at(scene, cue, t, frac)
     if clip == 'dark':
         d = ImageDraw.Draw(im)
@@ -1276,6 +1375,7 @@ def main() -> int:
         raise RuntimeError('缺音源：git show origin/arena/689c1837-newday:鲸鱼MV重看_克隆配音_最终版.wav > 鲸鱼MV重看_克隆配音_最终版.wav')
     assert alignment['measured'] is True and subs['measured'] is True
     assert len(SCENES) == 24 and set(WORD_TRIGGERS) == set(range(1, 25))
+    assert set(MAIN_BG) == set(range(1, 25)) and set(INTERACTIONS) == set(range(1, 25))
     cues = alignment['cues']
     screens = subs['screens']
     source_duration = float(alignment['source_duration_seconds'])

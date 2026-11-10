@@ -124,3 +124,5 @@ assets/ai-girls/walk-v14/preview/*_native.png
 
 # 中文字体文件（制作环境按 google/fonts 取回，不入库）
 /video-fx/assets/fonts/
+
+/tools/day14制作/sample_frames/
