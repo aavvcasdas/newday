@@ -1,0 +1,19 @@
+{
+  "name": "tonghuazhen-paper-popup",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node scripts/verify-timeline.mjs",
+    "render:stills": "node render.mjs stills",
+    "render:review": "node render.mjs review",
+    "render:sample": "node render.mjs sample",
+    "render": "node render.mjs full",
+    "captions": "node render.mjs srt"
+  },
+  "dependencies": {
+    "playwright-core": "1.63.0",
+    "three": "0.170.0"
+  }
+}
