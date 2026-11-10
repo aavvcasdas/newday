@@ -1,9 +1,87 @@
 {
-  "version": "v9",
+  "version": "v10",
   "source": "real renderer",
   "seed": "PYTHONHASHSEED=0",
-  "skill": "lemo-opuscar styles/paper-popup/STYLE.md + DIRECTOR.md §9",
-  "rejected_style": "v8 pixel-rpg / Bayer / integer-pixel / brick-wall",
+  "skill": "lemo-opuscar styles/paper-popup/STYLE.md + DEMO.md (229 lines, full read) + DIRECTOR.md §9",
+  "style": "paper-popup 纸片立体书；v10 只换主画面人物层与互动层",
+  "user_feedback_v10": "分镜画面够了；不要用少一只脚的图；动作不符、增加互动、不要用这么多人物形象",
+  "rejected_style": "v8 pixel-rpg / Bayer / integer-pixel / brick-wall；v9 的 33 张错配姿态图",
+  "safe_sheets": {
+    "本鲸": {
+      "sheet": "v10_whale_letter",
+      "verified_frames": 11,
+      "min_bottom_components": 2,
+      "max_alpha_mean_diff": 0.0
+    },
+    "龙娘": {
+      "sheet": "v10_gpt_heart",
+      "verified_frames": 11,
+      "min_bottom_components": 5,
+      "max_alpha_mean_diff": 0.0
+    },
+    "豆包": {
+      "sheet": "v10_doubao_cup",
+      "verified_frames": 11,
+      "min_bottom_components": 2,
+      "max_alpha_mean_diff": 0.421
+    },
+    "大小姐": {
+      "sheet": "v10_claude_letter",
+      "verified_frames": 11,
+      "min_bottom_components": 3,
+      "max_alpha_mean_diff": 0.0
+    },
+    "Kimi": {
+      "sheet": "v10_kimi_photo",
+      "verified_frames": 11,
+      "min_bottom_components": 2,
+      "max_alpha_mean_diff": 1.112
+    },
+    "Gemini": {
+      "sheet": "v10_gemini_shell",
+      "verified_frames": 11,
+      "min_bottom_components": 4,
+      "max_alpha_mean_diff": 0.0
+    },
+    "智谱": {
+      "sheet": "v10_zai_read",
+      "verified_frames": 11,
+      "min_bottom_components": 4,
+      "max_alpha_mean_diff": 0.0
+    },
+    "千问": {
+      "sheet": "v10_qwen_lantern",
+      "verified_frames": 11,
+      "min_bottom_components": 2,
+      "max_alpha_mean_diff": 0.535
+    }
+  },
+  "actors_per_scene": {
+    "1": 2,
+    "2": 2,
+    "3": 2,
+    "4": 3,
+    "5": 2,
+    "6": 2,
+    "7": 2,
+    "8": 3,
+    "9": 2,
+    "10": 2,
+    "11": 3,
+    "12": 2,
+    "13": 2,
+    "14": 2,
+    "15": 2,
+    "16": 2,
+    "17": 2,
+    "18": 2,
+    "19": 2,
+    "20": 2,
+    "21": 2,
+    "22": 2,
+    "23": 2,
+    "24": 2
+  },
   "keyframes": [
     {
       "index": 1,
@@ -14,12 +92,12 @@
       "layout": "charred_corner",
       "move": "static",
       "duration": 3.79,
-      "actors": "龙娘／本鲸／豆包",
+      "actors": "豆包／本鲸",
       "handover": "豆包→本鲸：cloth",
       "frame": "01_M01_charred_corner_3.79s_L01.png",
       "lyrics": "本鲸，就是昨天被烤成黑炭的那条鱼。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 2,
@@ -30,12 +108,12 @@
       "layout": "book_stage",
       "move": "push",
       "duration": 5.7,
-      "actors": "本鲸／大小姐／Gemini",
+      "actors": "本鲸／大小姐",
       "handover": "本鲸→大小姐：book",
       "frame": "02_M03_book_stage_5.70s_L03.png",
       "lyrics": "屏幕一亮，一本红皮书翻开，城堡从书页里长出来。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 3,
@@ -50,8 +128,8 @@
       "handover": "龙娘→豆包：ribbon",
       "frame": "03_M04_castle_night_5.52s_L04.png",
       "lyrics": "龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 4,
@@ -62,12 +140,12 @@
       "layout": "throne",
       "move": "push",
       "duration": 8.16,
-      "actors": "大小姐／本鲸／豆包",
+      "actors": "本鲸／大小姐",
       "handover": "本鲸→大小姐：name_strip",
       "frame": "04_M07_throne_8.16s_L07.png",
       "lyrics": "名字太长，塞不进那个框，大小姐扮的女王追着问了好几遍。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 5,
@@ -82,8 +160,8 @@
       "handover": "Kimi→豆包：lantern",
       "frame": "05_M08_cave_5.37s_L08.png",
       "lyrics": "最黑的那段，Kimi 的月光照亮洞口；豆包在笼子里喊了一声「小心后面」。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 6,
@@ -94,12 +172,12 @@
       "layout": "rewind",
       "move": "pan_l",
       "duration": 3.89,
-      "actors": "本鲸／Gemini／智谱",
+      "actors": "本鲸／Gemini",
       "handover": "本鲸→Gemini：reel",
       "frame": "06_M12_rewind_3.89s_L12.png",
       "lyrics": "本鲸按下暂停，倒回去，一段一段看。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 7,
@@ -110,12 +188,12 @@
       "layout": "film_wall",
       "move": "pull",
       "duration": 4.08,
-      "actors": "本鲸／龙娘／大小姐",
+      "actors": "大小姐／本鲸",
       "handover": "大小姐→本鲸：paper",
       "frame": "07_M17_film_wall_4.08s_L17.png",
       "lyrics": "电视里全演过了，只是没人把它写下来。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 8,
@@ -126,12 +204,12 @@
       "layout": "hallway",
       "move": "pan_r",
       "duration": 4.5,
-      "actors": "本鲸／智谱／豆包",
+      "actors": "智谱／本鲸",
       "handover": "智谱→本鲸：umbrella",
       "frame": "08_M22_hallway_4.50s_L22.png",
       "lyrics": "电视关掉，那把歪伞收进抽屉，今天不拍雨了。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     },
     {
       "index": 9,
@@ -142,16 +220,16 @@
       "layout": "name_bench",
       "move": "push",
       "duration": 6.5,
-      "actors": "大小姐／本鲸／豆包",
+      "actors": "本鲸／豆包",
       "handover": "本鲸→豆包：glyph_block",
       "frame": "09_M24_name_bench_6.50s_L24.png",
       "lyrics": "下一集，本鲸要把那个装不下的名字，一个字一个字塞回框里。",
-      "video_version": "v9",
-      "style": "paper-popup"
+      "video_version": "v10",
+      "style": "paper-popup / v10 双脚可见安全人物层"
     }
   ],
-  "video_sha256": "2df1e1b136ebaf4d90b60078bc43261378b41034f9822ff2a16a493fbe55ec0a",
-  "video_size_bytes": 43827522,
+  "video_sha256": "2c236b820400ba0125502b8cc916a8cf8e5c46855a973fecb5cbe019bff658ba",
+  "video_size_bytes": 38669372,
   "media_gate": {
     "verify_episode": true,
     "check_subtitle_sync": true,
@@ -159,6 +237,28 @@
     "audio_gate": true,
     "tv_at_v3_mismatches": 0,
     "effect_tv_rect_maxdiff": 0
+  },
+  "determinism": {
+    "seeds": [
+      "0",
+      "42",
+      "1"
+    ],
+    "times": [
+      2.5,
+      11.9,
+      36.5,
+      83.0,
+      123.9
+    ],
+    "sums": [
+      7610483,
+      7594008,
+      8070603,
+      7025007,
+      7664550
+    ],
+    "note": "final v10 code, 160x90 downscaled RGB pixel sums"
   },
   "deliverables": [
     "storyboard_sheet.jpg",

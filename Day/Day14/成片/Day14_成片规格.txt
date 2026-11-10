@@ -1,51 +1,61 @@
-Day14 成片规格（视频 v9 / 换掉 v8 的 pixel-rpg，改用 lemo-opuscar「Paper Pop-up Book 纸片立体书」/ 主画面与 MV 真帧无关 / 电视机内容不变，最终渲染）
+Day14 成片规格（视频 v10 / 保留 v9 paper-popup 分镜与背景，只修主画面人物层与互动层 / 电视内容与几何不变，最终渲染）
 文件：Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-SHA256：2df1e1b136ebaf4d90b60078bc43261378b41034f9822ff2a16a493fbe55ec0a
-大小：43,827,522 字节
+SHA256：2c236b820400ba0125502b8cc916a8cf8e5c46855a973fecb5cbe019bff658ba
+大小：38,669,372 字节
 视频：h264 1920x1080 30/1  3756 帧  时长 125.200000s
 音频：aac 44100Hz 2ch  时长 125.195011s（源 WAV 124.970s + 0.25s 收尾）
 音源：鲸鱼MV重看_克隆配音_最终版.wav  40kHz/16bit/单声道  SHA256 86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3
 实测轴：tools/day14制作/voice_alignment.json  24 cue / measured=true
 字幕轴：tools/day14制作/subtitle_timing.json  63 屏 / measured=true
-分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v9）
+分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v10）
       Day/Day14/opuscar-day14/TREATMENT.md / STORYBOARD.md / storyboard_sheet.jpg / mv_reference_sheet.jpg /
       model_sheet.jpg / action_test_sheet.jpg / skill_reference_sheet.jpg / poster.jpg / *.srt / build.sh / CREDITS
-主画面：与 MV 真帧无关；保留 v7 定点站位、逐句硬切、24 个剧本场景，
-      由 tools/day14制作/day14_v9_scenes.py 的 SCRIPT_SCENES / SCRIPT_INTERACTIONS / PASTEL_OVERRIDE /
-      HANDOVERS / REACTION_SHEET 驱动。
-      用户第九次反馈「没用说要rpg画风」否决 v8 的 8 色 Bayer / 整数像素 / 砖墙 / 拱窗 / 火把 / 透视地板；
-      v9 改用 styles/paper-popup/STYLE.md：暖棉纸底与三档噪声纸纤维、剪影外扩的灰纸板边与米白纸边、
-      深棕墨线、软投影、三层 pop-up 纸片（远山 / 中景 / 前景波边）、每镜一个主色族、纸片舞台与折痕、纸屑暖光。
-      摄影机 push/pull/pan_r/pan_l/tilt_up/shake/static 只动背景，用 LANCZOS 平滑变换，不再 nearest 像素化。
-      场景含焦痕检查角、晨间搬运过道、红皮书舞台、夜色城堡走廊、城门送别口、
-      风车村、王座厅、山洞口、龙焰石碑、后台圆镜、档案桌、倒带台、启动台、双台、
-      名牌长廊、月灯长廊、胶片墙、灯箱、翻纸长桌、夹子桌、抽屉柜、收伞门厅、白饭桌、昵称框修补台。
-互动：每镜 2–3 位本名只有一个固定 x 点位；STAGE_SCALE 缩小立绘，0.35s 短距滑入到位；
-      实测 chars_timed 词点用平滑 Image.blend 混合 idle→action→reaction，预备抬身、词点短回弹、结果停留；
-      24 句各一件手绘道具在两位本名手掌之间交接，道具与人物都套 cut-paper 白边/纸板边/软投影；
-      配视线弧、纸屑轨迹、末词点 reaction 与局部纸片粒子；
-      局部 dx/dy ≤70px，不用 walk-v14 步态整句 x0→x1→x2 横穿画面。
-      番外与项目 MV 真帧都不进主画面；主画面胶片条也只画手绘胶片孔与色块。
+用户第十次反馈（逐字）：「现在整体分镜的画面是够了，有几个问题1：有部分的图人物的脚少一只的，不要使用这些。
+      2.当前画面的动作很不符合，增加点互动吧，不要用这么多的人物形象，人物形象的动作不符合画面的状态。」
+范围：用户说「整体分镜的画面是够了」→ v9 的暖棉纸底、纸纤维、灰纸板边/米白纸边、深棕墨线、
+      软投影、三层 pop-up 纸片、24 套主色族、24 个剧本场景、逐句硬切、摄影机 LANCZOS 运动、
+      电视几何/内容、WAV / 24 cue / 63 屏 / 1080p30 / 3756 帧 / 125.200s / TAIL_PAD=0.25 / Day2 字幕全部不动。
+      v8 的 pixel-rpg / 8 色 Bayer / 整数像素 / 砖墙 / 火把语法仍为已否决历史；本轮不重问画风、不回到 RPG。
+主画面人物层：tools/day14制作/day14_v10_scenes.py 驱动；render_day14_video.py 绑定 S10 并注册 8 张 v10_* 图集。
+      停用 v9 用过的 33 张侧身单鞋 idle / 迈步 / 蹲坐 / 桌面 / 泳姿 / reach 等错配姿态图，
+      也停用 idle→act→reaction 三套姿态混合与 REACTION_SHEET 第三姿态。
+      白名单（assets/ai-girls/actions-v12，11 帧）：whale_letter / gpt_heart / doubao_cup / claude_letter /
+      kimi_photo / gemini_shell / zai_read / qwen_lantern；全部正面站立、底部不裁切、双脚可见。
+      启动闸门 verify_safe_sheets()：8×11 帧逐帧检查四角透明、a[415] 底部不裁切、
+      alpha 相对首帧均值差 <2/255（允许手里道具轻微位移）、底部 392–410 行至少 2 段独立脚/裙摆轮廓；
+      任何不合格直接 AssertionError。实际演出只取 SAFE_FRAMES=(0,3,7,10) 做一次性动作条，不循环步态。
+      每镜只保留 HANDOVERS 交接双方 2 位本名；本鲸不在交接对里时补 1 位定点旁观（L04/L08/L11 共 3 位）。
+互动与动作：SCENE_STATES 24 个语义状态对（give / receive / watch），STATE_PARAMS 给出朝对方倾身幅度、
+      抬手高度、纸片倾斜角、回弹点头；同一实测词点同步起势，一次性钟形曲线 anticipation→action→follow-through，
+      没有整句横穿、没有步态循环、没有第三套表情图。
+      既有 24 组 HANDOVERS 与 20 个 _draw_prop 道具键全部保留并加厚：道具在两掌之间缓动移动、
+      两掌到道具的连线、给出者掌心渐显 / 接收者掌心渐隐的纸片回响、到达时一次性 8 向火花、
+      关系弧与词点纸片粒子；_paper_interaction_links / _paper_handover_props / _paper_state_interaction /
+      _paper_impact_particles 依次绘制。draw_script_props() 24 句场景道具与 draw_script_backdrop() 未改。
 电视：440x276 机身 / 380x214 屏幕，右上 (1400,96)-(1840,372)；
       tv_at / CLIP_SECOND / TRIPLE / 定格 / 黑屏 / M15 三连 / 开机渐亮与 v3 逐帧一致
-      （3756 帧决策比对 0 差异）；背景切场、人物、道具、特效后电视矩形逐像素贴回
+      （最终代码 3756 帧决策比对 0 差异）；背景切场、人物、道具、特效后电视矩形逐像素贴回
       （9 个特效帧 render-level maxdiff=0）。番外真帧只出现在电视画中画。
 媒体终验：passed=True  decode_passed=True  pcm_correlation=0.9999960533334695  tail_pad=0.255s
           字幕抽样 errors=[]（78 个在屏/气口采样，63 屏在屏、气口无误报，Day2 青色条检测，不是 OCR）
 字幕同步：check_subtitle_sync.py passed=True / errors=[]（色彩/帧差抽样，不是 OCR）
-开场视觉：passed=True（运动 1.394 / 上半屏亮部 0.826 / 全帧亮部 0.889）
-音频门禁：gate --day 14 --stage audio passed=True；gate_audio_report.json 输入 MP4 SHA 与 v9 成片一致
+开场视觉：passed=True（运动 1.243 / 上半屏亮部 0.825 / 全帧亮部 0.886）
+音频门禁：gate --day 14 --stage audio passed=True；gate_audio_report.json 输入 MP4 SHA 与 v10 成片一致
 主画面词点帧差（编码后 MP4，640x360 灰度，遮掉电视矩形与字幕带，词点前后 ±0.35s，mean|Δ|/255×100）：
-          L03「翻开」`4.871`、L08「小心后面」`1.722`、L12「倒回去」`2.233`、L22「不拍雨」`1.805`、L24「一个字一个字」`5.907`
-          仍是局部表演与道具交接，不是 v6 的整句横穿走位。
+          L03「翻开」`4.123`、L08「小心后面」`1.261`、L12「倒回去」`1.395`、L22「不拍雨」`1.669`、L24「一个字一个字」`5.197`
+          仍是一次性语义姿态与道具交接，不是 v6 的整句横穿走位。
 关键帧：Day/Day14/opuscar-day14/keyframes/ 9 张真实渲染帧；storyboard_sheet.jpg 由本仓库 Python 脚本拼成；
-      model_sheet.jpg / action_test_sheet.jpg / action_test_L03.jpg / action_test_L08.jpg 按 skill 0.2s 动作条复核；
-      skill_reference_sheet.jpg 与 paper-popup demo poster / styleframe 并排。
-      编码后另抽 26 帧全片等距目检（tools/day14制作/review_frames/v9_encoded/fullsheet.jpg）、
-      L03 按 0.2s 抽 10 帧确认交接道具与固定点位（L03_fixed_sheet.jpg）。
-可复现：最终渲染使用 `PYTHONHASHSEED=0`；v9 布局/词点粒子种子为 `zlib.crc32(layout/word)`，
-      `PYTHONHASHSEED=0/42/1` 在 5 个抽查时间的像素和完全一致：7590213 / 7567895 / 8024840 / 6999690 / 7627479。
-流程偏差：skill 的风格帧单独批准与 6–9 张 storyboard stop/wait 未单独停等；用户要求直接换风格并渲染推送，
-      本轮把审看材料与 MP4 一次交付。未获真人观影批准、未发布、未合并 PR、未做连续带声全片人工播放。
+      model_sheet.jpg 展示 8 张白名单与 4 帧动作条；action_test_sheet.jpg / action_test_L03.jpg /
+      action_test_L08.jpg 按 skill 0.2s 动作条复核；skill_reference_sheet.jpg 与 paper-popup demo 并排。
+      编码后另抽 26 帧全片等距目检（tools/day14制作/review_frames/v10_encoded/fullsheet.jpg）、
+      L03 按 0.2s 抽 10 帧（L03_fixed_sheet.jpg）、16 帧人物/脚部带（feet_band.jpg）确认编码后双脚可见。
+可复现：最终渲染使用 `PYTHONHASHSEED=0`；v10 布局/词点粒子种子仍为 `zlib.crc32(layout/word)`，
+      **在最终 v10 代码上重跑** `PYTHONHASHSEED=0/42/1`，5 个抽查时间 `2.5/11.9/36.5/83.0/123.9s`
+      的 `160×90` 像素和完全一致：7610483 / 7594008 / 8070603 / 7025007 / 7664550；
+      另跑 24 cue × 3 `render_at()` 共 72 帧 0 异常；`tv_at` 3756 帧与 v3 比对 0 差异。
+      v9 文档里的 `7590213 / 7567895 / 8024840 / 6999690 / 7627479` 是换 LANCZOS/白边前的旧代码数据，已更正。
+流程偏差：用户说「分镜画面够了」，本轮按反馈直接改人物层并出片；Treatment / Storyboard 在代码与探针审看后重写，
+      style-frame 单独批准与 6–9 张 storyboard stop/wait 仍未单独停等。DEMO.md 229 行本轮全篇读毕
+      （v9 文档曾过度声明全篇读毕，已更正）。未获真人观影批准、未发布、未合并 PR、未做连续带声全片人工播放。
 注意：字幕核验是色彩/帧差抽样，不是 OCR；纸片背景与立绘融合度、连续表演和节奏仍需人工看片。
       没有单独 style-frame / storyboard stop-wait 审批，也没有通用引擎绿灯结论；电视内容与几何仍锁 v3。

@@ -1,20 +1,18 @@
 #!/usr/bin/env python3
-"""Day14《重看昨天那支片子》成片渲染器 v9 —— paper-popup 纸片立体书画风。
+"""Day14《重看昨天那支片子》成片渲染器 v10 —— paper-popup 纸片立体书 + 安全人物层。
 
-用户 2026-11-09 第九次反馈：「继续修改，没用说要rpg画风，换个画风啊，
-并且渲染视频推送分支」。v8 错把 lemo-opuscar 的 `pixel-rpg` 当成「参照 skill」
-的全部，Bayer 抖动 / 有限调色板 / 砖墙 / 拱窗 / 火把 / 整数像素 RPG 语汇全部作废。
-本轮回到 `styles/README.md` 选 **Materials & 3D → Paper Pop-up Book / 纸片立体书**：
-  · 暖棉纸底、纸纤维、剪影外扩的灰纸板边与米白纸边、深棕墨线、软投影；
-  · 远山 / 中景 / 前景波边三层 pop-up 纸片，由远到近立起，每镜一个主色族；
-  · 既有 AI娘立绘与手绘道具都套 cut-paper 白边；姿态平滑缓动，不再 Bayer 抖动；
-  · DIRECTOR §9 的 anticipation → action → follow-through → reaction 保留；
-  · 不复制 demo 角色、故事、Paper Mario 名称、HP/分数 UI、气泡、标题卡或尾卡。
+用户第十次反馈：「现在整体分镜的画面是够了，有几个问题1：有部分的图人物的脚少一只的，
+不要使用这些。2.当前画面的动作很不符合，增加点互动吧，不要用这么多的人物形象，
+人物形象的动作不符合画面的状态。」
 
-硬约束不改：主画面与 MV 真帧无关、24 句切 24 个剧本场景、2–3 位本名固定 x 点位、
-不横向乱走、电视内容与几何 v3 锁定、WAV / 24 cue / 63 屏 / 1080p30 / 3756 帧 /
-125.200s / Day2 字幕不变。不加 BGM/音效重混、不改 30fps、不改字幕为对话框。
-番外真帧仍只在右上电视 PiP；主画面与 MV 真帧无关。
+v10 保留 v9 的整体分镜 / 纸片立体书背景 / 24 句硬切 / 定点站位 / 电视几何与内容，
+只替换主画面人物层：8 张逐帧核验「双脚可见」的正面站立图集白名单、每镜 2–3 位本名、
+按导演卡语义的一次性纸片姿态，以及既有 24 组道具交接 / 关系线 / 粒子互动加厚。
+停用 v9 的 33 张侧身、抬脚、蹲坐、桌面、泳姿等错配姿态图与第三套 reaction 姿态。
+
+硬约束不改：主画面与 MV 真帧无关、WAV / 24 cue / 63 屏 / 1080p30 / 3756 帧 /
+125.200s / TAIL_PAD=0.25 / Day2 字幕不变；番外真帧仍只在右上电视 PiP；
+不加 BGM/音效重混、不改 30fps、不改字幕为对话框、不回到 RPG 画风。
 
 用法：
   PYTHONHASHSEED=0 python3 tools/day14制作/render_day14_video.py --out Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
@@ -40,7 +38,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
-import day14_v9_scenes as S9
+import day14_v10_scenes as S10
 
 ROOT = Path(__file__).resolve().parents[2]
 W, H, FPS = 1920, 1080, 30             # 仓库统一规格（verify_episode.py 要求 1080p30）
@@ -110,6 +108,16 @@ SHEETS = {
     'zai_clock': ('assets/ai-girls/lyric-action-v13/zai_clock_action.png', 16),
     'qwen_idle': ('assets/ai-girls/walk-v14/qwen_idle_pet.png', 8),
     'qwen_reach': ('assets/ai-girls/lyric-action-v13/qwen_reach_action.png', 16),
+    # v10 白名单：仅这 8 张 actions-v12 正面站立图集允许进入主画面。
+    # verify_safe_sheets() 会逐帧检查底部不裁切、>=2 段独立脚/裙摆轮廓。
+    'v10_whale_letter': ('assets/ai-girls/actions-v12/whale_letter.png', 11),
+    'v10_gpt_heart': ('assets/ai-girls/actions-v12/gpt_heart.png', 11),
+    'v10_doubao_cup': ('assets/ai-girls/actions-v12/doubao_cup.png', 11),
+    'v10_claude_letter': ('assets/ai-girls/actions-v12/claude_letter.png', 11),
+    'v10_kimi_photo': ('assets/ai-girls/actions-v12/kimi_photo.png', 11),
+    'v10_gemini_shell': ('assets/ai-girls/actions-v12/gemini_shell.png', 11),
+    'v10_zai_read': ('assets/ai-girls/actions-v12/zai_read.png', 11),
+    'v10_qwen_lantern': ('assets/ai-girls/actions-v12/qwen_lantern.png', 11),
 }
 
 CAST = {
@@ -614,7 +622,7 @@ def draw_tv_body(d: ImageDraw.ImageDraw) -> None:
 
 def background(t: float, cue: dict, line: int, wt: dict, frac: float) -> Image.Image:
     """主画面 = paper-popup 暖纸 / 三层剪纸 pop-up / 24 场景 → 镜头只动背景 → 固定电视外壳。"""
-    return S9.draw_script_backdrop(t, line, wt, frac)
+    return S10.draw_script_backdrop(t, line, wt, frac)
 
 
 def mood_grade(im: Image.Image, t: float, scene: dict, wt: dict) -> Image.Image:
@@ -1124,8 +1132,8 @@ def draw_interactions(im: Image.Image, t: float, line: int, wt: dict) -> None:
 
 def draw_stage(im: Image.Image, t: float, line: int, frac: float,
                wt: dict[str, float], inks: list[float], cue: dict) -> None:
-    S9.draw_script_props(im, t, line, wt, frac, inks, cue)
-    S9.draw_script_actors(im, t, line, cue, wt)
+    S10.draw_script_props(im, t, line, wt, frac, inks, cue)
+    S10.draw_script_actors(im, t, line, cue, wt)
     # 少量前景浮尘：与场景背景不同速度，不覆盖电视与字幕。
     da = ImageDraw.Draw(im, 'RGBA')
     rng = np.random.default_rng(91)
@@ -1224,7 +1232,7 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
     return im
 
 
-S9.bind(globals())
+S10.bind(globals())
 
 
 def main() -> int:
@@ -1241,7 +1249,10 @@ def main() -> int:
         raise RuntimeError('缺音源：git show origin/arena/689c1837-newday:鲸鱼MV重看_克隆配音_最终版.wav > 鲸鱼MV重看_克隆配音_最终版.wav')
     assert alignment['measured'] is True and subs['measured'] is True
     assert len(SCENES) == 24 and set(WORD_TRIGGERS) == set(range(1, 25))
-    assert set(S9.SCRIPT_SCENES) == set(range(1, 25)) and set(S9.SCRIPT_INTERACTIONS) == set(range(1, 25))
+    assert set(S10.SCRIPT_SCENES) == set(range(1, 25)) and set(S10.SCRIPT_INTERACTIONS) == set(range(1, 25))
+    safe = S10.verify_safe_sheets()
+    assert len(safe) == 8 and set(S10.SAFE_SHEET_BY_WHO.values()) <= set(SHEETS)
+    print('V10_SAFE_SHEETS_OK', {k: v['min_bottom_components'] for k, v in safe.items()}, flush=True)
     cues = alignment['cues']
     screens = subs['screens']
     source_duration = float(alignment['source_duration_seconds'])

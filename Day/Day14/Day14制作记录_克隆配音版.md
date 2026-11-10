@@ -1,10 +1,25 @@
 # Day14 制作记录｜克隆配音版成片（`measured=true`）
 
+> **视频 v10 人物层修订（2026-11-09，当前成片；最高优先）**：用户第十次原话
+> 「现在整体分镜的画面是够了，有几个问题1：有部分的图人物的脚少一只的，不要使用这些。
+> 2.当前画面的动作很不符合，增加点互动吧，不要用这么多的人物形象，人物形象的动作不符合画面的状态。」
+> 本轮按「分镜画面够了」锁定范围：**不重做背景/画风/电视/音轴/字幕/帧数**。
+> 新增 [`tools/day14制作/day14_v10_scenes.py`](../../tools/day14制作/day14_v10_scenes.py)，
+> `render_day14_video.py` 改绑 `S10` 并注册 8 张 `v10_*` 安全图集；停用 v9 的 33 张错配姿态图与
+> `REACTION_SHEET` 三套姿态混合。`verify_safe_sheets()` 在 `main()` 里对 8×11 帧做启动闸门：
+> 四角透明、底部不裁切、alpha 轮廓基本不变、底部至少两段独立脚/裙摆，不合格即 AssertionError。
+> 每镜 2–3 位本名、24 个 `SCENE_STATES` 语义对、一次性钟形姿态（倾身/抬手/小角度纸片倾斜/回弹），
+> 互动加厚为 24 次道具交接 + 两掌连线 + 掌心回响 + 到达火花。
+> 最终代码重跑 `PYTHONHASHSEED=0/42/1`（5 点 `160×90` 像素和一致）、`24×3 render_at` 0 异常、
+> `tv_at` 3756 帧与 v3 比对 0 差异、9 个特效帧电视矩形 maxdiff=0；DEMO.md 229 行全篇读毕。
+> **下方 v9 及更早段落均为历史**；本轮不合并 PR、不发布、不声称人工批准。
+
+
 > 2026-11-09：用户给定 [`鲸鱼MV重看_克隆配音_最终版.wav`](../../鲸鱼MV重看_克隆配音_最终版.wav)
 > （分支 `arena/689c1837-newday`，提交 `4a6a000 Add files via upload`），要求「现在根据这个生成视频」。
 > 本记录只写**实际做过的事与可复现命令**；没做的列在最后一节，不冒称。
 >
-> **视频 v9 换画风（2026-11-09，当前成片；v8 RPG 画风已被否决）**：用户第九次原话
+> **视频 v9 换画风（2026-11-09，历史；v8 RPG 画风已被否决）**：用户第九次原话
 > 「继续修改，没用说要rpg画风，换个画风啊，并且渲染视频推送分支」。v8 把 lemo-opuscar 的
 > `styles/pixel-rpg/STYLE.md` 当成「参照 skill」的全部，8 色有限调色板、4×4 Bayer 抖动、
 > 整数像素、砖墙/拱窗/旗帜/火把/透视地板均**不是用户要的画风**；本轮不辩解「不是完整 320×180 RPG」，
@@ -397,14 +412,14 @@ v3 / v7 `tv_at` 全 `3756` 帧决策 `0` 差异，9 个特效帧电视矩形 `ma
 | 与 MV 真帧解耦 / 项目 MV 参照 | 主画面渲染器仍无 `MAIN_BG` / `sample_frame()` / `SAMPLE_DIR`；`background()` 调 `day14_v9_scenes.draw_script_backdrop()`；`strip()` 画手绘胶片孔/色块。四支项目影像只抽帧拼成 `mv_reference_sheet.jpg` 作导演对照，**真帧不进主画面**；番外真帧只由 `tv_frame()` 进右上电视 |
 | `tools/剧本/画面红线体检.py --file` 点查 | `render_day14_video.py` 与 `day14_v9_scenes.py` 均**通过**：不画粉丝数/进度条/音量条/加载条/数据曲线/账本表。全仓扫描仍会命中**本轮未改的** `tools/engine/whale_rig/render_legacy_sample.mjs` 红线探针，不能把它冒充成 v9 全仓通过 |
 | 风格帧 / 模型表 / 0.2s 动作条 | `opuscar-day14/keyframes/` 9 张真实渲染帧与 `storyboard_sheet.jpg`；`model_sheet.jpg` 8 位 idle/reaction；`action_test_sheet.jpg` 与放大的 `action_test_L03.jpg` / `action_test_L08.jpg` 按 0.2s 查书本/月灯交接；`skill_reference_sheet.jpg` 与 demo poster 并排复核；编码后 `v9_encoded/fullsheet.jpg` 26 帧等距目检 + `L03_fixed_sheet.jpg` 10 帧 |
-| 主画面词点帧差（编码后，遮掉电视矩形与字幕带） | `640×360` 灰度级，取词点前后 `±0.35s`，`mean|Δ|/255×100`：L03「翻开」`4.871`、L08「小心后面」`1.722`、L12「倒回去」`2.233`、L22「不拍雨」`1.805`、L24「一个字一个字」`5.907`；仍是局部表演与道具交接，不是 v6 整句横穿 |
+| 主画面词点帧差（编码后，遮掉电视矩形与字幕带） | `640×360` 灰度级，取词点前后 `±0.35s`，`mean|Δ|/255×100`：L03「翻开」`4.123`、L08「小心后面」`1.261`、L12「倒回去」`1.395`、L22「不拍雨」`1.669`、L24「一个字一个字」`5.197`；仍是一次性语义姿态与道具交接，不是 v6 整句横穿 |
 | 电视机不变性比对 | v3 / v9 `tv_at` 全 `3756` 帧决策 `0` 差异；`CLIP_SECOND` / `TRIPLE` / `TV_OUTER` / `SCREEN` 全等；抽查 9 个闪白/速度线/黑屏帧，`fx='none'` 与正常特效的电视矩形 `maxdiff=0` |
 | `tools/验收/verify_episode.py` 媒体终验 | **通过**：1080p30 / 双声道 / 全片解码 / 原声零偏移相关 `0.9999960533334695` / 尾挂 `0.255s` / `63` 屏字幕在屏与气口抽样 `errors=[]` |
 | `tools/验收/check_subtitle_sync.py` | **通过**：`passed=true` / `errors=[]`；色彩/帧差抽样，不证明 OCR 或音素同步 |
-| `tools/验收/check_opener_visual.py` 前 2 秒体检 | **通过**：运动 `1.394`、上半屏亮部 `0.826`、全帧亮部 `0.889` |
-| `gate --day 14 --stage audio --config Day/Day14/gate_config.json` | **通过**；`gate_audio_report.json` `passed=true`，输入 MP4 SHA 与 v9 成片一致 |
-| ffprobe | H264 `1920×1080@30` / `3756` 帧 / `125.200000s`，AAC `44100Hz/2ch/125.195011s`；`43,827,522` 字节 |
-| 可复现性 | `PYTHONHASHSEED=0/42/1` 在 `2.5/11.9/36.5/83.0/123.9s` 的 `160×90` 像素和完全一致：`7590213 / 7567895 / 8024840 / 6999690 / 7627479`；布局/词点粒子用 `zlib.crc32(layout/word)` |
+| `tools/验收/check_opener_visual.py` 前 2 秒体检 | **通过**：运动 `1.243`、上半屏亮部 `0.825`、全帧亮部 `0.886` |
+| `gate --day 14 --stage audio --config Day/Day14/gate_config.json` | **通过**；`gate_audio_report.json` `passed=true`，输入 MP4 SHA 与 v10 成片一致 |
+| ffprobe | H264 `1920×1080@30` / `3756` 帧 / `125.200000s`，AAC `44100Hz/2ch/125.195011s`；`38,669,372` 字节 |
+| 可复现性 | **最终 v10 代码重跑** `PYTHONHASHSEED=0/42/1` 在 `2.5/11.9/36.5/83.0/123.9s` 的 `160×90` 像素和完全一致：`7610483 / 7594008 / 8070603 / 7025007 / 7664550`；布局/词点粒子用 `zlib.crc32(layout/word)` |
 | Python / Node / JSON / diff | 逐文件 `test_creation_skill.py` / `test_media_gates.py` / `test_mowan_agent.py` / `test_plot_skill.py` / `test_mix_episode_bgm.py` **5 个文件 34 项全 OK**；Node **3 pass + 1 skip**；`py_compile`、4 份 JSON、`git diff --check` 通过。<br>`test_gates.py` 另有 2 项仍断言**已删除的「零阿拉伯数字」门禁**，本轮未改门禁代码，不拿它冒充全绿 |
 
 ### 成片实测（视频 v9 最终渲染）
@@ -412,7 +427,7 @@ v3 / v7 `tv_at` 全 `3756` 帧决策 `0` 差异，9 个特效帧电视矩形 `ma
 | 项 | 值 |
 |---|---|
 | 文件 | [`成片/Day14_重看昨天那支片子_克隆配音版.mp4`](成片/Day14_重看昨天那支片子_克隆配音版.mp4) |
-| 大小 / SHA256 | `43,827,522` 字节 / `2df1e1b136ebaf4d90b60078bc43261378b41034f9822ff2a16a493fbe55ec0a` |
+| 大小 / SHA256 | `38,669,372` 字节 / `2c236b820400ba0125502b8cc916a8cf8e5c46855a973fecb5cbe019bff658ba` |
 | 视频 | `h264` `1920×1080` `30/1` `3756` 帧 `125.200s`（视频 v9：主画面 24 个 paper-popup 剧本场景逐句硬切、2–3 位本名定点站位、词点姿态混合与道具交接；`440×276` 小电视逐帧不变） |
 | 音频 | `aac` `44100Hz` 双声道 `125.195s`（源 `124.970s` + `0.25s` 收尾） |
 | 尾挂 / PCM 相关 | `0.255s` / `0.9999960533334695` |
