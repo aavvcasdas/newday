@@ -4,34 +4,33 @@
 > （分支 `arena/689c1837-newday`，提交 `4a6a000 Add files via upload`），要求「现在根据这个生成视频」。
 > 本记录只写**实际做过的事与可复现命令**；没做的列在最后一节，不冒称。
 >
-> **视频 v8 重渲（2026-11-09，当前成片；v7 方向保留）**：用户第八次指出「好的现在稍微正常了，但是背景和互动太潦草了，请参照 skill 修改下」；
-> v7 曾按第七次反馈「现在的画面还是很奇怪，请查看为什么人一直乱走，
-> 不是这个样的啊，你看看别人的 mv……是让你参照下项目的 mv 做啊」。v6 把「别站着」理解成
-> 每镜 2–3 人整句 `x0→x1→x2` 横穿画面，被判「人一直乱走」，也没有参照项目 MV 的镜头语法。
-> v7 当时先抽帧回看 `把回忆拼好给你_v12剧情动作版.mp4`、`v13_整片渲染_待审.mp4`、
-> `我怀疑大禹治水/Remotion_动态引擎重做_待审.mp4` 与根目录《达拉崩吧》，拼成
-> [`mv_reference_sheet.jpg`](opuscar-day14/mv_reference_sheet.jpg)，确认项目 MV 的共同语法是
-> **浅色扁平舞台、主角居中、左右定点、一句一硬切、词点局部动作、结果停留**。
-> v7 当时第 7 次重渲：主画面仍**与 MV 真帧无关**，但改成 24 个粉彩扁平剧本场景；
-> 每镜 2–3 位本名只有一个固定 x 点位，0.35s 短距入场，实测 `chars_timed` 词点切一次
-> idle→action 图集并做 ≤70px 局部手势/道具动作，之后停在结果位；
-> **不整句横穿巡游、不八人漫游、也不回到 v4 站桩**；摄影机只动背景。番外真帧只保留在右上电视画中画。
-> **电视机仍锁死**：`440×276 / 380×214`、片段、换段、定格、黑屏、三连与开机渐亮与 v3 逐帧不变
-> （3756 帧决策比对 `0` 差异，特效后电视矩形逐像素贴回）。
-> **音源、台词、实测轴、字幕轴、片长一个字未改**；第 4.7 节是 v7 历史，第 4.8 节列 v8 改动，第 5 节是 v8 验收。
+> **视频 v9 换画风（2026-11-09，当前成片；v8 RPG 画风已被否决）**：用户第九次原话
+> 「继续修改，没用说要rpg画风，换个画风啊，并且渲染视频推送分支」。v8 把 lemo-opuscar 的
+> `styles/pixel-rpg/STYLE.md` 当成「参照 skill」的全部，8 色有限调色板、4×4 Bayer 抖动、
+> 整数像素、砖墙/拱窗/旗帜/火把/透视地板均**不是用户要的画风**；本轮不辩解「不是完整 320×180 RPG」，
+> 重新从 `styles/README.md` 选 **Materials & 3D → Paper Pop-up Book / 纸片立体书**。
+> 新增 [`tools/day14制作/day14_v9_scenes.py`](../../tools/day14制作/day14_v9_scenes.py)，
+> `render_day14_video.py` 改指向 v9；暖棉纸、纸纤维、米白纸边、灰纸板边、深棕墨线、软投影、
+> 三层 pop-up 纸片、每镜主色族、纸片舞台与折痕、纸屑与暖光取代 RPG 语汇；
+> 人物与道具都套 cut-paper 白边，姿态改平滑缓动，摄影机改 LANCZOS，不再 nearest 像素化。
+> **v7 的定点站位、逐句硬切、24 个剧本场景、2–3 位本名固定 x、词点局部动作、道具交接、reaction、
+> 电视 v3 锁定、WAV / 24 cue / 63 屏 / 1080p30 / 3756 帧 / 125.200s / Day2 字幕全部不变**；
+> 只换视觉画风，不加 BGM/音效重混、不改 30fps、不改字幕为对话框、不加尾卡。
+> 第 4.7 节是 v7 历史，第 4.8 节是 v8 历史（RPG 画风已被否决），第 4.9 节列 v9 改动，第 5 节是 v9 验收。
 >
-> **v8 本次重渲**：用户说「稍微正常了，但是背景和互动太潦草了，请参照 skill 修改下」。
-> 本轮保留上述定点/硬切/电视/音轴，按 lemo-opuscar 的 `STYLE.md`/`TECHNIQUE.md`/`DIRECTOR.md`
-> 给 24 个场景加有限调色板 Bayer 抖动、四层整数像素视差、砖墙/拱窗/旗帜/火把/透视地板；
-> 给 24 句加预备→动作→回弹→reaction、双手道具交接、视线弧与词点粒子。
-> 不变 1080p30 / 3756 帧 / 125.200s / Day2 字幕 / v3 电视；不改成 RPG 对话框、24fps 或新 BGM。
+> **v8 本次重渲（历史）**：用户第八次说「稍微正常了，但是背景和互动太潦草了，请参照 skill 修改下」。
+> 当时保留定点/硬切/电视/音轴，按 `pixel-rpg` 给 24 个场景加有限调色板 Bayer 抖动、
+> 四层整数像素视差、砖墙/拱窗/旗帜/火把/透视地板，给 24 句加预备→动作→回弹→reaction、
+> 双手道具交接、视线弧与词点粒子；该视觉方向已被第九次反馈否决，不作为当前画风。
 >
 > 历史：v1 大电视静止版（`1060×630 / 920×517`）；v2 逐句切镜版（`660×400 / 560×315`），见 4.2；
 > v3 八位人物巡游版（`440×276 / 380×214`），见 4.3——人群走动已被用户否决；
 > v4 固定镜头 / 一人站定 / 词点动作版，见 4.4——「背景没变、人物原地踏步」已被用户否决；
 > v5 MV 真帧主画面 / 词点冻结姿态版，见 4.5——「和 MV 无关、按剧本互动、人站着不动」被用户否决；
-> v6 剧本场景 / 整句连续横穿走位版，见 4.6——「人一直乱走、没参照项目 MV」被用户否决。
-> 六版 MP4 均已被覆盖，不另留文件；电视几何/片段从 v3 起一直未改。
+> v6 剧本场景 / 整句连续横穿走位版，见 4.6——「人一直乱走、没参照项目 MV」被用户否决；
+> v7 粗背景定点版，见 4.7；v8 RPG 加厚版，见 4.8（画风已被否决）。
+> 八版 MP4 均已被覆盖，不另留文件；电视几何/片段从 v3 起一直未改。
+
 
 ---
 
@@ -43,7 +42,7 @@
 | 取回命令 | `git show origin/arena/689c1837-newday:鲸鱼MV重看_克隆配音_最终版.wav > 鲸鱼MV重看_克隆配音_最终版.wav` |
 | 规格 | 单声道 / `40000 Hz` / `16-bit PCM` / `4998800` 帧 / **124.970 s** / `9,997,644` 字节 |
 | SHA256 | `86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3` |
-| 台词 | [`Day14配音台词_达拉崩吧版_待审.txt`](Day14配音台词_达拉崩吧版_待审.txt)（文稿 v6，24 行 / 440 汉字，八位本名；视频 v8 不改台词） |
+| 台词 | [`Day14配音台词_达拉崩吧版_待审.txt`](Day14配音台词_达拉崩吧版_待审.txt)（文稿 v6，24 行 / 440 汉字，八位本名；视频 v9 不改台词） |
 | 画面素材 | `番外MV/达拉崩吧/dalabengba.mp4`（本仓库已交付成片，`132.77s`，零水印） |
 | 剧本 / 分镜 | [`Day14剧本_达拉崩吧承接_待审.md`](Day14剧本_达拉崩吧承接_待审.md) · [`Day14分镜_电视机版_待审.md`](Day14分镜_电视机版_待审.md) |
 
@@ -137,7 +136,8 @@ python3 tools/day14制作/render_day14_video.py \
 - 电视外（**v4，历史且已被否决**）：见第 4.4 节，本鲸一人站定 + 实测词点动作 + 背景/道具/MV 真帧胶片条 + 固定镜头。
 - 电视外（**视频 v5，历史且已被否决**）：见第 4.5 节，番外样片真帧逐句换主画面背景、2–3 位本名按实测词点交互、背景摄影机运动；电视仍锁死。
 - 电视外（**视频 v6，历史且已被否决**）：见第 4.6 节，主画面与 MV 真帧解耦，24 个手绘剧本场景逐句硬切、2–3 位本名整句连续走位、摄影机动背景；电视仍锁死。
-- 电视外（**视频 v8，当前成片**）：见第 4.8 节，保留 v7 的 24 个定点剧本场景与词点局部动作，按 skill 加厚背景、道具交接与 reaction；电视仍锁死。
+- 电视外（**视频 v8，历史且画风已被否决**）：见第 4.8 节，保留 v7 的 24 个定点剧本场景与词点局部动作，按 pixel-rpg 加厚背景、道具交接与 reaction；电视仍锁死。
+- 电视外（**视频 v9，当前成片**）：见第 4.9 节，保留 v7 的定点/硬切/电视/音轴，改 paper-popup 暖纸、纸板边、三层 pop-up 纸片与纸片道具；电视仍锁死。
 - 字幕：**按用户定死的项目统一 Day2 样式**（`tools/字幕/README.md`、`day2_style_sub.mjs` 的 `DAY2_SUB`）
   逐项复刻：深蓝 `rgba(9,22,54)` 对话条、`#48C8FF` 青色描边、圆角、左上角
   `#1E40AF`/`#FACC15` 说话人小标签、白色 `NotoSansSC-Bold` 正文（28px 逻辑 ×1.5）。
@@ -246,8 +246,8 @@ L24「一个字一个字」`9.60`（`640×360` 灰度级 `/255`），说明动�
 
 依据：用户要求「请全面重新修改分镜调用 lemo-opuscar skill 来生成分镜」。
 执行 `sh .claude/skills/lemo-opuscar/scripts/setup.sh` 拉库到 `/home/user/lemo-opuscar`，
-`setup.sh demo pixel-rpg` 读技术语法；`setup.sh deps` 的 Playwright 浏览器下载被沙箱网络拒绝，
-故未用库的浏览器渲染器，只按 `AGENTS.md` / `DIRECTOR.md` / `styles/pixel-rpg/STYLE.md`
+`setup.sh demo pixel-rpg` 读技术语法（v5 当时；v9 已改 `setup.sh demo paper-popup`）；`setup.sh deps` 的 Playwright 浏览器下载被沙箱网络拒绝，
+故未用库的浏览器渲染器，只按 `AGENTS.md` / `DIRECTOR.md` / v5 当时的 `styles/pixel-rpg/STYLE.md`
 与 `core/render/sheet.py` 的导演/拼板流程执行。先写
 [`opuscar-day14/TREATMENT.md`](opuscar-day14/TREATMENT.md)（三候选结构、logline、benchmark、
 shot list、beat sheet、cue map、sound design、字幕设计、与 demo 六项对照），再生成
@@ -342,14 +342,14 @@ v3 / v7 `tv_at` 全 `3756` 帧决策 `0` 差异，9 个特效帧电视矩形 `ma
 
 ---
 
-### 4.8 视频 v8：参照 skill 加厚背景与互动（当前成片）
+### 4.8 视频 v8：参照 pixel-rpg 加厚背景与互动（历史；RPG 画风已被用户否决）
 
 用户说「稍微正常了，但是背景和互动太潦草了，请参照 skill 修改下」。v7 的定点站位/逐句硬切/电视锁定/
 实测音轴保留；v7 的一层粉彩渐变与单次 idle→action 不够，按 `.claude/skills/lemo-opuscar/SKILL.md`
 重读 `AGENTS.md` / `DIRECTOR.md` / `TECHNIQUE.md` / `styles/pixel-rpg/STYLE.md` / `DEMO.md`，
 并对照 `poster.jpg` / `styleframe.jpg`，新增 [`tools/day14制作/day14_v8_scenes.py`](../../tools/day14制作/day14_v8_scenes.py)：
 
-| 维度 | v7（历史） | **视频 v8（当前成片）** |
+| 维度 | v7（历史） | **视频 v8（历史，已否决）** |
 |---|---|---|
 | 背景 | 粉彩渐变 + 24 套稀疏几何道具 | 保留粉彩亮度，叠加 8 色有限调色板 / 4×4 Bayer 抖动 / 480×270→1920×1080 nearest / 远墙·柱廊·地板·前景柱四层整数像素视差 / 砖缝、拱窗、旗帜、火把、透视地板、光轴与浮尘 |
 | 人物 | 固定 x，实测词点一次 idle→action，结果停留 | 固定 x 不变；idle→action→reaction 用缓动权重与 Bayer 掩膜逐像素混合，预备抬身、成形回弹，不在 `if` 里硬切 pose |
@@ -364,39 +364,63 @@ v3 / v7 `tv_at` 全 `3756` 帧决策 `0` 差异，9 个特效帧电视矩形 `ma
 `AGENTS.md` 的风格帧单独批准与 6–9 张 storyboard stop/wait 本轮未单独停等，随成片一次交付，详见
 [`TREATMENT.md`](opuscar-day14/TREATMENT.md) 与 [`STORYBOARD.md`](opuscar-day14/STORYBOARD.md)。
 
-## 五、已跑的验收（视频 v8 最终 MP4）
+
+### 4.9 视频 v9：用户否决 RPG，换 paper-popup 纸片立体书（当前成片）
+
+用户第九次反馈「没用说要rpg画风，换个画风啊，并且渲染视频推送分支」。v8 的 `pixel-rpg` 画风被明确否决，
+本轮回到 `styles/README.md` 选 **Materials & 3D → Paper Pop-up Book / 纸片立体书**，读
+`styles/paper-popup/STYLE.md` / `DEMO.md` / `poster.jpg` / `demo/stills/styleframe.jpg`，
+新增 [`tools/day14制作/day14_v9_scenes.py`](../../tools/day14制作/day14_v9_scenes.py)：
+
+| 维度 | v8（历史，已否决） | **视频 v9（当前成片）** |
+|---|---|---|
+| 背景 | 8 色有限调色板 / 4×4 Bayer / 480×270→1080p nearest / 砖墙·拱窗·旗帜·火把·透视地板 | 暖棉纸 + 三档噪声纸纤维 + 三层 pop-up 纸片（远山/中景/波边）+ 24 套主色族 + 纸片舞台折痕；摄影机 LANCZOS 平滑运动 |
+| 人物 | Bayer 掩膜混合 pose，深冷墨线 | 平滑 `Image.blend` 混合 pose；立绘外扩灰纸板边、米白纸边、深棕墨线、软投影；固定 x 与词点动作不变 |
+| 道具 / 互动 | 最近邻放大道具、Bayer 光晕 | 道具同样套 cut-paper 白边；纸屑轨迹、视线弧、暖色纸晕、词点纸片粒子；24 句交接双方都在当句演员表 |
+| 时间 | 按实测 `wt[word]` 排序 | 继续按实测 `wt[word]` 排序，交接/反应/粒子不早于词点 |
+| 摄影机 | 整数像素 NEAREST | LANCZOS，保住纸边柔和；电视外壳仍在摄影机之后固定贴上 |
+| 不改 | — | WAV / 24 cue / 63 屏 / 1080p30 / 3756 帧 / 125.200s / Day2 字幕 / 电视 v3 内容几何 / 无 BGM 与尾卡 / 主画面与 MV 真帧无关 |
+
+一轮修正：初版 `_cutout_sprite()` 把整圈米白纸边画成深棕墨线，模型表复核后改成「墨线只贴立绘轮廓、
+米白纸边留在外圈」；全高清形态学改为 1/4 分辨率做纸边，避免 3756 帧渲染过慢。
+`py_compile`、24 cue ×3 帧运行时抽查、`PYTHONHASHSEED=0/42/1` 五点像素和一致；
+9 张真实渲染关键帧、模型表、poster、SRT、build.sh、故事板拼板、0.2s 动作条和 skill 对照拼板已刷新。
+`AGENTS.md` 的风格帧单独批准与 6–9 张 storyboard stop/wait 本轮仍未单独停等，随成片一次交付，详见
+[`TREATMENT.md`](opuscar-day14/TREATMENT.md) 与 [`STORYBOARD.md`](opuscar-day14/STORYBOARD.md)。
+
+## 五、已跑的验收（视频 v9 最终 MP4）
 
 | 检查 | 结果 |
 |---|---|
-| v8 场景 / 互动数据 | `SCRIPT_SCENES` 24 个 layout 全互异；`PASTEL_OVERRIDE` 24 套；`SCRIPT_INTERACTIONS` 24 句全有 2–3 位本名、固定 `x`、多个实测词点；`HANDOVERS` 24 句交接双方都在当句演员表里；`REACTION_SHEET` 8 位全部指向现有图集；`who / act / trigger` 引用 `0` 缺失；无 v6 的 `x0`；`word_times(cues)` 24 句通过；`SHEETS` 路径 `0` 缺失 |
+| v9 场景 / 互动数据 | `SCRIPT_SCENES` 24 个 layout 全互异；`PASTEL_OVERRIDE` 24 套；`SCRIPT_INTERACTIONS` 24 句全有 2–3 位本名、固定 `x`、多个实测词点；`HANDOVERS` 24 句交接双方都在当句演员表里；`REACTION_SHEET` 8 位全部指向现有图集；`who / act / trigger` 引用 `0` 缺失；无 v6 的 `x0`；`word_times(cues)` 24 句通过；`SHEETS` 路径 `0` 缺失 |
 | 运行时 / 编译 | `py_compile` 通过；`load_frame_index()` 后 24 cue × 3 个时间点 `render_at()` 无异常；38 张图集路径 `missing []` |
-| 与 MV 真帧解耦 / 项目 MV 参照 | 主画面渲染器仍无 `MAIN_BG` / `sample_frame()` / `SAMPLE_DIR`；`background()` 调 `day14_v8_scenes.draw_script_backdrop()`；`strip()` 画手绘胶片孔/色块。四支项目影像只抽帧拼成 `mv_reference_sheet.jpg` 作导演对照，**真帧不进主画面**；番外真帧只由 `tv_frame()` 进右上电视 |
-| `tools/剧本/画面红线体检.py --file` 点查 | `render_day14_video.py` 与 `day14_v8_scenes.py` 均**通过**：不画粉丝数/进度条/音量条/加载条/数据曲线/账本表。全仓扫描仍会命中**本轮未改的** `tools/engine/whale_rig/render_legacy_sample.mjs` 红线探针，不能把它冒充成 v8 全仓通过 |
-| 风格帧 / 模型表 / 0.2s 动作条 | `opuscar-day14/keyframes/` 9 张真实渲染帧与 `storyboard_sheet.jpg`；`model_sheet.jpg` 8 位 idle/reaction；`action_test_sheet.jpg` 与放大的 `action_test_L03.jpg` / `action_test_L08.jpg` 按 0.2s 查书本/月灯交接；`skill_reference_sheet.jpg` 与 demo poster 并排复核；编码后 `v8_encoded/fullsheet.jpg` 26 帧等距目检 + `L03_fixed_sheet.jpg` 10 帧 |
-| 主画面词点帧差（编码后，遮掉电视矩形与字幕带） | `640×360` 灰度级，取词点前后 `±0.35s`，`mean|Δ|/255×100`：L03「翻开」`2.308`、L08「小心后面」`1.554`、L12「倒回去」`3.189`、L22「不拍雨」`2.658`、L24「一个字一个字」`3.508`；仍是局部表演与道具交接，不是 v6 整句横穿 |
-| 电视机不变性比对 | v3 / v8 `tv_at` 全 `3756` 帧决策 `0` 差异；`CLIP_SECOND` / `TRIPLE` / `TV_OUTER` / `SCREEN` 全等；抽查 9 个闪白/速度线/黑屏帧，`fx='none'` 与正常特效的电视矩形 `maxdiff=0` |
+| 与 MV 真帧解耦 / 项目 MV 参照 | 主画面渲染器仍无 `MAIN_BG` / `sample_frame()` / `SAMPLE_DIR`；`background()` 调 `day14_v9_scenes.draw_script_backdrop()`；`strip()` 画手绘胶片孔/色块。四支项目影像只抽帧拼成 `mv_reference_sheet.jpg` 作导演对照，**真帧不进主画面**；番外真帧只由 `tv_frame()` 进右上电视 |
+| `tools/剧本/画面红线体检.py --file` 点查 | `render_day14_video.py` 与 `day14_v9_scenes.py` 均**通过**：不画粉丝数/进度条/音量条/加载条/数据曲线/账本表。全仓扫描仍会命中**本轮未改的** `tools/engine/whale_rig/render_legacy_sample.mjs` 红线探针，不能把它冒充成 v9 全仓通过 |
+| 风格帧 / 模型表 / 0.2s 动作条 | `opuscar-day14/keyframes/` 9 张真实渲染帧与 `storyboard_sheet.jpg`；`model_sheet.jpg` 8 位 idle/reaction；`action_test_sheet.jpg` 与放大的 `action_test_L03.jpg` / `action_test_L08.jpg` 按 0.2s 查书本/月灯交接；`skill_reference_sheet.jpg` 与 demo poster 并排复核；编码后 `v9_encoded/fullsheet.jpg` 26 帧等距目检 + `L03_fixed_sheet.jpg` 10 帧 |
+| 主画面词点帧差（编码后，遮掉电视矩形与字幕带） | `640×360` 灰度级，取词点前后 `±0.35s`，`mean|Δ|/255×100`：L03「翻开」`4.871`、L08「小心后面」`1.722`、L12「倒回去」`2.233`、L22「不拍雨」`1.805`、L24「一个字一个字」`5.907`；仍是局部表演与道具交接，不是 v6 整句横穿 |
+| 电视机不变性比对 | v3 / v9 `tv_at` 全 `3756` 帧决策 `0` 差异；`CLIP_SECOND` / `TRIPLE` / `TV_OUTER` / `SCREEN` 全等；抽查 9 个闪白/速度线/黑屏帧，`fx='none'` 与正常特效的电视矩形 `maxdiff=0` |
 | `tools/验收/verify_episode.py` 媒体终验 | **通过**：1080p30 / 双声道 / 全片解码 / 原声零偏移相关 `0.9999960533334695` / 尾挂 `0.255s` / `63` 屏字幕在屏与气口抽样 `errors=[]` |
 | `tools/验收/check_subtitle_sync.py` | **通过**：`passed=true` / `errors=[]`；色彩/帧差抽样，不证明 OCR 或音素同步 |
-| `tools/验收/check_opener_visual.py` 前 2 秒体检 | **通过**：运动 `1.459`、上半屏亮部 `0.772`、全帧亮部 `0.617` |
-| `gate --day 14 --stage audio --config Day/Day14/gate_config.json` | **通过**；`gate_audio_report.json` `passed=true`，输入 MP4 SHA 与 v8 成片一致 |
-| ffprobe | H264 `1920×1080@30` / `3756` 帧 / `125.200000s`，AAC `44100Hz/2ch/125.195011s`；`69,952,950` 字节 |
-| 可复现性 | `PYTHONHASHSEED=0/1/42` 在 `2.5/11.9/36.5/83.0/123.9s` 的整帧像素和完全一致；布局/词点粒子用 `zlib.crc32(layout/word)` |
+| `tools/验收/check_opener_visual.py` 前 2 秒体检 | **通过**：运动 `1.394`、上半屏亮部 `0.826`、全帧亮部 `0.889` |
+| `gate --day 14 --stage audio --config Day/Day14/gate_config.json` | **通过**；`gate_audio_report.json` `passed=true`，输入 MP4 SHA 与 v9 成片一致 |
+| ffprobe | H264 `1920×1080@30` / `3756` 帧 / `125.200000s`，AAC `44100Hz/2ch/125.195011s`；`43,827,522` 字节 |
+| 可复现性 | `PYTHONHASHSEED=0/42/1` 在 `2.5/11.9/36.5/83.0/123.9s` 的 `160×90` 像素和完全一致：`7590213 / 7567895 / 8024840 / 6999690 / 7627479`；布局/词点粒子用 `zlib.crc32(layout/word)` |
 | Python / Node / JSON / diff | 逐文件 `test_creation_skill.py` / `test_media_gates.py` / `test_mowan_agent.py` / `test_plot_skill.py` / `test_mix_episode_bgm.py` **5 个文件 34 项全 OK**；Node **3 pass + 1 skip**；`py_compile`、4 份 JSON、`git diff --check` 通过。<br>`test_gates.py` 另有 2 项仍断言**已删除的「零阿拉伯数字」门禁**，本轮未改门禁代码，不拿它冒充全绿 |
 
-### 成片实测（视频 v8 最终渲染）
+### 成片实测（视频 v9 最终渲染）
 
 | 项 | 值 |
 |---|---|
 | 文件 | [`成片/Day14_重看昨天那支片子_克隆配音版.mp4`](成片/Day14_重看昨天那支片子_克隆配音版.mp4) |
-| 大小 / SHA256 | `69,952,950` 字节 / `164561ac86f19e4eb6f257861e8284ce0ffe0a0a5a900f3e2ee808a735fbc4b1` |
-| 视频 | `h264` `1920×1080` `30/1` `3756` 帧 `125.200s`（视频 v8：主画面 24 个 skill 加厚剧本场景逐句硬切、2–3 位本名定点站位、词点姿态混合与道具交接；`440×276` 小电视逐帧不变） |
+| 大小 / SHA256 | `43,827,522` 字节 / `2df1e1b136ebaf4d90b60078bc43261378b41034f9822ff2a16a493fbe55ec0a` |
+| 视频 | `h264` `1920×1080` `30/1` `3756` 帧 `125.200s`（视频 v9：主画面 24 个 paper-popup 剧本场景逐句硬切、2–3 位本名定点站位、词点姿态混合与道具交接；`440×276` 小电视逐帧不变） |
 | 音频 | `aac` `44100Hz` 双声道 `125.195s`（源 `124.970s` + `0.25s` 收尾） |
 | 尾挂 / PCM 相关 | `0.255s` / `0.9999960533334695` |
 | 完整规格 | [`成片/Day14_成片规格.txt`](成片/Day14_成片规格.txt) |
 
 > 字幕核验是色彩/帧差抽样，**不是 OCR**，不证明字幕文字内容或音素同步；
-> 像素抖动背景与立绘的融合度、放大道具在连续播放里是否自然、节奏仍需人工看片。
-> 本轮未获真人观影批准、未发布、未合并 PR；skill 的风格帧/分镜 stop/wait 也未单独停等，见第 4.8 节记录。
+> 纸片背景与立绘的融合度、放大道具在连续播放里是否自然、节奏仍需人工看片。
+> 本轮未获真人观影批准、未发布、未合并 PR；skill 的风格帧/分镜 stop/wait 也未单独停等，见第 4.9 节记录。
 
 ---
 

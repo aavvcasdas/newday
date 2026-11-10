@@ -1,8 +1,11 @@
-# Day14 分镜｜skill 加厚的定点舞台版（视频 v8，lemo-opuscar 导演流程重生成）
+# Day14 分镜｜paper-popup 定点舞台版（视频 v9，lemo-opuscar 导演流程重生成）
 
-> **v8 覆盖条（2026-11-09，当前待审）**：用户指出「好的现在稍微正常了，但是背景和互动太潦草了，
-> 请参照 skill 修改下」。「稍微正常了」不是整片批准；v7 的定点站位、逐句硬切、主画面与 MV 真帧无关
-> 继续保留，v6 的整句 `x0→x1→x2` 横穿乱走仍作废。本轮按 lemo-opuscar skill 补厚背景与互动。
+> **v9 覆盖条（2026-11-09，当前待审）**：用户第九次指出「没用说要rpg画风，换个画风啊，并且渲染视频推送分支」。
+> v8 的 8 色有限调色板 / 4×4 Bayer 有序抖动 / 整数像素 / 砖墙 / 拱窗 / 火把 / 透视地板 RPG 语法**已被否决**；
+> v9 不再辩解「不是完整 320×180 RPG」，而是换掉整套视觉语法：从 `styles/README.md` 选
+> **Materials & 3D → Paper Pop-up Book / 纸片立体书**，读 `styles/paper-popup/STYLE.md` / `DEMO.md`、
+> `poster.jpg` 与 `demo/stills/styleframe.jpg`。暖棉纸、纸纤维、剪影外扩的灰纸板边与米白纸边、
+> 深棕墨线、软投影、三层 pop-up 纸片、每镜一个主色族、由远到近立起；只学语法，不复制 demo 角色/故事/UI/尾卡。
 >
 > 本轮回看并抽帧对照了 [`mv_reference_sheet.jpg`](opuscar-day14/mv_reference_sheet.jpg) 里的四支项目影像：
 > `把回忆拼好给你_v12剧情动作版.mp4`、`v13_整片渲染_待审.mp4`、
@@ -10,14 +13,15 @@
 > 它们的共同语法是：**浅色扁平舞台、主角居中、1–2 位对手戏角色左右定点、一句/一镜一次硬切、
 > 词点局部手势与道具动作、结果停留**；不是让角色整句横向巡游。
 >
-> - 主画面仍**与 MV 真帧无关**；24 句切 24 个剧本场景，保留粉彩亮度，但加 skill 的有限调色板 4×4 Bayer 抖动、四层整数像素视差、砖墙/拱窗/旗帜/火把/透视地板。
-> - 每位角色只有一个固定站位；开场 0.35s 短距滑入，之后**不横向乱走**；实测 `chars_timed` 词点用缓动+Bayer 掩膜混合 idle→action→reaction，局部 `dx/dy ≤70px`，动作播完停在结果位。
-> - 每句增加一件手绘道具在两位本名手掌之间交接、视线弧、词点粒子与接收者反应；`WORD_TRIGGERS` 按实测时间排序，避免反应早于交接。
-> - 不把整片改成 320×180 RPG / 24fps / 对话框字幕 / 新 BGM；音源、台词、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕、电视内容与几何均未改。
+> - 主画面仍**与 MV 真帧无关**；24 句切 24 个剧本场景，保留定点互动，换成暖棉纸/纸纤维/三层 pop-up 纸片/米白纸边/灰纸板边/软投影。
+> - 每位角色只有一个固定站位；开场 0.35s 短距滑入，之后**不横向乱走**；实测 `chars_timed` 词点用平滑缓动混合 idle→action→reaction，局部 `dx/dy ≤70px`，动作播完停在结果位。
+> - 每句保留一件手绘道具在两位本名手掌之间交接、视线弧、词点纸屑与接收者反应；`WORD_TRIGGERS` 按实测时间排序，避免反应早于交接。
+> - v8 的 RPG 画风已被否决；v9 不把整片改成 320×180 RPG / 24fps / 对话框字幕 / 新 BGM；音源、台词、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕、电视内容与几何均未改。
+
 
 ## 一、v6 为什么被推翻
 
-| 用户指出 | v6 的问题 | v7 方向（v8 保留） |
+| 用户指出 | v6 的问题 | v7 方向（v8 历史，v9 保留定点语法） |
 |---|---|---|
 | 人一直乱走 | 每镜 2–3 人整句 `x0→x1→x2` 横穿画面，看起来像无目的巡游 | 固定 x 点位；只保留 0.35s 入场滑入与 ≤70px 词点局部动作，之后停留 |
 | 不是这个样 | 深暗舞台、人物过大且散在画面各处 | 项目 MV 式粉彩大色块、居中主角 + 左右定点、缩小人物、统一地平线 |
@@ -28,7 +32,7 @@
 
 | 依据 | 用法 |
 |---|---|
-| [`lemo-opuscar`](https://github.com/lemomo-ai/lemo-opuscar) | 按 `.claude/skills/lemo-opuscar/SKILL.md` 拉库；读 `AGENTS.md` / `DIRECTOR.md` / `styles/pixel-rpg/STYLE.md`；用 `core/render/sheet.py` 拼 9 张真实渲染关键帧 |
+| [`lemo-opuscar`](https://github.com/lemomo-ai/lemo-opuscar) | 按 `.claude/skills/lemo-opuscar/SKILL.md` 拉库；读 `AGENTS.md` / `DIRECTOR.md` / `styles/paper-popup/STYLE.md`；用本仓库 Python 脚本拼 9 张真实渲染关键帧 |
 | 项目 MV 参照 | [`mv_reference_sheet.jpg`](opuscar-day14/mv_reference_sheet.jpg)；四支抽帧只用于学构图/切镜/定点动作，**不复制像素** |
 | 本集 WAV 与实测轴 | `voice_alignment.json` 24 cue `measured=true`，逐字 `chars_timed` 词点；`subtitle_timing.json` 63 屏 |
 | 本集剧本 | `Day14剧本_达拉崩吧承接_待审.md` / `Day14配音台词_达拉崩吧版_待审.txt` |

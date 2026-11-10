@@ -1,8 +1,9 @@
 {
-  "version": "v8",
+  "version": "v9",
   "source": "real renderer",
   "seed": "PYTHONHASHSEED=0",
-  "skill": "lemo-opuscar pixel-rpg background/performance grammar",
+  "skill": "lemo-opuscar styles/paper-popup/STYLE.md + DIRECTOR.md §9",
+  "rejected_style": "v8 pixel-rpg / Bayer / integer-pixel / brick-wall",
   "keyframes": [
     {
       "index": 1,
@@ -16,7 +17,9 @@
       "actors": "龙娘／本鲸／豆包",
       "handover": "豆包→本鲸：cloth",
       "frame": "01_M01_charred_corner_3.79s_L01.png",
-      "lyrics": "本鲸，就是昨天被烤成黑炭的那条鱼。"
+      "lyrics": "本鲸，就是昨天被烤成黑炭的那条鱼。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 2,
@@ -30,7 +33,9 @@
       "actors": "本鲸／大小姐／Gemini",
       "handover": "本鲸→大小姐：book",
       "frame": "02_M03_book_stage_5.70s_L03.png",
-      "lyrics": "屏幕一亮，一本红皮书翻开，城堡从书页里长出来。"
+      "lyrics": "屏幕一亮，一本红皮书翻开，城堡从书页里长出来。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 3,
@@ -44,7 +49,9 @@
       "actors": "龙娘／豆包／本鲸",
       "handover": "龙娘→豆包：ribbon",
       "frame": "03_M04_castle_night_5.52s_L04.png",
-      "lyrics": "龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。"
+      "lyrics": "龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 4,
@@ -58,7 +65,9 @@
       "actors": "大小姐／本鲸／豆包",
       "handover": "本鲸→大小姐：name_strip",
       "frame": "04_M07_throne_8.16s_L07.png",
-      "lyrics": "名字太长，塞不进那个框，大小姐扮的女王追着问了好几遍。"
+      "lyrics": "名字太长，塞不进那个框，大小姐扮的女王追着问了好几遍。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 5,
@@ -72,7 +81,9 @@
       "actors": "Kimi／豆包／本鲸",
       "handover": "Kimi→豆包：lantern",
       "frame": "05_M08_cave_5.37s_L08.png",
-      "lyrics": "最黑的那段，Kimi 的月光照亮洞口；豆包在笼子里喊了一声「小心后面」。"
+      "lyrics": "最黑的那段，Kimi 的月光照亮洞口；豆包在笼子里喊了一声「小心后面」。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 6,
@@ -86,7 +97,9 @@
       "actors": "本鲸／Gemini／智谱",
       "handover": "本鲸→Gemini：reel",
       "frame": "06_M12_rewind_3.89s_L12.png",
-      "lyrics": "本鲸按下暂停，倒回去，一段一段看。"
+      "lyrics": "本鲸按下暂停，倒回去，一段一段看。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 7,
@@ -100,7 +113,9 @@
       "actors": "本鲸／龙娘／大小姐",
       "handover": "大小姐→本鲸：paper",
       "frame": "07_M17_film_wall_4.08s_L17.png",
-      "lyrics": "电视里全演过了，只是没人把它写下来。"
+      "lyrics": "电视里全演过了，只是没人把它写下来。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 8,
@@ -114,7 +129,9 @@
       "actors": "本鲸／智谱／豆包",
       "handover": "智谱→本鲸：umbrella",
       "frame": "08_M22_hallway_4.50s_L22.png",
-      "lyrics": "电视关掉，那把歪伞收进抽屉，今天不拍雨了。"
+      "lyrics": "电视关掉，那把歪伞收进抽屉，今天不拍雨了。",
+      "video_version": "v9",
+      "style": "paper-popup"
     },
     {
       "index": 9,
@@ -128,15 +145,18 @@
       "actors": "大小姐／本鲸／豆包",
       "handover": "本鲸→豆包：glyph_block",
       "frame": "09_M24_name_bench_6.50s_L24.png",
-      "lyrics": "下一集，本鲸要把那个装不下的名字，一个字一个字塞回框里。"
+      "lyrics": "下一集，本鲸要把那个装不下的名字，一个字一个字塞回框里。",
+      "video_version": "v9",
+      "style": "paper-popup"
     }
   ],
-  "video_sha256": "164561ac86f19e4eb6f257861e8284ce0ffe0a0a5a900f3e2ee808a735fbc4b1",
-  "video_size_bytes": 69952950,
+  "video_sha256": "2df1e1b136ebaf4d90b60078bc43261378b41034f9822ff2a16a493fbe55ec0a",
+  "video_size_bytes": 43827522,
   "media_gate": {
     "verify_episode": true,
     "check_subtitle_sync": true,
     "opener_visual": true,
+    "audio_gate": true,
     "tv_at_v3_mismatches": 0,
     "effect_tv_rect_maxdiff": 0
   },
