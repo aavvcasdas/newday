@@ -3,6 +3,7 @@
 import { FB, C, T, DARK, clamp, mod } from './px.js';
 import { drawTextPx } from './glyphs.js';
 import { getBakedSprite } from './sprites_data.js';
+import { getWalkCycleBob, getWalkCycleFrame, getWalkCycleSprite } from './walk_cycle_data.js';
 
 const portraitCache = new Map();
 
@@ -80,7 +81,7 @@ export function drawRiceBowl(fb, cx, cy, t, scale = 1) {
 
 // Main Protagonist: Whale-Girl (640×360 light-pixel clarity!)
 export function drawWhaleHero(fb, x, y, t, {
-  pose = 'idle',      // idle | run | shout | think | happy | ride | swim
+  pose = 'idle',      // idle | walk | run | shout | think | happy | ride | swim
   facing = 1,
   scarfLen = 20,
   scale = 1,
@@ -88,14 +89,19 @@ export function drawWhaleHero(fb, x, y, t, {
   mermaidGlow = false,
 } = {}) {
   const step8 = Math.floor(t * 8);
+  const walkFrame = getWalkCycleFrame(t);
   const blink = mod(Math.floor(t * 3.1), 11) === 0;
 
   let sprKey;
+  let directSpr = null;
   if (scale >= 2) {
     if (pose === 'shout') sprKey = 'whale_big_point';
     else if (pose === 'happy') sprKey = 'whale_big_wave';
     else sprKey = blink ? 'whale_big_blink' : 'whale_big_idle';
-  } else if (pose === 'run' || pose === 'swim') {
+  } else if (pose === 'run' || pose === 'walk') {
+    directSpr = getWalkCycleSprite('whale', walkFrame);
+    if (!directSpr) sprKey = `whale_walk_${mod(step8, 4)}`;
+  } else if (pose === 'swim') {
     sprKey = `whale_walk_${mod(step8, 4)}`;
   } else if (pose === 'ride') {
     sprKey = `whale_walk_${(step8 & 1) ? 1 : 3}`;
@@ -107,13 +113,15 @@ export function drawWhaleHero(fb, x, y, t, {
     sprKey = blink ? 'whale_blink' : 'whale_idle';
   }
 
-  const spr = getBakedSprite(sprKey);
+  const spr = directSpr || getBakedSprite(sprKey);
   if (!spr) return;
 
   const bob = pose === 'swim'
     ? Math.round(Math.sin(t * 3.4) * 3)
-    : (pose === 'run' || pose === 'ride')
-      ? (step8 & 1 ? -1 : 0)
+    : (pose === 'run' || pose === 'walk')
+      ? getWalkCycleBob(walkFrame)
+      : pose === 'ride'
+        ? (step8 & 1 ? -1 : 0)
       : (Math.floor(t * 2.2) & 1 ? 0 : -1);
   const flip = facing < 0;
   const hL = spr.h >> 1;
@@ -171,11 +179,16 @@ export function drawMapWhaleHero(fb, x, y, t, {
   scarfLen = 13,
 } = {}) {
   const step10 = Math.floor(t * 10);
+  const walkFrame = getWalkCycleFrame(t);
   const sprKey = pose === 'wave' ? 'whale_map_pt' : `whale_map_${mod(step10, 4)}`;
-  const spr = getBakedSprite(sprKey);
+  const spr = (pose === 'run' && getWalkCycleSprite('map_whale', walkFrame)) || getBakedSprite(sprKey);
   if (!spr) return;
 
-  const jumpOff = pose === 'jump' ? -Math.abs(Math.round(Math.sin(t * 9) * 5)) : (step10 & 1 ? -1 : 0);
+  const jumpOff = pose === 'jump'
+    ? -Math.abs(Math.round(Math.sin(t * 9) * 5))
+    : pose === 'run'
+      ? getWalkCycleBob(walkFrame)
+      : (step10 & 1 ? -1 : 0);
   const collarY = Math.round(y - 12 + jumpOff);
   const dir = -facing;
   let px = Math.round(x + dir * 2), py = collarY;
@@ -256,15 +269,20 @@ export function drawCastSprite(fb, x, y, who, t, {
   big = false,
 } = {}) {
   const blink = mod(Math.floor(t * 2.7 + x * 0.13), 10) === 0;
+  const walking = pose === 'walk' || pose === 'panic';
+  const walkFrame = getWalkCycleFrame(t);
   const bob = pose === 'cheer'
     ? -Math.abs(Math.round(Math.sin(t * 8.0) * 2.5))
-    : (pose === 'walk' || pose === 'panic')
-      ? (Math.floor(t * 10) & 1 ? -1 : 0)
+    : walking
+      ? getWalkCycleBob(walkFrame)
       : (Math.floor(t * 2) & 1 ? 0 : -1);
 
   let sprKey;
   let useSide = false;
-  if (who === 'doubao') {
+  let spr = walking ? getWalkCycleSprite(who, walkFrame, big) : null;
+  if (spr) {
+    useSide = true;
+  } else if (who === 'doubao') {
     sprKey = big ? (blink ? 'doubao_cage_1' : 'doubao_cage_0') : (blink ? 'doubao_sm_1' : 'doubao_sm_0');
   } else if (who === 'gpt') {
     sprKey = (Math.floor(t * 6) & 1) ? 'gpt_fly_1' : 'gpt_fly_0';
@@ -273,17 +291,12 @@ export function drawCastSprite(fb, x, y, who, t, {
     // The baked closed-eye frame is used as a sleeping pose only when the story calls for it.
     sprKey = pose === 'sleep' ? 'claude_front_1' : (blink ? 'claude_front_1' : 'claude_front_0');
   } else if (who === 'kimi' || who === 'gemini' || who === 'zai' || who === 'qwen') {
-    if (pose === 'walk' || pose === 'panic') {
-      sprKey = `${who}_side_${Math.floor(t * (pose === 'panic' ? 11 : 6)) & 1}`;
-      useSide = true;
-    } else {
-      sprKey = `${who}_front_${blink ? 1 : 0}`;
-    }
+    sprKey = `${who}_front_${blink ? 1 : 0}`;
   } else {
     sprKey = 'kimi_front_0';
   }
 
-  const spr = getBakedSprite(sprKey);
+  if (!spr) spr = getBakedSprite(sprKey);
   if (!spr) return;
 
   const flip = useSide ? (facing < 0) : (facing < 0 && who !== 'doubao');
