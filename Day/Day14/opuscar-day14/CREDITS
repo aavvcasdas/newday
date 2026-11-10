@@ -1,26 +1,32 @@
-Day14 视频 v7 主画面分镜 / 项目 MV 参照 / 成片所用第三方素材
+Day14 视频 v8 主画面分镜 / skill 语法参照 / 成片所用第三方素材
 =============================================
 
 - 番外《达拉崩吧》：`番外MV/达拉崩吧/dalabengba.mp4`、`TREATMENT.md`、`CREDITS`、
   `events.json`；仓库内已交付 16-bit Pixel RPG MV。原曲信息见番外 CREDITS（词/曲：ilem）。
-  **视频 v7 的主画面与 MV 真帧无关**：24 个粉彩扁平剧本场景全部由 `day14_v7_scenes.py` 手绘；
+  **视频 v8 的主画面与 MV 真帧无关**：24 个剧本场景全部由 `day14_v8_scenes.py` 手绘；
   番外真帧只保留在右上角电视画中画（v3 锁定的 10 段 / 442 张抽帧）。不重唱、不新混音、不改原片。
 - 项目 MV 镜头语法参照：`番外MV/把回忆拼好给你/成片/把回忆拼好给你_v12剧情动作版.mp4`、
   `番外MV/把回忆拼好给你/样片/v13_整片渲染_待审.mp4`、
   `番外MV/我怀疑大禹治水/样片/Remotion_动态引擎重做_待审.mp4`、根目录 `达拉崩吧.mp4`。
-  四支只用于抽帧对照「浅色舞台 / 定点站位 / 硬切 / 局部动作 / 停留」，不复制真帧进 Day14 主画面；
+  四支只学「浅色舞台 / 定点站位 / 硬切 / 局部动作 / 停留」，不复制真帧进 Day14 主画面；
   对照拼板见本目录 `mv_reference_sheet.jpg`。v12/v13 自身仍待审，不作为已获人工批准的动画范本。
+- lemo-opuscar 技术语法参照：`github.com/lemomo-ai/lemo-opuscar`（MIT + 第三方资产说明），
+  本轮读 `AGENTS.md`、`DIRECTOR.md`、`TECHNIQUE.md`、`styles/pixel-rpg/STYLE.md` / `DEMO.md`，
+  并对照 `styles/pixel-rpg/poster.jpg` 与 `demo/stills/styleframe.jpg`（两份图复制到
+  Gitignored 的 `tools/day14制作/review_frames/` 作审看，不进成片）。
+  只借有限调色板、4×4 Bayer 有序抖动、整数像素摄影机、四层视差、砖/拱窗/旗帜/火把/地板、
+  anticipation→action→follow-through→reaction 与 0.2s 动作复核；
+  不复制 demo 的故事、角色、菜单/HP UI、旋律、片尾卡或台词。库代码未复制进本仓库，
+  Playwright 浏览器渲染器未用；`core/render/sheet.py` 仅用于拼 `storyboard_sheet.jpg`。
 - 配音：`鲸鱼MV重看_克隆配音_最终版.wav`（用户上传的克隆配音，分支 `arena/689c1837-newday`）。
-  声音 likeness 与再分发授权由用户确认；本轮不替换、不变速。
-- 人物动作图集：`assets/ai-girls/walk-v14/`（8 个角色图集，v7 只取 idle 定点帧，不整句播步态）、
-  `assets/ai-girls/lyric-action-v13/`、`assets/ai-girls/actions-v12/`（实测词点局部动作）；
+  声音 likeness 与再分发授权由用户确认；本轮不替换、不变速、不加 BGM/音效重混。
+- 人物动作图集：`assets/ai-girls/walk-v14/`（8 个角色图集，v8 只取 idle 定点帧，不整句播步态）、
+  `assets/ai-girls/lyric-action-v13/`、`assets/ai-girls/actions-v12/`（实测词点局部动作与 reaction）；
   仓库内既有 AI娘图鉴与动作素材，未生成新脸、未改固定 PNG 五官。
-- 字体：`video-fx/assets/fonts/NotoSansSC[wght].ttf` 与 `ZCOOLKuaiLe-Regular.ttf`
-  （Google Fonts / OFL-1.1，字体文件被 `.gitignore` 忽略，不随提交分发）。
-- 导演方法：`github.com/lemomo-ai/lemo-opuscar`（MIT + 第三方资产说明），只使用
-  `AGENTS.md`、`DIRECTOR.md`、`styles/pixel-rpg/STYLE.md` 与 `core/render/sheet.py` 的导演/拼板语法；
-  库代码未复制进本仓库，未使用其 demo 故事/角色/旋律/片尾卡；Playwright 浏览器渲染器未用。
-- 编码与验收：仓库内 `tools/day14制作/render_day14_video.py`、`tools/day14制作/day14_v7_scenes.py`、
+- 字体：`video-fx/assets/fonts/NotoSansSC[wght].ttf` 与 `ZCOOLKuaiLe-Regular.ttf`；
+  按文件名推定为 Google Fonts / OFL-1.1，但字体文件被 `.gitignore` 忽略、授权状态请用户最终确认。
+  成片字幕沿用仓库 Day2 既有样式；字体只额外用于模型表、拼板标注与 poster 文字。
+- 编码与验收：仓库内 `tools/day14制作/render_day14_video.py`、`tools/day14制作/day14_v8_scenes.py`、
   `tools/验收/*`、`@ffmpeg-installer/ffmpeg` / `@ffprobe-installer/ffprobe`（本地 npm 安装，不入库）。
 
 权利说明：用户需确认其提供的 WAV、番外 MV、人物图集与字体的再分发/发布权利；

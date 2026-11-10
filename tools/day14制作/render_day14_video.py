@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
-"""Day14《重看昨天那支片子》成片渲染器 v7 —— 参照项目 MV 的定点站位与切镜语法。
+"""Day14《重看昨天那支片子》成片渲染器 v8 —— skill 加厚背景与定点表演。
 
-用户 2026-11-09 第七次反馈：「现在的画面还是很奇怪，请查看为什么人一直乱走，
-不是这个样的啊，你看看别人的 mv……是让你参照下项目的 mv 做啊」。
+用户 2026-11-09 第八次反馈：「好的现在稍微正常了，但是背景和互动太潦草了，
+请参照 skill 修改下」。v7 的「项目 MV 式定点站位 + 词点局部动作 + 硬切」方向保留；
+本轮重新读 lemo-opuscar 的 AGENTS/DIRECTOR/STYLE/TECHNIQUE/DEMO，
+把 16-bit Pixel RPG 的背景语法与导演表演语法移植到已锁定的主画面：
+  · 480×270 有限调色板 + 4×4 Bayer 有序抖动，×4 nearest 回 1080p；
+  · 远墙 / 柱廊 / 光轴 / 地板 / 前景柱的整数像素视差，砖缝、拱窗、旗帜、火把；
+  · anticipation → action → follow-through → 第二位角色反应，姿态用 Bayer 抖动混合；
+  · 每句一件手绘道具在两位本名双手之间交接，词点有局部粒子，不复制 demo 故事/片尾卡。
 
-v6 把 2–3 人整句 x0→x1→x2 横穿画面，被判「人一直乱走」；回看仓库里的
-`把回忆拼好给你_v12剧情动作版.mp4`、`v13_整片渲染_待审.mp4`、
-`我怀疑大禹治水/Remotion_动态引擎重做_待审.mp4` 与根目录 `达拉崩吧.mp4` 抽帧后，
-确认项目 MV 的共同语法是：浅色扁平舞台、主角居中、对手戏角色左右定点、
-一句/一镜一次硬切、词点局部手势与道具动作、结果停留，不横向巡游。
-
-v7 改法：
-  1. 主画面仍与 MV 真帧无关，24 个剧本场景改成项目 MV 式粉彩扁平舞台；
-  2. 每位角色只有一个固定站位，开场 0.35s 短距滑入；实测 `chars_timed` 词点
-     切到动作图集，局部 dx/dy ≤70px，动作播完停在结果位，不用步态横移；
-  3. 不复制项目 MV 真帧，只借构图/切镜/定点动作语法；番外真帧仍只在右上电视；
-  4. 电视 `tv_at()` / `CLIP_SECOND` / `TRIPLE` / 几何与 v3 逐帧一致，特效后贴回；
-  5. WAV、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕不变。
-
-字幕层固定绘制、不随镜头/电视缩放；电视内仍是番外成片真帧按比例缩小的完整场景、
-静音画中画；不画界面控件/数字看板/角标/水印/片尾卡。
+不改成 320×180 全片像素 RPG、不改字幕为对话框、不换 24fps、不加 BGM/音效重混：
+用户给定 WAV、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕、
+电视内容与几何都是硬约束。番外真帧仍只在右上电视 PiP；主画面与 MV 真帧无关。
 
 用法：
-  python3 tools/day14制作/render_day14_video.py --out Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-  python3 tools/day14制作/render_day14_video.py --stills 9
+  PYTHONHASHSEED=0 python3 tools/day14制作/render_day14_video.py --out Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
+  PYTHONHASHSEED=0 python3 tools/day14制作/render_day14_video.py --stills 9
 """
 from __future__ import annotations
 
@@ -44,7 +37,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
-import day14_v7_scenes as S7
+import day14_v8_scenes as S8
 
 ROOT = Path(__file__).resolve().parents[2]
 W, H, FPS = 1920, 1080, 30             # 仓库统一规格（verify_episode.py 要求 1080p30）
@@ -56,7 +49,7 @@ TV_OUTER = (1400, 96, 1840, 372)
 SCREEN = (1428, 124, 1808, 338)         # 380×214，16:9
 SW, SH = SCREEN[2] - SCREEN[0], SCREEN[3] - SCREEN[1]
 PAPER = (1120, 772, 1650, 952)
-BEN = (380, 470)                        # 旧道具函数的参考基准点；v7 人物按项目 MV 定点站位
+BEN = (380, 470)                        # 旧道具函数的参考基准点；v8 人物按项目 MV 定点站位
 BEN_SIZE = (350, 379)                   # 384:416 原比例
 SUB_Y = 930                             # Day2 对话条：输出 y=966..1053，标签上移
 
@@ -68,8 +61,8 @@ DAY2_TAG_STROKE = (250, 204, 21, 255)
 DAY2_TAG_TEXT = (253, 230, 138, 255)
 
 
-# ---- v7：项目 MV 式定点站位；主画面不读 MV 真帧 -------------------------
-# 24 个场景与定点动作表在 day14_v7_scenes.py；电视机真帧仍由 tv_frames/ 提供。
+# ---- v8：skill 加厚的定点站位；主画面不读 MV 真帧 -------------------------
+# 24 个场景与定点动作表在 day14_v8_scenes.py；电视机真帧仍由 tv_frames/ 提供。
 # 主画面不再依赖 dalabengba.srt、sample_frames/ 或 dalabengba.mp4 抽帧。
 
 
@@ -244,14 +237,14 @@ INTERACTIONS = {
 }
 
 
-# v7 主画面场景切换表与定点动作表见 day14_v7_scenes.SCRIPT_SCENES /
+# v8 主画面场景切换表与定点动作表见 day14_v8_scenes.SCRIPT_SCENES /
 # SCRIPT_INTERACTIONS。主画面不再从 `dalabengba.srt` 或 `sample_frames/` 取背景。
 
 
 # 保留 v4 的逐句导演字段（tv/tv_mode/fx/stage 等）用于电视锁死与文档生成。
 
-# ---- 逐句电视/特效字段（M01–M24；主画面场景改为 v7 定点动作表）------------
-# tv/tv_mode/fx 与 v3 逐帧一致 → 电视机内容不变；主画面另见 day14_v7_scenes.py。
+# ---- 逐句电视/特效字段（M01–M24；主画面场景改为 v8 定点动作表）------------
+# tv/tv_mode/fx 与 v3 逐帧一致 → 电视机内容不变；主画面另见 day14_v8_scenes.py。
 # focus / entry / action / trigger / result / reaction / hold / exit / transition /
 # continuity_in / continuity_out 按 Day12 逐镜导演卡与 agent.md 24(e) 记录。
 SCENES = [
@@ -568,7 +561,7 @@ def progress(t: float, wt: dict[str, float], word: str, lead: float = 0.22,
 
 
 def apply_sample_camera(im: Image.Image, move: str, u: float, t: float) -> Image.Image:
-    """只变换主画面手绘背景；电视外壳随后固定贴上，不跟着推拉。"""
+    """只变换主画面手绘背景；整数像素 nearest，电视外壳随后固定贴上。"""
     scale, cx, cy = 1.0, W / 2, H / 2
     if move == 'push':
         scale = 1.0 + 0.18 * u
@@ -587,7 +580,8 @@ def apply_sample_camera(im: Image.Image, move: str, u: float, t: float) -> Image
     cw, ch = W / scale, H / scale
     x0 = int(round(min(max(cx - cw / 2, 0), W - cw)))
     y0 = int(round(min(max(cy - ch / 2, 0), H - ch)))
-    return im.crop((x0, y0, x0 + int(cw), y0 + int(ch))).resize((W, H), Image.LANCZOS)
+    # STYLE.md：摄影机走整数像素，nearest 保住有限调色板，不用 LANCZOS 抹平像素。
+    return im.crop((x0, y0, x0 + int(cw), y0 + int(ch))).resize((W, H), Image.Resampling.NEAREST)
 
 
 def top_glow(im: Image.Image, t: float) -> Image.Image:
@@ -615,12 +609,12 @@ def draw_tv_body(d: ImageDraw.ImageDraw) -> None:
 
 
 def background(t: float, cue: dict, line: int, wt: dict, frac: float) -> Image.Image:
-    """主画面 = 项目 MV 式粉彩舞台 → 镜头只动背景 → 固定电视外壳。"""
-    return S7.draw_script_backdrop(t, line, wt, frac)
+    """主画面 = skill 四层视差 + Bayer 抖动舞台 → 镜头只动背景 → 固定电视外壳。"""
+    return S8.draw_script_backdrop(t, line, wt, frac)
 
 
 def mood_grade(im: Image.Image, t: float, scene: dict, wt: dict) -> Image.Image:
-    """v7 不靠全屏压色换景；24 个粉彩剧本场景本身结构、调色板、道具都不同。"""
+    """v8 不靠全屏压色换景；24 个粉彩剧本场景本身结构、调色板、道具都不同。"""
     return im
 
 
@@ -1126,8 +1120,8 @@ def draw_interactions(im: Image.Image, t: float, line: int, wt: dict) -> None:
 
 def draw_stage(im: Image.Image, t: float, line: int, frac: float,
                wt: dict[str, float], inks: list[float], cue: dict) -> None:
-    S7.draw_script_props(im, t, line, wt, frac, inks)
-    S7.draw_script_actors(im, t, line, cue, wt)
+    S8.draw_script_props(im, t, line, wt, frac, inks, cue)
+    S8.draw_script_actors(im, t, line, cue, wt)
     # 少量前景浮尘：与场景背景不同速度，不覆盖电视与字幕。
     da = ImageDraw.Draw(im, 'RGBA')
     rng = np.random.default_rng(91)
@@ -1226,7 +1220,7 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
     return im
 
 
-S7.bind(globals())
+S8.bind(globals())
 
 
 def main() -> int:
@@ -1243,7 +1237,7 @@ def main() -> int:
         raise RuntimeError('缺音源：git show origin/arena/689c1837-newday:鲸鱼MV重看_克隆配音_最终版.wav > 鲸鱼MV重看_克隆配音_最终版.wav')
     assert alignment['measured'] is True and subs['measured'] is True
     assert len(SCENES) == 24 and set(WORD_TRIGGERS) == set(range(1, 25))
-    assert set(S7.SCRIPT_SCENES) == set(range(1, 25)) and set(S7.SCRIPT_INTERACTIONS) == set(range(1, 25))
+    assert set(S8.SCRIPT_SCENES) == set(range(1, 25)) and set(S8.SCRIPT_INTERACTIONS) == set(range(1, 25))
     cues = alignment['cues']
     screens = subs['screens']
     source_duration = float(alignment['source_duration_seconds'])

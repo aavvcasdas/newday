@@ -1,39 +1,47 @@
-Day14 成片规格（视频 v7 / 项目 MV 式定点站位 / 主画面与 MV 真帧无关 / 电视机内容不变，最终渲染）
+Day14 成片规格（视频 v8 / 参照 lemo-opuscar skill 加厚背景与互动 / 主画面与 MV 真帧无关 / 电视机内容不变，最终渲染）
 文件：Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-SHA256：2bc39196b3936601f7faf0d7064bc16d58b9a0443b13781ffcc32d85800555f3
-大小：22,698,641 字节
+SHA256：164561ac86f19e4eb6f257861e8284ce0ffe0a0a5a900f3e2ee808a735fbc4b1
+大小：69,952,950 字节
 视频：h264 1920x1080 30/1  3756 帧  时长 125.200000s
 音频：aac 44100Hz 2ch  时长 125.195011s（源 WAV 124.970s + 0.25s 收尾）
 音源：鲸鱼MV重看_克隆配音_最终版.wav  40kHz/16bit/单声道  SHA256 86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3
 实测轴：tools/day14制作/voice_alignment.json  24 cue / measured=true
 字幕轴：tools/day14制作/subtitle_timing.json  63 屏 / measured=true
-分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v7）
-      Day/Day14/opuscar-day14/TREATMENT.md / STORYBOARD.md / storyboard_sheet.jpg / mv_reference_sheet.jpg
-主画面：与 MV 真帧无关；参照项目 MV 的浅色扁平舞台、固定站位、一句一硬切、词点局部动作与停留，
-      按本集 24 句剧本切到 24 个互不相同的粉彩手绘场景，
-      由 tools/day14制作/day14_v7_scenes.py 的 SCRIPT_SCENES / SCRIPT_INTERACTIONS / PASTEL_OVERRIDE 驱动。
+分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v8）
+      Day/Day14/opuscar-day14/TREATMENT.md / STORYBOARD.md / storyboard_sheet.jpg / mv_reference_sheet.jpg /
+      model_sheet.jpg / action_test_sheet.jpg / skill_reference_sheet.jpg / poster.jpg / *.srt / build.sh / CREDITS
+主画面：与 MV 真帧无关；保留 v7 定点站位、逐句硬切、24 个剧本场景，
+      由 tools/day14制作/day14_v8_scenes.py 的 SCRIPT_SCENES / SCRIPT_INTERACTIONS / PASTEL_OVERRIDE /
+      HANDOVERS / REACTION_SHEET 驱动。
+      skill 语法：8 色有限调色板、4×4 Bayer 有序抖动、480×270→1920×1080 nearest 整数像素摄影机、
+      远墙/柱廊/地板/前景柱四层视差、砖缝、拱窗、旗帜、火把、透视地板、光轴与浮尘；
+      保留粉彩亮度，不改成 320×180 全片 RPG / 对话框字幕 / 24fps / 新 BGM / 片尾卡。
       场景含焦痕检查角、晨间搬运过道、红皮书舞台、夜色城堡走廊、城门送别口、
       风车村、王座厅、山洞口、龙焰石碑、后台圆镜、档案桌、倒带台、启动台、双台、
       名牌长廊、月灯长廊、胶片墙、灯箱、翻纸长桌、夹子桌、抽屉柜、收伞门厅、白饭桌、昵称框修补台。
       摄影机 push/pull/pan_r/pan_l/tilt_up/shake/static 只动背景。
-人物：每镜 2–3 位本名只有一个固定 x 点位；STAGE_SCALE 缩小立绘，0.35s 短距滑入到位；
-      实测 chars_timed 词点切 idle→action 图集，局部 dx/dy ≤70px 表示递接/抬手/让位/俯冲，
-      动作播完停在结果位；不用 walk-v14 步态整句 x0→x1→x2 横穿画面。
+互动：每镜 2–3 位本名只有一个固定 x 点位；STAGE_SCALE 缩小立绘，0.35s 短距滑入到位；
+      实测 chars_timed 词点用缓动 + Bayer 掩膜混合 idle→action→reaction，预备抬身、词点短回弹、结果停留；
+      24 句各一件手绘道具在两位本名手掌之间交接，配视线弧、末词点 reaction 与局部粒子；
+      局部 dx/dy ≤70px，不用 walk-v14 步态整句 x0→x1→x2 横穿画面。
       番外与项目 MV 真帧都不进主画面；主画面胶片条也只画手绘胶片孔与色块。
 电视：440x276 机身 / 380x214 屏幕，右上 (1400,96)-(1840,372)；
       tv_at / CLIP_SECOND / TRIPLE / 定格 / 黑屏 / M15 三连 / 开机渐亮与 v3 逐帧一致
       （3756 帧决策比对 0 差异）；背景切场、人物、道具、特效后电视矩形逐像素贴回
-      （抽查 9 个特效帧 maxdiff=0）。番外真帧只出现在电视画中画。
+      （9 个特效帧 maxdiff=0）。番外真帧只出现在电视画中画。
 媒体终验：passed=True  decode_passed=True  pcm_correlation=0.9999960533334695  tail_pad=0.255s
           字幕抽样 errors=[]（63 屏在屏、气口无误报，Day2 青色条检测，不是 OCR）
 字幕同步：check_subtitle_sync.py passed=True / errors=[]（色彩/帧差抽样，不是 OCR）
-开场视觉：passed=True（运动 1.558 / 上半屏亮部 0.755 / 全帧亮部 0.521）
-主画面词点帧差（640x360 灰度级 /255，遮掉电视矩形与字幕带，词点前后 ±0.35s）：
-          L03「翻开」2.85、L08「小心后面」1.65、L12「倒回去」1.81、L22「不拍雨」1.53、L24「一个字一个字」4.03
-          数值低于 v6 整句横穿走位，符合「定点站位 + 局部动作」而非「人一直乱走」。
+开场视觉：passed=True（运动 1.459 / 上半屏亮部 0.772 / 全帧亮部 0.617）
+主画面词点帧差（编码后 MP4，640x360 灰度，遮掉电视矩形与字幕带，词点前后 ±0.35s，mean|Δ|/255×100）：
+          L03「翻开」2.308、L08「小心后面」1.554、L12「倒回去」3.189、L22「不拍雨」2.658、L24「一个字一个字」3.508
+          仍是局部表演与道具交接，不是 v6 的整句横穿走位。
 关键帧：Day/Day14/opuscar-day14/keyframes/ 9 张真实渲染帧；storyboard_sheet.jpg 由
-      /home/user/lemo-opuscar/core/render/sheet.py 拼成；mv_reference_sheet.jpg 是四支项目 MV 的抽帧对照。
-      编码后另抽 25 帧全片等距目检、L03 按 0.6s 抽 8 帧确认人物固定点位、词点局部动作、结果停留。
-可复现：最终渲染使用 `PYTHONHASHSEED=0`；v7 场景粒子种子为 `zlib.crc32(layout)`，跨 hash seed 抽查像素一致。
-注意：字幕核验是色彩/帧差抽样，不是 OCR；粉彩舞台与立绘的融合度、定点动作是否自然、
-      像不像项目 MV、节奏仍需人工看片。未获真人观影批准、未发布、未合并 PR。
+      /home/user/lemo-opuscar/core/render/sheet.py 拼成；model_sheet.jpg / action_test_sheet.jpg /
+      action_test_L03.jpg / action_test_L08.jpg 按 skill 0.2s 动作条复核；skill_reference_sheet.jpg 与 demo poster 并排。
+      编码后另抽 26 帧全片等距目检、L03 按 0.2s 抽 10 帧确认交接道具与固定点位。
+可复现：最终渲染使用 `PYTHONHASHSEED=0`；v8 布局/词点粒子种子为 `zlib.crc32(layout/word)`，
+      `PYTHONHASHSEED=0/1/42` 在 5 个抽查时间的像素和完全一致。
+流程偏差：skill 的风格帧单独批准与 6–9 张 storyboard stop/wait 未单独停等；用户要求直接修改，
+      本轮把审看材料与 MP4 一次交付。未获真人观影批准、未发布、未合并 PR。
+注意：字幕核验是色彩/帧差抽样，不是 OCR；像素抖动背景与立绘融合度、连续表演和节奏仍需人工看片。
