@@ -13,6 +13,7 @@
 > `tv_at` 3756 帧与 v3 比对 0 差异。详见 [v10 治疗/分镜](opuscar-day14/TREATMENT.md)、
 > [v10 STORYBOARD](opuscar-day14/STORYBOARD.md)、[模型表](opuscar-day14/model_sheet.jpg) 与
 > [制作记录](Day14制作记录_克隆配音版.md)。**下方 v9 段落均为历史**；文稿与成片仍未获真人批准。
+> 封面：[cover_v10.jpg](opuscar-day14/cover_v10.jpg)（成片同目录副本：[Day14_重看昨天那支片子_封面_v10.jpg](成片/Day14_重看昨天那支片子_封面_v10.jpg)）；文案：[COVER_COPY.md](opuscar-day14/COVER_COPY.md)。
 
 
 > **状态分两条线（2026-11-09）**：
