@@ -1,18 +1,27 @@
 #!/usr/bin/env python3
-"""Day14 视频 v6：剧本驱动的场景互动数据与绘制。
+"""Day14 视频 v7：参照项目 MV 的「定点站位 + 词点短动作 + 硬切」重做主画面。
 
-用户 2026-11-09 第六次反馈：「需要和 mv 无关的，根据剧本的互动，目前人还是站着不动……
-请切换不同的场景互动」。本模块不再把 `dalabengba.mp4` 真帧铺进主画面；
-主画面按 24 句剧本换成 24 个手绘场景，2–3 位本名在每句里真实走动、交接、追回、躲开，
-动作由实测 `chars_timed` 词点触发。电视机内的番外真帧与 v3 锁定口径不变。
+用户 2026-11-09 第七次反馈：「现在的画面还是很奇怪，请查看为什么人一直乱走，
+不是这个样的啊，你看看别人的 mv……是让你参照下项目的 mv 做啊」。
+回看仓库里的 `番外MV/把回忆拼好给你/成片/把回忆拼好给你_v12剧情动作版.mp4`、
+`样片/v13_整片渲染_待审.mp4`、`番外MV/我怀疑大禹治水/样片/Remotion_动态引擎重做_待审.mp4`
+与根目录 `达拉崩吧.mp4` 抽帧后，确认项目 MV 的共同语法是：
+  · 大幅面、浅色调、扁平舞台；角色按构图站在固定点位；
+  · 一句/一镜一次切景，靠局部手势、道具、镜头与粒子推进，不做全场横向巡游；
+  · 主角居中，1–2 位对手戏角色在左右定点，动作成形后停留。
+v6 把 2–3 人整句 x0→x1→x2 横穿画面，被判「人一直乱走」。v7 改为：
+  · 24 个手绘剧本场景仍保留，但改成项目 MV 式浅色扁平舞台；
+  · 每位角色只有一个固定站位；开场 0.35s 内短距滑入，之后不横向游走；
+  · 实测 `chars_timed` 词点切到动作图集，配 ≤70px 的局部位移/抬手，动作播完停在结果位；
+  · 不复制项目 MV 的真帧，只借构图、切镜、定点动作语法；番外真帧仍只在右上电视。
 
-`bind(globals())` 由 `render_day14_video.py` 在定义完工具函数后调用，
-这里通过 CTX 取 W/H/CAST/SHEETS/sprite_frame/progress/既有道具函数，避免循环 import。
+`bind(globals())` 由 `render_day14_video.py` 在定义完工具函数后调用。
 """
 from __future__ import annotations
 
 import math
 import random
+import zlib
 
 import numpy as np
 from PIL import Image, ImageDraw
@@ -24,104 +33,97 @@ def bind(ctx: dict) -> None:
     CTX.update(ctx)
 
 
-# 每位角色都补上真正的 8 帧横向步态图集；主画面不再用 MV 真帧或只在原地换姿态。
-WALK_SHEETS = {
-    'gpt_walk': ('assets/ai-girls/walk-v14/gpt_walk_2leg.png', 8),
-    'doubao_walk': ('assets/ai-girls/walk-v14/doubao_walk_side_2leg.png', 8),
-    'claude_walk': ('assets/ai-girls/walk-v14/claude_walk_2leg.png', 8),
-    'kimi_walk': ('assets/ai-girls/walk-v14/kimi_walk_2leg.png', 8),
-    'gemini_walk': ('assets/ai-girls/walk-v14/gemini_walk_2leg.png', 8),
-    'zai_walk': ('assets/ai-girls/walk-v14/zai_walk_2leg.png', 8),
-    'qwen_walk': ('assets/ai-girls/walk-v14/qwen_walk_2leg.png', 8),
+# v7 只取 CAST 里的 idle 定点帧与实测词点 action 图集，不注册横向步态图集；
+# 项目 MV 的「走两步后停稳」在开场 0.35s 短距滑入里表达，之后不再步态循环。
+
+
+def A(who, x, trigger, note='', act=None, dx=0, dy=0, z=1,
+      charred=False, scale=None, phase=0.0, flip=None):
+    """项目 MV 式定点：一个固定 x，词点切短动作，最多局部 dx/dy，不横向巡游。"""
+    return dict(who=who, x=x, trigger=trigger, note=note, act=act,
+                dx=dx, dy=dy, z=z, charred=charred, scale=scale,
+                phase=phase, flip=flip)
+
+
+STAGE_SCALE = {
+    '本鲸': 0.72, '龙娘': 0.68, '豆包': 0.68, '大小姐': 0.68,
+    'Kimi': 0.68, 'Gemini': 0.68, '智谱': 0.68, '千问': 0.68,
 }
-WALK_SHEET = {
-    '本鲸': 'whale_walk', '龙娘': 'gpt_walk', '豆包': 'doubao_walk',
-    '大小姐': 'claude_walk', 'Kimi': 'kimi_walk', 'Gemini': 'gemini_walk',
-    '智谱': 'zai_walk', '千问': 'qwen_walk',
-}
 
-
-def A(who, x0, x1, x2, trigger, note='', act=None, lift=0, z=1,
-      charred=False, phase=0.0, size=None):
-    """一位前景人物：整句里 x0→x1→x2 连续位移；trigger 词点切一次有因果的动作。"""
-    return dict(who=who, x0=x0, x1=x1, x2=x2, trigger=trigger, note=note,
-                act=act, lift=lift, z=z, charred=charred, phase=phase, size=size)
-
-
-# 每镜 2–3 位本名，按「剧本里谁对谁做了什么」走位，不八人巡游、不原地循环。
+# 每镜 2–3 位本名：固定点位 + 词点短动作 + 结果停留，按项目 MV 的构图排位。
 SCRIPT_INTERACTIONS = {
-    1: [A('龙娘', 1680, 1020, 520, '昨天', '龙娘从右侧带火掠过，本鲸往后退', act='gpt_sweep', lift=170, z=2),
-        A('本鲸', 260, 430, 700, '黑炭', '本鲸边退边低头看焦痕，不站定', act='whale_crouch', charred=True, z=3),
-        A('豆包', 80, 420, 900, '那条鱼', '豆包拿布追上来，没擦掉焦痕', act='doubao_comfort', z=2)],
-    2: [A('本鲸', 120, 620, 1180, '搬', '本鲸推着电视箱穿过晨间过道', act='whale_walk', z=3),
-        A('Gemini', 1740, 1220, 760, '重看', 'Gemini 从右递线缆并让开', act='gemini_star', z=2),
-        A('智谱', 60, 420, 980, '片子', '智谱从左搬桌脚跟上', act='zai_reach', z=2)],
-    3: [A('本鲸', 120, 560, 1000, '翻开', '本鲸走到红皮书前把书翻开', act='whale_read', z=3),
-        A('大小姐', 1720, 1160, 760, '长出', '大小姐推来纸板城堡，城堡从书页立起', act='claude_place', z=2),
-        A('Gemini', 80, 420, 1120, '城堡', 'Gemini 拉开舞台侧幕', act='gemini_flower', z=1)],
-    4: [A('龙娘', 1700, 1080, 420, '俯冲', '龙娘从右上俯冲进场', act='gpt_push', lift=220, z=3),
-        A('豆包', 180, 620, 1260, '抓走', '豆包横穿城堡走廊后被带向右', act='doubao_step', z=2),
-        A('本鲸', 300, 520, 860, '暗', '本鲸躲到柱子后，又探头追看', act='whale_point', z=2)],
-    5: [A('本鲸', 100, 620, 1320, '应征', '本鲸从城门左侧走到木马旁', act='whale_walk', z=3),
-        A('Gemini', 1740, 1260, 820, '送', 'Gemini 从右跑来递缰绳', act='gemini_star', z=2),
-        A('智谱', 60, 500, 1040, '上马', '智谱从左搬马蹬跟上', act='zai_clock', z=2)],
-    6: [A('千问', 1680, 1180, 500, '风车村', '千问从村口迎过来，陪着一路走', act='qwen_reach', z=2),
-        A('本鲸', 120, 700, 1460, '宝箱', '本鲸沿三只宝箱逐只开过去', act='whale_gather', z=3),
-        A('豆包', 1780, 1300, 860, '山洞口', '豆包在洞口转身接人', act='doubao_lantern', z=1)],
-    7: [A('大小姐', 1700, 1120, 420, '追着问', '大小姐绕着长名字框追本鲸问', act='claude_letter', z=2),
-        A('本鲸', 220, 820, 1380, '塞不进', '本鲸抱着长名字条横穿王座厅', act='whale_letter', z=3),
-        A('豆包', 80, 520, 1080, '名字', '豆包抬着木框另一端挪位', act='doubao_step', z=1)],
-    8: [A('Kimi', 120, 600, 1220, '月光', 'Kimi 举月灯从洞口左侧走到笼前', act='kimi_lantern', lift=40, z=2),
-        A('豆包', 1680, 1160, 720, '小心后面', '豆包退进金笼又回头喊', act='doubao_lantern', z=2),
-        A('本鲸', 300, 640, 1080, '笼子', '本鲸摸黑靠近，听见喊声停步又侧身', act='whale_reach', z=3)],
-    9: [A('龙娘', 1720, 1080, 420, '一口火', '龙娘从右俯冲喷火', act='gpt_sweep', lift=210, z=3),
-        A('本鲸', 260, 620, 1180, '黑炭', '本鲸被火追着退到石碑边', act='whale_crouch', charred=True, z=3),
-        A('大小姐', 80, 560, 1320, '石碑', '大小姐拖石碑斜着落位', act='claude_place', z=2)],
-    10: [A('本鲸', 160, 620, 1080, '摸摸', '本鲸走到圆镜前摸自己', act='whale_wipe', charred=True, z=3),
-         A('豆包', 1720, 1180, 760, '焦的', '豆包拿布从右赶来，停在镜边', act='doubao_comfort', z=2),
-         A('龙娘', 60, 380, 900, '摸摸', '龙娘从镜后绕开，不抢前景', act='gpt_think', z=1)],
-    11: [A('本鲸', 120, 600, 1180, '谁', '本鲸走到空白册前，绕到桌右', act='whale_read', z=3),
-         A('大小姐', 1720, 1160, 560, '一个字都没有', '大小姐摊开空册后走到桌左', act='claude_collect', z=2),
-         A('Kimi', 80, 480, 1080, '谁', 'Kimi 笔悬着，沿桌边走一圈', act='kimi_stargaze', z=2)],
-    12: [A('本鲸', 160, 620, 1180, '暂停', '本鲸走到操作台按住旋钮', act='whale_reach', z=3),
-         A('Gemini', 1740, 1180, 620, '倒回去', 'Gemini 把胶片从右往左倒回', act='gemini_star', z=2),
-         A('智谱', 60, 500, 1080, '一段一段', '智谱扶住反转的轮盘走过', act='zai_clock', z=2)],
-    13: [A('本鲸', 120, 580, 1120, '翻书', '本鲸走到启动台翻红皮书', act='whale_read', z=3),
-         A('龙娘', 1720, 1180, 640, '开始', '龙娘从右走来摊手，再退到左', act='gpt_think', z=2),
-         A('大小姐', 80, 460, 1020, '没写', '大小姐拿空册从左侧走到台前', act='claude_letter', z=2)],
-    14: [A('龙娘', 1700, 1100, 420, '抓走', '龙娘在右半台重演抓走', act='gpt_push', lift=120, z=3),
-         A('豆包', 180, 620, 1280, '龙娘', '豆包从左走向右被带过去', act='doubao_step', z=2),
-         A('本鲸', 300, 720, 1160, '记一行', '本鲸从记录桌走到中间落第一行', act='whale_read', z=3)],
-    15: [A('大小姐', 1720, 1120, 420, '大小姐', '大小姐走到王冠名牌旁', act='claude_letter', z=2),
-         A('豆包', 100, 660, 1300, '小心后面', '豆包走到缎带名牌旁回头喊', act='doubao_lantern', z=2),
-         A('本鲸', 260, 780, 1180, '豆包', '本鲸依次走过两张名牌核对', act='whale_point', z=3)],
-    16: [A('Kimi', 120, 640, 1280, '举', 'Kimi 举月灯穿过长廊', act='kimi_lantern', lift=35, z=2),
-         A('本鲸', 300, 720, 1120, '月光', '本鲸侧身让光，再跟到灯下', act='whale_read', z=3),
-         A('Gemini', 1740, 1180, 620, '没人提', 'Gemini 从右注意到空行后走到左', act='gemini_flower', z=2)],
-    17: [A('本鲸', 120, 640, 1320, '全演过了', '本鲸沿胶片墙走，拉开空白纸', act='whale_gather', z=3),
-         A('龙娘', 1720, 1120, 480, '全演过了', '龙娘从右走到左，重演一次俯冲', act='gpt_push', lift=90, z=2),
-         A('大小姐', 80, 520, 1180, '写下来', '大小姐指着空行横穿前景', act='claude_collect', z=2)],
-    18: [A('本鲸', 140, 620, 1260, '不用问人', '本鲸走到灯箱前逐格看', act='whale_camera', z=3),
-         A('Gemini', 1740, 1180, 620, '一帧一帧', 'Gemini 把亮框从右挪到左', act='gemini_star', z=2),
-         A('智谱', 60, 500, 1080, '一帧一帧', '智谱扶着灯箱边走边停', act='zai_reach', z=2)],
-    19: [A('本鲸', 120, 620, 1240, '翻过来', '本鲸走到长桌翻纸', act='whale_letter', z=3),
-         A('千问', 1720, 1160, 580, '片子顺序', '千问从右递下一页再走到左', act='qwen_reach', z=2),
-         A('豆包', 80, 520, 1120, '一段写一行', '豆包沿桌按住纸角走过来', act='doubao_step', z=2)],
-    20: [A('本鲸', 160, 640, 1180, '不替谁顶', '本鲸在两行之间留出空档后走到右', act='whale_read', z=3),
-         A('大小姐', 1720, 1120, 460, '并成一段', '大小姐想连线，被让到桌左', act='claude_letter', z=2),
-         A('智谱', 80, 520, 1080, '并成一段', '智谱拿夹子沿桌走并扣下', act='zai_reach', z=2)],
-    21: [A('本鲸', 140, 620, 1240, '烤焦', '本鲸把焦纸从桌左抽到柜前', act='whale_letter', charred=True, z=3),
-         A('豆包', 1720, 1160, 580, '单独夹起来', '豆包拿夹子从右赶来', act='doubao_comfort', z=2),
-         A('龙娘', 80, 480, 1080, '待补', '龙娘收火后绕柜走开', act='gpt_sweep', z=1)],
-    22: [A('本鲸', 160, 620, 1180, '关掉', '本鲸走到门厅开关旁按下去', act='whale_reach', z=3),
-         A('智谱', 1740, 1180, 620, '收进抽屉', '智谱把歪伞从右搬到抽屉', act='zai_reach', z=2),
-         A('豆包', 80, 520, 1080, '不拍雨', '豆包合伞后从左侧走过', act='doubao_umbrella', z=2)],
-    23: [A('千问', 1720, 1160, 580, '白饭', '千问端白饭从右走到桌前', act='qwen_reach', z=2),
-         A('本鲸', 140, 620, 1240, '不改', '本鲸走到饭桌另一侧看那行字', act='whale_read', z=3),
-         A('大小姐', 80, 480, 1080, '不改', '大小姐把笔从左收走', act='claude_collect', z=2)],
-    24: [A('大小姐', 1720, 1160, 620, '下一集', '大小姐扶住长名字框走到台中', act='claude_letter', z=2),
-         A('本鲸', 120, 640, 1260, '一个字一个字', '本鲸抱字块从左走到框前', act='whale_point', z=3),
-         A('豆包', 80, 520, 1120, '塞回框', '豆包从左侧走来合上框口', act='doubao_step', z=2)],
+    1: [A('龙娘', 1240, '昨天', '龙娘在右定点掠火，不横穿全场', act='gpt_sweep', dx=-55, dy=45, z=2),
+        A('本鲸', 760, '黑炭', '本鲸居中低头看焦痕，只做一次收肩', act='whale_crouch', charred=True, z=3),
+        A('豆包', 420, '那条鱼', '豆包在左定点递布，不追着跑', act='doubao_comfort', dx=35, z=2)],
+    2: [A('本鲸', 760, '搬', '本鲸居中把电视箱推正，机身仍锁定', act='whale_gather', dx=25, z=3),
+        A('Gemini', 1180, '重看', 'Gemini 在右定点递线缆', act='gemini_star', dx=-30, z=2),
+        A('智谱', 420, '片子', '智谱在左定点扶桌脚', act='zai_reach', dx=25, z=2)],
+    3: [A('本鲸', 760, '翻开', '本鲸居中翻开红皮书', act='whale_read', z=3),
+        A('大小姐', 1180, '长出', '大小姐在右定点立起纸板城堡', act='claude_place', dx=-30, z=2),
+        A('Gemini', 420, '城堡', 'Gemini 在左定点拉开侧幕', act='gemini_flower', dx=20, z=1)],
+    4: [A('龙娘', 1240, '俯冲', '龙娘在右上定点俯冲，不飞越全屏', act='gpt_push', dy=85, z=3),
+        A('豆包', 760, '抓走', '豆包居中一次让位，表示被带向右侧', act='doubao_step', dx=55, z=2),
+        A('本鲸', 420, '暗', '本鲸在左定点侧身躲柱后', act='whale_point', dx=15, z=2)],
+    5: [A('本鲸', 760, '应征', '本鲸居中接下应征卷轴', act='whale_gather', z=3),
+        A('Gemini', 1180, '送', 'Gemini 在右定点递缰绳', act='gemini_star', dx=-35, z=2),
+        A('智谱', 420, '上马', '智谱在左定点扶马蹬', act='zai_clock', dx=20, z=2)],
+    6: [A('千问', 420, '风车村', '千问在左定点递钥匙', act='qwen_reach', dx=20, z=2),
+        A('本鲸', 760, '宝箱', '本鲸居中逐只开箱，站位不漂移', act='whale_gather', z=3),
+        A('豆包', 1180, '山洞口', '豆包在右洞口定点回身', act='doubao_lantern', dx=-20, z=1)],
+    7: [A('大小姐', 1180, '追着问', '大小姐在右定点倾身追问，不绕场追人', act='claude_letter', dx=-45, z=2),
+        A('本鲸', 760, '塞不进', '本鲸居中把长名字条举到框前', act='whale_letter', z=3),
+        A('豆包', 420, '名字', '豆包在左定点扶住木框', act='doubao_step', dx=15, z=1)],
+    8: [A('Kimi', 420, '月光', 'Kimi 在左定点把月灯举高', act='kimi_lantern', dy=30, z=2),
+        A('豆包', 1180, '小心后面', '豆包在右笼中回头喊，不横移', act='doubao_lantern', dx=-20, z=2),
+        A('本鲸', 760, '笼子', '本鲸居中听见喊声后侧身', act='whale_reach', dx=15, z=3)],
+    9: [A('龙娘', 1180, '一口火', '龙娘在右定点喷火', act='gpt_sweep', dy=60, z=3),
+        A('本鲸', 760, '黑炭', '本鲸居中退半步看焦痕', act='whale_crouch', dx=-25, charred=True, z=3),
+        A('大小姐', 420, '石碑', '大小姐在左定点扶落石碑', act='claude_place', dx=20, z=2)],
+    10: [A('本鲸', 760, '摸摸', '本鲸居中摸自己的焦痕', act='whale_wipe', charred=True, z=3),
+         A('豆包', 1180, '焦的', '豆包在右定点把布收住', act='doubao_comfort', dx=-25, z=2),
+         A('龙娘', 420, '摸摸', '龙娘在左定点摊手', act='gpt_think', z=1)],
+    11: [A('本鲸', 760, '谁', '本鲸居中看空白册', act='whale_read', z=3),
+         A('大小姐', 1180, '一个字都没有', '大小姐在右定点摊开空册', act='claude_collect', dx=-25, z=2),
+         A('Kimi', 420, '谁', 'Kimi 在左定点悬笔不落', act='kimi_stargaze', z=2)],
+    12: [A('本鲸', 760, '暂停', '本鲸居中按住旋钮', act='whale_reach', z=3),
+         A('Gemini', 1180, '倒回去', 'Gemini 在右定点把亮框倒回一格', act='gemini_star', dx=-35, z=2),
+         A('智谱', 420, '一段一段', '智谱在左定点扶住轮盘', act='zai_clock', dx=15, z=2)],
+    13: [A('本鲸', 760, '翻书', '本鲸居中翻启动台上的红皮书', act='whale_read', z=3),
+         A('龙娘', 1180, '开始', '龙娘在右定点摊手', act='gpt_think', dx=-20, z=2),
+         A('大小姐', 420, '没写', '大小姐在左定点亮出空册', act='claude_letter', dx=20, z=2)],
+    14: [A('龙娘', 1180, '抓走', '龙娘在右台定点重演抓走', act='gpt_push', dy=55, z=3),
+         A('豆包', 420, '龙娘', '豆包在左台定点被带向右侧', act='doubao_step', dx=45, z=2),
+         A('本鲸', 760, '记一行', '本鲸居中落第一行墨', act='whale_read', z=3)],
+    15: [A('大小姐', 420, '大小姐', '大小姐在左名牌旁定点', act='claude_letter', z=2),
+         A('豆包', 1180, '小心后面', '豆包在右名牌旁定点回头', act='doubao_lantern', z=2),
+         A('本鲸', 760, '豆包', '本鲸居中依次点两张名牌', act='whale_point', z=3)],
+    16: [A('Kimi', 420, '举', 'Kimi 在左定点举月灯', act='kimi_lantern', dy=28, z=2),
+         A('本鲸', 760, '月光', '本鲸居中侧身让光', act='whale_read', dx=15, z=3),
+         A('Gemini', 1180, '没人提', 'Gemini 在右定点注意到空行', act='gemini_flower', dx=-15, z=2)],
+    17: [A('本鲸', 760, '全演过了', '本鲸居中拉开空白纸', act='whale_gather', z=3),
+         A('龙娘', 1180, '全演过了', '龙娘在右定点重演一次俯冲', act='gpt_push', dy=40, z=2),
+         A('大小姐', 420, '写下来', '大小姐在左定点指空行', act='claude_collect', dx=20, z=2)],
+    18: [A('本鲸', 760, '不用问人', '本鲸居中俯身看灯箱', act='whale_camera', z=3),
+         A('Gemini', 1180, '一帧一帧', 'Gemini 在右定点挪亮框', act='gemini_star', dx=-30, z=2),
+         A('智谱', 420, '一帧一帧', '智谱在左定点扶灯箱', act='zai_reach', dx=15, z=2)],
+    19: [A('本鲸', 760, '翻过来', '本鲸居中把纸翻面', act='whale_letter', z=3),
+         A('千问', 1180, '片子顺序', '千问在右定点递下一页', act='qwen_reach', dx=-25, z=2),
+         A('豆包', 420, '一段写一行', '豆包在左定点按住纸角', act='doubao_step', dx=15, z=2)],
+    20: [A('本鲸', 760, '不替谁顶', '本鲸居中在两行间留空档', act='whale_read', z=3),
+         A('大小姐', 1180, '并成一段', '大小姐在右定点收回连线', act='claude_letter', dx=-30, z=2),
+         A('智谱', 420, '并成一段', '智谱在左定点扣下夹子', act='zai_reach', dx=15, z=2)],
+    21: [A('本鲸', 760, '烤焦', '本鲸居中抽出焦纸', act='whale_letter', charred=True, z=3),
+         A('豆包', 1180, '单独夹起来', '豆包在右定点拿夹子', act='doubao_comfort', dx=-25, z=2),
+         A('龙娘', 420, '待补', '龙娘在左定点收火', act='gpt_sweep', dx=15, z=1)],
+    22: [A('本鲸', 760, '关掉', '本鲸居中按门厅开关', act='whale_reach', z=3),
+         A('智谱', 1180, '收进抽屉', '智谱在右定点收伞', act='zai_reach', dx=-25, z=2),
+         A('豆包', 420, '不拍雨', '豆包在左定点合伞', act='doubao_umbrella', dx=15, z=2)],
+    23: [A('千问', 1180, '白饭', '千问在右定点放下饭盆', act='qwen_reach', dx=-25, z=2),
+         A('本鲸', 760, '不改', '本鲸居中看那行字', act='whale_read', z=3),
+         A('大小姐', 420, '不改', '大小姐在左定点收笔', act='claude_collect', z=2)],
+    24: [A('大小姐', 420, '下一集', '大小姐在左定点扶住长框', act='claude_letter', z=2),
+         A('本鲸', 760, '一个字一个字', '本鲸居中把字块送回框', act='whale_point', z=3),
+         A('豆包', 1180, '塞回框', '豆包在右定点合上框口', act='doubao_step', dx=-20, z=2)],
 }
 
 
@@ -151,6 +153,35 @@ SCRIPT_SCENES = {
     22: dict(name='收伞门厅', layout='hallway', top=(30, 52, 68), bot=(82, 110, 126), accent=(186, 110, 132), floor=(76, 106, 120), move='pan_r'),
     23: dict(name='白饭桌', layout='dinner', top=(62, 44, 38), bot=(148, 112, 76), accent=(246, 232, 192), floor=(128, 100, 72), move='static'),
     24: dict(name='昵称框修补台', layout='name_bench', top=(48, 38, 62), bot=(122, 86, 126), accent=(244, 212, 126), floor=(106, 80, 112), move='push'),
+}
+
+
+# 项目 MV 式浅色调：v6 的深暗舞台色不是参考片的语法；逐镜保留色相区分但整体压到粉彩。
+PASTEL_OVERRIDE = {
+    1: dict(top=(214,186,180), bot=(238,210,198), accent=(214,112,82), floor=(198,142,124)),
+    2: dict(top=(186,220,232), bot=(214,238,238), accent=(238,198,112), floor=(136,190,202)),
+    3: dict(top=(226,186,196), bot=(246,214,218), accent=(232,176,112), floor=(206,142,152)),
+    4: dict(top=(176,172,212), bot=(204,190,220), accent=(142,110,182), floor=(150,132,180)),
+    5: dict(top=(186,220,218), bot=(220,234,204), accent=(238,196,104), floor=(166,198,160)),
+    6: dict(top=(186,220,214), bot=(232,226,174), accent=(226,186,102), floor=(176,198,144)),
+    7: dict(top=(212,190,216), bot=(236,210,222), accent=(238,196,98), floor=(190,150,170)),
+    8: dict(top=(158,188,208), bot=(188,210,220), accent=(232,238,188), floor=(126,166,184)),
+    9: dict(top=(226,182,172), bot=(244,206,184), accent=(238,132,72), floor=(206,138,112)),
+    10: dict(top=(190,214,222), bot=(218,234,236), accent=(216,232,226), floor=(150,190,200)),
+    11: dict(top=(190,204,216), bot=(214,224,230), accent=(232,230,206), floor=(146,174,188)),
+    12: dict(top=(174,210,220), bot=(202,226,230), accent=(126,206,220), floor=(126,182,196)),
+    13: dict(top=(216,184,200), bot=(238,208,214), accent=(246,214,132), floor=(196,142,158)),
+    14: dict(top=(190,190,216), bot=(214,208,228), accent=(204,186,224), floor=(150,146,184)),
+    15: dict(top=(196,208,226), bot=(220,226,238), accent=(238,206,120), floor=(158,178,206)),
+    16: dict(top=(166,186,210), bot=(196,208,226), accent=(236,240,196), floor=(128,156,186)),
+    17: dict(top=(190,196,204), bot=(214,218,222), accent=(226,204,124), floor=(146,154,160)),
+    18: dict(top=(178,216,220), bot=(208,234,232), accent=(210,240,236), floor=(132,192,196)),
+    19: dict(top=(210,198,182), bot=(232,218,196), accent=(240,232,202), floor=(186,164,138)),
+    20: dict(top=(188,210,210), bot=(214,228,224), accent=(196,212,206), floor=(148,182,180)),
+    21: dict(top=(202,188,180), bot=(224,206,194), accent=(218,196,154), floor=(174,146,132)),
+    22: dict(top=(180,206,218), bot=(210,226,232), accent=(186,110,132), floor=(136,176,192)),
+    23: dict(top=(214,196,176), bot=(238,218,188), accent=(246,232,192), floor=(196,164,128)),
+    24: dict(top=(198,186,212), bot=(222,206,228), accent=(244,212,126), floor=(166,140,182)),
 }
 
 
@@ -378,6 +409,12 @@ def _layout(im, info, t, wt, frac):
     ac = info['accent']
     W, H = _w(), _h()
 
+    # 共通：项目 MV 的扁平天空语汇——大圆日/月、两片纸云；结构差异仍由各 layout 决定。
+    da.ellipse((850, 105, 1070, 325), fill=(*ac, 42))
+    for cx, cy, rx, ry in ((180, 150, 150, 62), (620, 120, 130, 52), (1180, 170, 170, 60)):
+        da.ellipse((cx - rx, cy - ry, cx + rx, cy + ry), fill=(255, 255, 255, 44))
+        da.ellipse((cx - rx + 35, cy - ry + 18, cx + rx - 35, cy + ry + 10), fill=(255, 255, 255, 28))
+
     # 共通：场景地面线以上的建筑感，靠不同结构而不是调色区分
     if lay == 'charred_corner':
         d.rounded_rectangle((70, 180, 520, 740), radius=18, fill=(76, 38, 38), outline=(34, 24, 28), width=6)
@@ -575,7 +612,7 @@ def _layout(im, info, t, wt, frac):
             d.ellipse((320 + k * 540, 300, 380 + k * 540, 360), fill=ac, outline=(92, 68, 48), width=3)
 
     # 场景内的小动势：光、尘、气泡，不用 MV 真帧
-    rng = random.Random(700 + hash(lay) % 97)
+    rng = random.Random(700 + zlib.crc32(lay.encode('utf-8')) % 97)
     for k in range(16):
         x = rng.randint(30, W - 30)
         y = int((rng.randint(60, 700) + t * (7 + k % 4 * 4)) % 700)
@@ -584,13 +621,19 @@ def _layout(im, info, t, wt, frac):
 
 
 def draw_script_backdrop(t: float, line: int, wt: dict, frac: float) -> Image.Image:
-    """主画面：剧本场景手绘背景 → 镜头只动背景 → 电视外壳固定贴上。"""
-    info = SCRIPT_SCENES[line]
+    """项目 MV 式浅色舞台：背景硬切，角色随后在固定站位演出。"""
+    info = dict(SCRIPT_SCENES[line])
+    info.update(PASTEL_OVERRIDE.get(line, {}))
     im = _base_image(info, t)
     _layout(im, info, t, wt, frac)
     im = CTX['apply_sample_camera'](im, info.get('move', 'static'), frac, t)
     d = ImageDraw.Draw(im)
     W, H = _w(), _h()
+    stage = tuple(min(255, int(c * 0.88 + 18)) for c in info['floor'])
+    outline = tuple(max(0, int(c * 0.55)) for c in info['floor'])
+    d.rounded_rectangle((80, 712, 1840, 760), radius=18,
+                        fill=stage, outline=outline, width=4)
+    d.line((100, 716, 1820, 716), fill=(255, 255, 255), width=2)
     d.rectangle((0, 760, W, H), fill=(18, 32, 46))
     d.rectangle((0, 756, W, 764), fill=info['floor'])
     for k in range(4):
@@ -656,42 +699,39 @@ def draw_script_props(im: Image.Image, t: float, line: int, wt: dict,
 
 def draw_script_actors(im: Image.Image, t: float, line: int,
                        cue: dict, wt: dict) -> None:
-    """2–3 位本名：整句真实走位；词点切动作图集后继续走，不原地冻结。"""
+    """项目 MV 式定点演出：固定 x，开场短滑入，词点播一次动作图集，之后停留。
+
+    不再用步态图集做整句横移；局部 dx/dy 只表示递接、抬手、让位、俯冲的起势。
+    """
     C = CTX
     CAST, SHEETS = C['CAST'], C['SHEETS']
     da = ImageDraw.Draw(im, 'RGBA')
     start, end = float(cue['start']), float(cue['end'])
     for e in sorted(SCRIPT_INTERACTIONS[line], key=lambda x: x['z']):
         who = e['who']
-        size = e['size'] or CAST[who]['size']
-        walk = WALK_SHEET[who]
-        act = e['act'] or CAST[who]['idle']
+        scale = e['scale'] or STAGE_SCALE[who]
+        size = tuple(max(1, int(v * scale)) for v in CAST[who]['size'])
+        idle = CAST[who]['idle']
+        act = e['act'] or idle
         tw = wt[e['trigger']]
-        ta = max(start, tw - 0.22)
-        tb = min(end, tw + 0.85)
-        # 走入场 → 词点动作 → 继续走向结果位
+        # 0.35s 从左右各 70px 滑入到位；之后固定，不再横向巡游。
+        enter_dir = 1 if e['x'] < 960 else -1
+        enter = 70 * (1 - _ease((t - start) / 0.35)) * enter_dir
         if t < tw:
-            u = _ease((t - start) / max(0.2, tw - start))
-            x = _lerp(e['x0'], e['x1'], u)
-            sheet, frame = walk, int((t * 10 + e['phase']) * 1.0) % SHEETS[walk][1]
-        elif t < tb:
-            u = _ease((t - tw) / max(0.2, tb - tw))
-            x = _lerp(e['x1'], e['x2'], 0.28 * u)
-            sheet, frame = act, min(SHEETS[act][1] - 1, int(u * SHEETS[act][1]))
+            p = 0.0
+            sheet, n = idle, SHEETS[idle][1]
+            frame = int((t * 6 + e['phase']) * 1.0) % n
         else:
-            u = _ease((t - tb) / max(0.2, end - tb))
-            x = _lerp(e['x1'] + (e['x2'] - e['x1']) * 0.28, e['x2'], u)
-            sheet, frame = walk, int((t * 10 + e['phase']) * 1.0) % SHEETS[walk][1]
-        overall = _ease((t - start) / max(0.2, end - start))
-        base_y = 760 - size[1] + 3
-        lift = e['lift'] * math.sin(math.pi * overall)
-        bob = (3.2 * abs(math.sin((t * 10 + e['phase']) * math.pi / 4.0))
-               if sheet == walk else 1.5 * math.sin(t * 6.0 + e['phase']))
-        y = base_y - lift + bob
-        flip = e['x2'] < e['x0']
+            p = _ease((t - tw) / max(0.6, end - tw))
+            sheet, n = act, SHEETS[act][1]
+            frame = min(n - 1, int(p * n))
+        x = e['x'] + enter + e['dx'] * p
+        y = 740 - size[1] + 2 - e['dy'] * math.sin(math.pi * min(1.0, p * 1.25))
+        y += (1.3 if t < tw else 0.7) * math.sin(t * 2.2 + e['phase'])
+        flip = e['flip'] if e['flip'] is not None else (e['x'] > 960)
         sp = C['sprite_frame'](sheet, frame, size, flip, e['charred'])
-        xi, yi = int(round(max(-size[0] + 20, min(C['W'] - 20, x)))), int(round(y))
-        half = size[0] * 0.30 + 5 * math.sin(t * 8 + e['phase'])
-        da.ellipse((xi + size[0] / 2 - half, 744, xi + size[0] / 2 + half, 766),
-                   fill=(8, 18, 26, 90))
+        xi, yi = int(round(x)), int(round(y))
+        half = size[0] * 0.30
+        da.ellipse((xi + size[0] / 2 - half, 732, xi + size[0] / 2 + half, 752),
+                   fill=(8, 18, 26, 70))
         im.paste(sp, (xi, yi), sp)
