@@ -21,7 +21,7 @@
 
 ## 正式成片与技术验证
 
-- 正式成片：`out/童话镇-paper-popup.mp4`；旁字幕：`out/童话镇-paper-popup.srt`；渲染记录：`out/render-info.json`。`out/` 按项目忽略规则不纳入 Git。
+- 正式成片：`out/童话镇-paper-popup.mp4`；旁字幕：`out/童话镇-paper-popup.srt`；渲染记录：`out/render-info.json`。`out/` 中间文件默认忽略；应用户要求，正式 MP4 已作为例外纳入 Git，SRT、渲染记录和审查图仍留在工作区。
 - `ffprobe`：视频 H.264、1920×1080、30/1 fps、7488/7488 帧、时长 249.600000 秒；音轨 AAC、48 kHz、双声道、时长 249.578667 秒。视频时长与原曲差异小于一帧。
 - `ffmpeg -v error -i out/童话镇-paper-popup.mp4 -f null -`：修正后的成片完整解码通过，无解码错误。SHA-256：`00bc05ab4ab8dead6291043a190cf1ea35598417d1ad36899e6d3b9ce933279f`。
 - 原曲流由渲染脚本从 `../../童话镇.mp4` 选取，并编码为 AAC 192 kb/s；保持原曲编排和原唱，不添加旁白或新音效。

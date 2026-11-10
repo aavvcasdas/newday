@@ -64,7 +64,7 @@
 - L01–L50 均有一张对应中点帧；间奏和尾声不属于歌词 cue，不计入本表。
 - 主要字幕位于画面下方，contact sheet 所见未遮住页面中央主体；仍需在动作帧中复查局部遮挡。
 - 时间线单元测试通过并校验 cue 数量、页翻数量与总时长；BPM／拍点没有分析，因此不声称逐拍或逐音节同步已通过。
-- 文件由 `node render.mjs review` 按最终代码生成；联系表位于 `out/review/contact-L01-L25.jpg` 与 `out/review/contact-L26-L50.jpg`（`out/` 为忽略目录，不纳入 Git）。
+- 文件由 `node render.mjs review` 按最终代码生成；联系表位于 `out/review/contact-L01-L25.jpg` 与 `out/review/contact-L26-L50.jpg`（`out/` 默认忽略；正式 MP4 是应用户要求纳入 Git 的例外，审查图仍留在工作区）。
 
 ## 正式成片动态抽查
 
