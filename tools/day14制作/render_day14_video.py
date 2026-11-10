@@ -1,36 +1,38 @@
 #!/usr/bin/env python3
-"""Day14《重看昨天那支片子》成片渲染器 v5 —— lemo-opuscar 导演流程 / 样片歌词驱动主画面。
+"""Day14《重看昨天那支片子》成片渲染器 v6 —— 剧本场景互动 / 主画面与 MV 真帧解耦。
 
-用户 2026-11-09 第五次反馈：「整体的人物交互太垃圾了，和样片以及歌词不符合啊，
-我让你根据歌词或者样片来。背景为什么没变，人物为什么一直原地踏步？！请全面重新修改分镜
-调用 lemo-opuscar skill 来生成分镜。」
+用户 2026-11-09 第六次反馈：「我的意思是需要和 mv 无关的，根据剧本的互动，
+目前人还是站着不动的是为什么！！！！，请切换不同的场景互动啊」。
 
-本版按 `.claude/skills/lemo-opuscar/SKILL.md` 拉取 `github.com/lemomo-ai/lemo-opuscar`，
-读 `AGENTS.md` / `DIRECTOR.md` / `styles/pixel-rpg/STYLE.md`，先写
-`Day/Day14/opuscar-day14/TREATMENT.md`，再按 46 行 `dalabengba.srt` 与 `S01–S26` 重排主画面：
+v5 把 `dalabengba.mp4` 真帧铺进主画面、人物在词点冻结姿态，仍被判「和 MV 无关 /
+按剧本互动 / 人站着不动」不成立。v6 彻底改法：
 
-  1. **背景真的换**：主画面直接铺 `dalabengba.mp4` 的 5fps / 640×360 整数缩真帧，
-     按 SRT 歌词秒与 S01–S26 镜头窗取帧，最近邻 ×3 成 1080p；城堡、王座厅、羊皮地图、
-     风车村、月光林、龙穴、终局石碑逐句切换，配 push/pull/pan/tilt/shake 等摄影机运动。
-  2. **人物按姓名交互**：前景每镜只上 2–3 位本名，动作图集按实测词点走
-     「准备→接触/触发→结果→反应→停留」，成形后冻结关键姿态，不再循环踏步、不再八人巡游。
-  3. **电视仍锁死**：机身 / 屏幕 / 片段 / 定格 / 黑屏 / 三连 / 开机渐亮沿用 v3，
-     `tv_at()` 与 `CLIP_SECOND` / `TRIPLE` 一字未改；背景变换、人物、特效之后电视矩形贴回。
-  4. **音画轴不变**：WAV、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕均不改；
-     词点仍全部来自 `voice_alignment.json` 的 `chars_timed`，不按句长估造。
+  1. **主画面不再用 MV 真帧**：`day14_v6_scenes.py` 按 24 句剧本手绘 24 个不同场景
+     （焦痕检查角、晨间搬运过道、红皮书舞台、夜色城堡走廊、城门送别口、风车村、
+     王座厅、山洞口、龙焰石碑、后台圆镜、档案桌、倒带台……），逐句硬切场。
+  2. **人物真实走位**：每镜 2–3 位本名用 `walk-v14` 步态图集，整句从 x0→x1→x2
+     连续位移；实测 `chars_timed` 词点切到一次交互动作图集，之后继续走向结果位，
+     不原地循环、不人群巡游、不站定冻结。
+  3. **剧本驱动互动**：谁搬电视、谁送本鲸上马、谁举月灯、谁追着问名字、
+     谁把字塞回框，都按本集台词安排入场/接触/反应/退场，而不是贴 MV 画面。
+  4. **电视仍锁死**：右上 `440×276 / 380×214` 电视内继续播 v3 番外真帧；
+     `tv_at()` / `CLIP_SECOND` / `TRIPLE` / 几何 / 定格 / 黑屏 / 三连一字未改，
+     背景切场、人物、道具、特效之后电视矩形逐像素贴回。
+  5. **音画轴不变**：WAV、24 cue、63 屏、1080p30、3756 帧、125.200s、Day2 字幕不改；
+     词点全部来自 `voice_alignment.json` 的 `chars_timed`，不按句长估造。
 
 字幕层仍固定绘制、不随镜头/电视缩放（`agent.md` 17(f)）；电视内仍是番外成片真帧
-按比例缩小的完整场景、静音画中画；不画任何界面控件、不做数字看板/角标/水印/说完之后的收尾卡。
+按比例缩小的完整场景、静音画中画；不画界面控件/数字看板/角标/水印/片尾卡。
 
 依赖（本环境按需装，不入库）：
   python3 -m pip install --user --break-system-packages Pillow numpy
   npm install --no-save --no-package-lock @ffmpeg-installer/ffmpeg @ffprobe-installer/ffprobe
   中文字体 video-fx/assets/fonts/NotoSansSC[wght].ttf（取自 google/fonts，被 .gitignore 忽略）
-  抽帧：见 Day/Day14/Day14分镜_电视机版_待审.md 第 3 节（本脚本只读 tools/day14制作/tv_frames/）
+  电视抽帧：见 Day/Day14/Day14分镜_电视机版_待审.md 第 3 节（本脚本只读 tools/day14制作/tv_frames/）
 
 用法：
   python3 tools/day14制作/render_day14_video.py --out Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-  python3 tools/day14制作/render_day14_video.py --stills 9      # 只出 6–9 张关键帧，不编码
+  python3 tools/day14制作/render_day14_video.py --stills 9      # 只出抽查帧，不编码
 """
 from __future__ import annotations
 
@@ -51,6 +53,8 @@ from pathlib import Path
 import numpy as np
 from PIL import Image, ImageDraw, ImageEnhance, ImageFont
 
+import day14_v6_scenes as S6
+
 ROOT = Path(__file__).resolve().parents[2]
 W, H, FPS = 1920, 1080, 30             # 仓库统一规格（verify_episode.py 要求 1080p30）
 ACT_FPS = 10                            # 本鲸动作图集逐帧速度
@@ -61,7 +65,7 @@ TV_OUTER = (1400, 96, 1840, 372)
 SCREEN = (1428, 124, 1808, 338)         # 380×214，16:9
 SW, SH = SCREEN[2] - SCREEN[0], SCREEN[3] - SCREEN[1]
 PAPER = (1120, 772, 1650, 952)
-BEN = (380, 470)                        # 本鲸站定的世界坐标（不再全场巡游）
+BEN = (380, 470)                        # 旧道具函数的参考基准点；v6 人物按场景走位
 BEN_SIZE = (350, 379)                   # 384:416 原比例
 SUB_Y = 930                             # Day2 对话条：输出 y=966..1053，标签上移
 
@@ -73,38 +77,9 @@ DAY2_TAG_STROKE = (250, 204, 21, 255)
 DAY2_TAG_TEXT = (253, 230, 138, 255)
 
 
-# ---- v5：样片真帧、歌词轴、人物动作图集 ----------------------------------
-SAMPLE_FPS = 5
-SAMPLE_DIR = ROOT / 'tools/day14制作/sample_frames'
-SAMPLE_FILES = sorted(SAMPLE_DIR.glob('*.jpg'))
-if not SAMPLE_FILES:
-    raise RuntimeError('缺样片真帧：先从 番外MV/达拉崩吧/dalabengba.mp4 抽 5fps/640x360 到 tools/day14制作/sample_frames/')
-
-
-def parse_srt() -> list[tuple[float, float, str]]:
-    txt = (ROOT / '番外MV/达拉崩吧/dalabengba.srt').read_text(encoding='utf-8')
-    pat = re.compile(r'(\d{2}):(\d{2}):(\d{2}),(\d{3}) --> (\d{2}):(\d{2}):(\d{2}),(\d{3})')
-    out = []
-    blocks = re.split(r'\n\s*\n', txt.strip())
-    for b in blocks:
-        m = pat.search(b)
-        if not m:
-            continue
-        g = list(map(int, m.groups()))
-        a = g[0] * 3600 + g[1] * 60 + g[2] + g[3] / 1000
-        c = g[4] * 3600 + g[5] * 60 + g[6] + g[7] / 1000
-        lines = [x.strip() for x in b.splitlines() if x.strip() and not x.strip().isdigit() and '-->' not in x]
-        out.append((a, c, ' '.join(lines)))
-    assert len(out) == 46, f'歌词轴应是 46 行，实得 {len(out)}'
-    return out
-
-
-SRT_TIMES = parse_srt()
-
-
-def lyric_range(a: int, b: int) -> tuple[float, float]:
-    assert 1 <= a <= b <= len(SRT_TIMES)
-    return SRT_TIMES[a - 1][0], SRT_TIMES[b - 1][1]
+# ---- v6：剧本场景互动；主画面不读 MV 真帧 -------------------------------
+# 24 个场景与 2–3 人走位表在 day14_v6_scenes.py；电视机真帧仍由 tv_frames/ 提供。
+# 主画面不再依赖 dalabengba.srt、sample_frames/ 或 dalabengba.mp4 抽帧。
 
 
 # 图集：横向 384×416 / 帧；walk-v14 8 帧，lyric-action-v13 多为 16 帧，actions-v12 11 帧。
@@ -148,6 +123,8 @@ SHEETS = {
     'qwen_idle': ('assets/ai-girls/walk-v14/qwen_idle_pet.png', 8),
     'qwen_reach': ('assets/ai-girls/lyric-action-v13/qwen_reach_action.png', 16),
 }
+
+SHEETS.update(S6.WALK_SHEETS)
 
 CAST = {
     '本鲸': dict(size=(350, 379), idle='whale_idle'),
@@ -278,71 +255,14 @@ INTERACTIONS = {
 }
 
 
-def seg_bounds(seg: dict) -> tuple[float, float]:
-    if 'secs' in seg:
-        return seg['secs']
-    return lyric_range(*seg['lyrics'])
+# v6 主画面场景切换表与人物走位表见 day14_v6_scenes.SCRIPT_SCENES /
+# SCRIPT_INTERACTIONS。主画面不再从 `dalabengba.srt` 或 `sample_frames/` 取背景。
 
-
-# 主画面背景：每段绑到样片 S 镜 / SRT 歌词行；word 是 Day14 实测词点，不是估时。
-MAIN_BG = {
-    1: [dict(word=None, lyrics=(45, 46), shot='S25–S26', framing='wide', move='pull', why='龙焰与石碑收尾，先交代「昨天被烤成黑炭」'),
-        dict(word='黑炭', lyrics=(46, 46), shot='S26', framing='wide+shake', move='shake', why='石碑砸落，前景本鲸焦黑')],
-    2: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='红皮书 / START QUEST 启动'),
-        dict(word='重看', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='书页展开为王城')],
-    3: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='屏幕亮起前是红皮书'),
-        dict(word='翻开', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='城堡从书页长出'),
-        dict(word='长出', lyrics=(1, 1), shot='S02', framing='medium', move='push', why='「很久很久以前」露台')],
-    4: [dict(word=None, lyrics=(2, 3), shot='S03', framing='wide', move='pan_r', why='巨龙突然出现 / 带来灾难'),
-        dict(word='抓走', lyrics=(4, 4), shot='S03', framing='two_shot', move='push', why='带走公主又消失不见'),
-        dict(word='暗', secs=(26.09, 28.10), shot='S04', framing='medium', move='static', why='王国十分危险 / 天暗')],
-    5: [dict(word=None, lyrics=(6, 8), shot='S05', framing='wide', move='pan_r', why='世间谁最勇敢 / 勇者赶来 / 大声喊'),
-        dict(word='上马', secs=(85.23, 93.25), shot='S15', framing='wide', move='pan_r', why='英雄骑上最快的马 / 从城堡出发')],
-    6: [dict(word=None, lyrics=(32, 33), shot='S18', framing='wide', move='pan_r', why='偏远美丽村庄 / 打开所有宝箱'),
-        dict(word='山洞口', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='闯入山洞 / 公主和巨龙')],
-    7: [dict(word=None, lyrics=(17, 18), shot='S09–S10', framing='medium', move='push', why='十二字真名冲破对话框 / 再说一次'),
-        dict(word='追着问', lyrics=(19, 23), shot='S10–S11', framing='two_shot', move='pan_l', why='是不是 / 啊对对 / 石砖砸落')],
-    8: [dict(word=None, lyrics=(34, 35), shot='S19', framing='wide', move='tilt_up', why='一路风霜 / 指引前路的圣月光'),
-        dict(word='小心后面', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='笼中公主喊「小心后面」')],
-    9: [dict(word=None, lyrics=(44, 45), shot='S24–S25', framing='wide', move='shake', why='错误道具栏 / 不对是 / 龙焰'),
-        dict(word='黑炭', lyrics=(46, 46), shot='S26', framing='wide', move='shake', why='焦黑本鲸 / 石碑砸下'),
-        dict(word='完了', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='片子完了，定格')],
-    10: [dict(word=None, lyrics=(45, 45), shot='S25', framing='close', move='pull', why='焦黑搞笑帧'),
-         dict(word='焦的', lyrics=(46, 46), shot='S26', framing='medium', move='static', why='终局定格，焦痕不擦')],
-    11: [dict(word=None, lyrics=(13, 14), shot='S07', framing='wide', move='static', why='国王高兴 / 忙问姓名，空册'),
-        dict(word='一个字都没有', lyrics=(15, 16), shot='S08', framing='insert', move='push', why='年轻人想了想，纸仍空')],
-    12: [dict(word=None, secs=(78.21, 85.23), shot='S14', framing='overworld', move='pan_l', why='世界地图盖章 / 远征路线'),
-        dict(word='倒回去', lyrics=(9, 12), shot='S06', framing='overworld', move='pan_r', why='地图四站倒回去一段一段看')],
-    13: [dict(word=None, secs=(0, 8.05), shot='S01', framing='insert', move='push', why='红皮书再启动'),
-        dict(word='开始', secs=(8.05, 18.08), shot='S02', framing='wide', move='tilt_up', why='谁按下的开始')],
-    14: [dict(word=None, lyrics=(2, 4), shot='S03', framing='wide', move='pan_r', why='龙娘抓走豆包那段'),
-        dict(word='记一行', lyrics=(9, 12), shot='S06', framing='insert', move='static', why='按片序记一行')],
-    15: [dict(word=None, lyrics=(13, 14), shot='S07', framing='two_shot', move='static', why='追着问名字的是大小姐'),
-        dict(word='豆包', lyrics=(36, 37), shot='S20', framing='medium', move='push', why='喊小心后面的是豆包')],
-    16: [dict(word=None, lyrics=(34, 34), shot='S19', framing='wide', move='tilt_up', why='一路风霜伴随'),
-        dict(word='举', lyrics=(35, 35), shot='S19', framing='medium', move='push', why='Kimi 举的圣月光')],
-    17: [dict(word=None, secs=(66.69, 78.21), shot='S13', framing='wide', move='pan_r', why='章回卡 / 四张角色卡'),
-        dict(word='写下来', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='全演过了，纸却空着')],
-    18: [dict(word=None, lyrics=(28, 29), shot='S16', framing='side_scroll', move='pan_r', why='战胜魔兽 / 获得十二金币'),
-        dict(word='一帧一帧', lyrics=(30, 31), shot='S17', framing='side_scroll', move='pan_r', why='伤痕 / 升级，逐格看')],
-    19: [dict(word=None, lyrics=(9, 10), shot='S06', framing='overworld', move='pan_r', why='最好的剑 / 最高的山'),
-        dict(word='一段写一行', lyrics=(11, 12), shot='S06', framing='insert', move='push', why='最深的森林 / 带回面前，逐行写')],
-    20: [dict(word=None, lyrics=(44, 44), shot='S24', framing='insert', move='static', why='五格道具栏'),
-        dict(word='并成一段', lyrics=(44, 44), shot='S24', framing='insert', move='shake', why='不并段，两行分开')],
-    21: [dict(word=None, lyrics=(45, 45), shot='S25', framing='medium', move='shake', why='不对是 / 龙焰烧穿'),
-        dict(word='待补', lyrics=(46, 46), shot='S26', framing='insert', move='static', why='焦纸单独夹起写待补')],
-    22: [dict(word=None, lyrics=(46, 46), shot='S26', framing='wide', move='pull', why='终局定格 / 关电视'),
-        dict(word='不拍雨', lyrics=(46, 46), shot='S26', framing='wide', move='static', why='收伞 / 雨停')],
-    23: [dict(word=None, lyrics=(32, 33), shot='S18', framing='wide', move='static', why='风车村 / 白饭'),
-        dict(word='不改', lyrics=(32, 33), shot='S18', framing='medium', move='push', why='那句不改')],
-    24: [dict(word=None, lyrics=(17, 18), shot='S09–S10', framing='medium', move='push', why='长名字 / 再说一次'),
-        dict(word='塞回框', lyrics=(19, 23), shot='S10–S11', framing='insert', move='static', why='一个字一个字塞回昵称框')],
-}
 
 # 保留 v4 的逐句导演字段（tv/tv_mode/fx/stage 等）用于电视锁死与文档生成。
 
-# ---- 逐句主画面分镜（M01–M24，v4 重生成）----------------------------------
-# tv/tv_mode/fx 与 v3 逐帧一致 → 电视机内容不变；其余全是主画面导演字段。
+# ---- 逐句电视/特效字段（M01–M24；主画面场景改为 v6 剧本互动表）------------
+# tv/tv_mode/fx 与 v3 逐帧一致 → 电视机内容不变；主画面另见 day14_v6_scenes.py。
 # focus / entry / action / trigger / result / reaction / hold / exit / transition /
 # continuity_in / continuity_out 按 Day12 逐镜导演卡与 agent.md 24(e) 记录。
 SCENES = [
@@ -604,8 +524,6 @@ def sheet_image(rel: str) -> Image.Image:
     return Image.open(ROOT / rel).convert('RGBA')
 
 
-@lru_cache(maxsize=320)
-
 @lru_cache(maxsize=420)
 def sprite_frame(sheet: str, idx: int, size: tuple[int, int], flip: bool,
                  charred: bool) -> Image.Image:
@@ -660,35 +578,8 @@ def progress(t: float, wt: dict[str, float], word: str, lead: float = 0.22,
 
 
 
-@lru_cache(maxsize=96)
-def sample_frame(idx: int) -> Image.Image:
-    idx = max(1, min(len(SAMPLE_FILES), idx))
-    return Image.open(SAMPLE_FILES[idx - 1]).convert('RGB')
-
-
-def sample_time_for(t: float, cue: dict, line: int, wt: dict) -> tuple[float, float, dict]:
-    """把 Day14 实测词点映射到样片 SRT 秒；返回 (sample_t, 段内进度, 段)。"""
-    segs = MAIN_BG[line]
-    lead = 0.15
-    bounds = []
-    for i, sg in enumerate(segs):
-        st = float(cue['start']) if i == 0 else max(float(cue['start']), wt[segs[i]['word']] - lead)
-        en = float(cue['end']) if i == len(segs) - 1 else max(st + 0.05, wt[segs[i + 1]['word']] - lead)
-        bounds.append((st, en))
-    idx = 0
-    for i in range(1, len(segs)):
-        if t >= bounds[i][0]:
-            idx = i
-    st, en = bounds[idx]
-    u = min(0.999, max(0.0, (t - st) / max(0.05, en - st)))
-    s0, s1 = seg_bounds(segs[idx])
-    sample_t = s0 + (s1 - s0) * u
-    sample_t = max(0.0, min(132.7, sample_t))
-    return sample_t, u, segs[idx]
-
-
 def apply_sample_camera(im: Image.Image, move: str, u: float, t: float) -> Image.Image:
-    """只变换主画面真帧；电视矩形随后固定贴上，不跟着推拉。"""
+    """只变换主画面手绘背景；电视外壳随后固定贴上，不跟着推拉。"""
     scale, cx, cy = 1.0, W / 2, H / 2
     if move == 'push':
         scale = 1.0 + 0.18 * u
@@ -707,7 +598,7 @@ def apply_sample_camera(im: Image.Image, move: str, u: float, t: float) -> Image
     cw, ch = W / scale, H / scale
     x0 = int(round(min(max(cx - cw / 2, 0), W - cw)))
     y0 = int(round(min(max(cy - ch / 2, 0), H - ch)))
-    return im.crop((x0, y0, x0 + int(cw), y0 + int(ch))).resize((W, H), Image.NEAREST)
+    return im.crop((x0, y0, x0 + int(cw), y0 + int(ch))).resize((W, H), Image.LANCZOS)
 
 
 def top_glow(im: Image.Image, t: float) -> Image.Image:
@@ -734,25 +625,13 @@ def draw_tv_body(d: ImageDraw.ImageDraw) -> None:
 
 
 
-def background(t: float, cue: dict, line: int, wt: dict) -> Image.Image:
-    """主画面 = 样片真帧（按歌词秒取帧）+ 整数像素摄影机 + 固定电视外壳。"""
-    sample_t, u, seg = sample_time_for(t, cue, line, wt)
-    idx = int(sample_t * SAMPLE_FPS) + 1
-    im = sample_frame(idx).resize((W, H), Image.NEAREST)
-    im = apply_sample_camera(im, seg.get('move', 'static'), u, t)
-    im = top_glow(im, t)
-    d = ImageDraw.Draw(im)
-    # 下方固定舞台带：让 Day2 字幕检测稳定，也给前景人物一条落地线。
-    d.rectangle((0, 760, W, H), fill=(18, 32, 46))
-    d.rectangle((0, 756, W, 764), fill=(72, 120, 140))
-    for k in range(4):
-        d.line((0, 800 + k * 48, W, 800 + k * 48), fill=(28, 48, 62), width=2)
-    draw_tv_body(d)
-    return im
+def background(t: float, cue: dict, line: int, wt: dict, frac: float) -> Image.Image:
+    """主画面 = 剧本场景手绘背景 → 镜头只动背景 → 固定电视外壳。"""
+    return S6.draw_script_backdrop(t, line, wt, frac)
 
 
 def mood_grade(im: Image.Image, t: float, scene: dict, wt: dict) -> Image.Image:
-    """v5 不再用气氛压色冒充背景变化；样片真帧本身换景/换调色板。"""
+    """v6 不靠全屏压色换景；24 个剧本场景本身结构、调色板、道具都不同。"""
     return im
 
 
@@ -1079,19 +958,24 @@ def two_cards(im: Image.Image, t: float, wt: dict[str, float]) -> None:
 
 
 def strip(im: Image.Image, t: float, clip: str, step: int = 0, compact: bool = False) -> None:
-    """MV 真帧以胶片条形式进主画面（「一帧一帧看」），亮框每次只挪一格。"""
+    """实体胶片格：只画胶片孔与色块，不把 MV 真帧贴进主画面。"""
     d = ImageDraw.Draw(im)
+    da = ImageDraw.Draw(im, 'RGBA')
     x0, y0 = 300, 626 if compact else 612
     tw, th = (110, 62) if compact else (150, 84)
     n = 5
     d.rounded_rectangle((x0 - 12, y0 - 12, x0 + n * (tw + 10) + 2, y0 + th + 12),
                         radius=8, fill=(38, 52, 62), outline=(16, 28, 38), width=4)
-    nclip = len(frame_index.get(clip, [])) or 1
     for i in range(n):
         x = x0 + i * (tw + 10)
-        fr = tv_frame(clip, (i * 7 + step * 3) % nclip).resize((tw, th), Image.LANCZOS)
-        im.paste(fr, (x, y0))
-        d.rectangle((x, y0, x + tw, y0 + th), outline=(12, 24, 34), width=3)
+        d.rectangle((x, y0, x + tw, y0 + th), fill=(58, 72, 82), outline=(12, 24, 34), width=3)
+        for j in range(4):
+            d.rectangle((x + 6, y0 + 6 + j * 18, x + 16, y0 + 16 + j * 18), fill=(16, 26, 34))
+            d.rectangle((x + tw - 16, y0 + 6 + j * 18, x + tw - 6, y0 + 16 + j * 18), fill=(16, 26, 34))
+        q = clamp01((step % n + 1 - i) / 4.0)
+        da.ellipse((x + tw / 2 - 20, y0 + th / 2 - 20 + 5 * math.sin(t + i),
+                    x + tw / 2 + 20, y0 + th / 2 + 20 + 5 * math.sin(t + i)),
+                   fill=(226, 204, 124, int(80 * q)))
         if i == step % n:
             d.rectangle((x - 4, y0 - 4, x + tw + 4, y0 + th + 4), outline=(250, 226, 140), width=4)
 
@@ -1252,18 +1136,10 @@ def draw_interactions(im: Image.Image, t: float, line: int, wt: dict) -> None:
 
 
 def draw_stage(im: Image.Image, t: float, line: int, frac: float,
-               wt: dict[str, float], inks: list[float]) -> None:
-    stage = SCENES[line - 1]['stage']
-    # 写字/记录类镜头保留前景纸与实测墨线；其余镜头由样片真帧承担场景细节。
-    if stage in ('blank', 'write_one', 'paper_flip', 'separate', 'clip_charred',
-                 'hook', 'review', 'frames', 'reveal', 'off_umbrella', 'rice'):
-        draw_paper(im, t, wt, inks)
-    if stage in ('reveal', 'frames'):
-        strip(im, t, 'FIRE', step=int(max(0, t - wt.get('一帧一帧', t)) * 5), compact=True)
-    if stage == 'hook':
-        namebox(im, t, wt, returning=True)
-    draw_interactions(im, t, line, wt)
-    # 少量前景浮尘：与背景不同速度，不覆盖电视与字幕。
+               wt: dict[str, float], inks: list[float], cue: dict) -> None:
+    S6.draw_script_props(im, t, line, wt, frac, inks)
+    S6.draw_script_actors(im, t, line, cue, wt)
+    # 少量前景浮尘：与场景背景不同速度，不覆盖电视与字幕。
     da = ImageDraw.Draw(im, 'RGBA')
     rng = np.random.default_rng(91)
     for k in range(18):
@@ -1331,7 +1207,7 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
     wt = wt_all[line]
     frac = min(0.999, max(0.0, (t - cue['start']) / max(0.01, cue['end'] - cue['start'])))
 
-    im = background(t, cue, line, wt)
+    im = background(t, cue, line, wt, frac)
     clip, mode, idx = tv_at(scene, cue, t, frac)
     if clip == 'dark':
         d = ImageDraw.Draw(im)
@@ -1349,7 +1225,7 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
     # 电视矩形先存一份：主画面的一切绘制与切镜特效都不许改到它
     tv_pixels = im.crop(TV_OUTER)
     im = mood_grade(im, t, scene, wt)
-    draw_stage(im, t, line, frac, wt, inks)
+    draw_stage(im, t, line, frac, wt, inks, cue)
     im.paste(tv_pixels, (TV_OUTER[0], TV_OUTER[1]))
     im = effects(im, scene, frac, t)
     im.paste(tv_pixels, (TV_OUTER[0], TV_OUTER[1]))
@@ -1359,6 +1235,9 @@ def render_at(t: float, cues: list, screens: list, cue_starts: list,
         layer = subtitle_layer(screens[si]['text'])
         im.paste(layer, (0, SUB_Y), layer)
     return im
+
+
+S6.bind(globals())
 
 
 def main() -> int:
@@ -1375,7 +1254,7 @@ def main() -> int:
         raise RuntimeError('缺音源：git show origin/arena/689c1837-newday:鲸鱼MV重看_克隆配音_最终版.wav > 鲸鱼MV重看_克隆配音_最终版.wav')
     assert alignment['measured'] is True and subs['measured'] is True
     assert len(SCENES) == 24 and set(WORD_TRIGGERS) == set(range(1, 25))
-    assert set(MAIN_BG) == set(range(1, 25)) and set(INTERACTIONS) == set(range(1, 25))
+    assert set(S6.SCRIPT_SCENES) == set(range(1, 25)) and set(S6.SCRIPT_INTERACTIONS) == set(range(1, 25))
     cues = alignment['cues']
     screens = subs['screens']
     source_duration = float(alignment['source_duration_seconds'])

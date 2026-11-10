@@ -1,30 +1,34 @@
-Day14 成片规格（视频 v5 / lemo-opuscar 样片歌词驱动主画面 / 电视机内容不变，最终渲染）
+Day14 成片规格（视频 v6 / 剧本场景互动 / 主画面与 MV 真帧解耦 / 电视机内容不变，最终渲染）
 文件：Day/Day14/成片/Day14_重看昨天那支片子_克隆配音版.mp4
-SHA256：d2d1f0db9457ce40dca6bae13378f89eb9758b928fb5ad6ab920f71899d71567
-大小：76,666,321 字节
+SHA256：7c8d3455e536fec5cf03d06428d08b1e6d7d52833d9972879a805530114b6b7d
+大小：41,791,208 字节
 视频：h264 1920x1080 30/1  3756 帧  时长 125.200000s
 音频：aac 44100Hz 2ch  时长 125.195011s（源 WAV 124.970s + 0.25s 收尾）
 音源：鲸鱼MV重看_克隆配音_最终版.wav  40kHz/16bit/单声道  SHA256 86223c9fb2c34078e2077af8807b34f357ee74508c2e2b4a48e23003ae220ff3
 实测轴：tools/day14制作/voice_alignment.json  24 cue / measured=true
 字幕轴：tools/day14制作/subtitle_timing.json  63 屏 / measured=true
-分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v5）
+分镜：Day/Day14/Day14分镜_台词匹配版_待审.md  M01–M24（视频 v6）
       Day/Day14/opuscar-day14/TREATMENT.md / STORYBOARD.md / storyboard_sheet.jpg
-样片：番外MV/达拉崩吧/dalabengba.mp4 + dalabengba.srt（46 行） + TREATMENT.md S01–S26
-      5fps / 640x360 整数缩真帧 664 张，最近邻 ×3 铺成主画面；按 SRT 歌词秒取帧。
-主画面：逐句换红皮书/王城/巨龙/招募广场/羊皮地图/王座厅/风车村/月光林/龙穴/终局石碑；
-        push/pull/pan_r/pan_l/tilt_up/shake/static 只变换背景真帧；
-        每镜 2–3 位本名用 walk-v14 / lyric-action-v13 / actions-v12 动作图集
-        按实测 chars_timed 词点做交互，成形后冻结，不循环踏步、不八人巡游。
+主画面：与 MV 真帧无关；按本集 24 句剧本切到 24 个互不相同的手绘场景，
+      由 tools/day14制作/day14_v6_scenes.py 的 SCRIPT_SCENES / SCRIPT_INTERACTIONS 驱动。
+      场景含焦痕检查角、晨间搬运过道、红皮书舞台、夜色城堡走廊、城门送别口、
+      风车村、王座厅、山洞口、龙焰石碑、后台圆镜、档案桌、倒带台、启动台、双台、
+      名牌长廊、月灯长廊、胶片墙、灯箱、翻纸长桌、夹子桌、抽屉柜、收伞门厅、白饭桌、昵称框修补台。
+      摄影机 push/pull/pan_r/pan_l/tilt_up/shake/static 只动背景。
+人物：每镜 2–3 位本名用 walk-v14 步态图集整句 x0→x1→x2 连续走位；
+      实测 chars_timed 词点切一次 lyric-action-v13 / actions-v12 交互动作，之后继续走向结果位；
+      不站定、不原地循环、不八人巡游。主画面胶片条也改成手绘胶片孔与色块，不贴 MV 真帧。
 电视：440x276 机身 / 380x214 屏幕，右上 (1400,96)-(1840,372)；
       tv_at / CLIP_SECOND / TRIPLE / 定格 / 黑屏 / M15 三连 / 开机渐亮与 v3 逐帧一致
-      （3756 帧决策比对 0 差异）；背景变换、人物、气氛 no-op、特效后电视矩形逐像素贴回
-      （抽查 9 个特效帧 maxdiff=0）。
-媒体终验：passed=True  decode_passed=True  pcm_correlation=0.999996053  tail_pad=0.255s
-          字幕抽样 errors=0（63 屏在屏、气口无误报，Day2 青色条检测，不是 OCR）
-开场视觉：passed=True（运动 7.910 / 上半屏亮部 0.420 / 全帧亮部 0.248）
+      （3756 帧决策比对 0 差异）；背景切场、人物、道具、特效后电视矩形逐像素贴回
+      （抽查 9 个特效帧 maxdiff=0）。番外真帧只出现在电视画中画。
+媒体终验：passed=True  decode_passed=True  pcm_correlation=0.9999960533334695  tail_pad=0.255s
+          字幕抽样 errors=[]（63 屏在屏、气口无误报，Day2 青色条检测，不是 OCR）
+开场视觉：passed=True（运动 4.138 / 上半屏亮部 0.407 / 全帧亮部 0.191）
 主画面词点帧差（640x360 灰度级 /255，遮掉电视矩形与字幕带）：
-          L03「翻开」61.37、L08「小心后面」35.41、L22「不拍雨」26.52、L24「一个字一个字」30.56
+          L03「翻开」14.60、L08「小心后面」6.42、L12「倒回去」14.73、L22「不拍雨」7.95、L24「一个字一个字」11.81
 关键帧：Day/Day14/opuscar-day14/keyframes/ 9 张真实渲染帧；storyboard_sheet.jpg 由
-      /home/user/lemo-opuscar/core/render/sheet.py 拼成；编码后另抽 9 帧目检。
-注意：字幕核验是色彩/帧差抽样，不是 OCR；前景立绘与像素背景的融合度、好不好笑、
+      /home/user/lemo-opuscar/core/render/sheet.py 拼成；编码后另抽 25 帧全片等距目检、
+      L03 按 0.6s 抽 8 帧确认连续走位。
+注意：字幕核验是色彩/帧差抽样，不是 OCR；前景立绘与手绘场景的融合度、连续走位是否自然、
       像不像、节奏仍需人工看片。未获真人观影批准、未发布、未合并 PR。

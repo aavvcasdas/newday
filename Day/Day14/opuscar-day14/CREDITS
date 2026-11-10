@@ -1,20 +1,22 @@
-Day14 v5 主画面分镜 / 成片所用第三方素材
-=========================================
+Day14 视频 v6 主画面分镜 / 成片所用第三方素材
+=============================================
 
-- 样片与歌词：`番外MV/达拉崩吧/dalabengba.mp4`、`dalabengba.srt`、`TREATMENT.md`、`CREDITS`、
-  `events.json`；仓库内已交付番外《达拉崩吧》16-bit Pixel RPG MV。原曲信息见番外 CREDITS
-  （词/曲：ilem）；本轮只把已交付真帧作为主画面背景与电视画中画，不重唱、不新混音、不改原片。
+- 番外《达拉崩吧》：`番外MV/达拉崩吧/dalabengba.mp4`、`TREATMENT.md`、`CREDITS`、
+  `events.json`；仓库内已交付 16-bit Pixel RPG MV。原曲信息见番外 CREDITS（词/曲：ilem）。
+  **视频 v6 的主画面与 MV 真帧无关**：24 个剧本场景全部由 `day14_v6_scenes.py` 手绘；
+  番外真帧只保留在右上角电视画中画（v3 锁定的 10 段 / 442 张抽帧）。不重唱、不新混音、不改原片。
 - 配音：`鲸鱼MV重看_克隆配音_最终版.wav`（用户上传的克隆配音，分支 `arena/689c1837-newday`）。
   声音 likeness 与再分发授权由用户确认；本轮不替换、不变速。
-- 人物动作图集：`assets/ai-girls/walk-v14/`、`assets/ai-girls/lyric-action-v13/`、
-  `assets/ai-girls/actions-v12/`；仓库内既有 AI娘图鉴与动作素材，未生成新脸、未改固定 PNG 五官。
+- 人物动作图集：`assets/ai-girls/walk-v14/`（8 个角色步态）、
+  `assets/ai-girls/lyric-action-v13/`、`assets/ai-girls/actions-v12/`；
+  仓库内既有 AI娘图鉴与动作素材，未生成新脸、未改固定 PNG 五官。
 - 字体：`video-fx/assets/fonts/NotoSansSC[wght].ttf` 与 `ZCOOLKuaiLe-Regular.ttf`
   （Google Fonts / OFL-1.1，字体文件被 `.gitignore` 忽略，不随提交分发）。
 - 导演方法：`github.com/lemomo-ai/lemo-opuscar`（MIT + 第三方资产说明），只使用
   `AGENTS.md`、`DIRECTOR.md`、`styles/pixel-rpg/STYLE.md` 与 `core/render/sheet.py` 的导演/拼板语法；
-  库代码未复制进本仓库，未使用其 demo 故事/角色/旋律/片尾卡。
-- 编码与验收：仓库内 `tools/day14制作/render_day14_video.py`、`tools/验收/*`、
-  `@ffmpeg-installer/ffmpeg` / `@ffprobe-installer/ffprobe`（本地 npm 安装，不入库）。
+  库代码未复制进本仓库，未使用其 demo 故事/角色/旋律/片尾卡；Playwright 浏览器渲染器未用。
+- 编码与验收：仓库内 `tools/day14制作/render_day14_video.py`、`tools/day14制作/day14_v6_scenes.py`、
+  `tools/验收/*`、`@ffmpeg-installer/ffmpeg` / `@ffprobe-installer/ffprobe`（本地 npm 安装，不入库）。
 
 权利说明：用户需确认其提供的 WAV、番外 MV、人物图集与字体的再分发/发布权利；
 本轮只在本仓库内重排与本地渲染，不做平台发布、不自动合并 PR。

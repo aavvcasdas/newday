@@ -1,101 +1,123 @@
-[
-  {
-    "i": 1,
-    "t": 2.5,
-    "line": 1,
-    "shot": "S26",
-    "framing": "wide+shake",
-    "move": "shake",
-    "duration": 3.79,
-    "file": "01_M01_S26_wide+shake_3.79s_L01.png",
-    "sample_t": 130.083
-  },
-  {
-    "i": 2,
-    "t": 11.9,
-    "line": 3,
-    "shot": "S02",
-    "framing": "wide",
-    "move": "tilt_up",
-    "duration": 5.695,
-    "file": "02_M03_S02_wide_5.70s_L03.png",
-    "sample_t": 9.347
-  },
-  {
-    "i": 3,
-    "t": 18.7,
-    "line": 4,
-    "shot": "S03",
-    "framing": "two_shot",
-    "move": "push",
-    "duration": 5.52,
-    "file": "03_M04_S03_two_shot_5.52s_L04.png",
-    "sample_t": 24.266
-  },
-  {
-    "i": 4,
-    "t": 36.5,
-    "line": 7,
-    "shot": "S09–S10",
-    "framing": "medium",
-    "move": "push",
-    "duration": 8.165,
-    "file": "04_M07_S09-S10_medium_8.16s_L07.png",
-    "sample_t": 53.013
-  },
-  {
-    "i": 5,
-    "t": 46.9,
-    "line": 8,
-    "shot": "S20",
-    "framing": "medium",
-    "move": "push",
-    "duration": 5.37,
-    "file": "05_M08_S20_medium_5.37s_L08.png",
-    "sample_t": 111.351
-  },
-  {
-    "i": 6,
-    "t": 63.5,
-    "line": 12,
-    "shot": "S06",
-    "framing": "overworld",
-    "move": "pan_r",
-    "duration": 3.89,
-    "file": "06_M12_S06_overworld_3.89s_L12.png",
-    "sample_t": 35.117
-  },
-  {
-    "i": 7,
-    "t": 83.0,
-    "line": 17,
-    "shot": "S13",
-    "framing": "wide",
-    "move": "pan_r",
-    "duration": 4.075,
-    "file": "07_M17_S13_wide_4.08s_L17.png",
-    "sample_t": 72.515
-  },
-  {
-    "i": 8,
-    "t": 109.9,
-    "line": 22,
-    "shot": "S26",
-    "framing": "wide",
-    "move": "static",
-    "duration": 4.5,
-    "file": "08_M22_S26_wide_4.50s_L22.png",
-    "sample_t": 129.948
-  },
-  {
-    "i": 9,
-    "t": 123.9,
-    "line": 24,
-    "shot": "S10–S11",
-    "framing": "insert",
-    "move": "static",
-    "duration": 6.5,
-    "file": "09_M24_S10-S11_insert_6.50s_L24.png",
-    "sample_t": 56.846
-  }
-]
+{
+  "version": "v6",
+  "source": "real renderer",
+  "keyframes": [
+    {
+      "index": 1,
+      "time": 2.5,
+      "line": 1,
+      "shot": "M01",
+      "scene": "焦痕检查角",
+      "layout": "charred_corner",
+      "move": "static",
+      "duration": 3.79,
+      "actors": "龙娘／本鲸／豆包",
+      "frame": "01_M01_charred_corner_3.79s_L01.png",
+      "lyrics": "本鲸，就是昨天被烤成黑炭的那条鱼。"
+    },
+    {
+      "index": 2,
+      "time": 11.9,
+      "line": 3,
+      "shot": "M03",
+      "scene": "红皮书舞台",
+      "layout": "book_stage",
+      "move": "push",
+      "duration": 5.7,
+      "actors": "本鲸／大小姐／Gemini",
+      "frame": "02_M03_book_stage_5.70s_L03.png",
+      "lyrics": "屏幕一亮，一本红皮书翻开，城堡从书页里长出来。"
+    },
+    {
+      "index": 3,
+      "time": 18.7,
+      "line": 4,
+      "shot": "M04",
+      "scene": "夜色城堡走廊",
+      "layout": "castle_night",
+      "move": "pan_l",
+      "duration": 5.52,
+      "actors": "龙娘／豆包／本鲸",
+      "frame": "03_M04_castle_night_5.52s_L04.png",
+      "lyrics": "龙娘扮的恶龙俯冲下来，把豆包扮的公主抓走，天一下子暗了。"
+    },
+    {
+      "index": 4,
+      "time": 36.5,
+      "line": 7,
+      "shot": "M07",
+      "scene": "王座厅名字框",
+      "layout": "throne",
+      "move": "push",
+      "duration": 8.16,
+      "actors": "大小姐／本鲸／豆包",
+      "frame": "04_M07_throne_8.16s_L07.png",
+      "lyrics": "名字太长，塞不进那个框，大小姐扮的女王追着问了好几遍。"
+    },
+    {
+      "index": 5,
+      "time": 46.9,
+      "line": 8,
+      "shot": "M08",
+      "scene": "山洞口金笼",
+      "layout": "cave",
+      "move": "tilt_up",
+      "duration": 5.37,
+      "actors": "Kimi／豆包／本鲸",
+      "frame": "05_M08_cave_5.37s_L08.png",
+      "lyrics": "最黑的那段，Kimi 的月光照亮洞口；豆包在笼子里喊了一声「小心后面」。"
+    },
+    {
+      "index": 6,
+      "time": 63.5,
+      "line": 12,
+      "shot": "M12",
+      "scene": "暂停倒带操作台",
+      "layout": "rewind",
+      "move": "pan_l",
+      "duration": 3.89,
+      "actors": "本鲸／Gemini／智谱",
+      "frame": "06_M12_rewind_3.89s_L12.png",
+      "lyrics": "本鲸按下暂停，倒回去，一段一段看。"
+    },
+    {
+      "index": 7,
+      "time": 83.0,
+      "line": 17,
+      "shot": "M17",
+      "scene": "胶片墙放映室",
+      "layout": "film_wall",
+      "move": "pull",
+      "duration": 4.08,
+      "actors": "本鲸／龙娘／大小姐",
+      "frame": "07_M17_film_wall_4.08s_L17.png",
+      "lyrics": "电视里全演过了，只是没人把它写下来。"
+    },
+    {
+      "index": 8,
+      "time": 109.9,
+      "line": 22,
+      "shot": "M22",
+      "scene": "收伞门厅",
+      "layout": "hallway",
+      "move": "pan_r",
+      "duration": 4.5,
+      "actors": "本鲸／智谱／豆包",
+      "frame": "08_M22_hallway_4.50s_L22.png",
+      "lyrics": "电视关掉，那把歪伞收进抽屉，今天不拍雨了。"
+    },
+    {
+      "index": 9,
+      "time": 123.9,
+      "line": 24,
+      "shot": "M24",
+      "scene": "昵称框修补台",
+      "layout": "name_bench",
+      "move": "push",
+      "duration": 6.5,
+      "actors": "大小姐／本鲸／豆包",
+      "frame": "09_M24_name_bench_6.50s_L24.png",
+      "lyrics": "下一集，本鲸要把那个装不下的名字，一个字一个字塞回框里。"
+    }
+  ]
+}
