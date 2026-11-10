@@ -270,6 +270,17 @@
     "poster.jpg",
     "Day14_重看昨天那支片子_克隆配音版.srt",
     "build.sh",
-    "CREDITS"
-  ]
+    "CREDITS",
+    "cover_v10.jpg",
+    "COVER_COPY.md",
+    "tools/day14制作/gen_day14_v10_cover.py"
+  ],
+  "cover": {
+    "file": "cover_v10.jpg",
+    "title": "重看昨天那支片子",
+    "subtitle": "全演过了，只是没人写下来",
+    "size": "1920x1080",
+    "source_frame": "real renderer 13.0s (M03)",
+    "video_modified": false
+  }
 }
