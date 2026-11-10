@@ -13,8 +13,8 @@
 > `tv_at` 3756 帧与 v3 比对 0 差异。详见 [v10 治疗/分镜](opuscar-day14/TREATMENT.md)、
 > [v10 STORYBOARD](opuscar-day14/STORYBOARD.md)、[模型表](opuscar-day14/model_sheet.jpg) 与
 > [制作记录](Day14制作记录_克隆配音版.md)。**下方 v9 段落均为历史**；文稿与成片仍未获真人批准。
-> 封面：[cover_v10.jpg](opuscar-day14/cover_v10.jpg)（成片同目录副本：[Day14_重看昨天那支片子_封面_v10.jpg](成片/Day14_重看昨天那支片子_封面_v10.jpg)）；文案：[COVER_COPY.md](opuscar-day14/COVER_COPY.md)。
-> 比例封面（文案已排进图里）：[3:4](opuscar-day14/cover_v10_3x4.jpg)（1080×1440）、[4:3](opuscar-day14/cover_v10_4x3.jpg)（1600×1200），成片同目录另有中文名副本；生成脚本 `tools/day14制作/gen_day14_v10_cover_ratios.py`。
+> 文案：[Day14文案_待审.md](Day14文案_待审.md)（独立 md，格式照 Day13；文案不进封面图）；16:9 历史含字封面：[cover_v10.jpg](opuscar-day14/cover_v10.jpg)。
+> 比例封面（图上无文案）：[3:4](opuscar-day14/cover_v10_3x4.jpg)（1080×1440）、[4:3](opuscar-day14/cover_v10_4x3.jpg)（1440×1080），成片同目录另有中文名副本；生成脚本 `tools/day14制作/gen_day14_v10_cover_ratios.py`。
 
 
 > **状态分两条线（2026-11-09）**：

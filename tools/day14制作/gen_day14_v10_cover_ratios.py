@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Day14 v10 的 3:4 / 4:3 两版封面，文案直接排进图里。
+"""Day14 v10 的 3:4 / 4:3 两版无字封面。
+
+用户更正（2026-11-09）：封面图里不写文案，只出 3:4 / 4:3 两个比例；
+文案单独写进 `Day/Day14/Day14文案_待审.md`（格式照 Day13 的 `Day13文案_待审.md`）。
 
 底图统一取 render_day14_video.render_at(13.0s) 的 M03「红皮书舞台」真实渲染帧
 （本鲸 / 大小姐 2 位，均为 v10 双脚可见白名单；两人之间的书页交接与关系弧保留，
 右上电视 PiP 保留）。封面专用：临时屏蔽 Day2 字幕层，成片 MP4 完全不修改。
-用暖纸画布 + 16:9 画面窗口 + paper-popup 纸片标题卡重新排版，不拉伸、不裁掉人物。
+本脚本只画暖纸底纹、无字纸片层和 16:9 画面窗口的纸框/软投影；不排任何文字、
+不加载字体、不新增人物形象，也不把文案或角标写进图里。
 
 复现：PYTHONHASHSEED=0 python3 tools/day14制作/gen_day14_v10_cover_ratios.py
 输出：
-  Day/Day14/opuscar-day14/cover_v10_3x4.jpg   1080x1440
-  Day/Day14/opuscar-day14/cover_v10_4x3.jpg   1600x1200
+  Day/Day14/opuscar-day14/cover_v10_3x4.jpg   1080x1440  (3:4)
+  Day/Day14/opuscar-day14/cover_v10_4x3.jpg   1440x1080  (4:3)
   （并各复制一份到 Day/Day14/成片/ 下的中文名文件）
 """
 import json
@@ -18,14 +22,12 @@ import sys
 from pathlib import Path
 
 import numpy as np
-from PIL import Image, ImageDraw, ImageFilter, ImageFont
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parents[2]
 TOOLS = ROOT / 'tools/day14制作'
 ART = ROOT / 'Day/Day14/opuscar-day14'
 MOVIE = ROOT / 'Day/Day14/成片'
-FONT = ROOT / 'video-fx/assets/fonts/NotoSansSC[wght].ttf'
-FUN = ROOT / 'video-fx/assets/fonts/ZCOOLKuaiLe-Regular.ttf'
 sys.path.insert(0, str(TOOLS))
 import render_day14_video as R  # noqa: E402
 
@@ -33,27 +35,9 @@ INK = (74, 56, 42)
 EDGE = (186, 166, 140)
 PAPER = (250, 246, 232)
 
-# ---- 文案（与 COVER_COPY.md 一致，逐行写进两张封面） ----
-KICKER = 'DAY 14   ·   克隆配音版   ·   PAPER POP-UP'
-TITLE = '重看昨天那支片子'
-SUBTITLE = '全演过了，只是没人写下来'
-HELPER = '一帧一帧，把演过的写下来 · 八位本名，一张白纸'
-SPEC = '纸片立体书 / 双脚可见人物层 / 24 次道具交接'
-ALT = '备选：纸上一个字都没有 · 一帧一帧，把演过的写下来'
-INTRO_3X4 = [
-    '本鲸重看昨天那支片子，才发现纸上一个字都没有。',
-    '于是暂停、倒带、一帧一帧看，把八位本名谁对谁做了什么，',
-    '一段一行补写下来——不替谁顶，也不把几段并成一段。',
-]
-INTRO_4X3 = '烤焦那张单独夹起来写「待补」；昨天那碗白饭，那行字不改。'
-SIGN = 'Day14 · 纸片立体书 · 视频 v10   /   重看 · 补写 · 不改'
-
-
-def f(sz, fun=False):
-    return ImageFont.truetype(str(FUN if fun else FONT), sz)
-
 
 def load_frame():
+    """取 13.0s 真实渲染帧；仅在封面生成时屏蔽 Day2 字幕层。"""
     R.load_frame_index()
     al = json.loads((TOOLS / 'voice_alignment.json').read_text(encoding='utf-8'))
     sb = json.loads((TOOLS / 'subtitle_timing.json').read_text(encoding='utf-8'))
@@ -102,27 +86,31 @@ def paper_bg(w, h):
 
 
 def make_parts(w, h):
-    """返回 (canvas, overlay, draw)。overlay 用于所有纸片卡片，最后一次性合成。"""
+    """返回 (canvas, overlay, draw)。overlay 用于所有无字纸片层，最后一次性合成。"""
     canvas = paper_bg(w, h)
     ov = Image.new('RGBA', (w, h), (0, 0, 0, 0))
     return canvas, ov, ImageDraw.Draw(ov, 'RGBA')
 
 
-def paper_card(ov, d, box, radius=28):
+def paper_shape(ov, d, box, radius, fill, edge=EDGE, fold=True):
+    """无字纸片：灰纸板边 + 米白纸面 + 软投影 + 折角；不含任何字符。"""
     sh = Image.new('RGBA', ov.size, (0, 0, 0, 0))
     sd = ImageDraw.Draw(sh, 'RGBA')
     sd.rounded_rectangle((box[0] + 9, box[1] + 14, box[2] + 9, box[3] + 14),
                          radius=radius, fill=(78, 60, 46, 100))
     ov.alpha_composite(sh.filter(ImageFilter.GaussianBlur(13)))
     d.rounded_rectangle((box[0], box[1] + 8, box[2], box[3] + 8), radius=radius,
-                        fill=(*EDGE, 255), outline=(*INK, 255), width=3)
-    d.rounded_rectangle(box, radius=radius, fill=(*PAPER, 246),
+                        fill=(*edge, 255), outline=(*INK, 255), width=3)
+    d.rounded_rectangle(box, radius=radius, fill=(*fill, 246),
                         outline=(*PAPER, 255), width=9)
-    d.rounded_rectangle((box[0] + 18, box[1] + 18, box[2] - 18, box[3] - 18),
-                        radius=radius - 10, outline=(*INK, 90), width=2)
-    d.polygon([(box[2] - 18, box[1] + 18), (box[2] - 18, box[1] + 58),
-               (box[2] - 58, box[1] + 18)],
-              fill=(238, 230, 210, 235), outline=(*INK, 105), width=2)
+    if fold:
+        d.polygon([(box[2] - 18, box[1] + 18), (box[2] - 18, box[1] + 58),
+                   (box[2] - 58, box[1] + 18)],
+                  fill=(238, 230, 210, 235), outline=(*INK, 105), width=2)
+
+
+def dot(d, x, y, r=5, col=(120, 96, 76, 150)):
+    d.ellipse((x - r, y - r, x + r, y + r), fill=col)
 
 
 def paste_window(canvas, frame, box):
@@ -148,65 +136,61 @@ def paste_window(canvas, frame, box):
     canvas.alpha_composite(ov)
 
 
-def centered(d, text, cy, w, font, fill):
-    bb = d.textbbox((0, 0), text, font=font)
-    d.text(((w - (bb[2] - bb[0])) / 2 - bb[0], cy), text, font=font, fill=fill)
-
-
 # ---------------------------------------------------------------- 3:4 竖版 ----
 def build_3x4(frame):
     W, H = 1080, 1440
     canvas, ov, d = make_parts(W, H)
-    paste_window(canvas, frame, (54, 556, 1026, 1103))
 
-    box = (54, 60, 1026, 500)
-    paper_card(ov, d, box, radius=30)
-    x = box[0] + 44
-    d.text((x, box[1] + 34), KICKER, font=f(20), fill=(120, 72, 56, 255))
-    d.text((x, box[1] + 82), TITLE, font=f(66, fun=True), fill=(*INK, 255))
-    d.line((x, box[1] + 180, x + 300, box[1] + 180), fill=(214, 112, 82, 220), width=5)
-    d.text((x, box[1] + 198), SUBTITLE, font=f(31), fill=(96, 76, 58, 255))
-    d.text((x, box[1] + 254), HELPER, font=f(21), fill=(120, 96, 76, 255))
-    d.text((x, box[1] + 296), SPEC, font=f(18), fill=(140, 116, 92, 255))
-    d.text((x, box[1] + 336), ALT, font=f(18), fill=(140, 116, 92, 255))
+    # 上方三张错层无字纸片，纯色块 / 折角 / 打孔，不放任何文案
+    paper_shape(ov, d, (70, 76, 520, 300), 28, (247, 226, 222))
+    paper_shape(ov, d, (392, 128, 1010, 340), 28, (250, 240, 218))
+    paper_shape(ov, d, (132, 256, 748, 392), 24, (240, 214, 208))
+    for x in (110, 150, 190):
+        dot(d, x, 110, 4)
+    for x in (430, 470, 510):
+        dot(d, x, 164, 4)
+    d.line((170, 350, 690, 350), fill=(214, 112, 82, 120), width=4)
 
-    foot = (54, 1150, 1026, 1390)
-    paper_card(ov, d, foot, radius=26)
-    fx = foot[0] + 40
-    for i, line in enumerate(INTRO_3X4):
-        d.text((fx, foot[1] + 32 + i * 40), line, font=f(22), fill=(*INK, 255))
-    d.line((fx, foot[1] + 168, foot[2] - 40, foot[1] + 168), fill=(214, 112, 82, 150), width=3)
-    d.text((fx, foot[1] + 184), SIGN, font=f(18), fill=(120, 96, 76, 255))
+    # 16:9 真实帧窗口
+    paste_window(canvas, frame, (48, 410, 1032, 963))
 
-    out = Image.alpha_composite(canvas, ov).convert('RGB')
-    return out
+    # 下方长纸签 + 一本无字小册子（呼应 M03 红皮书），仍不写字
+    paper_shape(ov, d, (70, 1000, 1010, 1372), 30, (250, 246, 232), fold=False)
+    d.rounded_rectangle((250, 1070, 530, 1290), radius=18,
+                        fill=(166, 62, 62, 235), outline=(*INK, 210), width=3)
+    d.rounded_rectangle((550, 1070, 830, 1290), radius=18,
+                        fill=(238, 230, 210, 245), outline=(*INK, 210), width=3)
+    d.line((540, 1076, 540, 1284), fill=(*INK, 150), width=3)
+    for x in (120, 160, 200, 880, 920, 960):
+        dot(d, x, 1336, 5)
+    d.line((120, 1040, 960, 1040), fill=(*EDGE, 160), width=3)
+
+    return Image.alpha_composite(canvas, ov).convert('RGB')
 
 
 # ---------------------------------------------------------------- 4:3 横版 ----
 def build_4x3(frame):
-    W, H = 1600, 1200
+    W, H = 1440, 1080
     canvas, ov, d = make_parts(W, H)
-    paste_window(canvas, frame, (60, 258, 1540, 1091))
 
-    box = (60, 36, 1540, 236)
-    paper_card(ov, d, box, radius=26)
-    x = box[0] + 42
-    d.text((x, box[1] + 22), KICKER, font=f(18), fill=(120, 72, 56, 255))
-    d.text((x, box[1] + 54), TITLE, font=f(58, fun=True), fill=(*INK, 255))
-    d.text((x, box[1] + 140), SUBTITLE, font=f(26), fill=(96, 76, 58, 255))
-    d.line((x, box[1] + 126, x + 260, box[1] + 126), fill=(214, 112, 82, 220), width=4)
-    rx = 1010
-    d.text((rx, box[1] + 40), HELPER, font=f(22), fill=(120, 96, 76, 255))
-    d.text((rx, box[1] + 82), SPEC, font=f(18), fill=(140, 116, 92, 255))
-    d.text((rx, box[1] + 120), ALT, font=f(17), fill=(140, 116, 92, 255))
+    # 顶部三段无字纸片标签
+    paper_shape(ov, d, (56, 28, 430, 118), 22, (247, 226, 222), fold=False)
+    paper_shape(ov, d, (470, 28, 970, 118), 22, (250, 240, 218), fold=False)
+    paper_shape(ov, d, (1010, 28, 1384, 118), 22, (240, 214, 208), fold=False)
+    for x in (90, 128, 166, 504, 542, 580, 1044, 1082, 1120):
+        dot(d, x, 72, 4)
 
-    foot = (60, 1100, 1540, 1182)
-    paper_card(ov, d, foot, radius=22)
-    centered(d, INTRO_4X3, foot[1] + 12, W, f(22), (*INK, 255))
-    centered(d, SIGN, foot[1] + 38, W, f(17), (120, 96, 76, 255))
+    # 16:9 真实帧窗口
+    paste_window(canvas, frame, (56, 150, 1384, 897))
 
-    out = Image.alpha_composite(canvas, ov).convert('RGB')
-    return out
+    # 底部无字纸签 + 打孔/压痕
+    paper_shape(ov, d, (56, 930, 1384, 1052), 26, (250, 246, 232), fold=False)
+    d.line((110, 968, 1330, 968), fill=(*EDGE, 170), width=3)
+    d.line((110, 1010, 1330, 1010), fill=(214, 112, 82, 110), width=3)
+    for x in (110, 170, 230, 1210, 1270, 1330):
+        dot(d, x, 990, 5)
+
+    return Image.alpha_composite(canvas, ov).convert('RGB')
 
 
 def main():
@@ -215,7 +199,7 @@ def main():
         (build_3x4(frame), ART / 'cover_v10_3x4.jpg',
          MOVIE / 'Day14_重看昨天那支片子_封面_v10_3x4.jpg', (1080, 1440)),
         (build_4x3(frame), ART / 'cover_v10_4x3.jpg',
-         MOVIE / 'Day14_重看昨天那支片子_封面_v10_4x3.jpg', (1600, 1200)),
+         MOVIE / 'Day14_重看昨天那支片子_封面_v10_4x3.jpg', (1440, 1080)),
     ]
     for im, p, copy, expected in jobs:
         assert im.size == expected, (p, im.size)
@@ -223,7 +207,7 @@ def main():
         im.save(p, quality=94, subsampling=0)
         copy.write_bytes(p.read_bytes())
         print('COVER_OK', p.name, im.size, p.stat().st_size, 'bytes; copy:', copy.name)
-    print('COVER_RATIOS_OK')
+    print('COVER_RATIOS_NO_TEXT_OK')
 
 
 if __name__ == '__main__':

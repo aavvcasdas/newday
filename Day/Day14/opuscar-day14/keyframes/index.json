@@ -276,7 +276,8 @@
     "tools/day14制作/gen_day14_v10_cover.py",
     "cover_v10_3x4.jpg",
     "cover_v10_4x3.jpg",
-    "tools/day14制作/gen_day14_v10_cover_ratios.py"
+    "tools/day14制作/gen_day14_v10_cover_ratios.py",
+    "Day/Day14/Day14文案_待审.md"
   ],
   "cover": {
     "file": "cover_v10.jpg",
@@ -284,41 +285,30 @@
     "subtitle": "全演过了，只是没人写下来",
     "size": "1920x1080",
     "source_frame": "real renderer 13.0s (M03)",
-    "video_modified": false
+    "video_modified": false,
+    "note": "16:9 历史封面，含排版文字；本轮 3:4 / 4:3 两版不再把文案写进图里"
   },
   "cover_ratios": {
     "3:4": {
       "file": "cover_v10_3x4.jpg",
       "size": "1080x1440",
       "movie_copy": "Day14_重看昨天那支片子_封面_v10_3x4.jpg",
-      "copy_in_image": [
-        "DAY 14 · 克隆配音版 · PAPER POP-UP",
-        "重看昨天那支片子",
-        "全演过了，只是没人写下来",
-        "一帧一帧，把演过的写下来 · 八位本名，一张白纸",
-        "纸片立体书 / 双脚可见人物层 / 24 次道具交接",
-        "备选：纸上一个字都没有 · 一帧一帧，把演过的写下来",
-        "Day14 · 纸片立体书 · 视频 v10",
-        "3 行发布简介（本鲸重看昨天那支片子…不把几段并成一段）"
-      ]
+      "copy_in_image": false,
+      "text_elements": [],
+      "watermark": false
     },
     "4:3": {
       "file": "cover_v10_4x3.jpg",
-      "size": "1600x1200",
+      "size": "1440x1080",
       "movie_copy": "Day14_重看昨天那支片子_封面_v10_4x3.jpg",
-      "copy_in_image": [
-        "DAY 14 · 克隆配音版 · PAPER POP-UP",
-        "重看昨天那支片子",
-        "全演过了，只是没人写下来",
-        "一帧一帧，把演过的写下来 · 八位本名，一张白纸",
-        "纸片立体书 / 双脚可见人物层 / 24 次道具交接",
-        "备选：纸上一个字都没有 · 一帧一帧，把演过的写下来",
-        "Day14 · 纸片立体书 · 视频 v10",
-        "烤焦那张单独夹起来写「待补」；昨天那碗白饭，那行字不改。"
-      ]
+      "copy_in_image": false,
+      "text_elements": [],
+      "watermark": false
     },
     "source_frame": "real renderer 13.0s (M03)",
     "video_modified": false,
-    "script": "tools/day14制作/gen_day14_v10_cover_ratios.py"
-  }
+    "script": "tools/day14制作/gen_day14_v10_cover_ratios.py",
+    "note": "用户更正：文案单独写进 Day14文案_待审.md，不排进封面图；电视 PiP 内原有片名字样属于成片真帧。"
+  },
+  "copy_md": "Day/Day14/Day14文案_待审.md"
 }
