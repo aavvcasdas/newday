@@ -85,39 +85,47 @@ export function backdrop(theme='day'){
 function xGrass(x,px,py,s,col){x.strokeStyle=col;x.lineWidth=3;x.lineCap='round';x.beginPath();x.moveTo(px,py);x.quadraticCurveTo(px-s*.2,py-s*.6,px-s*.18,py-s);x.moveTo(px,py);x.quadraticCurveTo(px+s*.2,py-s*.5,px+s*.45,py-s*.9);x.stroke();}
 
 const ROLE = {
-  whale:{skin:'#f4d9c6',hair:'#27384e',coat:'#6cb6c2',shade:'#398a9a',accent:'#e7c980',kind:'mermaid'},
-  claude:{skin:'#f4d8c3',hair:'#27243b',coat:'#f1d17a',shade:'#647aa4',accent:'#c84c59',kind:'princess'},
+  whale:{skin:'#f4d9c6',hair:'#244f72',coat:'#6cb6c2',shade:'#398a9a',accent:'#e7c980',kind:'mermaid'},
+  claude:{skin:'#f4d8c3',hair:'#c56f43',coat:'#f1d17a',shade:'#647aa4',accent:'#c84c59',kind:'princess'},
   doubao:{skin:'#f1c9a8',hair:'#573b32',coat:'#b9434c',shade:'#8c2937',accent:'#e76855',kind:'hood'},
   gemini:{skin:'#f4d7b9',hair:'#8a503c',coat:'#b8d2c0',shade:'#71988e',accent:'#d9b86f',kind:'alice'},
   qwen:{skin:'#edc8a4',hair:'#453345',coat:'#8a6d94',shade:'#5f4d71',accent:'#55a6a3',kind:'hatter'},
-  kimi:{skin:'#f3d7bc',hair:'#4f3944',coat:'#92a9c6',shade:'#65748f',accent:'#d9ca8f',kind:'cinderella'},
+  kimi:{skin:'#f3d7bc',hair:'#a9a7c3',coat:'#92a9c6',shade:'#65748f',accent:'#d9ca8f',kind:'cinderella'},
   zai:{skin:'#efc6a2',hair:'#493b32',coat:'#83a776',shade:'#4c7555',accent:'#d5a86d',kind:'traveler'},
   gpt:{skin:'#e8c4b4',hair:'#302f43',coat:'#586b78',shade:'#3a4e5d',accent:'#d05a55',kind:'dragon'},
 };
 function limb(x,a,b,w,col){x.lineCap='round';x.lineJoin='round';x.strokeStyle='#fffdf7';x.lineWidth=w+24;x.beginPath();x.moveTo(a[0],a[1]);x.lineTo(b[0],b[1]);x.stroke();x.strokeStyle=INK;x.lineWidth=w+9;x.stroke();x.strokeStyle=col;x.lineWidth=w;x.stroke();}
-function dotEye(x,px,py,scale=1){x.fillStyle=INK;x.beginPath();x.ellipse(px,py,8*scale,12*scale,0,0,TAU);x.fill();x.fillStyle='#fffdf7';x.beginPath();x.arc(px-2,py-4,2.6*scale,0,TAU);x.fill();}
+function dotEye(x,px,py,scale=1,iris=INK){x.fillStyle=iris;x.beginPath();x.ellipse(px,py,8*scale,12*scale,0,0,TAU);x.fill();if(iris!==INK){x.fillStyle=INK;x.beginPath();x.ellipse(px,py+1,3.4*scale,7*scale,0,0,TAU);x.fill();}x.fillStyle='#fffdf7';x.beginPath();x.arc(px-2,py-4,2.6*scale,0,TAU);x.fill();}
 function drawHair(x,role,faceY){const r=ROLE[role];x.fillStyle=r.hair;x.strokeStyle=INK;x.lineWidth=10;
   x.beginPath();x.ellipse(256,faceY-28,84,92,0,Math.PI,TAU);x.lineTo(340,faceY+10);x.quadraticCurveTo(300,faceY-12,278,faceY+4);x.quadraticCurveTo(245,faceY-12,176,faceY+20);x.closePath();x.fill();x.stroke();
   if(role==='doubao'){x.fillStyle=r.coat;x.beginPath();x.moveTo(180,faceY-38);x.quadraticCurveTo(256,faceY-145,332,faceY-38);x.lineTo(318,faceY-5);x.quadraticCurveTo(255,faceY-40,194,faceY-5);x.closePath();x.fill();x.stroke();}
   if(role==='qwen'){x.fillStyle=r.accent;x.beginPath();x.moveTo(196,faceY-84);x.lineTo(215,faceY-174);x.lineTo(298,faceY-174);x.lineTo(318,faceY-84);x.closePath();x.fill();x.stroke();x.fillStyle='#f0d58b';x.fillRect(198,faceY-95,116,18);}
   if(role==='gpt'){x.fillStyle='#6a4f5e';for(const side of [-1,1]){x.beginPath();x.moveTo(256+side*45,faceY-80);x.quadraticCurveTo(256+side*110,faceY-160,256+side*92,faceY-38);x.closePath();x.fill();x.stroke();}}
   if(role==='claude'){x.fillStyle='#c84c59';for(const side of [-1,1]){x.beginPath();x.arc(256+side*60,faceY-76,15,0,TAU);x.fill();}}
+  // Gemini keeps the project's Alice bow palette, with a small cat-ear silhouette as a research-informed cue.
+  if(role==='gemini'){
+    for(const side of [-1,1]){
+      x.fillStyle=r.hair;x.strokeStyle=INK;x.lineWidth=9;x.beginPath();
+      x.moveTo(256+side*27,faceY-85);x.lineTo(256+side*66,faceY-164);x.lineTo(256+side*102,faceY-75);x.closePath();x.fill();x.stroke();
+      x.fillStyle='#8875a8';x.beginPath();x.moveTo(256+side*42,faceY-98);x.lineTo(256+side*66,faceY-145);x.lineTo(256+side*87,faceY-91);x.closePath();x.fill();
+    }
+    x.fillStyle='#74b6c6';x.strokeStyle=INK;x.lineWidth=7;x.beginPath();x.moveTo(216,faceY-94);x.lineTo(190,faceY-112);x.lineTo(211,faceY-70);x.closePath();x.fill();x.stroke();
+  }
 }
 function actorRaw(role,pose='idle',phase=0,expression=''){
   const c=cv(ACTOR_W,ACTOR_H),x=c.getContext('2d'),r=ROLE[role]||ROLE.whale;
   x.save();
-  // Claude lies sideways in her rose bed; rotate the whole cut-out around its center,
-  // then widen its card at display time so the sleeping silhouette reads horizontally.
-  if(pose==='sleep'){x.translate(ACTOR_W/2,ACTOR_H/2);x.scale(.62,.62);x.rotate(-Math.PI/2);x.translate(-ACTOR_W/2,-ACTOR_H/2);}
-  const swim=pose==='swim',dance=pose==='dance',jump=pose==='jump',wave=pose==='wave',reach=pose==='reach'||pose==='point'||pose==='hold'||pose==='row'||wave;
-  const lean=swim?Math.sin(phase)*4:0;
+  // Every actor is an upright paper cut-out. "sleep" is a standing, closed-eye pose;
+  // locomotion, swimming and dance loops are carried by props/page staging instead.
+  const swim=false,dance=false,jump=false,wave=pose==='wave',reach=pose==='reach'||pose==='point'||pose==='hold'||pose==='row'||wave,sleep=pose==='sleep';
+  const lean=0;
   // Tail / wings / cape behind the body
   if(role==='whale'){
-    x.fillStyle=r.shade;x.strokeStyle=INK;x.lineWidth=12;x.beginPath();x.moveTo(205,540);x.quadraticCurveTo(185,640,235+Math.sin(phase)*18,720);x.quadraticCurveTo(256,770,277,720);x.quadraticCurveTo(314+Math.sin(phase)*18,640,307,540);x.closePath();x.fill();x.stroke();
+    x.fillStyle=r.shade;x.strokeStyle=INK;x.lineWidth=12;x.beginPath();x.moveTo(205,540);x.quadraticCurveTo(185,640,235,720);x.quadraticCurveTo(256,770,277,720);x.quadraticCurveTo(314,640,307,540);x.closePath();x.fill();x.stroke();
     x.fillStyle=r.coat;x.beginPath();x.moveTo(235,700);x.quadraticCurveTo(185,780,128,770);x.quadraticCurveTo(180,725,195,685);x.quadraticCurveTo(236,704,256,714);x.quadraticCurveTo(275,702,317,680);x.quadraticCurveTo(344,742,397,774);x.quadraticCurveTo(315,794,277,720);x.closePath();x.fill();x.stroke();
   } else if(role==='gpt'){
     for(const side of [-1,1]){x.fillStyle=r.shade;x.strokeStyle=INK;x.lineWidth=12;x.beginPath();x.moveTo(256+side*50,370);x.quadraticCurveTo(256+side*195,250,256+side*196,505);x.quadraticCurveTo(256+side*105,470,256+side*68,515);x.closePath();x.fill();x.stroke();}
-    x.fillStyle=r.accent;x.beginPath();x.moveTo(300,535);x.quadraticCurveTo(390,590+Math.sin(phase)*20,340,720);x.lineTo(280,675);x.closePath();x.fill();x.stroke();
+    x.fillStyle=r.accent;x.beginPath();x.moveTo(300,535);x.quadraticCurveTo(390,590,340,720);x.lineTo(280,675);x.closePath();x.fill();x.stroke();
   } else if(role==='doubao'){
     x.fillStyle=r.coat;x.strokeStyle=INK;x.lineWidth=12;x.beginPath();x.moveTo(200,380);x.quadraticCurveTo(105,500,166,690);x.quadraticCurveTo(255,738,353,690);x.quadraticCurveTo(398,502,310,380);x.closePath();x.fill();x.stroke();
   }
@@ -143,9 +151,8 @@ function actorRaw(role,pose='idle',phase=0,expression=''){
   x.strokeStyle='rgba(255,250,230,.8)';x.lineWidth=7;x.beginPath();x.moveTo(213,505);x.quadraticCurveTo(256,522,300,505);x.stroke();
   x.restore();
   // Arms with anticipatory bends and unmistakable open hands.
-  const armSwing=swim?Math.sin(phase+Math.PI)*.3:0;
-  const leftEnd=jump?[128,275]:pose==='row'?[148,425+Math.sin(phase)*32]:wave?[142,335+Math.sin(phase)*24]:reach?[126,350]:dance?[130,345+Math.sin(phase)*28]:[155,455+armSwing*62];
-  const rightEnd=jump?[378,265]:pose==='row'?[365,425-Math.sin(phase)*32]:wave?[365,315-Math.sin(phase)*44]:reach?[390,350]:dance?[380,340-Math.sin(phase)*28]:[355,455-armSwing*62];
+  const leftEnd=sleep?[164,474]:pose==='row'?[148,425]:wave?[142,300]:reach?[126,350]:[155,455];
+  const rightEnd=sleep?[350,474]:pose==='row'?[365,425]:wave?[365,346]:reach?[390,350]:[355,455];
   limb(x,[205,380],[leftEnd[0]+22,leftEnd[1]+35],39,r.coat);limb(x,[leftEnd[0]+22,leftEnd[1]+35],leftEnd,32,r.skin);
   limb(x,[307,380],[rightEnd[0]-22,rightEnd[1]+35],39,r.coat);limb(x,[rightEnd[0]-22,rightEnd[1]+35],rightEnd,32,r.skin);
   for(const p of [leftEnd,rightEnd]){x.fillStyle=r.skin;x.strokeStyle=INK;x.lineWidth=7;x.beginPath();x.arc(p[0],p[1],18,0,TAU);x.fill();x.stroke();}
@@ -153,6 +160,7 @@ function actorRaw(role,pose='idle',phase=0,expression=''){
   const faceY=236;x.fillStyle=r.skin;x.strokeStyle=INK;x.lineWidth=13;x.beginPath();x.ellipse(256,faceY,73,82,0,0,TAU);x.fill();x.stroke();drawHair(x,role,faceY);
   const sleepy=pose==='sleep'||expression==='sleep',eyeY=faceY+4;
   if(sleepy){x.strokeStyle=INK;x.lineWidth=8;x.lineCap='round';for(const px of [228,280]){x.beginPath();x.moveTo(px-12,eyeY);x.quadraticCurveTo(px,eyeY+10,px+12,eyeY);x.stroke();}}
+  else if(role==='gemini'){dotEye(x,228,eyeY,1,'#62b7cf');dotEye(x,280,eyeY,1,'#9a77bd');}
   else{dotEye(x,228,eyeY);dotEye(x,280,eyeY);}
   x.strokeStyle=INK;x.lineWidth=8;x.lineCap='round';x.beginPath();if(expression==='worried'){x.moveTo(238,296);x.quadraticCurveTo(256,278,274,297);}else if(expression==='surprised'){x.ellipse(256,296,10,15,0,0,TAU);}else{x.moveTo(238,289);x.quadraticCurveTo(256,310,275,288);}x.stroke();
   x.fillStyle='rgba(227,126,130,.55)';for(const px of [205,307]){x.beginPath();x.ellipse(px,273,15,8,0,0,TAU);x.fill();}

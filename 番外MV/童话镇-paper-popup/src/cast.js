@@ -26,7 +26,7 @@ export function makeActor(role,height=.056){
     setPose(poseName='idle',phase=0,face='happy'){
       const f=frameFor(poseName,phase),key=`${poseName}|${f}|${face}`;if(key===current)return;current=key;
       const t=textureFor(role,poseName,phase,face);
-      card.scale.set(poseName==='sleep'?A.ACTOR_H/A.ACTOR_W:1,1,1);
+      card.scale.set(1,1,1);
       card.userData.front.material.map=t;card.userData.back.material.map=t;
       card.userData.front.material.needsUpdate=true;card.userData.back.material.needsUpdate=true;
     },

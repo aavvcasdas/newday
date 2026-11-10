@@ -6,10 +6,8 @@ const LOCOMOTION = /run|track|walk|travel|approach|procession|converge|lead|flee
 export function sectionPose(action, role) {
   const s = String(action).toLowerCase();
   if (/sleep/.test(s) && role === 'claude') return ['sleep', 'sleep'];
-  if (/dance|twirl/.test(s)) return ['dance', 'happy'];
-  if (LOCOMOTION.test(s)) return ['idle', role === 'doubao' ? 'worried' : 'happy'];
-  if (/swim|river|mermaid|foam|waterfall|dive/.test(s)) return [role === 'whale' ? 'swim' : 'reach', 'happy'];
-  if (/jump|glide|orbit|rise|leap|fly/.test(s)) return ['jump', 'happy'];
+  // All paper-cut performers remain upright and planted. Scenery, boats, and props carry motion.
+  if (LOCOMOTION.test(s) || /dance|twirl|swim|river|mermaid|foam|waterfall|dive|jump|glide|orbit|rise|leap|fly/.test(s)) return ['idle', role === 'doubao' ? 'worried' : 'happy'];
   if (/point|draw|sketch/.test(s)) return ['point', 'happy'];
   if (/handoff|pass|receive|deliver|shield|hold|open|pull|catch|place|climb|harp|shoe|candy|puppet|chest|star|sunlight|turn|meet/.test(s)) return ['reach', 'happy'];
   return ['idle', 'happy'];

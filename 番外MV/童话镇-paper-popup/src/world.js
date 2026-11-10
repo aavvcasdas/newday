@@ -276,6 +276,7 @@ export function buildWorld(book){
     cue.cast.forEach((role,index)=>{
       const actor=actors.get(role);if(!actor)return;
       let [pose,face]=sectionPose(cue.action,role);
+      // Cut-paper performers hold a single upright key pose; motion belongs to props and camera.
       if(cue.action==='run-beside-boat'&&role==='whale')pose='row';
       if(cue.action==='playful-run'&&role==='claude')pose='wave';
       if((cue.action==='lead-paper-fleet'||cue.action==='guide-empty-fleet')&&role==='whale')pose='wave';
@@ -283,14 +284,9 @@ export function buildWorld(book){
       if(cue.action==='cloak-shield-open'&&role==='doubao')face='determined';
       if(cue.action==='sleep-buried-in-roses'||cue.action==='sleep-through-hardship'){pose=role==='claude'?'sleep':'idle';face=pose==='sleep'?'sleep':'gentle';}
       if(cue.action==='sleep-through-hardship'&&role==='whale')pose='reach';
-      if(cue.action==='duck-to-swan'&&role==='whale')pose='swim';
-      if(cue.action==='red-shoe-dance'&&role==='whale')pose='dance';
-      if(cue.action==='sunlight-eyeshadow'&&role==='whale')pose='swim';
-      if(cue.action==='paper-boat-rapids'&&role==='whale')pose='row';
+      if(pose!=='sleep')pose='idle';
       if(cue.action==='farewell-and-return-to-page'&&role==='whale')pose='wave';
-      const p=actorLayout(cue,role,index,total,u);const phase=u*TAU*(pose==='dance'?2:3)+(index%3)*.6;
-      if(pose==='jump')p.y+=Math.sin(Math.PI*u)*.022;
-      if(pose==='swim')p.y+=.012+Math.sin(phase)*.004;
+      const p=actorLayout(cue,role,index,total,.5);const phase=0;
       actor.setPose(pose,phase,face);actor.setPosition(p.x,p.y,p.z,p.scale,p.rot);actor.setVisible(true);
       const shadow=(cue.action==='lantern-shield'&&role==='gpt')?.32:1;actor.setOpacity(shadow);
     });

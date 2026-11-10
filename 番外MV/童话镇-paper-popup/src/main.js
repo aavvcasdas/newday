@@ -103,39 +103,31 @@ const stagePoint=(x,y,z)=>({x:960+x*2690,y:423+z*995-y*2250});
 function drawPaperCanvas(t,state,open){
   const ctx=canvasRenderer;ctx.clearRect(0,0,W,H);
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#77717b');bg.addColorStop(.38,'#d0bc9f');bg.addColorStop(1,'#453e43');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
-  // Quiet wood-grain tabletop, with a soft pool of warm light.
-  ctx.save();const lamp=ctx.createRadialGradient(740,330,60,850,460,980);lamp.addColorStop(0,'rgba(255,239,201,.42)');lamp.addColorStop(1,'rgba(255,239,201,0)');ctx.fillStyle=lamp;ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle='rgba(78,53,42,.13)';ctx.lineWidth=3;for(let y=760;y<H;y+=38){ctx.beginPath();ctx.moveTo(0,y);ctx.bezierCurveTo(530,y-22,1280,y+19,W,y-9);ctx.stroke();}ctx.restore();
-
-  const panel=[{x:485,y:183},{x:1435,y:183},{x:1435,y:445},{x:485,y:445}];
-  ctx.save();ctx.shadowColor='rgba(24,20,24,.32)';ctx.shadowBlur=34;ctx.shadowOffsetY=16;ctx.fillStyle='#f0e5d2';rr(ctx,466,164,988,300,20);ctx.fill();ctx.restore();
-  ctx.save();rr(ctx,485,183,950,262,8);ctx.clip();const sky=book.backMat.map?.image;if(sky)ctx.drawImage(sky,485,183,950,262);else{ctx.fillStyle='#9fc5d2';ctx.fillRect(485,183,950,262);}ctx.restore();
-  ctx.strokeStyle='#d0b98e';ctx.lineWidth=4;rr(ctx,477,175,966,278,13);ctx.stroke();
-
-  const ground=[{x:482,y:431},{x:1438,y:431},{x:1568,y:748},{x:352,y:748}];
-  ctx.save();ctx.shadowColor='rgba(31,24,22,.38)';ctx.shadowBlur=34;ctx.shadowOffsetY=20;ctx.fillStyle='#e9deca';ctx.beginPath();ctx.moveTo(ground[0].x,ground[0].y);for(let i=1;i<ground.length;i++)ctx.lineTo(ground[i].x,ground[i].y);ctx.closePath();ctx.fill();ctx.restore();
-  ctx.save();ctx.beginPath();ctx.moveTo(ground[0].x,ground[0].y);for(let i=1;i<ground.length;i++)ctx.lineTo(ground[i].x,ground[i].y);ctx.closePath();ctx.clip();
-  const floor=book.groundMat.map?.image;if(floor)drawQuad(ctx,floor,ground);else{ctx.fillStyle='#a5c68c';ctx.fill();}ctx.restore();
-  ctx.strokeStyle='#f6eddc';ctx.lineWidth=22;ctx.lineJoin='round';ctx.beginPath();ctx.moveTo(...[ground[0].x,ground[0].y]);for(let i=1;i<ground.length;i++)ctx.lineTo(ground[i].x,ground[i].y);ctx.closePath();ctx.stroke();
-  ctx.strokeStyle='#c7ad82';ctx.lineWidth=3;ctx.stroke();
-  ctx.strokeStyle='rgba(113,89,71,.34)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(485,435);ctx.lineTo(1435,435);ctx.stroke();
+  // Full-bleed story world: no tabletop, miniature book frame, or gray margins.
+  const active=state.cue?world.scenes[CUES.indexOf(state.cue)]:null;
+  const theme=state.cue?.theme||'castle-river';
+  const sky=book.backMat.map?.image, floor=book.groundMat.map?.image;
+  if(sky)ctx.drawImage(sky,0,0,W,H);
+  else {ctx.fillStyle='#9fc5d2';ctx.fillRect(0,0,W,H);}
+  // Full-bleed layered paper landscape; a lower scenic band replaces the old small page.
+  if(floor){ctx.save();ctx.globalAlpha=.98;ctx.drawImage(floor,0,H*.34,W,H*.66);ctx.restore();}
+  const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'rgba(255,250,237,.08)');veil.addColorStop(.58,'rgba(255,248,228,0)');veil.addColorStop(1,'rgba(26,43,55,.13)');ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);
 
   const drawables=[];
   for(const actor of world.actors.values())if(actor.root.visible){
     const p=actor.root.position.clone(),sc=actor.root.scale,cardSc=actor.card.scale;
     drawables.push({z:p.z+.001,kind:'actor',draw(){
-      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*2250,widthPx=actor.height*(512/820)*sc.x*cardSc.x*2690;
+      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*5600,widthPx=actor.height*(512/820)*sc.x*cardSc.x*5600;
       const alpha=actor.card.userData.front.material.opacity??1;
       ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle='rgba(38,36,43,.23)';ctx.filter='blur(12px)';ctx.beginPath();ctx.ellipse(q.x,q.y+6,Math.max(18,widthPx*.38),11,0,0,TAU);ctx.fill();ctx.filter='none';
       const image=actor.card.userData.front.material.map?.image;if(image){ctx.shadowColor='rgba(50,35,28,.28)';ctx.shadowBlur=12;ctx.drawImage(image,q.x-widthPx/2,q.y-heightPx,widthPx,heightPx);}ctx.restore();
     }});
   }
-  const active=state.cue?world.scenes[CUES.indexOf(state.cue)]:null;
   const props=active?[...active.props,world.whaleBoat]:world.instrumentalProps;
   for(const item of props)if(item.g.visible){
     const g=item.g,p=g.position.clone(),sc=g.scale,rot=g.rotation.z,flat=item.flat;
     drawables.push({z:p.z,kind:'prop',draw(){
-      const q=stagePoint(p.x,p.y,p.z),widthPx=item.w*sc.x*2690,heightPx=item.h*sc.y*(flat?920:2250);
+      const q=stagePoint(p.x,p.y,p.z),widthPx=item.w*sc.x*3800,heightPx=item.h*sc.y*(flat?1500:3800);
       const ay=item.anchor??.75,top=q.y-heightPx*ay;const image=item.card.userData.front.material.map?.image;
       ctx.save();ctx.fillStyle='rgba(40,36,42,.20)';ctx.filter='blur(10px)';ctx.beginPath();ctx.ellipse(q.x,q.y+5,Math.max(14,widthPx*.30),9,0,0,TAU);ctx.fill();ctx.filter='none';
       if(image){ctx.translate(q.x,q.y);ctx.rotate(rot);ctx.shadowColor='rgba(51,39,31,.26)';ctx.shadowBlur=10;ctx.drawImage(image,-widthPx/2,-heightPx*ay,widthPx,heightPx);}
@@ -144,9 +136,7 @@ function drawPaperCanvas(t,state,open){
   }
   for(const d of drawables.sort((a,b)=>a.z-b.z))d.draw();
 
-  // The closing cover is part of the book, not a screen logo; it reveals/returns the spread.
-  const coverImage=book.coverMat.map?.image,coverAlpha=clamp(1-open,0,1);
-  if(coverImage&&coverAlpha>.01){ctx.save();ctx.globalAlpha=coverAlpha;ctx.shadowColor='rgba(25,21,26,.36)';ctx.shadowBlur=24;ctx.drawImage(coverImage,388,224,1144,780);ctx.strokeStyle='#e2c77f';ctx.lineWidth=5;ctx.strokeRect(398,234,1124,760);ctx.restore();}
+  // Keep the story world full-bleed throughout; never shrink back to a framed tabletop book.
 }
 function drawOverlay(t,state){
   ox.clearRect(0,0,W,H);
