@@ -1,7 +1,7 @@
 // 《童话镇》Paper Pop-up Book MV — deterministic 3D renderer with an affine 2D fallback.
 import * as THREE from 'three';
 import { makeBook, coverCanvases } from './book.js';
-import { actorSprite } from './art.js';
+import { actorSprite, preloadProjectCharacters } from './art.js';
 import { buildWorld } from './world.js';
 import { CUES, DUR, FPS } from './timeline.js';
 import { makePost } from './post.js';
@@ -51,6 +51,7 @@ await Promise.all([
   document.fonts.load('italic 48px "IM Fell English"','paper stories'),
   document.fonts.load('48px "ZCOOL KuaiLe"','童话镇'),
 ]);
+await preloadProjectCharacters();
 const cover=coverCanvases((ctx,px,py,w,h)=>{
   const whale=actorSprite('whale','idle',0,'happy');ctx.drawImage(whale,px,py,w,h);
 });
@@ -99,7 +100,8 @@ function drawQuad(ctx,img,quad){
   drawTriangle(ctx,img,[p[0],p[1],p[3]],[quad[0],quad[1],quad[3]]);
   drawTriangle(ctx,img,[p[1],p[2],p[3]],[quad[1],quad[2],quad[3]]);
 }
-const stagePoint=(x,y,z)=>({x:960+x*2690,y:423+z*995-y*2250});
+let storyCamX=0,storyCamY=0,storyZoom=1;
+const stagePoint=(x,y,z)=>({x:960+(x*2690)*storyZoom+storyCamX,y:423+(z*995-y*2250)*storyZoom+storyCamY});
 function drawPaperCanvas(t,state,open){
   const ctx=canvasRenderer;ctx.clearRect(0,0,W,H);
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#77717b');bg.addColorStop(.38,'#d0bc9f');bg.addColorStop(1,'#453e43');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
@@ -117,7 +119,7 @@ function drawPaperCanvas(t,state,open){
   for(const actor of world.actors.values())if(actor.root.visible){
     const p=actor.root.position.clone(),sc=actor.root.scale,cardSc=actor.card.scale;
     drawables.push({z:p.z+.001,kind:'actor',draw(){
-      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*5600,widthPx=actor.height*(512/820)*sc.x*cardSc.x*5600;
+      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*6800,widthPx=actor.height*(512/820)*sc.x*cardSc.x*6800;
       const alpha=actor.card.userData.front.material.opacity??1;
       ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle='rgba(38,36,43,.23)';ctx.filter='blur(12px)';ctx.beginPath();ctx.ellipse(q.x,q.y+6,Math.max(18,widthPx*.38),11,0,0,TAU);ctx.fill();ctx.filter='none';
       const image=actor.card.userData.front.material.map?.image;if(image){ctx.shadowColor='rgba(50,35,28,.28)';ctx.shadowBlur=12;ctx.drawImage(image,q.x-widthPx/2,q.y-heightPx,widthPx,heightPx);}ctx.restore();
@@ -156,6 +158,14 @@ function render(t){
   const flutter=t>1.65&&t<2.45?Math.sin(seg(t,1.65,2.45)*Math.PI)*-.025:0;
   book.setOpen(Math.PI/2*open+flutter);
   const state=world.render(t);
+  // Long lyric lines receive a clear internal reframing about every three seconds.
+  // Characters remain upright; the pop-up layer pans/zooms while the printed world stays full-bleed.
+  if(state.cue){
+    const local=Math.max(0,t-state.cue.t0),shot=Math.floor(local/3.0),within=local-shot*3.0;
+    const direction=shot%2===0?1:-1,pan=60*direction*eio(seg(within,0,.42));
+    storyCamX=pan;storyCamY=(/push|close|face|chest|bed/.test(state.cue.camera)?-18:0)*eio(seg(within,0,.42));
+    storyZoom=1+((shot%2===0)?0:.035)*eio(seg(within,0,.42));
+  }else{storyCamX=storyCamY=0;storyZoom=1;}
   if(gpuAvailable){
     const C=cameraFor(t,state);camera.position.copy(C.p);camera.fov=C.fov;camera.lookAt(C.target);camera.updateProjectionMatrix();camera.updateMatrixWorld();
     const night=/night|cosmic|galaxy|deep-river/.test(state.theme);key.intensity=night?1.65:2.15;fill.intensity=night?.38:.55;glow.intensity=night?.28:.18;

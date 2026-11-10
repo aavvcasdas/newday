@@ -5,7 +5,7 @@ import { texOf } from './book.js';
 import { cutMesh, blobShadow } from './cutmesh.js';
 
 const POSE_CACHE=new Map();
-const PHASED=new Set(['swim','dance','row']);
+const PHASED=new Set(['swim','dance','row','idle','reach','wave','point']);
 function frameFor(pose,phase){return PHASED.has(pose)?Math.floor((((phase/Math.PI/2)%4)+4)%4):0;}
 function textureFor(role,pose,phase,expression){
   const frame=frameFor(pose,phase),key=`${role}|${pose}|${frame}|${expression||''}`;

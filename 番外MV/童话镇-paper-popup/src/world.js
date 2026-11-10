@@ -99,7 +99,7 @@ function actorLayout(cue,role,index,total,u){
   if(a==='run-beside-boat'){if(role==='claude'){x=-.15;z=.17;}if(role==='whale'){x=lerp(-.03,.105,k);z=.22;}}
   if(a==='lantern-shield'||a==='cloak-shield-open'){if(role==='doubao'){x=-.075;z=.16;}if(role==='whale'){x=.075;z=.20;}if(role==='gpt'){x=.15;z=.07;scale*=.72;}}
   if(a==='wolf-shadow-contained'){if(role==='doubao'){x=-.05;z=.17;}if(role==='gpt'){x=.05;z=.09;scale*=.64;}if(role==='whale'){x=.13;z=.22;}}
-  if(a==='cup-pass'){if(role==='qwen'){x=-.095;z=.19;scale=.88;}if(role==='gemini'){x=.015;z=.19;scale=.88;}if(role==='whale'){x=.145;z=.22;scale=.60;}}
+  if(a==='cup-pass'){if(role==='qwen'){x=-.095;z=.19;scale=.88;}if(role==='gemini'){x=.015;z=.19;scale=.88;}if(role==='whale'){x=.145;z=.22;scale=.90;}}
   if(a==='duck-to-swan'||a==='wise-river'||a==='wise-river-return'){if(role==='whale'){x=-.015;y+=.006;z=.21;}if(role==='kimi'){x=.105;z=.17;scale=.72;}}
   if(a==='clocktower-glide'){if(role==='zai'){x=lerp(-.08,.045,k);y+=Math.sin(Math.PI*u)*.03;z=.11;}if(role==='whale'){x=.13;z=.22;scale=.62;}}
   if(a==='harp-and-climb'){if(role==='zai'){x=-.09;z=.12;}if(role==='whale'){x=.075;y+=.012+u*.018;z=.20;scale=.77;}}
@@ -276,17 +276,27 @@ export function buildWorld(book){
     cue.cast.forEach((role,index)=>{
       const actor=actors.get(role);if(!actor)return;
       let [pose,face]=sectionPose(cue.action,role);
-      // Cut-paper performers hold a single upright key pose; motion belongs to props and camera.
-      if(cue.action==='run-beside-boat'&&role==='whale')pose='row';
-      if(cue.action==='playful-run'&&role==='claude')pose='wave';
+      // Upright performers use source-project gesture sprites; props and camera supply travel.
+      if(cue.action==='run-beside-boat'&&role==='whale')pose='point';
+      if((cue.action==='lantern-shield'||cue.action==='cloak-shield-open')&&(role==='doubao'||role==='whale'))pose='reach';
+      if(cue.action==='cup-pass'&&(role==='qwen'||role==='gemini'))pose='reach';
+      if(cue.action==='clocktower-glide'&&role==='zai')pose='point';
+      if(cue.action==='harp-and-climb'&&role==='zai')pose='reach';
+      if(cue.action==='candy-pass'&&(role==='doubao'||role==='gemini'))pose='reach';
+      if(cue.action==='shoe-falls'&&role==='kimi')pose='point';
+      if(cue.action==='pinocchio-lie'&&role==='gemini')pose='point';
+      if(cue.action==='playful-run'&&role==='claude')pose='point';
       if((cue.action==='lead-paper-fleet'||cue.action==='guide-empty-fleet')&&role==='whale')pose='wave';
       if(cue.action==='lantern-shield'&&role==='doubao')face='worried';
       if(cue.action==='cloak-shield-open'&&role==='doubao')face='determined';
       if(cue.action==='sleep-buried-in-roses'||cue.action==='sleep-through-hardship'){pose=role==='claude'?'sleep':'idle';face=pose==='sleep'?'sleep':'gentle';}
       if(cue.action==='sleep-through-hardship'&&role==='whale')pose='reach';
-      if(pose!=='sleep')pose='idle';
       if(cue.action==='farewell-and-return-to-page'&&role==='whale')pose='wave';
-      const p=actorLayout(cue,role,index,total,.5);const phase=0;
+      // Gesture has a readable prepare → contact → release window; feet stay planted.
+      if(['reach','point','wave'].includes(pose)&&(u<.12||u>.88))pose='idle';
+      const p=actorLayout(cue,role,index,total,role==='whale'?u:.5);
+      if(role==='whale')p.x+=Math.sin(u*TAU)*.045; // carried by the boat; never a walk cycle
+      const phase=u*TAU*2;
       actor.setPose(pose,phase,face);actor.setPosition(p.x,p.y,p.z,p.scale,p.rot);actor.setVisible(true);
       const shadow=(cue.action==='lantern-shield'&&role==='gpt')?.32:1;actor.setOpacity(shadow);
     });

@@ -3,6 +3,21 @@ import { cv, paperFill, finishCut, sh, blob, smoothClosed, INK } from './paper.j
 import { mulberry, TAU } from './lib.js';
 import { THEME_PALETTES } from './timeline.js';
 
+// Character art is extracted from this repository's existing AI-girl sprite atlas;
+// the paper-book renderer only wraps these approved character images as outlined cut-outs.
+const PROJECT_ACTOR_FILES={whale:['idle','wave','point','blink'],gpt:['idle','reach','point','worried'],claude:['idle','blink','sleep'],doubao:['idle','blink','reach'],gemini:['idle','blink','reach'],qwen:['idle','blink','reach'],kimi:['idle','blink','reach'],zai:['idle','blink','reach']};
+const PROJECT_ACTORS=new Map();
+export async function preloadProjectCharacters(){
+  const jobs=[];
+  for(const [role,poses] of Object.entries(PROJECT_ACTOR_FILES))for(const pose of poses){
+    const key=`${role}:${pose}`;if(PROJECT_ACTORS.has(key))continue;
+    const img=new Image();img.src=new URL(`../assets/actors/${role}-${pose}.png`,import.meta.url).href;
+    jobs.push(new Promise((resolve,reject)=>{img.onload=()=>{PROJECT_ACTORS.set(key,img);resolve();};img.onerror=()=>reject(new Error(`角色图加载失败：${role}-${pose}`));}));
+  }
+  await Promise.all(jobs);
+}
+
+
 export const PW = 1024, PH = 700;
 export const ACTOR_W = 512, ACTOR_H = 820;
 const PAPER = '#fffdf7';
@@ -170,9 +185,27 @@ function actorRaw(role,pose='idle',phase=0,expression=''){
   x.restore();
   return c;
 }
+function projectActorCutout(role,pose='idle',phase=0){
+  const frame=Math.floor(phase/(Math.PI/2))%4;
+  const keyPose=pose==='idle'&&(frame===1||frame===3)?'blink':pose;
+  const available=PROJECT_ACTORS.get(`${role}:${keyPose}`)||PROJECT_ACTORS.get(`${role}:${pose}`)||PROJECT_ACTORS.get(`${role}:idle`);
+  if(!available)return null;
+  const c=cv(ACTOR_W,ACTOR_H),x=c.getContext('2d',{willReadFrequently:true});
+  x.imageSmoothingEnabled=false;
+  const raw=cv(available.naturalWidth,available.naturalHeight),r=raw.getContext('2d',{willReadFrequently:true});
+  r.drawImage(available,0,0);const pixels=r.getImageData(0,0,raw.width,raw.height).data;
+  let x0=raw.width,y0=raw.height,x1=-1,y1=-1;
+  for(let yy=0;yy<raw.height;yy++)for(let xx=0;xx<raw.width;xx++)if(pixels[(yy*raw.width+xx)*4+3]>8){x0=Math.min(x0,xx);y0=Math.min(y0,yy);x1=Math.max(x1,xx);y1=Math.max(y1,yy);}
+  if(x1<x0)return null;
+  const sw=x1-x0+1,sh=y1-y0+1,scale=Math.min(470/sw,760/sh),dw=sw*scale,dh=sh*scale;
+  x.drawImage(available,x0,y0,sw,sh,(ACTOR_W-dw)/2,ACTOR_H-dh-20,dw,dh);
+  return finishCut(c,24,{edge:'#81756b',paper:'#fffdf7',grainA:.18});
+}
 export function actorSprite(role,pose='idle',phase=0,expression=''){
+  const fromProject=projectActorCutout(role,pose,phase);
+  if(fromProject)return fromProject;
   const c=actorRaw(role,pose,phase,expression);
-  return finishCut(c,18,{edge:'#b7ad9f',paper:PAPER,grainA:.42});
+  return finishCut(c,24,{edge:'#81756b',paper:'#fffdf7',grainA:.18});
 }
 
 function outlinedPath(x,fn,fill='#fff',lw=10){x.beginPath();fn();x.fillStyle=fill;x.fill();x.lineWidth=lw;x.lineJoin='round';x.lineCap='round';x.strokeStyle=INK;x.stroke();}

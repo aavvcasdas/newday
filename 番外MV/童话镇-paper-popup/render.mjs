@@ -85,7 +85,7 @@ function runFfmpeg(args,label){
     child.finish=()=>child.stdin.end();
   });
 }
-async function renderVideo(from,to,fps,label){
+async function renderVideo(from,to,fps,label,target=FINAL){
   fs.mkdirSync(OUT,{recursive:true});
   fs.writeFileSync(SRT,makeSrt(),'utf8');
   const total=Math.ceil((to-from)*fps),ff=spawn(FF,[
@@ -115,11 +115,11 @@ async function renderVideo(from,to,fps,label){
   const duration=to-from;
   const muxArgs=['-y','-hide_banner','-loglevel','error','-i',VIDEO];
   if(from>0)muxArgs.push('-ss',String(from));
-  muxArgs.push('-i',audio,'-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','192k','-t',String(duration),'-movflags','+faststart',FINAL);
+  muxArgs.push('-i',audio,'-map','0:v:0','-map','1:a:0','-c:v','copy','-c:a','aac','-b:a','192k','-t',String(duration),'-movflags','+faststart',target);
   execFileSync(FF,muxArgs,{stdio:'inherit'});
-  const meta=execFileSync(FFPROBE,['-v','error','-show_entries','format=duration:stream=codec_type,width,height,avg_frame_rate','-of','json',FINAL],{encoding:'utf8'});
+  const meta=execFileSync(FFPROBE,['-v','error','-show_entries','format=duration:stream=codec_type,width,height,avg_frame_rate','-of','json',target],{encoding:'utf8'});
   fs.writeFileSync(path.join(OUT,'render-info.json'),JSON.stringify({from,to,fps,frames:total,source:'../../童话镇.mp4',ffprobe:JSON.parse(meta)},null,2));
-  console.log(`Wrote ${FINAL}`);
+  console.log(`Wrote ${target}`);
 }
 
 try{
@@ -131,7 +131,7 @@ try{
     for(const item of items){const file=path.join(dir,`${item.name}_${item.t.toFixed(2)}.jpg`);await saveStill(page,item.t,file);console.log(file);}
     await browser.close();browser=null;
   }else if(mode==='sample'){
-    const from=Number(process.argv[3]??'13.55'),to=Number(process.argv[4]??'23.75');await renderVideo(from,to,Number(process.env.FPS||24),'sample');
+    const from=Number(process.argv[3]??'13.55'),to=Number(process.argv[4]??'23.75');await renderVideo(from,to,Number(process.env.FPS||24),'sample',path.join(OUT,'review','latest-sample.mp4'));
   }else if(mode==='full'){
     await renderVideo(0,DUR,Number(process.env.FPS||30),'full');
   }else if(mode==='srt'){
