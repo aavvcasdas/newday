@@ -199,7 +199,13 @@ function projectActorCutout(role,pose='idle',phase=0){
   if(x1<x0)return null;
   const sw=x1-x0+1,sh=y1-y0+1,scale=Math.min(470/sw,760/sh),dw=sw*scale,dh=sh*scale;
   x.drawImage(available,x0,y0,sw,sh,(ACTOR_W-dw)/2,ACTOR_H-dh-20,dw,dh);
-  return finishCut(c,24,{edge:'#81756b',paper:'#fffdf7',grainA:.18});
+  // A clean white keyline only: retain every original sprite pixel, with no white fill or paper grain over it.
+  const outline=cv(ACTOR_W,ACTOR_H),o=outline.getContext('2d');
+  const radius=2;
+  for(let dy=-radius;dy<=radius;dy++)for(let dx=-radius;dx<=radius;dx++)if(dx*dx+dy*dy<=radius*radius)o.drawImage(c,dx,dy);
+  o.globalCompositeOperation='source-in';o.fillStyle='#fffdf7';o.fillRect(0,0,ACTOR_W,ACTOR_H);
+  const cut=cv(ACTOR_W,ACTOR_H),k=cut.getContext('2d');k.drawImage(outline,0,0);k.drawImage(c,0,0);
+  return cut;
 }
 export function actorSprite(role,pose='idle',phase=0,expression=''){
   const fromProject=projectActorCutout(role,pose,phase);

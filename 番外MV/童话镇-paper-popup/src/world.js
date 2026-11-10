@@ -99,7 +99,7 @@ function actorLayout(cue,role,index,total,u){
   if(a==='run-beside-boat'){if(role==='claude'){x=-.15;z=.17;}if(role==='whale'){x=lerp(-.03,.105,k);z=.22;}}
   if(a==='lantern-shield'||a==='cloak-shield-open'){if(role==='doubao'){x=-.075;z=.16;}if(role==='whale'){x=.075;z=.20;}if(role==='gpt'){x=.15;z=.07;scale*=.72;}}
   if(a==='wolf-shadow-contained'){if(role==='doubao'){x=-.05;z=.17;}if(role==='gpt'){x=.05;z=.09;scale*=.64;}if(role==='whale'){x=.13;z=.22;}}
-  if(a==='cup-pass'){if(role==='qwen'){x=-.095;z=.19;scale=.88;}if(role==='gemini'){x=.015;z=.19;scale=.88;}if(role==='whale'){x=.145;z=.22;scale=.90;}}
+  if(a==='cup-pass'){if(role==='qwen'){x=-.17;z=.19;scale=.88;}if(role==='gemini'){x=.005;z=.19;scale=.88;}if(role==='whale'){x=.20;z=.22;scale=.90;}}
   if(a==='duck-to-swan'||a==='wise-river'||a==='wise-river-return'){if(role==='whale'){x=-.015;y+=.006;z=.21;}if(role==='kimi'){x=.105;z=.17;scale=.72;}}
   if(a==='clocktower-glide'){if(role==='zai'){x=lerp(-.08,.045,k);y+=Math.sin(Math.PI*u)*.03;z=.11;}if(role==='whale'){x=.13;z=.22;scale=.62;}}
   if(a==='harp-and-climb'){if(role==='zai'){x=-.09;z=.12;}if(role==='whale'){x=.075;y+=.012+u*.018;z=.20;scale=.77;}}

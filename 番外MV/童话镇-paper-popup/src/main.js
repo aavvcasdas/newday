@@ -101,25 +101,61 @@ function drawQuad(ctx,img,quad){
   drawTriangle(ctx,img,[p[1],p[2],p[3]],[quad[1],quad[2],quad[3]]);
 }
 let storyCamX=0,storyCamY=0,storyZoom=1;
-const stagePoint=(x,y,z)=>({x:960+(x*2690)*storyZoom+storyCamX,y:423+(z*995-y*2250)*storyZoom+storyCamY});
+const stagePoint=(x,y,z)=>({x:960+(x*2690)*storyZoom+storyCamX,y:535+(z*995-y*2250)*storyZoom+storyCamY});
 function drawPaperCanvas(t,state,open){
   const ctx=canvasRenderer;ctx.clearRect(0,0,W,H);
   const bg=ctx.createLinearGradient(0,0,0,H);bg.addColorStop(0,'#77717b');bg.addColorStop(.38,'#d0bc9f');bg.addColorStop(1,'#453e43');ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
   // Full-bleed story world: no tabletop, miniature book frame, or gray margins.
   const active=state.cue?world.scenes[CUES.indexOf(state.cue)]:null;
   const theme=state.cue?.theme||'castle-river';
-  const sky=book.backMat.map?.image, floor=book.groundMat.map?.image;
+  const sky=book.backMat.map?.image;
   if(sky)ctx.drawImage(sky,0,0,W,H);
   else {ctx.fillStyle='#9fc5d2';ctx.fillRect(0,0,W,H);}
-  // Full-bleed layered paper landscape; a lower scenic band replaces the old small page.
-  if(floor){ctx.save();ctx.globalAlpha=.98;ctx.drawImage(floor,0,H*.34,W,H*.66);ctx.restore();}
-  const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'rgba(255,250,237,.08)');veil.addColorStop(.58,'rgba(255,248,228,0)');veil.addColorStop(1,'rgba(26,43,55,.13)');ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);
+  // Match the reference's panoramic fairytale blocking: low horizon, readable banks,
+  // compact horizontal river, and several landmarks; avoid an empty screen-sized water plane.
+  const night=/night|cosmic|galaxy|deep-river|rose/.test(theme);
+  const land=ctx.createLinearGradient(0,H*.54,0,H);land.addColorStop(0,night?'#65766b':'#8eae74');land.addColorStop(1,night?'#425b57':'#668b67');
+  ctx.fillStyle=land;ctx.fillRect(0,H*.54,W,H*.46);
+  // Scenic rolling banks and a varied storybook skyline, not a repeated icon strip.
+  for(let layer=0;layer<3;layer++){
+    ctx.beginPath();ctx.moveTo(0,H*(.59+layer*.025));
+    for(let x=0;x<=W+80;x+=80)ctx.quadraticCurveTo(x+30,H*(.50+layer*.035)+((x/80+layer)%2)*34,x+80,H*(.59+layer*.025));
+    ctx.lineTo(W,H*.68);ctx.lineTo(0,H*.68);ctx.closePath();ctx.fillStyle=['#9cba83','#7fa273','#71936e'][layer];ctx.globalAlpha=.78;ctx.fill();
+  }ctx.globalAlpha=1;
+  // Distant clustered trees with rounded crowns and varied heights.
+  for(let i=0;i<16;i++){
+    const x=i*142-28,base=H*(.615+(i%3)*.012),r=31+(i*17%23);
+    ctx.fillStyle='#725d4b';ctx.fillRect(x-5,base-8,10,28);
+    for(let j=0;j<3;j++){ctx.beginPath();ctx.arc(x+(j-1)*r*.48,base-r*.68+(j===1?-r*.23:0),r*.56,0,TAU);ctx.fillStyle=['#4f765b','#60865f','#719469'][(i+j)%3];ctx.fill();ctx.strokeStyle='rgba(48,74,57,.5)';ctx.lineWidth=3;ctx.stroke();}
+  }
+  // Landmark castle at left, plus a handful of asymmetrical cottages.
+  const castleX=245,castleBase=H*.59;ctx.fillStyle='#d4c6a4';ctx.strokeStyle='#62575b';ctx.lineWidth=6;
+  ctx.fillRect(castleX-67,castleBase-138,134,138);ctx.strokeRect(castleX-67,castleBase-138,134,138);
+  for(const dx of [-76,0,76]){const hh=dx===0?196:156,x=castleX+dx;ctx.fillRect(x-28,castleBase-hh,56,hh);ctx.strokeRect(x-28,castleBase-hh,56,hh);ctx.beginPath();ctx.moveTo(x-38,castleBase-hh);ctx.lineTo(x,castleBase-hh-42);ctx.lineTo(x+38,castleBase-hh);ctx.closePath();ctx.fillStyle='#916b78';ctx.fill();ctx.stroke();ctx.fillStyle='#f6df9a';ctx.fillRect(x-7,castleBase-hh+35,14,25);ctx.fillStyle='#d4c6a4';}
+  for(let i=0;i<4;i++){
+    const x=820+i*330,base=H*.625,h=64+(i*29%52),w=68+(i%2)*20;
+    ctx.fillStyle=['#e4c9a0','#d49a80','#b7c49a'][i%3];ctx.strokeStyle='#634c46';ctx.lineWidth=5;
+    ctx.fillRect(x-w/2,base-h,w,h);ctx.strokeRect(x-w/2,base-h,w,h);
+    ctx.beginPath();ctx.moveTo(x-w*.65,base-h);ctx.lineTo(x,base-h-34);ctx.lineTo(x+w*.65,base-h);ctx.closePath();ctx.fillStyle='#8b6570';ctx.fill();ctx.stroke();
+    ctx.fillStyle='#f6df9a';ctx.fillRect(x-7,base-42,14,20);
+  }
+  // flower clumps and little golden lights animate the banks with storybook detail
+  for(let i=0;i<42;i++){const x=(i*97+19)%W,y=H*(.635+(i%4)*.018);ctx.fillStyle=['#f5d986','#ed9a9b','#f7eee0'][i%3];for(let j=0;j<5;j++){ctx.beginPath();ctx.arc(x+Math.cos(j*TAU/5)*4,y+Math.sin(j*TAU/5)*4,3.2,0,TAU);ctx.fill();}ctx.fillStyle='#b98354';ctx.beginPath();ctx.arc(x,y,2.3,0,TAU);ctx.fill();}
+  const riverPath=()=>{ctx.beginPath();ctx.moveTo(-100,H*.76);ctx.bezierCurveTo(420,H*.72,560,H*.79,950,H*.76);ctx.bezierCurveTo(1290,H*.72,1540,H*.81,2020,H*.75);};
+  riverPath();ctx.strokeStyle='#e9d8b7';ctx.lineWidth=178;ctx.lineCap='round';ctx.stroke();
+  riverPath();ctx.strokeStyle=night?'#365f76':'#62aebe';ctx.lineWidth=142;ctx.stroke();
+  riverPath();ctx.strokeStyle='rgba(236,247,234,.78)';ctx.lineWidth=5;ctx.stroke();
+  // ripples and short reflection dashes keep water active without dominating the frame
+  for(let i=0;i<26;i++){const x=(i*83+(t*90)%83)%W,y=H*(.70+(i%5)*.035);ctx.strokeStyle=i%2?'rgba(231,246,237,.62)':'rgba(43,104,119,.45)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x,y);ctx.quadraticCurveTo(x+22,y-5,x+50,y);ctx.stroke();}
+  // shore path gives standing cut-outs a stable stage above the moving water
+  ctx.strokeStyle='#ead7b1';ctx.lineWidth=36;ctx.beginPath();ctx.moveTo(-20,H*.65);ctx.bezierCurveTo(480,H*.63,910,H*.67,1330,H*.64);ctx.bezierCurveTo(1600,H*.62,1810,H*.66,1940,H*.64);ctx.stroke();
+  const veil=ctx.createLinearGradient(0,0,0,H);veil.addColorStop(0,'rgba(255,250,237,.05)');veil.addColorStop(.58,'rgba(255,248,228,0)');veil.addColorStop(1,'rgba(26,43,55,.08)');ctx.fillStyle=veil;ctx.fillRect(0,0,W,H);
 
   const drawables=[];
   for(const actor of world.actors.values())if(actor.root.visible){
     const p=actor.root.position.clone(),sc=actor.root.scale,cardSc=actor.card.scale;
     drawables.push({z:p.z+.001,kind:'actor',draw(){
-      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*6800,widthPx=actor.height*(512/820)*sc.x*cardSc.x*6800;
+      const q=stagePoint(p.x,p.y,p.z),heightPx=actor.height*sc.y*6200,widthPx=actor.height*(512/820)*sc.x*cardSc.x*6200;
       const alpha=actor.card.userData.front.material.opacity??1;
       ctx.save();ctx.globalAlpha=alpha;ctx.fillStyle='rgba(38,36,43,.23)';ctx.filter='blur(12px)';ctx.beginPath();ctx.ellipse(q.x,q.y+6,Math.max(18,widthPx*.38),11,0,0,TAU);ctx.fill();ctx.filter='none';
       const image=actor.card.userData.front.material.map?.image;if(image){ctx.shadowColor='rgba(50,35,28,.28)';ctx.shadowBlur=12;ctx.drawImage(image,q.x-widthPx/2,q.y-heightPx,widthPx,heightPx);}ctx.restore();
