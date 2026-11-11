@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 const PALETTES = {
   whale: { hair: '#2558AA', hairHi: '#53AAE8', dress: '#1E2D52', apron: '#F8FBFF', tail: '#365284', skin: '#FFEAE0', eye: '#1F56B5', bow: '#4BAEE8' },
@@ -133,7 +133,9 @@ function AtlasCellSprite({ clipId, url, frameIndex = 0, cols = 16, heightPx, opa
   const cellW = heightPx * (384 / 416);
   const footY = -heightPx * 0.968;
   const stripW = cellW * cols;
-  const offsetX = -cellW / 2 - frameIndex * cellW;
+  // 帧号越界时钳到末格，绝不取到条带之外的空白（否则角色整格消失）
+  const safeFrame = Math.max(0, Math.min(cols - 1, Math.floor(frameIndex) || 0));
+  const offsetX = -cellW / 2 - safeFrame * cellW;
 
   return (
     <g opacity={opacity}>
@@ -164,6 +166,9 @@ function AtlasCellSprite({ clipId, url, frameIndex = 0, cols = 16, heightPx, opa
  *   3. 多关节 SVG 玩偶模式 (ArticulatedPuppetSvg)
  */
 export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate = false }) {
+  // clipPath 的 id 是整个文档全局的。旧写法 `ac-${characterId}-${round(x)}` 在两个同名/无名角色
+  // 站到同一 x 时会撞 id，后一个角色被前一个的裁剪框裁掉。useId 每实例唯一且逐帧稳定。
+  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
   if ((actor.opacity ?? 1) <= 0.01) return null;
 
   const heightPx = actor.height
@@ -185,7 +190,7 @@ export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate 
   const spriteUrl = assetUrlMap[spriteKey] || assetUrlMap[actor.pose] || assetUrlMap[actor.assetId] || null;
   const prevSpriteUrl = prevSpriteKey ? (assetUrlMap[prevSpriteKey] || assetUrlMap[actor.prevPose] || null) : null;
 
-  const clipPrefix = `ac-${actor.characterId || 'ch'}-${Math.round(actor.x)}`;
+  const clipPrefix = `ac-${uid}`;
 
   return (
     <svg
@@ -217,7 +222,7 @@ export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate 
                 clipId={`${clipPrefix}-prev`}
                 url={prevAtlasUrl}
                 frameIndex={actor.prevAtlasFrame ?? 0}
-                cols={actor.atlasCols || 16}
+                cols={actor.prevAtlasCols || actor.atlasCols || 16}
                 heightPx={heightPx}
                 opacity={1 - (actor.atlasBlend ?? 1)}
               />

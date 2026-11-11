@@ -682,14 +682,19 @@ export function evaluateCharacterMotion(plan, t, {
 
   // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
   // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
-  const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
+  // 列数必须按「每一张图集」解析，而不是每个角色一个值：同一 plan 里步态 8 格 → 表演 16 格 → *_cel 单格会混用，
+  // 拿初始图集的列数去切另一张图集，会把角色横向拉宽一倍只露半身，或一格里挤进两个人。
+  const atlasColsFor = (name) => {
+    if (!name) return 16;
+    if (/(_2leg|_pet)$/.test(name)) return 8;
+    if (/_cel$/.test(name)) return 1;
+    return 16;
+  };
+  const colsOfAtlas = (name) => plan.atlasColsByName?.[name] || plan.atlasCols || atlasColsFor(name);
   // 注意：atlas 也可能只由 locomotion 预设推导出来（plan.atlas 缺省），
   // 这里必须把预设解析后的真实图集名也算进来，否则 8 格步态会被当成 16 列播，
   // 抽到不存在的格子 → 角色闪空。
-  const initialAtlasName = plan.atlas
-    || plan.atlases?.[0]?.atlas
-    || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
-  const atlasCols = plan.atlasCols || atlasColsFor(initialAtlasName);
+  // → 所以 atlasCols 改为在解析出「当前真正生效的图集」之后按图集名求（见下方 colsOfAtlas(atlas)）。
   let activeAtlasSpec = defaultAtlasFromPlan
     ? {
       at: shotStart,
@@ -789,6 +794,7 @@ export function evaluateCharacterMotion(plan, t, {
   const computeAtlasFrame = (spec, resolvedAtlasName = null) => {
     const atlasName = resolvedAtlasName || resolveEffectiveAtlasName(spec);
     if (!atlasName) return 0;
+    const cols = colsOfAtlas(atlasName);
     const isTwoLegWalk = atlasName.endsWith('_2leg') || (spec?.strideCyclePx ?? 0) > 0;
     if (isTwoLegWalk) {
       // 对标 ai-girl-chatgpt-pets pet.json (8帧×120ms ≈ 0.96s/双步周期)：匀速稳定屈膝节拍，绝不忽快忽慢卡帧
@@ -797,15 +803,16 @@ export function evaluateCharacterMotion(plan, t, {
       const speedBoost = Math.abs(trackVx) > 165 ? 0.82 : 1.0;
       const cyc = Math.max(0.48, (spec?.cycle || 0.96) * speedBoost);
       const prog = (((relWalk / cyc) + (spec?.phaseOffset || 0)) % 1 + 1) % 1;
-      return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
+      return Math.min(cols - 1, Math.floor(prog * cols));
     }
     const rel = Math.max(0, t - (spec?.at ?? shotStart));
     const cyc = Math.max(0.25, spec?.cycle || (atlasName.endsWith('_pet') ? 1.35 : 1.25));
     const prog = spec?.loop === false ? Math.min(0.999, rel / cyc) : ((rel / cyc) % 1 + 1) % 1;
-    return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
+    return Math.min(cols - 1, Math.floor(prog * cols));
   };
 
   const atlas = resolveEffectiveAtlasName(activeAtlasSpec);
+  const atlasCols = colsOfAtlas(atlas);
   const refVx = Math.abs(trackVx) > 6 ? trackVx : lastMovingVx;
   if (activeAtlasSpec?.flip != null) {
     autoFlip = activeAtlasSpec.flip;
@@ -948,6 +955,7 @@ export function evaluateCharacterMotion(plan, t, {
     prevAtlasFrame,
     atlasBlend,
     atlasCols,
+    prevAtlasCols: prevAtlas ? colsOfAtlas(prevAtlas) : null,
     pose,
     prevPose,
     poseBlend,

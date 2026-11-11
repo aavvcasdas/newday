@@ -287,11 +287,11 @@ function drawAtlasActor(g, a, atlasImages) {
   const dir = a.flip ? -1 : 1;
   const footSink = h * 0.018;
 
-  const drawFrame = (sheetImg, frameIdx, alpha) => {
+  const drawFrame = (sheetImg, frameIdx, alpha, sheetCols = cols) => {
     if (!sheetImg || alpha <= 0.005) return;
-    const cw = sheetImg.width / cols;
+    const cw = sheetImg.width / sheetCols;
     const ch = sheetImg.height;
-    const idx = Math.max(0, Math.min(cols - 1, frameIdx | 0));
+    const idx = Math.max(0, Math.min(sheetCols - 1, frameIdx | 0));
     g.save();
     g.globalAlpha = (a.opacity ?? 1) * alpha;
     g.translate(a.x, a.y + footSink);
@@ -302,7 +302,7 @@ function drawAtlasActor(g, a, atlasImages) {
   };
 
   if (a.prevAtlas && a.atlasBlend < 0.999 && atlasImages.has(a.prevAtlas)) {
-    drawFrame(atlasImages.get(a.prevAtlas), a.prevAtlasFrame ?? 0, 1 - a.atlasBlend);
+    drawFrame(atlasImages.get(a.prevAtlas), a.prevAtlasFrame ?? 0, 1 - a.atlasBlend, a.prevAtlasCols || cols);
     drawFrame(img, a.atlasFrame ?? 0, a.atlasBlend);
   } else {
     drawFrame(img, a.atlasFrame ?? 0, 1);

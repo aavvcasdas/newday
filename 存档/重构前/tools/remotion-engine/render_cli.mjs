@@ -33,7 +33,7 @@ async function loadModuleSpec(specPath) {
   return spec;
 }
 
-function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
+export function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR, { walkRigFiles = {}, extraFiles = {} } = {}) {
   const mimeMap = {
     '.png': 'image/png',
     '.jpg': 'image/jpeg',
@@ -51,10 +51,23 @@ function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
   const server = http.createServer((req, res) => {
     const cleanUrl = decodeURIComponent((req.url || '/').split('?')[0]);
     let filePath;
-    if (cleanUrl.startsWith('/__walk_rigs__/')) {
+    if (Object.prototype.hasOwnProperty.call(extraFiles, cleanUrl)) {
+      // 显式挂载的单文件（例如放在仓库外的 --font 字体）
+      filePath = path.resolve(extraFiles[cleanUrl]);
+      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        res.writeHead(404);
+        res.end('Not found');
+        return;
+      }
+    } else if (cleanUrl.startsWith('/__walk_rigs__/')) {
       const relRig = cleanUrl.slice('/__walk_rigs__/'.length);
-      filePath = path.resolve(walkRigDir, relRig);
-      if (!filePath.startsWith(path.resolve(walkRigDir)) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      // ensureWalkRigAtlases() 对「仓库里已有预烘成品」的图集只返回成品路径、不往缓存目录落盘。
+      // 只查缓存目录 = 全新机器上 22 张步态/待机图集全部 404（旧机器则读到 /tmp 里的过期缓存）。
+      const rigName = relRig.replace(/\.png$/i, '');
+      const mapped = Object.prototype.hasOwnProperty.call(walkRigFiles, rigName) ? walkRigFiles[rigName] : null;
+      filePath = mapped ? path.resolve(mapped) : path.resolve(walkRigDir, relRig);
+      const allowed = Boolean(mapped) || filePath.startsWith(path.resolve(walkRigDir) + path.sep);
+      if (!allowed || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
         res.writeHead(404);
         res.end('Not found');
         return;
@@ -83,7 +96,7 @@ function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
   });
 }
 
-function buildAssetUrlMap(baseUrl) {
+export function buildAssetUrlMap(baseUrl, walkRigFiles = null) {
   const map = {};
   const whaleFallbackPoses = {
     idle: 'assets/ai-girls/lyric-v8/source/whale_neutral.png',
@@ -131,6 +144,8 @@ function buildAssetUrlMap(baseUrl) {
 
   // 注册程序化双腿交替行走与长椅坐姿 16 帧图集 (/__walk_rigs__/*.png)
   for (const rigName of Object.keys(WALK_RIG_BUILDERS)) {
+    // 只登记真正存在（预烘或已落盘）的图集；缺的交给 preflightRemotionAssets() 明确报错，不留悬空 URL
+    if (walkRigFiles && !walkRigFiles[rigName]) continue;
     const url = `${baseUrl}/__walk_rigs__/${encodeURIComponent(rigName)}.png`;
     map[`atlas:${rigName}`] = url;
     map[rigName] = url;
@@ -139,18 +154,43 @@ function buildAssetUrlMap(baseUrl) {
   return map;
 }
 
-function resolveFontUrl(baseUrl) {
+// 首选字体。注意：这两个路径都写在 .gitignore 里，全新克隆 / CI / 沙箱里一定不存在。
+const FONT_PRIMARY_CANDIDATES = [
+  'video-fx/assets/fonts/NotoSansSC-Bold.ttf',
+  'tools/mv_extra/cache/NotoSansSC-Bold.ttf',
+];
+// 仓库里真实入库的 OFL 中文字体：只作「至少不出豆腐块」的兜底，字形与定稿不同，使用时必须告警。
+const FONT_IN_REPO_FALLBACK = '番外MV/童话镇-paper-popup/fonts/ZCOOLKuaiLe-Regular.ttf';
+
+/** 解析中文字体文件：--font / NEWDAY_FONT > NotoSansSC-Bold（首选）> 仓库内兜底 > null */
+export function resolveFontFile(argv = []) {
+  const explicit = argOf(argv, '--font') || process.env.NEWDAY_FONT || null;
+  if (explicit) {
+    const abs = path.resolve(explicit);
+    if (!fs.existsSync(abs)) throw new Error(`--font / NEWDAY_FONT 指向的字体不存在：${abs}`);
+    return { file: abs, kind: 'explicit' };
+  }
+  for (const rel of FONT_PRIMARY_CANDIDATES) {
+    const abs = path.join(REPO_ROOT, rel);
+    if (fs.existsSync(abs)) return { file: abs, kind: 'primary' };
+  }
+  const fallback = path.join(REPO_ROOT, FONT_IN_REPO_FALLBACK);
+  if (fs.existsSync(fallback)) return { file: fallback, kind: 'fallback' };
+  return null;
+}
+
+function fontRouteOf(fontFile) {
+  return `/__font__/${path.basename(fontFile)}`;
+}
+
+function resolveFontUrl(baseUrl, fontFile = null) {
   if (!baseUrl) return null;
-  const candidates = [
-    'video-fx/assets/fonts/NotoSansSC-Bold.ttf',
-    'tools/mv_extra/cache/NotoSansSC-Bold.ttf',
-  ];
-  for (const rel of candidates) {
+  if (fontFile) return `${baseUrl}${encodeURI(fontRouteOf(fontFile))}`;
+  for (const rel of FONT_PRIMARY_CANDIDATES) {
     if (fs.existsSync(path.join(REPO_ROOT, rel))) {
       return `${baseUrl}/${encodeURI(rel)}`;
     }
   }
-
   return null;
 }
 
@@ -186,13 +226,13 @@ async function prepareHeadlessChromium() {
   return chromium.executablePath();
 }
 
-export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '') {
+export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '', { walkRigFiles = null, fontFile = null } = {}) {
   const mode = argOf(argv, '--mode') || 'mv';
   const specPath = argOf(argv, '--spec');
   if (!specPath) throw new Error('缺少 --spec <spec.mjs>');
   const spec = await loadModuleSpec(specPath);
-  const assetUrlMap = baseUrl ? buildAssetUrlMap(baseUrl) : {};
-  const fontUrl = resolveFontUrl(baseUrl);
+  const assetUrlMap = baseUrl ? buildAssetUrlMap(baseUrl, walkRigFiles) : {};
+  const fontUrl = resolveFontUrl(baseUrl, fontFile);
   const muxAudio = argOf(argv, '--mux-audio');
 
   if (mode === 'episode') {
@@ -296,6 +336,90 @@ export function auditRemotionPropsActivity(props) {
   };
 }
 
+function pngSizeOf(buf) {
+  if (!buf || buf.length < 24 || buf.readUInt32BE(0) !== 0x89504e47) return null;
+  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
+}
+
+/** 逐帧扫描全片，收集真正会被画到的图集（含声明列数）与立绘键 */
+export function collectRequiredAssets(props) {
+  const fps = props.fps || 30;
+  const total = Math.max(1, props.durationInFrames || Math.ceil((props.duration || 0) * fps));
+  const atlases = new Map();
+  const sprites = new Set();
+  for (let f = 0; f < total; f++) {
+    const st = evaluateRemotionFrameState(props, f / fps);
+    for (const a of st.actors) {
+      if ((a.opacity ?? 1) <= 0.01 || a.renderMode === 'puppet') continue;
+      if (a.atlas) {
+        atlases.set(a.atlas, a.atlasCols || 16);
+        if (a.prevAtlas) atlases.set(a.prevAtlas, a.prevAtlasCols || a.atlasCols || 16);
+      } else if (a.assetId) {
+        sprites.add(`actor:${a.assetId}`);
+      } else {
+        if (a.pose) sprites.add(`pose:${a.pose}`);
+        if (a.prevPose) sprites.add(`pose:${a.prevPose}`);
+      }
+    }
+  }
+  return { atlases, sprites };
+}
+
+/**
+ * 素材预检：走真实 HTTP 链路逐个取回全片用到的图集/立绘。
+ * 未登记、404、列数与真实像素不符 —— 一律在开渲前报错，不允许「渲染成功但角色消失/被拉伸」。
+ */
+export async function preflightRemotionAssets(props, { allowMissing = false } = {}) {
+  const { atlases, sprites } = collectRequiredAssets(props);
+  const urlMap = props.assetUrlMap || {};
+  const problems = [];
+  const preloadUrls = new Set();
+  const probe = async (url) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) return { ok: false, why: `HTTP ${res.status}` };
+      return { ok: true, size: pngSizeOf(Buffer.from(await res.arrayBuffer())) };
+    } catch (err) {
+      return { ok: false, why: err.message };
+    }
+  };
+  for (const [name, declaredCols] of atlases) {
+    const url = urlMap[`atlas:${name}`] || urlMap[name];
+    if (!url) {
+      problems.push(`图集 ${name}：assetUrlMap 未登记（会静默回退成立绘/矢量木偶）`);
+      continue;
+    }
+    const r = await probe(url);
+    if (!r.ok) {
+      problems.push(`图集 ${name}：${r.why} ← ${url}`);
+      continue;
+    }
+    if (r.size) {
+      const realCols = Math.round((r.size.width / r.size.height) * (416 / 384));
+      if (realCols !== declaredCols) {
+        problems.push(`图集 ${name}：引擎按 ${declaredCols} 列取帧，实际 ${r.size.width}×${r.size.height} = ${realCols} 列（会被横向拉伸/切半）`);
+      }
+    }
+    preloadUrls.add(url);
+  }
+  for (const key of sprites) {
+    const url = urlMap[key];
+    if (!url) continue; // 没有位图的 pose 走矢量木偶是设计内行为
+    const r = await probe(url);
+    if (!r.ok) {
+      problems.push(`立绘 ${key}：${r.why} ← ${url}`);
+      continue;
+    }
+    preloadUrls.add(url);
+  }
+  if (problems.length) {
+    const report = `Remotion 素材预检失败（${problems.length} 项）：\n  - ${problems.join('\n  - ')}`;
+    if (!allowMissing) throw new Error(`${report}\n（确需带缺陷出片请显式加 --allow-missing-assets）`);
+    console.warn(`[Remotion][WARN] ${report}`);
+  }
+  return { preloadUrls: [...preloadUrls], problems, atlases: [...atlases.keys()], sprites: [...sprites] };
+}
+
 export async function main(argv = process.argv.slice(2)) {
   if (argv.includes('--bundle-check')) {
     const { bundle } = await import('@remotion/bundler');
@@ -340,12 +464,43 @@ export async function main(argv = process.argv.slice(2)) {
   const browserExecutable = await prepareHeadlessChromium();
   const chromiumOptions = { gl: 'angle', disableWebSecurity: true };
 
-  await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
-  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR);
+  // 返回值必须留着：name -> 实际文件（预烘成品优先，其次才是 /tmp 缓存）
+  const walkRigFiles = await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
+
+  const fontInfo = resolveFontFile(argv);
+  if (!fontInfo && !argv.includes('--allow-missing-font')) {
+    throw new Error([
+      '找不到中文字体，拒绝开渲（无头 Chromium 环境里通常没有任何 CJK 字体，歌词/字幕/道具文字会全部变成 □□□）。',
+      `  已查找：${FONT_PRIMARY_CANDIDATES.join('、')}（均在 .gitignore 中）、${FONT_IN_REPO_FALLBACK}`,
+      '  解决：--font <NotoSansSC-Bold.ttf> 或环境变量 NEWDAY_FONT；或把字体放到 video-fx/assets/fonts/。',
+      '  只渲染无文字底板时可加 --allow-missing-font。',
+    ].join('\n'));
+  }
+  if (fontInfo?.kind === 'fallback') {
+    console.warn(`[Remotion][WARN] 未找到 NotoSansSC-Bold.ttf，改用仓库内兜底字体 ${FONT_IN_REPO_FALLBACK}：字形与定稿不同，仅供预览，正式出片请提供 --font。`);
+  }
+  const extraFiles = fontInfo ? { [fontRouteOf(fontInfo.file)]: fontInfo.file } : {};
+
+  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR, { walkRigFiles, extraFiles });
   try {
-    const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl);
+    const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl, { walkRigFiles, fontFile: fontInfo?.file || null });
     if (argv.includes('--no-subtitles')) {
       liveProps.hideSubtitles = true;
+    }
+
+    const preflight = await preflightRemotionAssets(liveProps, { allowMissing: argv.includes('--allow-missing-assets') });
+    liveProps.preloadUrls = preflight.preloadUrls;
+    console.log(`[Remotion] 素材预检通过：图集 ${preflight.atlases.length} 张，预载 ${preflight.preloadUrls.length} 个文件，字体 ${fontInfo ? path.basename(fontInfo.file) : '（无）'}`);
+
+    if (liveProps.audioUrl) {
+      const audioOk = await fetch(liveProps.audioUrl).then((r) => { r.body?.cancel?.(); return r.ok; }, () => false);
+      if (!audioOk) {
+        const isStill = Boolean(stillFramesArg && outDirArg) || argOf(argv, '--still-frame') != null || argOf(argv, '--frame') != null;
+        if (!isStill && !argv.includes('--allow-missing-audio')) {
+          throw new Error(`音频文件取不到：${liveProps.audioUrl}\n  请把音频放到分镜声明的位置，或用 --audio/--mux-audio 指定；确需静音出片加 --allow-missing-audio。`);
+        }
+        delete liveProps.audioUrl;
+      }
     }
     const serveUrl = await bundle({ entryPoint: path.join(HERE, 'entry.jsx') });
     const composition = await selectComposition({

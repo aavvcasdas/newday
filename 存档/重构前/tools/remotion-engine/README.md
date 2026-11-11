@@ -47,8 +47,8 @@ NODE_PATH=$PWD/tools/engine/node_modules node tools/mv_dayu/remotion/render.mjs 
 NODE_PATH=$PWD/tools/engine/node_modules node tools/remotion-engine/render_cli.mjs \
   --mode episode \
   --auto-sets \
-  --spec tools/day12制作/episode.production.spec.mjs \
-  --alignment tools/day12制作/voice_alignment.json \
-  --subtitle-file tools/day12制作/subtitle_timing.json \
+  --spec Day/Day12/episode.production.spec.mjs \
+  --alignment Day/Day12/voice_alignment.json \
+  --subtitle-file Day/Day12/subtitle_timing.json \
   --dry-run
 ```
