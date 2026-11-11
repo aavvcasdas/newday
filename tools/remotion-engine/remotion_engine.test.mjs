@@ -5,10 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createCanvas, loadImage } from '../engine/room_base.mjs';
-import mvSpec from '../mv_dayu/mv.spec.mjs';
-import { adaptMvToRemotionProps } from './mv_adapter.mjs';
 import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
-import { auditRemotionPropsActivity } from './render_cli.mjs';
+import { auditRemotionPropsActivity, buildRemotionInputPropsFromCli } from './render_cli.mjs';
 import { ensureWalkRigAtlases, WALK_RIG_BUILDERS, CELL_W, CELL_H } from './walk_rig_builder.mjs';
 import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.mjs';
 import { createPlanningPreview } from '../engine/render_episode.mjs';
@@ -18,56 +16,8 @@ import {
   buildTemplatePlanningSubtitles,
 } from '../engine/day_episode.template.spec.mjs';
 
-test('mv_dayu 声明式多舞台规格: 8 镜 8 套差异化动态场景、16 帧图集平滑过渡与零静态幻灯片区间', () => {
-  const props = adaptMvToRemotionProps({ spec: mvSpec });
-  assert.equal(props.mode, 'lyric-mv');
-  assert.equal(props.shots.length, 8);
-  assert.equal(props.durationInFrames, 880);
-  assert.equal(props.complianceBadge, null, '所有新视频一律不带右上角水印');
-
-  const uniqueSets = new Set(props.shots.map((s) => s.setSpec.id));
-  assert.equal(uniqueSets.size, 8, '大禹 MV 8 镜应切换 8 套不同舞台背景而非锁死单一背景');
-
-  // 纯 t 确定性检验：打乱时间采样顺序必须返回完全一致的帧状态（支持 Remotion 并发分片渲染）
-  const sampleA1 = evaluateRemotionFrameState(props, 5.8);
-  const sampleOther = evaluateRemotionFrameState(props, 19.8);
-  const sampleA2 = evaluateRemotionFrameState(props, 5.8);
-  assert.deepEqual(sampleA1, sampleA2);
-  assert.notEqual(sampleA1.setState.id, sampleOther.setState.id);
-
-  // 环境交互检验：开闸触发器应驱动水闸开启度上升；后羿射日触发器应令昼夜光照下降
-  const gateBefore = evaluateRemotionFrameState(props, 0.3);
-  const gateAfter = evaluateRemotionFrameState(props, 2.5);
-  assert.ok(gateAfter.setState.reactive.gateOpen > gateBefore.setState.reactive.gateOpen + 0.5);
-
-  const sunBefore = evaluateRemotionFrameState(props, 5.0);
-  const sunAfter = evaluateRemotionFrameState(props, 6.9);
-  assert.ok(sunAfter.setState.reactive.dawn < sunBefore.setState.reactive.dawn - 0.5);
-
-  // 对标 ai-girl-chatgpt-pets 同体状态机检验：反转点 1.90s 由同体待机 whale_idle_side_pet 切入屈膝追赶 whale_walk_side_2leg，零上跳、零鬼影重影！
-  const beforePivot = evaluateRemotionFrameState(props, 1.80);
-  const afterPivot = evaluateRemotionFrameState(props, 2.00);
-  assert.equal(beforePivot.actors[0].atlas, 'whale_idle_side_pet');
-  assert.equal(afterPivot.actors[0].atlas, 'whale_walk_side_2leg');
-  assert.equal(afterPivot.actors[0].prevAtlas, null, '同体 pet 步态切换不应产生四条腿重影交叉淡化');
-  assert.ok(Math.abs(afterPivot.actors[0].y - beforePivot.actors[0].y) < 1.0, '同体待机<->行走切换时脚底高度须零弹跳');
-
-  // 帧级音画同步回归校验：每镜区间与歌词卡拉OK起唱帧严丝合缝，且第 6 镜「对象」为真实美少女伴侣角色而非折纸鹤
-  const expectedStarts = [0.0, 4.18, 7.45, 11.10, 14.07, 17.75, 21.22, 24.82];
-  props.shots.forEach((shot, i) => {
-    assert.ok(Math.abs(shot.start - expectedStarts[i]) < 0.02, `第 ${i + 1} 镜起始时间应与人声对齐`);
-    assert.equal(shot.start, props.screens[i].start, `第 ${i + 1} 镜画面切镜与字幕起始须一致`);
-  });
-
-  const gfPier = evaluateRemotionFrameState(props, 18.4);
-  const gfBoat = evaluateRemotionFrameState(props, 20.6);
-  assert.equal(gfPier.actors.length, 2, '第 6 镜应同时包含主角与女朋友（对象）两名真人/美少女角色');
-  assert.equal(gfPier.actors[1].characterId, 'gemini');
-  assert.ok(gfBoat.actors[1].x > gfPier.actors[1].x + 350, '第 6 镜后半句女朋友角色应登上草船随草船丞相远去');
-
-  // 反 PPT 静态检测：全片无 >=1.0s 的冻结区间
-  const activity = auditRemotionPropsActivity(props);
-  assert.equal(activity.passed, true, `不应存在静态区间: ${JSON.stringify(activity.staticStretches)}`);
+test('旧 MV 模式明确拒绝并指向新框架', async () => {
+  await assert.rejects(buildRemotionInputPropsFromCli(['--mode','mv']), /旧 MV 渲染入口已退役/);
 });
 
 test('Remotion 通用引擎无缝评估 Day 系列单集 (episode -> inputProps -> frame state)', () => {
@@ -155,124 +105,6 @@ test('Remotion 通用引擎无缝评估 Day 系列单集 (episode -> inputProps 
   assert.equal(activity.passed, true);
 });
 
-test('双腿剪刀步态图集生成与全片正常走动 + 第5镜白米饭积蓄校验', async () => {
-  const built = await ensureWalkRigAtlases();
-  for (const key of Object.keys(WALK_RIG_BUILDERS)) {
-    assert.ok(built[key] && fs.existsSync(built[key]), `缺少程序化步态图集: ${key}`);
-    assert.ok(fs.statSync(built[key]).size > 20_000, `步态图集体积异常: ${key}`);
-  }
-
-  const props = adaptMvToRemotionProps({ spec: mvSpec });
-
-  // 镜1、镜3(推山)、镜6(栈桥散步与追船)、镜7(豆包递梨)、镜8(三迁街巷) 位移期间须遍历多个不同迈步帧，绝不锁死单帧滑步
-  const walkWindows = [
-    { label: '镜1主角追薪水', actorIdx: 0, start: 1.95, end: 3.35 },
-    { label: '镜3龙女迈步推靠山', actorIdx: 1, start: 8.85, end: 10.65 },
-    { label: '镜6女朋友散步登船', actorIdx: 1, start: 17.80, end: 19.30 },
-    { label: '镜7豆包迈步递梨', actorIdx: 1, start: 21.30, end: 22.80 },
-    { label: '镜8主角三迁街巷行走', actorIdx: 0, start: 25.00, end: 27.30 },
-  ];
-  for (const w of walkWindows) {
-    const framesSeen = new Set();
-    for (let t = w.start; t <= w.end; t += 0.08) {
-      const st = evaluateRemotionFrameState(props, t);
-      const actor = st.actors[w.actorIdx];
-      assert.ok(actor.atlas?.endsWith('_2leg'), `${w.label} 在 t=${t.toFixed(2)} 应使用 *_2leg 双腿行走图集，实际为 ${actor.atlas}`);
-      assert.equal(actor.walking, true, `${w.label} 在 t=${t.toFixed(2)} walking 应为 true`);
-      assert.ok(Math.abs(actor.dy) < 1.0, `${w.label} 在 t=${t.toFixed(2)} 不应发生上下乱跳 (dy=${actor.dy})`);
-      framesSeen.add(actor.atlasFrame);
-    }
-    assert.ok(framesSeen.size >= 8, `${w.label} 行走期间应遍历至少 8 个不同双腿迈步相位帧，实际 ${framesSeen.size}`);
-  }
-
-  // 停步后须无缝落定到 100% 同体 *_pet 待机图集（杜绝原地踏步或跨立绘突变）
-  assert.equal(evaluateRemotionFrameState(props, 3.80).actors[0].atlas, 'whale_idle_side_pet');
-  assert.equal(evaluateRemotionFrameState(props, 7.00).actors[0].atlas, 'whale_idle_side_pet');
-  assert.equal(evaluateRemotionFrameState(props, 10.20).actors[0].atlas, 'whale_idle_sad_pet');
-  assert.equal(evaluateRemotionFrameState(props, 20.10).actors[1].atlas, 'gemini_idle_pet');
-  assert.equal(evaluateRemotionFrameState(props, 23.80).actors[1].atlas, 'doubao_idle_side_pet');
-
-  // 像素级红线校验（v14 起与立绘坐标解耦）：
-  //   1) 脚底基线以下不得有任何像素（悬空残鞋 / 出血）；
-  //   2) 下半身（y >= 370）必须是单一连通块 —— 出现第 2、3 个孤立块就说明有断腿或悬空残鞋。
-  for (const rigKey of ['whale_idle_side_pet', 'whale_idle_happy_pet', 'whale_idle_sad_pet', 'whale_walk_side_2leg']) {
-    const img = await loadImage(path.resolve(built[rigKey]));
-    const c = createCanvas(CELL_W, CELL_H);
-    const ctx = c.getContext('2d');
-    for (let f = 0; f < 8; f++) {
-      ctx.clearRect(0, 0, CELL_W, CELL_H);
-      ctx.drawImage(img, f * CELL_W, 0, CELL_W, CELL_H, 0, 0, CELL_W, CELL_H);
-      const full = ctx.getImageData(0, 0, CELL_W, CELL_H).data;
-      for (let y = 408; y < CELL_H; y++) {
-        for (let x = 0; x < CELL_W; x++) {
-          assert.ok(full[(y * CELL_W + x) * 4 + 3] <= 12, `${rigKey} 第 ${f} 帧脚底基线以下不应有像素 (${x},${y})`);
-        }
-      }
-      const low = ctx.getImageData(0, 370, CELL_W, CELL_H - 370).data;
-      const seen = new Uint8Array(CELL_W * (CELL_H - 370));
-      const h = CELL_H - 370;
-      const compSizes = [];
-      for (let y = 0; y < h; y++) {
-        for (let x = 0; x < CELL_W; x++) {
-          const p = y * CELL_W + x;
-          if (seen[p] || low[p * 4 + 3] <= 12) continue;
-          let size = 0;
-          const stack = [p];
-          seen[p] = 1;
-          while (stack.length) {
-            const q = stack.pop();
-            size++;
-            const qx = q % CELL_W;
-            const qy = (q / CELL_W) | 0;
-            for (let oy = -1; oy <= 1; oy++) {
-              for (let ox = -1; ox <= 1; ox++) {
-                const nx = qx + ox;
-                const ny = qy + oy;
-                if (nx < 0 || nx >= CELL_W || ny < 0 || ny >= h) continue;
-                const np = ny * CELL_W + nx;
-                if (seen[np] || low[np * 4 + 3] <= 12) continue;
-                seen[np] = 1;
-                stack.push(np);
-              }
-            }
-          }
-          compSizes.push(size);
-        }
-      }
-      // 下半身最多允许两条腿（两块），出现第 3 块足尺寸连通块 = 断腿 / 悬空残鞋
-      const solid = compSizes.filter((n) => n >= 60);
-      assert.ok(
-        solid.length <= 2,
-        `${rigKey} 第 ${f} 帧下半身出现 ${solid.length} 块足尺寸连通块（最多只应有两条腿），疑似断腿/悬空残鞋`
-      );
-    }
-  }
-
-  // 镜5「偷光积蓄」道具组件源码校验：青花瓷碗白米饭一粒一粒快速被偷走，且全局视频层零右上角水印
-  const propsLayerSrc = fs.readFileSync(new URL('./components/InteractivePropsLayer.jsx', import.meta.url), 'utf8');
-  assert.ok(
-    propsLayerSrc.includes('RICE_GRAINS') && propsLayerSrc.includes('flying-grain-') && propsLayerSrc.includes('白米饭'),
-    '第5镜 savings_jar_beam 应渲染白米饭一粒一粒快速被偷走的颗粒流'
-  );
-  assert.ok(!propsLayerSrc.includes('6 枚金币沿弧线被隔壁墙洞吸光'), '第5镜旧版金币吸光逻辑不应残留');
-
-  const subtitleLayerSrc = fs.readFileSync(new URL('./components/LyricAndSubtitleLayer.jsx', import.meta.url), 'utf8');
-  assert.ok(!subtitleLayerSrc.includes('非官方同人'), 'Remotion 字幕层不应再渲染任何右上角水印角标');
-
-  const compositorSrc = fs.readFileSync(new URL('../engine/scene_compositor.mjs', import.meta.url), 'utf8');
-  assert.ok(!compositorSrc.includes('非官方同人'), 'Day 系列通用合成器不应再渲染任何右上角水印角标');
-
-  // 封面尺寸与零水印验收报告校验（3:4 竖版 1080x1440 + 4:3 横版 1440x1080）
-  const cover34 = await loadImage(fileURLToPath(new URL('../../番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_3比4.png', import.meta.url)));
-  const cover43 = await loadImage(fileURLToPath(new URL('../../番外MV/我怀疑大禹治水/封面/大禹治水MV_封面_4比3.png', import.meta.url)));
-  assert.equal(cover34.width, 1080);
-  assert.equal(cover34.height, 1440);
-  assert.equal(cover43.width, 1440);
-  assert.equal(cover43.height, 1080);
-});
-
-// 角色姿势 PNG（whale_*.png）是外部素材，未随仓库分发。缺图时这条用例跳过，
-// 而不是让整个套件因为素材缺失崩掉；素材就位后自动恢复。
 const HAVE_WHALE_ART = fs.existsSync(new URL('../../tools/engine/whale_rig/whale_point.png', import.meta.url));
 test('Day 系列通用单集模板 (day_episode.template.spec.mjs): 双后端兼容双骨骼蒙皮步态与同体待机',
   { skip: !HAVE_WHALE_ART && '缺少 whale_*.png 姿势素材（外部素材，未随仓库分发）' }, async () => {

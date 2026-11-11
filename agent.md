@@ -1,3 +1,5 @@
+> **MV 框架新覆盖规则（2026-11-11）**：网页 three.js + Remotion 通用 MV 框架现行入口为 `tools/mv-framework/README.md`；旧 MV 工程源码已按用户确认移除，历史成片、素材和文档保留。以下旧 MV 的构建命令与现行状态均属历史；Day 正传继续用原共用引擎。
+
 > **仓库结构（2026-11-08 清理，覆盖下文所有旧路径）**：顶层只剩 `Day/`、`tools/`、`assets/`、`番外MV/`、`00_运营总览/`、`参考资料/`、`video-fx/`。
 > - 所有集的数据文案（文案/台词/字幕/分镜/方向/发布物料/验收记录/alignment JSON/分镜 spec）统一在 **`Day/DayN/`**；原来的 `DayN/` 前缀一律加 `Day/`。
 > - **`tools/dayN制作/` 单集目录已全部删除**：通用模板在 `tools/engine/day_episode.template.spec.mjs`，

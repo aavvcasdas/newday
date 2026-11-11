@@ -1,3 +1,7 @@
+## MV 现行框架（覆盖下方历史 MV 入口）
+
+MV 新制作统一使用 `tools/mv-framework/README.md` 的网页 three.js + Remotion 框架；旧 MV 工程源码已删除，旧文档命令仅供历史参考。历史素材、成片、文档保留；Day 正传继续使用原共用引擎。不同歌曲需自行编写分镜与时间轴；不得声称自动音频对齐或已完成真人审片。
+
 # 本仓库创作入口
 
 先读根目录 `agent.md` 的“现行覆盖规则”，其中第29–31条是 Day12 与人格移植的本轮口径。
@@ -24,7 +28,7 @@ Day12当前指定原音源版入口为 `Day/Day12/README.md`、`Day/Day12/Day12�
 
 用户要求加入`shuaizenge/ai-girls`豆包原有素材、移除全部笨鱼立绘。当前执行方案为`Day/Day12/Day12_v2修复导演表.md`和`episode.production.spec.mjs`的performanceVersion=2；旧固定机位/idleMotion=0是历史，不得重新覆盖本轮已授权的连续微呼吸、单次有动机运镜与转场。固定PNG无口型/眨眼/局部五官/真实头转；已有姿态仅做身体变换＋PNG切换。v2不拿脸ROI运动作“活”指标。技术结果看成片SHA绑定报告；人工动态审看为独立pending，禁止把自动差分/静帧当作真人动态批准。豆包是来源仓库已有生成参考全身，非官方全身原图；本轮只抠除背景，记录来源/NOTICE，不擅自声明商用开放授权。
 
-## 独立歌词MV现行入口（覆盖下方 v2 历史记录）
+## 独立歌词MV历史记录（技术入口已由顶部新框架覆盖）
 
 - **16-bit 轻像素立体书/RPG 番外MV复刻超越（《达拉崩吧》《童话镇》等）**：统一调用 `.claude/skills/pixel-mv-remake/SKILL.md`（环境初始化 `sh .claude/skills/pixel-mv-remake/scripts/bootstrap.sh`，像素中文字库自动烘焙 `node .claude/skills/pixel-mv-remake/scripts/bake_glyphs.mjs`）。强制规则：主角与全部地图小人用**鲸鱼娘 (`whale`)**、恶龙/巨兽用 **GPT 龙娘 (`gpt`)**、**公主必须用 Claude 大小姐 (`claude`) 严禁豆包演公主**；角色采用 `640×360` 轻像素层保证清晰辨识度；开场 1–2 秒闪电跃入立体书，前奏/间奏/吟唱段高频多场景切镜并配齐语义道具，遵循零水印新规。
 

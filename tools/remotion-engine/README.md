@@ -1,3 +1,5 @@
+> **现行入口变更：** 本目录只用于 Day 正传；旧 MV 入口已退役。新 MV 使用 `tools/mv-framework/README.md`。下文关于 MV 入口、旧单曲脚本的内容仅供历史参考，不再可执行。
+
 # 通用动态 Remotion 舞台与动画引擎 (`tools/remotion-engine/`)
 
 本目录提供与具体剧本/歌曲彻底解耦的 **数据驱动 Remotion 渲染引擎**，同时支持：

@@ -1,0 +1,12 @@
+import React from 'react';
+import { Composition, registerRoot } from 'remotion';
+import { createMVComp, type MVProps } from './MVComp';
+import { SHOTS_A } from './shotsA';
+import { SHOTS_B } from './shotsB';
+import { LYRICS, makeTimeline } from './tonghuazhen';
+import './font.css';
+const shots = [...SHOTS_A, ...SHOTS_B];
+const shotMap = Object.fromEntries(shots.map(s => [s.id,s]));
+const MV = createMVComp(shotMap);
+const defaults: MVProps = {timeline: makeTimeline(), lyrics: LYRICS, title:'童话镇', subtitle:'AI 娘图鉴 · 立体童话书', endTitle:'很久很久以后', endShot:'OUT', audioSrc:null, audioOffset:0, showLyrics:true};
+registerRoot(() => <Composition id="MV" component={MV} width={1920} height={1080} fps={30} durationInFrames={defaults.timeline.frames} defaultProps={defaults} calculateMetadata={({props})=>({durationInFrames:props.timeline.frames})}/>);

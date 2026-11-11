@@ -1,8 +1,8 @@
 #!/usr/bin/env node
-// render_cli.mjs — 通用数据驱动 Remotion 渲染与校验 CLI（同时支持 Day 系列单集与音乐 MV）
+// render_cli.mjs — Day 系列数据驱动 Remotion 渲染与校验 CLI
 // 用法：
 //   Day 系列：node tools/remotion-engine/render_cli.mjs --mode episode --spec <episode.spec.mjs> --alignment <json> --subtitle-file <json> [--voice <wav>] [--dry-run|--bundle-check|--out <mp4>]
-//   音乐 MV ：node tools/remotion-engine/render_cli.mjs --mode mv --spec <mv.spec.mjs> [--lyrics <json>] [--audio <mp3/wav>] [--mux-audio <source>] [--still-frames f1,f2 --out-dir <dir>] [--out <mp4>]
+//   音乐 MV：使用 tools/mv-framework/render.mjs。
 
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -11,7 +11,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { adaptEpisodeToRemotionProps } from '../engine/remotion_episode_adapter.mjs';
-import { adaptMvToRemotionProps } from './mv_adapter.mjs';
 import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
 import { auditTimelineActivity, semanticStateAt } from '../engine/timeline_core.mjs';
 import { POSES } from '../engine/whale_rig/whale_poses.mjs';
@@ -187,7 +186,8 @@ async function prepareHeadlessChromium() {
 }
 
 export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '') {
-  const mode = argOf(argv, '--mode') || 'mv';
+  const mode = argOf(argv, '--mode') || 'episode';
+  if (mode !== 'episode') throw new Error('旧 MV 渲染入口已退役，请使用 tools/mv-framework/render.mjs');
   const specPath = argOf(argv, '--spec');
   if (!specPath) throw new Error('缺少 --spec <spec.mjs>');
   const spec = await loadModuleSpec(specPath);
@@ -221,23 +221,7 @@ export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2
     return props;
   }
 
-  const lyricsPath = argOf(argv, '--lyrics');
-  const audioPath = argOf(argv, '--audio') || argOf(argv, '--voice');
-  const lyrics = lyricsPath ? JSON.parse(fs.readFileSync(lyricsPath, 'utf8')) : null;
-  const props = adaptMvToRemotionProps({
-    spec,
-    lyrics,
-    audioPath,
-    repoRoot: REPO_ROOT,
-    assetUrlMap,
-  });
-  props.fontUrl = fontUrl;
-  props.externalAudioMux = Boolean(muxAudio);
-  if (props.audioSrc && baseUrl && !muxAudio) {
-    const relAudio = path.relative(REPO_ROOT, props.audioSrc);
-    if (!relAudio.startsWith('..')) props.audioUrl = `${baseUrl}/${encodeURI(relAudio)}`;
-  }
-  return props;
+  throw new Error(`不支持的模式: ${mode}`);
 }
 
 export function auditRemotionPropsActivity(props) {

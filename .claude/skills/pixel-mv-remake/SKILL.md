@@ -4,8 +4,10 @@ description: >-
   将参考歌曲MV（立体书/剪影/RPG/童话叙事MV）用本仓库 AI 娘图鉴全员进行 16-bit 轻像素化复刻与超越。
   当用户提供参考 MV/歌曲与歌词，要求把人物像素化替换为项目角色、保留角色辨识度（轻像素不糊）、
   主角全图走位都是鲸鱼娘、1–2 秒快速跃入立体书、压缩冗长前奏并加密每个剧情段的场景与道具细节时使用。
-compatibility: Node.js 20+, Python 3.11+, Lemo-Opuscar pixel-rpg pipeline; run scripts/bootstrap.sh first.
+compatibility: Node.js 22+, Remotion and Three.js; see tools/mv-framework/README.md.
 ---
+> **现行技术入口（2026-11-11）：** 本文件下方提及的旧像素引擎、旧分镜源码和构建命令为历史资料；新 MV 必须使用 `tools/mv-framework/README.md` 的网页 three.js + Remotion 框架。角色身份、无水印和人工审查要求仍适用；时间轴和各歌分镜须独立制作。
+
 
 # Pixel MV Remake & Surpass（AI娘轻像素立体书/RPG 番外MV复刻超越规范）
 

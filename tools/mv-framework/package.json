@@ -1,0 +1,31 @@
+{
+  "name": "newday-mv-framework",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --import tsx --test test/*.test.ts",
+    "atlas": "node scripts/build-atlas.mjs",
+    "render": "node render.mjs",
+    "typecheck": "tsc --noEmit",
+    "check:scenes": "node --import tsx scripts/check-scenes.mjs"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.436",
+    "@remotion/renderer": "4.0.436",
+    "@sparticuz/chromium": "153.0.0",
+    "pngjs": "7.0.0",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "remotion": "4.0.436",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@types/node": "22.19.17",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.170.0",
+    "tsx": "^4.20.6",
+    "typescript": "5.9.3"
+  }
+}
