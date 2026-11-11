@@ -4,7 +4,7 @@
 import React, { useLayoutEffect, useRef } from 'react';
 import { AbsoluteFill } from 'remotion';
 import type { AtlasData, CharId } from './actors';
-import { SPEAKER_NAME, SPEAKER_PORTRAIT } from './project';
+import { SPEAKER_NAME } from './project';
 
 export interface CueState { i: number; p: number; age: number }
 
@@ -48,7 +48,7 @@ const Portrait: React.FC<{ atlas: AtlasData; cell: string; size: number }> = ({ 
 };
 
 /** 对话条：左边头像，右边名牌 + 台词。一屏一句，整句同时出现。 */
-export const DialogBar: React.FC<{ text: string; cue: CueState; fps: number; S: number; who: CharId | null; atlas: AtlasData | null }> = ({ text, cue, fps, S, who, atlas }) => {
+export const DialogBar: React.FC<{ text: string; cue: CueState; fps: number; S: number; who: CharId | null; face: string | null; atlas: AtlasData | null }> = ({ text, cue, fps, S, who, face, atlas }) => {
   const a = Math.min(1, cue.age * fps / 4);
   const dy = (1 - Math.min(1, cue.age * fps / 5)) * 14 * S;
   const long = text.length > 22;
@@ -57,14 +57,14 @@ export const DialogBar: React.FC<{ text: string; cue: CueState; fps: number; S: 
       <div
         style={{
           display: 'flex', alignItems: 'center', gap: 22 * S, maxWidth: 1660 * S,
-          padding: `${14 * S}px ${40 * S}px ${14 * S}px ${who && atlas ? 16 * S : 40 * S}px`,
+          padding: `${14 * S}px ${40 * S}px ${14 * S}px ${who && face && atlas ? 16 * S : 40 * S}px`,
           background: 'rgba(24,18,44,.88)', border: `${4 * S}px solid #ffd166`, borderRadius: 18 * S,
           boxShadow: `0 ${8 * S}px ${30 * S}px rgba(0,0,0,.35)`, opacity: a, transform: `translateY(${dy}px)`,
         }}
       >
-        {who && atlas && (
+        {who && face && atlas && (
           <div style={{ flex: 'none', padding: 4 * S, background: '#2c2350', border: `${3 * S}px solid #ffd166`, borderRadius: 12 * S, overflow: 'hidden' }}>
-            <Portrait atlas={atlas} cell={SPEAKER_PORTRAIT[who]} size={128 * S} />
+            <Portrait atlas={atlas} cell={face} size={128 * S} />
           </div>
         )}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 4 * S }}>

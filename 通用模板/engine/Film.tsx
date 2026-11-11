@@ -100,7 +100,7 @@ export function makeFilm(project: ProjectDef): React.FC<FilmProps> {
         )}
 
         {cue && project.subtitle === 'lyric' && <LyricBar text={project.lines[cue.i]} cue={cue} fps={fps} S={S} />}
-        {cue && project.subtitle === 'dialog' && <DialogBar text={project.lines[cue.i]} cue={cue} fps={fps} S={S} who={project.speakers?.[cue.i] ?? null} atlas={atlas} />}
+        {cue && project.subtitle === 'dialog' && <DialogBar text={project.lines[cue.i]} cue={cue} fps={fps} S={S} who={project.speakers?.[cue.i] ?? null} face={project.faces?.[cue.i] ?? null} atlas={atlas} />}
 
         {endA > 0.01 && end && (
           <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center', opacity: endA }}>

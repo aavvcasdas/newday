@@ -11,9 +11,10 @@
 //   sheet                       分镜总览图（每个镜头 62% 处一格）→ <输出>_分镜总览.jpg
 //   frames   [--from a --to b]  逐帧渲染 PNG 序列（每 300 帧一块，中断后重跑会续渲）
 //   encode   [--bitrate 4700k | --crf 18] [--preset slow]   PNG 序列 → 无声 H.264
-//   mux                         音轨对齐混入 → <输出>.mp4 + <输出>.srt
+//   mux                         音轨对齐混入 → <输出>.mp4 + <输出>.srt（只接受按这条音源实测过的卡点）
+//   sample                      没有音源时：<输出>_无声样片.mp4（文件名写明是样片）
 //   qa       [--skip-frames]    自检 → <输出目录>/qa.json
-//   full                        frames + encode + mux + qa + sheet
+//   full                        frames + encode + (mux | sample) + qa + sheet
 //
 // 通用选项：--cues <文件>  临时换一份卡点（默认用作品目录里的 cues.json）
 //           --work <目录>  中间文件目录（默认 $FILM_WORK 或 系统临时目录/newday-film/<id>）
@@ -40,7 +41,7 @@ const FONT_DIR = path.join(ENGINE, 'assets/fonts');
 
 const argv = process.argv.slice(2);
 const mode = argv[0];
-const USAGE = '用法：node 通用模板/cli/film.mjs <info|align|stills|sheet|frames|encode|mux|qa|full> <作品目录> [选项]';
+const USAGE = '用法：node 通用模板/cli/film.mjs <info|align|stills|sheet|frames|encode|mux|sample|qa|full> <作品目录> [选项]';
 if (!mode || !argv[1] || argv[1].startsWith('--')) { console.error(USAGE); process.exit(2); }
 const PROJ = path.resolve(argv[1]);
 const rest = argv.slice(2);
@@ -59,6 +60,7 @@ if (/(^|[\\/])(out|build|dist|target|coverage)([\\/]|$)/.test(path.relative(REPO
 const WORK = path.resolve(opt('--work', process.env.FILM_WORK || path.join(os.tmpdir(), 'newday-film', film.id)));
 const FRAMES = path.join(WORK, 'frames');
 const QA_FILE = path.join(OUT_DIR, 'qa.json');
+const SAMPLE = `${OUT_BASE}_无声样片.mp4`;
 const rel = (p) => path.relative(REPO, p) || '.';
 
 // —— ffmpeg / ffprobe：优先用环境变量或系统里的，没有就用 Remotion 自带的精简版 ——
@@ -74,6 +76,39 @@ const py = (script, args, o = {}) => execFileSync(process.env.PYTHON || 'python3
 const sha256 = (file) => crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex');
 const framePath = (f) => path.join(FRAMES, `f${String(f).padStart(5, '0')}.png`);
 const haveFrame = (f) => { try { return fs.statSync(framePath(f)).size > 0; } catch { return false; } };
+
+/**
+ * 画面源码指纹：从 project.tsx 出发顺着 import 走一遍，把这部片子真正用到的源文件（引擎 + 镜头 + 图集 + 字体）哈希起来。
+ * 帧序列和 qa.json 都记着它：源码一改，旧帧作废；也能事后核对「仓库里的成片是不是现在这份源码渲出来的」。
+ * 卡点（cues.json）不算在内——它体现在时间轴里，另有指纹。
+ */
+function sourceFingerprint() {
+  const seen = new Map();
+  const exts = ['', '.ts', '.tsx', '.mjs', '.js', '.json', '/index.ts', '/index.tsx'];
+  const resolve = (from, spec) => {
+    let base;
+    if (spec === '@tpl' || spec.startsWith('@tpl/')) base = path.join(ENGINE, spec.slice(5));
+    else if (spec.startsWith('.')) base = path.resolve(path.dirname(from), spec);
+    else return null; // npm 包：版本由 package-lock.json 锁定，不在这里算
+    for (const e of exts) { const f = base + e; if (fs.existsSync(f) && fs.statSync(f).isFile()) return f; }
+    throw new Error(`[指纹] ${rel(from)} 引用的 ${spec} 找不到`);
+  };
+  const visit = (file) => {
+    if (seen.has(file)) return;
+    const buf = fs.readFileSync(file);
+    seen.set(file, crypto.createHash('sha256').update(buf).digest('hex'));
+    if (!/\.(tsx?|mjs|js)$/.test(file)) return;
+    const src = buf.toString('utf8');
+    const re = /(?:import|export)\s[^'"]*?from\s*['"]([^'"]+)['"]|import\s*['"]([^'"]+)['"]|import\(\s*['"]([^'"]+)['"]\s*\)/g;
+    for (let m; (m = re.exec(src));) { const f = resolve(file, m[1] || m[2] || m[3]); if (f) visit(f); }
+  };
+  visit(path.join(PROJ, 'project.tsx'));
+  visit(path.join(ENGINE, 'register.tsx'));
+  const h = crypto.createHash('sha256');
+  const files = [...seen.keys()].filter((f) => path.basename(f) !== 'cues.json').sort();
+  for (const f of files) h.update(rel(f)).update('\0').update(seen.get(f)).update('\0');
+  return { sha256: h.digest('hex'), files: files.map(rel) };
+}
 
 const audioFile = film.audio?.file ? path.resolve(PROJ, film.audio.file) : null;
 const needAudio = () => {
@@ -141,6 +176,9 @@ async function openComposition() {
   const info = composition.props.__info;
   if (!info) throw new Error('合成没有返回时间轴信息（__info）');
   if (composition.durationInFrames !== info.frames) throw new Error('合成总帧数与时间轴不一致');
+  const fp = sourceFingerprint();
+  info.source_sha256 = fp.sha256;
+  info.source_files = fp.files;
   fs.mkdirSync(WORK, { recursive: true });
   fs.writeFileSync(path.join(WORK, 'info.json'), JSON.stringify(info, null, 1));
   opened = { renderer, serveUrl, composition, browserExecutable, chromiumOptions, props, info };
@@ -157,6 +195,12 @@ async function info() {
   const { info: I } = await openComposition();
   console.log(`${I.title}（${I.kind}）· ${I.width}×${I.height} @ ${I.fps}fps · ${I.frames} 帧 · ${I.duration.toFixed(3)}s · ${I.shots.length} 镜 / ${I.lines.length} 句`);
   for (const s of I.shots) console.log(`  ${s.id.padEnd(6)} ${String(Math.ceil(s.a * I.fps - 1e-9)).padStart(5)}帧  ${s.a.toFixed(3).padStart(8)}–${s.b.toFixed(3).padStart(8)}s  ${s.cue >= 0 ? `第${s.cue + 1}句` : '      '}  ${s.title}`);
+  console.log(`源码指纹 ${I.source_sha256.slice(0, 16)}…（${I.source_files.length} 个源文件）`);
+  if (fs.existsSync(QA_FILE)) {
+    const was = JSON.parse(fs.readFileSync(QA_FILE, 'utf8')).project?.source_sha256;
+    if (!was) console.log('  成片/qa.json 里没有记录源码指纹');
+    else console.log(was === I.source_sha256 ? '  与 成片/qa.json 记录的一致：仓库里的成片就是这份源码渲的' : `  ⚠ 与 成片/qa.json 记录的（${was.slice(0, 16)}…）不一致：源码在出片之后改过，成片需要重渲`);
+  }
   return I;
 }
 
@@ -185,11 +229,11 @@ async function frames() {
   const to = Number(opt('--to', o.info.frames - 1));
   const chunk = Number(opt('--chunk', 300));
   const concurrency = Number(opt('--concurrency', Math.max(1, Math.min(4, os.cpus().length))));
-  // 换了卡点 / 改了镜头后旧帧作废：帧目录里记着上次渲染用的时间轴指纹
-  const stampFile = path.join(FRAMES, '_timeline.sha');
-  const stamp = crypto.createHash('sha256').update(JSON.stringify([o.info.shots, o.info.starts, o.info.ends, o.info.frames])).digest('hex');
+  // 换了卡点 / 改了镜头或引擎之后旧帧作废：帧目录里记着上次渲染用的「时间轴 + 源码」指纹
+  const stampFile = path.join(FRAMES, '_stamp.sha');
+  const stamp = crypto.createHash('sha256').update(JSON.stringify([o.info.shots, o.info.starts, o.info.ends, o.info.frames, o.info.source_sha256])).digest('hex');
   if (fs.existsSync(stampFile) && fs.readFileSync(stampFile, 'utf8') !== stamp && !flag('--keep')) {
-    console.log('[frames] 时间轴变了，清空旧帧重渲（要保留旧帧就加 --keep）');
+    console.log('[frames] 时间轴或源码变了，清空旧帧重渲（确定旧帧还能用就加 --keep）');
     fs.rmSync(FRAMES, { recursive: true, force: true }); fs.mkdirSync(FRAMES, { recursive: true });
   }
   fs.writeFileSync(stampFile, stamp);
@@ -270,11 +314,33 @@ function srtText(I) {
   return I.lines.map((txt, i) => `${i + 1}\n${f(I.starts[i])} --> ${f(I.ends[i])}\n${txt}\n`).join('\n');
 }
 
+/** 出成片的前提：卡点是按「现在这条音源」实测过的。估出来的轴、按另一条音频测的轴，一律不许混音出片 */
+function requireMeasured() {
+  const src = needAudio();
+  const cues = JSON.parse(fs.readFileSync(CUES_FILE, 'utf8'));
+  if (cues.measured !== true) die(`${rel(CUES_FILE)} 标着 measured=false（卡点是估的）：先跑 align 按音源实测，再出成片`);
+  const was = cues.source?.audio_sha256;
+  if (!was) die(`${rel(CUES_FILE)} 没有记录它是按哪条音频测的（source.audio_sha256）：重新跑一次 align`);
+  if (was !== sha256(src)) die(`${rel(CUES_FILE)} 是按另一条音频测的（SHA256 对不上）：换了音源就要重新 align`);
+  return src;
+}
+
+/** 没有音源时的产物：无声样片（文件名里写明，免得被当成成片） */
+function sample() {
+  const I = savedInfo();
+  const videoFile = opt('--video', path.join(WORK, 'video.mp4'));
+  if (!fs.existsSync(videoFile)) die(`没有画面流 ${videoFile}，先跑 encode`);
+  fs.mkdirSync(OUT_DIR, { recursive: true });
+  fs.copyFileSync(videoFile, SAMPLE);
+  fs.writeFileSync(SAMPLE.replace(/\.mp4$/, '.srt'), srtText(I));
+  console.log(`SAMPLE_OK ${rel(SAMPLE)} ${(fs.statSync(SAMPLE).size / 1e6).toFixed(1)} MB（无声样片，不是成片）`);
+}
+
 function mux() {
   const I = savedInfo();
   const videoFile = opt('--video', path.join(WORK, 'video.mp4'));
   if (!fs.existsSync(videoFile)) die(`没有画面流 ${videoFile}，先跑 encode`);
-  const src = needAudio();
+  const src = requireMeasured();
   const dur = I.frames / I.fps;
   const SR = 48000;
   const srcWav = wavOf(src, SR, 'source');
@@ -314,27 +380,41 @@ function qa() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const final = `${OUT_BASE}.mp4`;
   const infoFile = path.join(WORK, 'info.json');
+  const silent = !audioFile;
+  const PROBE = 'stream=codec_type,codec_name,profile,pix_fmt,color_space,color_range,width,height,r_frame_rate,nb_frames,duration,sample_rate,channels,bit_rate:format=duration,size,bit_rate';
+  if (fs.existsSync(QA_FILE)) fs.rmSync(QA_FILE); // 每次自检都从头写，不留上一次的结论
   if (!flag('--skip-frames')) py('qa.py', ['frames', FRAMES, '--info', infoFile, '--qa', QA_FILE]);
-  py('qa.py', ['timing', '--info', infoFile, '--cues', CUES_FILE, '--qa', QA_FILE]);
-  if (fs.existsSync(final) && audioFile) {
+  py('qa.py', ['timing', '--info', infoFile, '--cues', CUES_FILE, '--qa', QA_FILE, ...(silent ? ['--silent-sample'] : [])]);
+  const data = JSON.parse(fs.readFileSync(QA_FILE, 'utf8'));
+  const frameCheck = (file, probed, problems) => {
+    const v = probed.streams.find((x) => x.codec_type === 'video');
+    if (Number(v.nb_frames) !== I.frames) problems.push(`${path.basename(file)} 的画面是 ${v.nb_frames} 帧，时间轴是 ${I.frames} 帧`);
+    if (v.width !== I.width || v.height !== I.height) problems.push(`${path.basename(file)} 的分辨率是 ${v.width}×${v.height}`);
+  };
+  if (!silent && fs.existsSync(final)) {
     const srcWav = wavOf(needAudio(), 48000, 'source');
     const outWav = path.join(WORK, 'final_audio_48000.wav');
     ff(['-y', '-i', final, '-vn', '-ac', '2', '-ar', '48000', '-c:a', 'pcm_s16le', '-f', 'wav', outWav]);
     ff(['-v', 'error', '-i', final, '-map', '0:v:0', '-map', '0:a:0', '-c:v', 'rawvideo', '-c:a', 'pcm_s16le', '-f', 'null', '-']); // 全片解码一遍，坏流会在这里报错
     const mixReport = path.join(WORK, 'mix_report.json');
     py('qa.py', ['final', final, srcWav, outWav, '--info', infoFile, '--offset', String(film.audio.offset || 0), '--qa', QA_FILE, ...(fs.existsSync(mixReport) ? ['--mix-report', mixReport] : [])]);
-    const data = JSON.parse(fs.readFileSync(QA_FILE, 'utf8'));
+    data.final = JSON.parse(fs.readFileSync(QA_FILE, 'utf8')).final;
     data.final.full_decode = 'ok';
-    data.final.probe = probe(final, 'stream=codec_type,codec_name,profile,pix_fmt,color_space,color_range,width,height,r_frame_rate,nb_frames,duration,sample_rate,channels,bit_rate:format=duration,size,bit_rate');
-    fs.writeFileSync(QA_FILE, JSON.stringify(data, null, 1));
+    data.final.probe = probe(final, PROBE);
+    frameCheck(final, data.final.probe, data.final.problems);
+  } else if (silent && fs.existsSync(SAMPLE)) {
+    ff(['-v', 'error', '-i', SAMPLE, '-map', '0:v:0', '-c:v', 'rawvideo', '-f', 'null', '-']);
+    data.sample = { file: path.basename(SAMPLE), bytes: fs.statSync(SAMPLE).size, sha256: sha256(SAMPLE), full_decode: 'ok', probe: probe(SAMPLE, PROBE), problems: [] };
+    frameCheck(SAMPLE, data.sample.probe, data.sample.problems);
   } else {
-    console.log('[qa] 没有成片或没有音源，跳过成片音画检查');
+    console.log('[qa] 还没有成片 / 样片，跳过成片检查');
   }
-  const data = JSON.parse(fs.readFileSync(QA_FILE, 'utf8'));
-  data.project = { id: I.id, kind: I.kind, title: I.title, frames: I.frames, duration: I.duration, shots: I.shots.length, lines: I.lines.length };
+  data.project = { id: I.id, kind: I.kind, title: I.title, frames: I.frames, duration: I.duration, shots: I.shots.length, lines: I.lines.length, source_sha256: I.source_sha256, source_files: I.source_files.length };
+  data.checked_at = new Date().toISOString();
   fs.writeFileSync(QA_FILE, JSON.stringify(data, null, 1));
-  const problems = [...(data.frames?.problems || []), ...(data.timing?.problems || []), ...(data.final?.problems || [])];
+  const problems = [...(data.frames?.problems || []), ...(data.timing?.problems || []), ...(data.final?.problems || []), ...(data.sample?.problems || [])];
   console.log(problems.length ? `QA_PROBLEMS ${problems.length}\n  - ${problems.join('\n  - ')}` : `QA_OK ${rel(QA_FILE)}`);
+  for (const n of data.timing?.notes || []) console.log(`  注：${n}`);
   if (problems.length) process.exitCode = 1;
 }
 
@@ -361,7 +441,13 @@ try {
   else if (mode === 'encode') encode();
   else if (mode === 'mux') mux();
   else if (mode === 'qa') qa();
-  else if (mode === 'full') { await frames(); encode(); if (audioFile) mux(); qa(); await sheet(); }
+  else if (mode === 'sample') sample();
+  else if (mode === 'full') {
+    if (audioFile) requireMeasured(); // 先查卡点，别渲了半小时才发现轴不对
+    await frames(); encode();
+    if (audioFile) mux(); else sample();
+    qa(); await sheet();
+  }
   else die(`未知命令 ${mode}\n${USAGE}`);
 } catch (e) {
   console.error(`✗ ${e?.stack || e}`);

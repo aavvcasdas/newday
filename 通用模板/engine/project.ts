@@ -1,11 +1,15 @@
 // 作品契约：一部片子 = 台词卡点（cues.json）+ 镜头表（shots）+ 排镜规则（plan）+ 字幕与字卡样式。
 // 引擎（engine.ts / Film.tsx）不认识任何具体作品，一切都从这里传进去。
 import type { CharId } from './actors';
+import atlasJson from './assets/cast_atlas.json';
 import type { ShotDef } from './core';
 import { planByCues, type BeatGrid, type PlanShot, type Timeline } from './timeline';
 
-/** cues.json 里的一句：text=台词 / 歌词，start / end=秒，who=说话人（只有口播片的对话条用得到） */
-export interface CueLine { text: string; start: number; end: number; who?: CharId }
+/**
+ * cues.json 里的一句：text=台词 / 歌词，start / end=秒。
+ * 口播片的对话条还会读：who=说话人（头像 + 名牌），face=这一句换用的头像格（图集里 p_ 开头的格子名，如 p_whale_think）。
+ */
+export interface CueLine { text: string; start: number; end: number; who?: CharId; face?: string }
 /**
  * cues.json 的最小结构。其余字段（对齐报告、原始卡点等）由对齐工具写入，引擎不读。
  *   measured=false 表示卡点是估出来的（还没有音频），只能出无声样片，不能当成片交付。
@@ -25,6 +29,8 @@ export interface ProjectDef {
   ends: number[];
   /** 每句的说话人（对话条左侧头像与名牌）；没有就不画头像 */
   speakers?: (CharId | null)[];
+  /** 每句的头像格（没写 face 的句子用说话人的默认头像） */
+  faces?: (string | null)[];
   shots: ShotDef[];
   /** 排镜：卡点 → 时间轴。卡点变了，镜头切点跟着变 */
   plan: (starts: number[], ends: number[]) => Timeline;
@@ -45,6 +51,7 @@ export const SPEAKER_PORTRAIT: Record<CharId, string> = {
 };
 
 const ID_OK = /^[A-Za-z0-9-]+$/;
+const CELLS = (atlasJson as unknown as { s: Record<string, unknown> }).s;
 
 /** 校验并补全一部作品的定义；有问题直接抛错，不带病渲染 */
 export function defineProject(p: {
@@ -66,6 +73,9 @@ export function defineProject(p: {
     if (!l.text) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句没有文字`);
     if (!(l.end > l.start)) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句的结束不晚于开始`);
     if (i && l.start < lines[i - 1].start) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句的起点早于上一句`);
+    if (l.who != null && !(l.who in SPEAKER_NAME)) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句的说话人「${l.who}」不在角色表里`);
+    if (l.face != null && !CELLS[l.face]) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句的头像「${l.face}」不在图集里`);
+    if (l.face != null && l.who == null) throw new Error(`[project] ${p.id}: 第 ${i + 1} 句写了 face 却没写 who`);
   });
   const ids = new Set<string>();
   for (const s of p.shots) { if (ids.has(s.id)) throw new Error(`[project] ${p.id}: 镜头 id 重复 ${s.id}`); ids.add(s.id); }
@@ -95,6 +105,7 @@ export function defineProject(p: {
   return {
     id: p.id, kind: p.kind, title: p.title, lines: lines.map((l) => l.text), starts, ends,
     speakers: who.some(Boolean) ? who : undefined,
+    faces: who.some(Boolean) ? lines.map((l) => l.face ?? (l.who ? SPEAKER_PORTRAIT[l.who] : null)) : undefined,
     shots: p.shots, plan, subtitle: p.subtitle ?? (p.kind === 'mv' ? 'lyric' : 'dialog'), cards: p.cards, sectionOf: p.sectionOf,
   };
 }

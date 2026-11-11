@@ -38,11 +38,13 @@ export class FilmEngine {
     this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false, powerPreference: 'high-performance' });
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(w, h, false);
-    // 不透明物体的绘制顺序。three 默认先按 material.id 排，而 material.id 是全局自增的——取决于这个页面之前搭过哪些镜头。
-    // 远处两块相交 / 共面的几何体（比如相邻的两座远山、地平线）深度相等时「后画的赢」，于是同一帧在
-    // 「刚打开的页面」和「已经渲染过别的镜头的页面」上会差出几十个边缘像素。
-    // 改成只按 深度 → 搭景先后 排序：同一帧在任何页面、任何渲染顺序下逐像素相同（分段 / 并发渲染、按 md5 复核的前提）。
-    this.renderer.setOpaqueSort((a, b) => a.groupOrder - b.groupOrder || a.renderOrder - b.renderOrder || a.z - b.z || a.id - b.id);
+    // 绘制顺序必须只由「这一帧的场景」决定。three 默认：不透明物体先按 material.id 排、透明物体深度相同时按 object.id 排，
+    // 而这两个 id 都是全局自增的——取决于这个页面之前搭过哪些镜头。远处两块相交 / 共面的几何体（相邻的远山、地平线）
+    // 深度相等时「后画的赢」，于是同一帧在「刚打开的页面」和「已经渲染过别的镜头的页面」上会差出几十个边缘像素。
+    // 这里改成只按 分组 → renderOrder → 深度 排；并列时比较函数返回 0，Array.sort 是稳定排序，
+    // 保留的就是场景树的遍历顺序（搭景先后）。结果：任何页面、任何渲染顺序、任何分段方式，同一帧逐像素相同。
+    this.renderer.setOpaqueSort((a, b) => a.groupOrder - b.groupOrder || a.renderOrder - b.renderOrder || a.z - b.z);
+    this.renderer.setTransparentSort((a, b) => a.groupOrder - b.groupOrder || a.renderOrder - b.renderOrder || b.z - a.z);
     this.camera = new THREE.PerspectiveCamera(40, w / h, 0.1, 1500);
     this.scene.fog = this.fog;
     this.scene.add(this.sky, this.stars, this.sun, this.sun.target, this.hemi);

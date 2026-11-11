@@ -106,8 +106,11 @@ def timing(a):
     fps = info['fps']
     problems = []
     out = {'measured': bool(cues.get('measured')), 'method': cues.get('method', ''), 'source': cues.get('source', {})}
+    notes = []
     if not out['measured']:
-        problems.append('卡点是估算的（cues.json measured=false）：只能当无声样片，不能当成片交付')
+        msg = '卡点是估算的（cues.json measured=false）：只能当无声样片，不能当成片交付'
+        (notes if a.silent_sample else problems).append(msg)
+    out['notes'] = notes
     if len(cues['lines']) != len(info['lines']):
         problems.append(f"cues.json 有 {len(cues['lines'])} 句，时间轴用的是 {len(info['lines'])} 句")
     beat = cues.get('beat')
@@ -222,6 +225,7 @@ if __name__ == '__main__':
     sub = ap.add_subparsers(dest='cmd', required=True)
     p = sub.add_parser('frames'); p.add_argument('dir'); p.add_argument('--info', required=True); p.add_argument('--qa', required=True)
     p = sub.add_parser('timing'); p.add_argument('--info', required=True); p.add_argument('--cues', required=True); p.add_argument('--qa', required=True)
+    p.add_argument('--silent-sample', action='store_true', help='这次出的是无声样片：估算的卡点只记一条说明，不算问题')
     p = sub.add_parser('final'); p.add_argument('mp4'); p.add_argument('src_wav'); p.add_argument('out_wav'); p.add_argument('--info', required=True)
     p.add_argument('--offset', type=float, default=0.0); p.add_argument('--qa', required=True); p.add_argument('--mix-report')
     p = sub.add_parser('sheet'); p.add_argument('list'); p.add_argument('out')
