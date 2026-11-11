@@ -12,7 +12,7 @@
   "subtitle_bar_missing": [],
   "luma_min": 0,
   "luma_max": 255,
-  "sequence_md5": "cdc88e05f2fbda424b7c6237ef41d59e",
+  "sequence_md5": "511854f0fa3aab723876119564c5dc84",
   "problems": []
  },
  "timing": {
@@ -33,8 +33,8 @@
  },
  "sample": {
   "file": "MV样板_无声样片.mp4",
-  "bytes": 5326986,
-  "sha256": "ff3ae2ee30a65d1a174f3f53e302e6b3ac85a072b09a89d46fe8f22d97a11f98",
+  "bytes": 5335793,
+  "sha256": "0f8186fde339e9ea29fc68e327edd75057abdbcb8b5e206beaa551858ef84409",
   "full_decode": "ok",
   "probe": {
    "programs": [],
@@ -51,14 +51,14 @@
      "color_space": "bt709",
      "r_frame_rate": "30/1",
      "duration": "21.000000",
-     "bit_rate": "2026671",
+     "bit_rate": "2030024",
      "nb_frames": "630"
     }
    ],
    "format": {
     "duration": "21.000000",
-    "size": "5326986",
-    "bit_rate": "2029328"
+    "size": "5335793",
+    "bit_rate": "2032683"
    }
   },
   "problems": []
@@ -71,8 +71,8 @@
   "duration": 21,
   "shots": 4,
   "lines": 4,
-  "source_sha256": "1ef4f532ac7814e2d4b85744111035802cd917ecff3c6ca6c0b81b0c4a039bdd",
+  "source_sha256": "58b37b8c4bf28725fef727130af3eb163c04842b8831336e96dc2d6b1c09d9c4",
   "source_files": 17
  },
- "checked_at": "2026-11-11T06:28:39.329Z"
+ "checked_at": "2026-11-11T06:36:26.459Z"
 }

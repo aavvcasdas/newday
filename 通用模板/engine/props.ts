@@ -91,10 +91,13 @@ export function riceBowl(r = 0.2, color = 0x3d7fd9): THREE.Group {
   return g;
 }
 
-export interface Hourglass { g: THREE.Group; body: THREE.Group; set: (p: number, T?: number) => void }
+export interface Hourglass { g: THREE.Group; body: THREE.Group; set: (p: number, T?: number, flowing?: boolean) => void; flip: (e: number, pBefore: number, T?: number) => void }
 /**
- * 沙漏（物理沙子，没有刻度）：set(p) 的 p=0 沙全在上、1 全在下。
- * 要「倒过来」就在镜头里转 body.rotation.z，同时把 p 重新从 0 走起。原点在底座底面。
+ * 沙漏（物理沙子，没有刻度）。原点在底座底面。
+ *   set(p, T, flowing)  p=0 沙全在上、1 全在下；flowing=false 时不画下落的沙柱
+ *   flip(e, pBefore, T) 把沙漏倒过来：e 是翻转进度 0–1，pBefore 是翻之前的 p。翻完（e=1）之后沙量变成 1 − pBefore，
+ *                       接着用 set(1 − pBefore + …) 让它继续漏。沙漏上下对称，所以翻到一半（横过来的那一帧）换成镜像状态，
+ *                       沙子始终待在同一侧，看不出接缝。
  */
 export function hourglass(h = 0.62, sand = 0xf2c14e, wood = 0x8a5a3c): Hourglass {
   const g = new THREE.Group();
@@ -113,16 +116,22 @@ export function hourglass(h = 0.62, sand = 0xf2c14e, wood = 0x8a5a3c): Hourglass
   pile.position.y = -bulb;
   const stream = new THREE.Mesh(new THREE.CylinderGeometry(h * 0.012, h * 0.012, 1, 6).translate(0, -0.5, 0), sandMat);
   body.add(top, pile, stream);
-  const set = (p0: number, T = 0) => {
+  const set = (p0: number, T = 0, flowing = true) => {
     const p = clamp01(p0);
     const a = Math.cbrt(1 - p), b = Math.cbrt(p); // 体积守恒：锥体体积 ∝ 边长³
     top.visible = p < 0.999; top.scale.setScalar(Math.max(0.001, a));
     pile.visible = p > 0.001; pile.scale.setScalar(Math.max(0.001, b));
-    stream.visible = p > 0.001 && p < 0.999;
+    stream.visible = flowing && p > 0.001 && p < 0.999;
     stream.scale.set(1 + 0.25 * Math.sin(T * 31), bulb * (1 - 0.62 * b), 1 + 0.25 * Math.cos(T * 27));
   };
+  const flip = (e0: number, pBefore: number, T = 0) => {
+    const e = clamp01(e0);
+    if (e <= 0) { body.rotation.z = 0; set(pBefore, T); return; }
+    if (e >= 1) { body.rotation.z = 0; set(1 - pBefore, T); return; }
+    if (e < 0.5) { body.rotation.z = e * PI; set(pBefore, T, false); } else { body.rotation.z = (e - 1) * PI; set(1 - pBefore, T, false); }
+  };
   set(0);
-  return { g, body, set };
+  return { g, body, set, flip };
 }
 
 /** 一张纸 / 一页内页：draw 在上面写字（坐标系 0–W × 0–H 像素，已铺好纸色）。平放在桌上，原点在纸的中心 */

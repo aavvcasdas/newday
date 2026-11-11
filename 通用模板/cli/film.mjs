@@ -11,6 +11,7 @@
 //              day：台词.txt + 配音 → 按停顿切句（--words <ASR 词级时间戳.json> 可换成逐词对齐）
 //   stills   <帧号…>            抽查静帧 → <工作目录>/stills/
 //   sheet                       分镜总览图（每个镜头 62% 处一格）→ <输出>_分镜总览.jpg
+//   sheet    --shot <镜头id> [--n 6]   只看一个镜头：从头到尾抽 n 格 → <工作目录>/镜头_<id>.jpg（写镜头时用）
 //   frames   [--from a --to b]  逐帧渲染 PNG 序列（每 300 帧一块，中断后重跑会续渲）
 //   encode   [--bitrate 4700k | --crf 18] [--preset slow]   PNG 序列 → 无声 H.264
 //   mux                         音轨对齐混入 → <输出>.mp4 + <输出>.srt（只接受按这条音源实测过的卡点）
@@ -222,7 +223,7 @@ async function info() {
   console.log(`源码指纹 ${I.source_sha256.slice(0, 16)}…（${I.source_files.length} 个源文件）`);
   if (fs.existsSync(QA_FILE)) {
     const was = JSON.parse(fs.readFileSync(QA_FILE, 'utf8')).project?.source_sha256;
-    if (!was) console.log('  成片/qa.json 里没有记录源码指纹');
+    if (!was) console.log('  成片/qa.json 里没有记录源码指纹：这份成片不是由当前模板逐帧自检过的那批帧生成的（或自检时跳过了逐帧检查）');
     else console.log(was === I.source_sha256 ? '  与 成片/qa.json 记录的一致：仓库里的成片就是这份源码渲的' : `  ⚠ 与 成片/qa.json 记录的（${was.slice(0, 16)}…）不一致：源码在出片之后改过，成片需要重渲`);
   }
   return I;
@@ -261,6 +262,8 @@ async function frames() {
     fs.rmSync(FRAMES, { recursive: true, force: true }); fs.mkdirSync(FRAMES, { recursive: true });
   }
   fs.writeFileSync(stampFile, stamp);
+  // 这批帧是哪份源码渲的：自检时从这里读，而不是拿「自检那一刻的源码」冒充
+  fs.writeFileSync(path.join(FRAMES, '_source.json'), JSON.stringify({ source_sha256: o.info.source_sha256, source_files: o.info.source_files.length }));
   const todo = [];
   for (let a = from; a <= to; a += chunk) {
     const b = Math.min(to, a + chunk - 1);
@@ -496,7 +499,10 @@ function qa() {
   } else {
     console.log('[qa] 还没有成片 / 样片，跳过成片检查');
   }
-  data.project = { id: I.id, kind: I.kind, title: I.title, frames: I.frames, duration: I.duration, shots: I.shots.length, lines: I.lines.length, source_sha256: I.source_sha256, source_files: I.source_files.length };
+  // 源码指纹只在「这次自检真的逐帧查过工作目录里的 PNG 序列」时才写：它说的是「这批帧（也就是成片的画面）是这份源码渲的」
+  const srcFile = path.join(FRAMES, '_source.json');
+  const rendered = !flag('--skip-frames') && fs.existsSync(srcFile) ? JSON.parse(fs.readFileSync(srcFile, 'utf8')) : null;
+  data.project = { id: I.id, kind: I.kind, title: I.title, frames: I.frames, duration: I.duration, shots: I.shots.length, lines: I.lines.length, source_sha256: rendered?.source_sha256 ?? null, source_files: rendered?.source_files ?? null };
   data.checked_at = new Date().toISOString();
   fs.writeFileSync(QA_FILE, JSON.stringify(data, null, 1));
   const problems = [...(data.frames?.problems || []), ...(data.timing?.problems || []), ...(data.final?.problems || []), ...(data.sample?.problems || [])];
@@ -507,6 +513,8 @@ function qa() {
 
 async function sheet() {
   const o = await openComposition();
+  const only = opt('--shot');
+  if (only) return shotSheet(o, only);
   const mids = o.info.shots.map((s) => Math.min(o.info.frames - 1, Math.round((s.a + (s.b - s.a) * 0.62) * o.info.fps)));
   // 已经有 PNG 序列就直接取，没有才单独渲染
   const files = [];
@@ -517,6 +525,22 @@ async function sheet() {
   fs.writeFileSync(listFile, JSON.stringify({ title: o.info.title, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cells: o.info.shots.map((s, i) => ({ id: s.id, a: s.a, b: s.b, title: s.title, line: s.cue >= 0 ? o.info.lines[s.cue] : '', file: files[i] })) }));
   fs.mkdirSync(OUT_DIR, { recursive: true });
   py('qa.py', ['sheet', listFile, `${OUT_BASE}_分镜总览.jpg`]);
+}
+
+/** 单个镜头从头到尾抽 n 格（写镜头时用来看走位、道具时机、有没有人被画框切掉）→ 工作目录，不进成片目录 */
+async function shotSheet(o, id) {
+  const s = o.info.shots.find((x) => x.id === id);
+  if (!s) die(`没有镜头 ${id}。现有：${o.info.shots.map((x) => x.id).join(' ')}`);
+  const n = Math.max(2, Math.min(24, Number(opt('--n', 6)) || 6));
+  const fa = Math.ceil(s.a * o.info.fps - 1e-6), fb = Math.min(o.info.frames, Math.ceil(s.b * o.info.fps - 1e-6)) - 1;
+  const picks = [...new Set(Array.from({ length: n }, (_, i) => Math.round(fa + ((fb - fa) * i) / (n - 1))))];
+  const files = await stills(picks);
+  const lineAt = (t) => { const i = o.info.starts.findIndex((a, k) => t >= a && t <= o.info.ends[k]); return i >= 0 ? `第${i + 1}句 ${o.info.lines[i]}` : ''; };
+  const listFile = path.join(WORK, 'sheet_shot.json');
+  const out = path.join(WORK, `镜头_${id}.jpg`);
+  fs.writeFileSync(listFile, JSON.stringify({ title: `${o.info.title} ${id}`, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cols: n <= 4 ? 2 : 3, cell: [640, 360],
+    cells: picks.map((f, i) => ({ id: `${id} f${f}`, a: f / o.info.fps, b: null, title: `镜头内 ${(((f - fa) / Math.max(1, fb - fa)) * 100).toFixed(0)}%`, line: lineAt(f / o.info.fps), file: files[i] })) }));
+  py('qa.py', ['sheet', listFile, out]);
 }
 
 try {

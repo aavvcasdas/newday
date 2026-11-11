@@ -18,8 +18,14 @@ export interface CamState { p: V3; l: V3; fov: number; roll: number }
  *   t / dur / u   镜头内的秒数、镜头总长、进度 0–1          T   全片秒数          f   全片帧号
  *   bt            节拍（口播片没有节拍时 pulse 恒为 0）
  *   line / lp     此刻正在说 / 唱第几句（0 起；句间空档为 −1）与这一句的进度 0–1——口播片用它让「正在说话的人」动起来
+ *   said          已经开口的最后一句（0 起；第一句开口之前为 −1）。句间空档里它不会变回 −1，用来写「说到第 n 句时道具出场」
+ *   when(n, p)    第 n 句说到 p（0 = 开口，1 = 说完）的那一刻，折算成本镜头的进度 u（句子不在本镜头里时会小于 0 或大于 1）。
+ *                 用它给相机关键帧定位：track([[0, A], [f.when(28), A], [f.when(28, 0.3), B]], f.u)
+ *                 ——配音到了、卡点从估算换成实测以后，镜头还是在「那句话」上动，不用回来改数字。
  */
-export interface Frame { t: number; u: number; dur: number; T: number; bt: Beat; f: number; line: number; lp: number }
+export interface Frame { t: number; u: number; dur: number; T: number; bt: Beat; f: number; line: number; lp: number; said: number; when: (n: number, p?: number) => number }
+/** 第 n 句（0 起）说到哪了：还没轮到 = 0，正在说 = 0–1，已经说完（含之后的句间空档）= 1 */
+export const lineU = (f: Frame, n: number): number => (f.said > n ? 1 : f.said < n ? 0 : f.line === n ? f.lp : 1);
 
 export class Kit {
   root = new THREE.Group();
@@ -63,6 +69,9 @@ export const glide = (a: CamState, b: CamState, u: number, k = 0.55): CamState =
  */
 export function track(keys: [number, CamState][], u: number, k = 0.55): CamState {
   if (!keys.length) throw new Error('[cam] track() 至少要一个关键帧');
+  for (let i = 1; i < keys.length; i++) {
+    if (!(keys[i][0] >= keys[i - 1][0])) throw new Error(`[cam] track() 的关键帧时间必须从小到大：第 ${i + 1} 个是 ${keys[i][0]}，前一个是 ${keys[i - 1][0]}`);
+  }
   if (u <= keys[0][0]) return keys[0][1];
   for (let i = 1; i < keys.length; i++) {
     if (u <= keys[i][0]) {

@@ -204,8 +204,8 @@ def sheet(a):
     from PIL import Image, ImageDraw, ImageFont
     spec = json.load(open(a.list, encoding='utf-8'))
     cells = spec['cells']
-    cols = 5 if len(cells) > 12 else 4 if len(cells) > 6 else 3
-    tw, th, pad, cap = 384, 216, 10, 46
+    cols = spec.get('cols') or (5 if len(cells) > 12 else 4 if len(cells) > 6 else 3)
+    (tw, th), pad, cap = spec.get('cell') or (384, 216), 10, 46
     rows = (len(cells) + cols - 1) // cols
     W, H = cols * (tw + pad) + pad, rows * (th + cap + pad) + pad
     img = Image.new('RGB', (W, H), (13, 11, 30))
@@ -214,11 +214,13 @@ def sheet(a):
     for i, c in enumerate(cells):
         x, y = pad + (i % cols) * (tw + pad), pad + (i // cols) * (th + cap + pad)
         img.paste(Image.open(c['file']).convert('RGB').resize((tw, th), Image.LANCZOS), (x, y))
-        d.rectangle([x, y, x + 58, y + 22], fill=(0, 0, 0))
+        d.rectangle([x, y, x + 12 + d.textlength(c['id'], font=f1), y + 22], fill=(0, 0, 0))
         d.text((x + 5, y + 1), c['id'], font=f1, fill=(255, 216, 74))
-        d.text((x, y + th + 3), f"{c['a']:.2f}–{c['b']:.2f}s  {c['title']}"[:30], font=f2, fill=(255, 255, 255))
+        when = f"{c['a']:.2f}–{c['b']:.2f}s" if c.get('b') is not None else f"{c['a']:.2f}s"
+        room = max(10, int(tw / 15.5))  # 一格下面放得下多少个字
+        d.text((x, y + th + 3), f"{when}  {c['title']}"[:room + 5], font=f2, fill=(255, 255, 255))
         if c['line']:
-            d.text((x, y + th + 23), ('「' + c['line'])[:25] + '」', font=f2, fill=(255, 216, 74))
+            d.text((x, y + th + 23), ('「' + c['line'])[:room] + '」', font=f2, fill=(255, 216, 74))
     img.save(a.out, quality=88)
     print('SHEET', a.out, f'{len(cells)} 格 {W}x{H}')
 

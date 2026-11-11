@@ -85,8 +85,14 @@ export class FilmEngine {
     const t = T - st.a, dur = st.b - st.a, bt = beatAt(tl, T);
     timeU.value = T;
     for (const a of rt.kit.actors) a.begin();
-    const said = cueAt(tl, T, 0, 0);
-    const cs = rt.update({ t, u: clamp01(t / dur), dur, T, bt, f: frame, line: said ? said.i : -1, lp: said ? said.p : 0 });
+    const now = cueAt(tl, T, 0, 0);
+    let said = -1;
+    while (said + 1 < tl.starts.length && tl.starts[said + 1] <= T) said++;
+    const when = (n: number, p = 0) => {
+      if (!Number.isInteger(n) || n < 0 || n >= tl.starts.length) throw new Error(`[engine] 镜头 ${st.id} 用 when(${n}) 引用了不存在的句子（全片 ${tl.starts.length} 句，序号从 0 数）`);
+      return (tl.starts[n] + (tl.ends[n] - tl.starts[n]) * p - st.a) / dur;
+    };
+    const cs = rt.update({ t, u: clamp01(t / dur), dur, T, bt, f: frame, line: now ? now.i : -1, lp: now ? now.p : 0, said, when });
     const cam = this.camera;
     cam.position.set(cs.p[0], cs.p[1], cs.p[2]);
     cam.up.set(0, 1, 0);
