@@ -1,0 +1,11 @@
+import React from 'react';
+import {Composition,registerRoot} from 'remotion';
+import {createMVComp, type MVProps} from '../src/MVComp';
+import {validateStory} from '../src/story-spec';
+import {buildStoryShots} from '../src/story-scene';
+import '../src/font.css';
+import {spec} from './mv.spec';
+const timeline=validateStory(spec);
+const Comp=createMVComp(buildStoryShots(spec.scenes));
+const defaults: MVProps={timeline,lyrics:spec.captions.map(c=>c.text),title:spec.title,subtitle:'',endTitle:'',endShot:'',audioSrc:null,audioOffset:0,showLyrics:true,karaoke:true,strictCues:true,pulseCamera:true};
+registerRoot(()=> <Composition id="MV" component={Comp} defaultProps={defaults} durationInFrames={timeline.frames} fps={30} width={1920} height={1080}/>);
