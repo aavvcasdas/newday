@@ -1,0 +1,12 @@
+{
+  "id": "day-sample",
+  "kind": "day",
+  "title": "口播样板",
+  "script": "台词.txt",
+  "speaker": "whale",
+  "output": "成片/口播样板",
+  "video": {
+    "bitrate": "1500k",
+    "preset": "medium"
+  }
+}

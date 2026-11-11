@@ -130,6 +130,9 @@ def timing(a):
                        'cut_frames_before_beat': {'min': min(cut_lead) if cut_lead else None, 'max': max(cut_lead) if cut_lead else None, 'shots': len(cut_lead)}}
         for w in (cues.get('summary') or {}).get('warnings', []):
             problems.append(f'拍点测量警告：{w}')
+    else:
+        for w in (cues.get('summary') or {}).get('warnings', []):
+            notes.append(w)
     if cues.get('summary'):
         out['summary'] = {k: v for k, v in cues['summary'].items() if k != 'beats_between_lines'}
     shots = info['shots']

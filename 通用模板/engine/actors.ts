@@ -275,6 +275,11 @@ export class Actor {
     const ph = (T + this.seed * 1.3) % 2.6;
     return this.set(ph < 0.13 ? s.front[1] : s.front[0]);
   }
+  /** 说话时的小动作：轻轻一颠一颠（每秒约 4 下）。on=false 时什么都不做，方便写成 a.talk(T, f.line === 3) */
+  talk(T: number, on = true): this {
+    if (on) { const w = Math.abs(Math.sin(T * 13)); this._lift += w * 0.035; this._sq += 0.025 * (w - 0.5); }
+    return this;
+  }
   at(x: number, y: number, z: number): this { this.holder.position.set(x, y, z); return this; }
   flip(b = true): this { this._flip = b; return this; }
   size(s: number): this { this._size = s; return this; }

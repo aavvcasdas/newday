@@ -4,7 +4,9 @@
   "private": true,
   "type": "module",
   "description": "鲸鱼娘 AI 运营 · 通用模板（three.js 3D 世界 + 2D 像素纸片人，Remotion 逐帧出片）",
-  "engines": { "node": ">=22.18" },
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "film": "node 通用模板/cli/film.mjs",
     "new": "node 通用模板/cli/new.mjs",
@@ -12,7 +14,7 @@
     "atlas": "node 通用模板/cast/bake_atlas.mjs",
     "atlas:check": "node 通用模板/cast/bake_atlas.mjs --check",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --test 通用模板/tests/"
+    "test": "node --test \"通用模板/tests/*.test.mjs\" && python3 -m unittest discover -s 通用模板/tests -p \"test_*.py\""
   },
   "dependencies": {
     "@remotion/bundler": "4.0.436",

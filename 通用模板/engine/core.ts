@@ -13,7 +13,13 @@ import type { Beat } from './timeline';
 
 export type V3 = [number, number, number];
 export interface CamState { p: V3; l: V3; fov: number; roll: number }
-export interface Frame { t: number; u: number; dur: number; T: number; bt: Beat; f: number }
+/**
+ * 每帧传给镜头的时间信息：
+ *   t / dur / u   镜头内的秒数、镜头总长、进度 0–1          T   全片秒数          f   全片帧号
+ *   bt            节拍（口播片没有节拍时 pulse 恒为 0）
+ *   line / lp     此刻正在说 / 唱第几句（0 起；句间空档为 −1）与这一句的进度 0–1——口播片用它让「正在说话的人」动起来
+ */
+export interface Frame { t: number; u: number; dur: number; T: number; bt: Beat; f: number; line: number; lp: number }
 
 export class Kit {
   root = new THREE.Group();

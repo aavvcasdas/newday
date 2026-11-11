@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import type { AtlasData } from './actors';
 import { Kit, type CamState, type Frame, type ShotDef } from './core';
 import { clamp01, LOOKS, makeSky, makeStars, rgb, timeU, type LookName } from './kit';
-import { beatAt, FPS, shotIndexAt, type Timeline } from './timeline';
+import { beatAt, cueAt, FPS, shotIndexAt, type Timeline } from './timeline';
 
 /** 镜头表 → 按 id 查表；id 重复直接报错（重复的 id 会让两个镜头共用同一份搭景与随机种子） */
 export function shotMap(shots: ShotDef[]): Record<string, ShotDef> {
@@ -85,7 +85,8 @@ export class FilmEngine {
     const t = T - st.a, dur = st.b - st.a, bt = beatAt(tl, T);
     timeU.value = T;
     for (const a of rt.kit.actors) a.begin();
-    const cs = rt.update({ t, u: clamp01(t / dur), dur, T, bt, f: frame });
+    const said = cueAt(tl, T, 0, 0);
+    const cs = rt.update({ t, u: clamp01(t / dur), dur, T, bt, f: frame, line: said ? said.i : -1, lp: said ? said.p : 0 });
     const cam = this.camera;
     cam.position.set(cs.p[0], cs.p[1], cs.p[2]);
     cam.up.set(0, 1, 0);

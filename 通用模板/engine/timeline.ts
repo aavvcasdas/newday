@@ -54,10 +54,12 @@ export interface PlanShot {
   cue?: number;
   /** 写死的起点（秒）。同时给了 cue 时，cue 只用来标注「这镜对应哪一句」 */
   at?: number;
+  /** 这个镜头从第 after 句（0 起）说完 / 唱完后 0.15 秒开始——尾声、句间过场用 */
+  after?: number;
 }
 /**
  * 通用排镜（新作品默认用它）：
- *   · 第一个镜头从 0 秒开始；之后每个镜头从「第 cue 句起点 − lead」开始，或用 at 写死；
+ *   · 第一个镜头从 0 秒开始；之后每个镜头从「第 cue 句起点 − lead」开始，或「第 after 句结束 + 0.15 秒」，或用 at 写死；
  *   · 全片总长 = 最后一句结束 + tail；
  *   · beat：'none'（口播片，没有节拍）、'estimate'（按每句 8 拍估算）、或实测网格 { period, first }。
  */
@@ -67,9 +69,11 @@ export function planByCues(
 ): Timeline {
   const lead = o.lead ?? LEAD, tail = o.tail ?? 0.8;
   const raw: RawShot[] = shots.map((sh, i) => {
-    if (sh.at == null && sh.cue == null) throw new Error(`[timeline] 镜头 ${sh.id} 既没有 cue 也没有 at`);
-    if (sh.cue != null && (sh.cue < 0 || sh.cue >= starts.length)) throw new Error(`[timeline] 镜头 ${sh.id} 的 cue=${sh.cue} 超出台词范围（共 ${starts.length} 句）`);
-    const a = i === 0 && sh.at == null ? 0 : sh.at != null ? sh.at : starts[sh.cue as number] - lead;
+    if (i > 0 && sh.at == null && sh.cue == null && sh.after == null) throw new Error(`[timeline] 镜头 ${sh.id} 没写从哪开始（cue / at / after 三选一）`);
+    for (const [name, v] of [['cue', sh.cue], ['after', sh.after]] as const) {
+      if (v != null && (!Number.isInteger(v) || v < 0 || v >= starts.length)) throw new Error(`[timeline] 镜头 ${sh.id} 的 ${name}=${v} 超出台词范围（共 ${starts.length} 句，从 0 数）`);
+    }
+    const a = sh.at != null ? sh.at : i === 0 ? 0 : sh.after != null ? Math.max(ends[sh.after], starts[sh.after] + 0.3) + 0.15 : starts[sh.cue as number] - lead;
     return { id: sh.id, a: Math.max(0, a), cue: sh.cue ?? -1 };
   });
   const last = starts.length - 1;

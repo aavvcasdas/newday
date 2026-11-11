@@ -4,9 +4,11 @@
 //   node 通用模板/cli/film.mjs <命令> <作品目录> [选项]
 //
 //   info     打印时间轴：总帧数、每个镜头的切点
-//   align    按音频对齐卡点：<字幕>.srt + 音源 → cues.json
-//              mv ：实测全曲拍点，把每句起点吸附到最近的实拍（--no-snap 只测不挪）
-//              day：按配音的静音间隙核对每句起止，句首吸附到真实开口处（--no-snap 只测不挪）
+//   plan     还没有音源时的规划轴 → cues.json（measured=false，只能出无声样片）
+//              day：台词.txt 按语速估算每句起止；mv：歌词 .srt 的时间原样照抄
+//   align    按音源实测卡点 → cues.json（measured=true）
+//              mv ：歌词 .srt + 原曲 → 实测全曲拍点，把每句起点吸附到最近的实拍（--no-snap 只测不挪）
+//              day：台词.txt + 配音 → 按停顿切句（--words <ASR 词级时间戳.json> 可换成逐词对齐）
 //   stills   <帧号…>            抽查静帧 → <工作目录>/stills/
 //   sheet                       分镜总览图（每个镜头 62% 处一格）→ <输出>_分镜总览.jpg
 //   frames   [--from a --to b]  逐帧渲染 PNG 序列（每 300 帧一块，中断后重跑会续渲）
@@ -41,7 +43,7 @@ const FONT_DIR = path.join(ENGINE, 'assets/fonts');
 
 const argv = process.argv.slice(2);
 const mode = argv[0];
-const USAGE = '用法：node 通用模板/cli/film.mjs <info|align|stills|sheet|frames|encode|mux|sample|qa|full> <作品目录> [选项]';
+const USAGE = '用法：node 通用模板/cli/film.mjs <info|plan|align|stills|sheet|frames|encode|mux|sample|qa|full> <作品目录> [选项]';
 if (!mode || !argv[1] || argv[1].startsWith('--')) { console.error(USAGE); process.exit(2); }
 const PROJ = path.resolve(argv[1]);
 const rest = argv.slice(2);
@@ -108,6 +110,28 @@ function sourceFingerprint() {
   const files = [...seen.keys()].filter((f) => path.basename(f) !== 'cues.json').sort();
   for (const f of files) h.update(rel(f)).update('\0').update(seen.get(f)).update('\0');
   return { sha256: h.digest('hex'), files: files.map(rel) };
+}
+
+// —— 口播台词（day）：一行一句，行首可写「角色:」或「角色/头像:」 ——
+const CAST = ['whale', 'gpt', 'claude', 'doubao', 'gemini', 'kimi', 'qwen', 'zai'];
+function readScript() {
+  const file = path.resolve(PROJ, film.script || '台词.txt');
+  if (!fs.existsSync(file)) die(`找不到台词文件 ${rel(file)}（film.json 的 script）`);
+  if (film.speaker && !CAST.includes(film.speaker)) die(`film.json 的 speaker「${film.speaker}」不在角色表里（${CAST.join(' ')}）`);
+  const lines = [];
+  fs.readFileSync(file, 'utf8').split(/\r?\n/).forEach((raw, n) => {
+    const ln = raw.trim();
+    if (!ln || ln.startsWith('#')) return;
+    const m = /^([A-Za-z]+)(?:\/([A-Za-z0-9_]+))?\s*[:：]\s*(.+)$/.exec(ln);
+    let who = film.speaker || null, face = null, text = ln;
+    if (m) {
+      if (!CAST.includes(m[1])) die(`${rel(file)} 第 ${n + 1} 行：不认识的角色「${m[1]}」（可用：${CAST.join(' ')}）`);
+      who = m[1]; face = m[2] || null; text = m[3].trim();
+    }
+    lines.push({ text, ...(who ? { who } : {}), ...(face ? { face } : {}) });
+  });
+  if (!lines.length) die(`${rel(file)} 里一句台词都没有`);
+  return { file, lines };
 }
 
 const audioFile = film.audio?.file ? path.resolve(PROJ, film.audio.file) : null;
@@ -364,14 +388,77 @@ function mux() {
   if (mb > 100) console.warn('⚠ 成片超过 100 MB：GitHub 不接受这么大的单文件。');
 }
 
+/**
+ * 口播片还没有配音时的规划轴：按语速估每句的起止 → cues.json（measured=false，只能出无声样片）。
+ * 估法沿用旧项目：每个分句 = max(0.8 秒, 字数 ÷ 语速)，每个标点 0.15 秒，句间 0.18 秒，开头留 0.25 秒；默认语速 3.36 字/秒（Day13 实测）。
+ */
+function plan() {
+  if (fs.existsSync(CUES_FILE) && JSON.parse(fs.readFileSync(CUES_FILE, 'utf8')).measured === true && !flag('--force')) die(`${rel(CUES_FILE)} 已经是实测轴（measured=true），plan 会把它盖成估算轴。确实要重估就加 --force`);
+  if (film.kind === 'mv') {
+    // MV：歌词 .srt 自带时间，原样抄进 cues.json，但标 measured=false——还没对过原曲的拍点
+    const srt = path.resolve(PROJ, film.subtitles || '歌词.srt');
+    if (!fs.existsSync(srt)) die(`找不到歌词文件 ${rel(srt)}（film.json 的 subtitles）`);
+    const sec = (h, m, s2, ms) => Number(h) * 3600 + Number(m) * 60 + Number(s2) + Number(ms) / 1000;
+    const cues = [];
+    for (const block of fs.readFileSync(srt, 'utf8').replace(/\r/g, '').split(/\n\s*\n/)) {
+      const rows = block.split('\n').map((x) => x.trim()).filter(Boolean);
+      const ti = rows.findIndex((x) => x.includes('-->'));
+      if (ti < 0) continue;
+      const m = /(\d+):(\d+):(\d+)[,.](\d+)\s*-->\s*(\d+):(\d+):(\d+)[,.](\d+)/.exec(rows[ti]);
+      if (!m) die(`${rel(srt)}：看不懂这一行时间「${rows[ti]}」`);
+      cues.push({ text: rows.slice(ti + 1).join(' '), start: sec(m[1], m[2], m[3], m[4]), end: sec(m[5], m[6], m[7], m[8]) });
+    }
+    if (!cues.length) die(`${rel(srt)} 里没有歌词`);
+    fs.writeFileSync(CUES_FILE, JSON.stringify({ measured: false, method: '规划轴：歌词 .srt 的时间原样照抄，没有对过原曲拍点，只能出无声样片', source: { subtitles: path.relative(PROJ, srt) }, beat: null, lines: cues }, null, 1) + '\n');
+    console.log(`PLAN_OK ${rel(CUES_FILE)} · ${cues.length} 句（measured=false；原曲到位后跑 align）`);
+    return;
+  }
+  const { file, lines } = readScript();
+  const rate = Number(opt('--rate', 3.36)), gap = Number(opt('--gap', 0.18)), lead = Number(opt('--lead', 0.25));
+  const PUNCT = /[，。！？…—；：、,.!?;:~～]/;
+  const r3 = (x) => Math.round(x * 1000) / 1000;
+  let t = lead;
+  const out = lines.map((l) => {
+    let dur = 0, units = 0;
+    const flush = () => { if (units > 0) dur += r3(Math.max(0.8, units / rate)); units = 0; }; // 每个分句的时长先舍到毫秒（与旧项目的规划工具同一口径，两边逐句一致）
+    for (const ch of l.text) {
+      if (PUNCT.test(ch)) { flush(); dur += 0.15; } else if (!/\s/.test(ch)) units += ch.charCodeAt(0) < 128 ? 0.5 : 1;
+    }
+    flush();
+    const cue = { text: l.text, start: r3(t), end: r3(t + dur), ...(l.who ? { who: l.who } : {}), ...(l.face ? { face: l.face } : {}) };
+    t += dur + gap;
+    return cue;
+  });
+  const data = {
+    measured: false,
+    method: `规划轴：按 ${rate} 字/秒估算（每个分句不少于 0.8 秒，每个标点 0.15 秒，句间 ${gap} 秒）。没有对齐任何音频，只能出无声样片`,
+    source: { script: path.relative(PROJ, file), script_sha256: sha256(file) },
+    beat: null,
+    lines: out,
+  };
+  fs.writeFileSync(CUES_FILE, JSON.stringify(data, null, 1) + '\n');
+  console.log(`PLAN_OK ${rel(CUES_FILE)} · ${out.length} 句 · 估计 ${out[out.length - 1].end.toFixed(2)} 秒（measured=false）`);
+}
+
 function align() {
   const src = needAudio();
-  const srt = path.resolve(PROJ, film.subtitles || '字幕.srt');
-  if (!fs.existsSync(srt)) die(`找不到字幕文件 ${rel(srt)}（film.json 的 subtitles）`);
-  const common = ['--srt', srt, '--out', CUES_FILE, '--audio-name', path.relative(PROJ, src), '--audio-sha256', sha256(src), '--srt-name', path.relative(PROJ, srt)];
-  if (flag('--no-snap')) common.push('--no-snap');
-  if (film.kind === 'mv') py('align_beats.py', ['--wav', wavOf(src, 22050, 'source'), ...common]);
-  else py('align_voice.py', ['--wav', wavOf(src, 16000, 'source'), ...common]);
+  const common = ['--out', CUES_FILE, '--audio-name', path.relative(PROJ, src), '--audio-sha256', sha256(src)];
+  if (film.kind === 'mv') {
+    const srt = path.resolve(PROJ, film.subtitles || '歌词.srt');
+    if (!fs.existsSync(srt)) die(`找不到歌词文件 ${rel(srt)}（film.json 的 subtitles）`);
+    if (flag('--no-snap')) common.push('--no-snap');
+    py('align_beats.py', ['--wav', wavOf(src, 22050, 'source'), '--srt', srt, '--srt-name', path.relative(PROJ, srt), ...common]);
+  } else {
+    const { file, lines } = readScript();
+    const linesFile = path.join(WORK, 'script_lines.json');
+    fs.mkdirSync(WORK, { recursive: true });
+    fs.writeFileSync(linesFile, JSON.stringify(lines));
+    const extra = [];
+    if (opt('--words')) extra.push('--words', path.resolve(opt('--words')));
+    if (opt('--min-pause')) extra.push('--min-pause', opt('--min-pause'));
+    if (flag('--accept-uneven')) extra.push('--accept-uneven');
+    py('align_voice.py', ['--wav', wavOf(src, 16000, 'source'), '--lines', linesFile, '--script-name', path.relative(PROJ, file), '--script-sha256', sha256(file), ...common, ...extra]);
+  }
   console.log(`ALIGN_OK ${rel(CUES_FILE)}`);
 }
 
@@ -433,7 +520,11 @@ async function sheet() {
 }
 
 try {
+  if (!['plan', 'align'].includes(mode) && !fs.existsSync(CUES_FILE)) {
+    die(`还没有 ${rel(CUES_FILE)}：${film.kind === 'day' ? '口播片先跑 plan（没配音时估一份规划轴）或 align（按配音实测）' : 'MV 先跑 align（按原曲实测拍点）'}`);
+  }
   if (mode === 'info') await info();
+  else if (mode === 'plan') plan();
   else if (mode === 'align') align();
   else if (mode === 'stills') await stills();
   else if (mode === 'sheet') await sheet();

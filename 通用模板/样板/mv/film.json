@@ -1,0 +1,11 @@
+{
+  "id": "mv-sample",
+  "kind": "mv",
+  "title": "MV样板",
+  "subtitles": "歌词.srt",
+  "output": "成片/MV样板",
+  "video": {
+    "bitrate": "2000k",
+    "preset": "medium"
+  }
+}

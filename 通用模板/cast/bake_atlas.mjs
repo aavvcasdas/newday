@@ -1,15 +1,15 @@
 #!/usr/bin/env node
-// 重建 site/src/mv/assets/cast_atlas.png
+// 重建角色图集 通用模板/engine/assets/cast_atlas.png
 //
-// 页面源码包（remotion-fix-and-mv-recreation.zip）只带了图集的坐标表 cast_atlas.json，没带 PNG 本体。
-// 图集里的 108 格全部来自仓库已有的像素角色数据：
-//   番外MV/童话镇/src/sprites_data.js     （立绘 / 头像，与《达拉崩吧》同一份）
-//   番外MV/童话镇/src/walk_cycle_data.js  （8 帧步态）
-// 调色板用 番外MV/童话镇/src/px.js 的 RGB 表（48 基础色 + CHAR_HEX 200 色，255 = 透明）。
+// 来源包（通用模板/来源/remotion-fix-and-mv-recreation.zip）只带了图集的坐标表 cast_atlas.json，没带 PNG 本体。
+// 图集里的 108 格全部来自项目自己的像素角色数据（《达拉崩吧》《童话镇》两部旧 MV 共用的那一份，现存于 cast/source/）：
+//   cast/source/sprites_data.js     立绘 / 头像
+//   cast/source/walk_cycle_data.js  8 帧步态
+//   cast/source/px.js               调色板（48 基础色 + CHAR_HEX 200 色，255 = 透明）
 // 本脚本按 cast_atlas.json 的坐标逐格贴回去，不缩放、不改色；任何一格缺失或尺寸不符都直接报错。
 //
-//   node bake_atlas.mjs            重建并写盘
-//   node bake_atlas.mjs --check    只校验现有 PNG 与重建结果逐字节一致
+//   npm run atlas          重建并写盘
+//   npm run atlas:check    只校验现有 PNG 与重建结果逐字节一致
 import fs from 'node:fs';
 import path from 'node:path';
 import zlib from 'node:zlib';
@@ -17,9 +17,9 @@ import crypto from 'node:crypto';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
-const PIXEL_MV = path.resolve(HERE, '../童话镇/src');
-const META_PATH = path.join(HERE, 'site/src/mv/assets/cast_atlas.json');
-const OUT_PATH = path.join(HERE, 'site/src/mv/assets/cast_atlas.png');
+const PIXEL_MV = path.join(HERE, 'source');
+const META_PATH = path.join(HERE, '../engine/assets/cast_atlas.json');
+const OUT_PATH = path.join(HERE, '../engine/assets/cast_atlas.png');
 
 const imp = (f) => import(pathToFileURL(path.join(PIXEL_MV, f)).href);
 const { RGB, T } = await imp('px.js');

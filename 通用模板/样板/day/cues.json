@@ -1,0 +1,50 @@
+{
+ "measured": false,
+ "method": "规划轴：按 3.36 字/秒估算（每个分句不少于 0.8 秒，每个标点 0.15 秒，句间 0.18 秒）。没有对齐任何音频，只能出无声样片",
+ "source": {
+  "script": "台词.txt",
+  "script_sha256": "d05fafccd1a1514cf5ddf4a8207b72e98b98576c230069ea0ed77d87bb1976ae"
+ },
+ "beat": null,
+ "lines": [
+  {
+   "text": "本鲸来演示一下口播片的样板。",
+   "start": 0.25,
+   "end": 4.269,
+   "who": "whale"
+  },
+  {
+   "text": "一句台词一屏字，左边是说话人的头像。",
+   "start": 4.449,
+   "end": 9.511,
+   "who": "whale"
+  },
+  {
+   "text": "镜头在每句开口前两帧切换。",
+   "start": 9.691,
+   "end": 13.412,
+   "who": "gpt"
+  },
+  {
+   "text": "没有配音的时候，只能出无声样片。",
+   "start": 13.592,
+   "end": 18.059,
+   "who": "whale",
+   "face": "p_whale_think"
+  },
+  {
+   "text": "配音到位，先对齐，再出成片。",
+   "start": 18.239,
+   "end": 21.963,
+   "who": "gpt",
+   "face": "p_gpt_haughty"
+  },
+  {
+   "text": "把这几句换成你的台词就能开工啦。",
+   "start": 22.143,
+   "end": 26.757,
+   "who": "whale",
+   "face": "p_whale_shout"
+  }
+ ]
+}

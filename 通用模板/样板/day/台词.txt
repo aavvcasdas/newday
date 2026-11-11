@@ -1,0 +1,11 @@
+# 口播台词：一行一句 = 一屏字幕。井号开头的行是注释。
+# 行首可以写「角色:」指定说话人，或「角色/头像:」连表情一起换；不写就用 film.json 里的 speaker。
+#   角色：whale gpt claude doubao gemini kimi qwen zai
+#   头像：图集里 p_ 开头的格子，如 p_whale_think、p_whale_shout、p_gpt_haughty（见 通用模板/README.md）
+# 一句别超过 22 个字（超了字号会自动缩小），口播里的数字写成汉字。
+本鲸来演示一下口播片的样板。
+一句台词一屏字，左边是说话人的头像。
+gpt: 镜头在每句开口前两帧切换。
+whale/p_whale_think: 没有配音的时候，只能出无声样片。
+gpt/p_gpt_haughty: 配音到位，先对齐，再出成片。
+whale/p_whale_shout: 把这几句换成你的台词就能开工啦。
