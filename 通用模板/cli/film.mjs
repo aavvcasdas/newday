@@ -256,9 +256,12 @@ async function frames() {
   const concurrency = Number(opt('--concurrency', Math.max(1, Math.min(4, os.cpus().length))));
   // 换了卡点 / 改了镜头或引擎之后旧帧作废：帧目录里记着上次渲染用的「时间轴 + 源码」指纹
   const stampFile = path.join(FRAMES, '_stamp.sha');
-  const stamp = crypto.createHash('sha256').update(JSON.stringify([o.info.shots, o.info.starts, o.info.ends, o.info.frames, o.info.source_sha256])).digest('hex');
+  // 字幕的文字、说话人、头像、拍点都画在帧里，而它们只存在卡点文件中（不在源码指纹里），所以一并算进去：
+  // 只改了一个错别字、每句的时间没变，旧帧也必须作废。
+  const faces = JSON.parse(fs.readFileSync(path.join(PROJ, 'cues.json'), 'utf8')).lines.map((l) => l.face ?? null); // 文字和头像永远取作品自己的 cues.json（--cues 只换时间）
+  const stamp = crypto.createHash('sha256').update(JSON.stringify([o.info.shots, o.info.starts, o.info.ends, o.info.frames, o.info.source_sha256, o.info.lines, o.info.speakers ?? null, faces, o.info.beat ?? null])).digest('hex');
   if (fs.existsSync(stampFile) && fs.readFileSync(stampFile, 'utf8') !== stamp && !flag('--keep')) {
-    console.log('[frames] 时间轴或源码变了，清空旧帧重渲（确定旧帧还能用就加 --keep）');
+    console.log('[frames] 时间轴、字幕或源码变了，清空旧帧重渲（确定旧帧还能用就加 --keep）');
     fs.rmSync(FRAMES, { recursive: true, force: true }); fs.mkdirSync(FRAMES, { recursive: true });
   }
   fs.writeFileSync(stampFile, stamp);
