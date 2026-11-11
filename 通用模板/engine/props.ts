@@ -146,6 +146,14 @@ export function sheet(w: number, d: number, draw?: (c: CanvasRenderingContext2D,
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, d).rotateX(-PI / 2), new THREE.MeshBasicMaterial({ map: tex }));
   return m;
 }
+/** 把一张 sheet() 立起来当桌牌 / 价签：正面朝 +z（朝镜头），lean 是往后仰的弧度。d 是那张纸的进深（立起来以后就是高）。原点在牌子底边中心 */
+export function standing(m: THREE.Mesh, d: number, lean = 0.14): THREE.Group {
+  const g = new THREE.Group();
+  m.rotation.x = PI / 2 - lean;
+  m.position.set(0, (d / 2) * Math.cos(lean), -(d / 2) * Math.sin(lean));
+  g.add(m);
+  return g;
+}
 /** 在纸上写一行字：自动缩到不超出纸宽。y 是基线位置（0–1），size 是字高占纸高的比例 */
 export function writeLine(c: CanvasRenderingContext2D, W: number, H: number, text: string, y = 0.5, size = 0.22, color = '#2b2233') {
   let px = Math.round(H * size);

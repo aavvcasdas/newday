@@ -11,7 +11,7 @@
 //              day：台词.txt + 配音 → 按停顿切句（--words <ASR 词级时间戳.json> 可换成逐词对齐）
 //   stills   <帧号…>            抽查静帧 → <工作目录>/stills/
 //   sheet                       分镜总览图（每个镜头 62% 处一格）→ <输出>_分镜总览.jpg
-//   sheet    --shot <镜头id> [--n 6]   只看一个镜头：从头到尾抽 n 格 → <工作目录>/镜头_<id>.jpg（写镜头时用）
+//   sheet    --shot <镜头id[,镜头id…]> [--n 6] [--cell 640]   只看某个镜头：从头到尾抽 n 格 → <工作目录>/镜头_<id>.jpg（写镜头时用）
 //   frames   [--from a --to b]  逐帧渲染 PNG 序列（每 300 帧一块，中断后重跑会续渲）
 //   encode   [--bitrate 4700k | --crf 18] [--preset slow]   PNG 序列 → 无声 H.264
 //   mux                         音轨对齐混入 → <输出>.mp4 + <输出>.srt（只接受按这条音源实测过的卡点）
@@ -514,7 +514,7 @@ function qa() {
 async function sheet() {
   const o = await openComposition();
   const only = opt('--shot');
-  if (only) return shotSheet(o, only);
+  if (only) { for (const id of only.split(',').filter(Boolean)) await shotSheet(o, id); return; }
   const mids = o.info.shots.map((s) => Math.min(o.info.frames - 1, Math.round((s.a + (s.b - s.a) * 0.62) * o.info.fps)));
   // 已经有 PNG 序列就直接取，没有才单独渲染
   const files = [];
@@ -532,13 +532,14 @@ async function shotSheet(o, id) {
   const s = o.info.shots.find((x) => x.id === id);
   if (!s) die(`没有镜头 ${id}。现有：${o.info.shots.map((x) => x.id).join(' ')}`);
   const n = Math.max(2, Math.min(24, Number(opt('--n', 6)) || 6));
+  const cellW = Number(opt('--cell', 640)) || 640;
   const fa = Math.ceil(s.a * o.info.fps - 1e-6), fb = Math.min(o.info.frames, Math.ceil(s.b * o.info.fps - 1e-6)) - 1;
   const picks = [...new Set(Array.from({ length: n }, (_, i) => Math.round(fa + ((fb - fa) * i) / (n - 1))))];
   const files = await stills(picks);
   const lineAt = (t) => { const i = o.info.starts.findIndex((a, k) => t >= a && t <= o.info.ends[k]); return i >= 0 ? `第${i + 1}句 ${o.info.lines[i]}` : ''; };
   const listFile = path.join(WORK, 'sheet_shot.json');
   const out = path.join(WORK, `镜头_${id}.jpg`);
-  fs.writeFileSync(listFile, JSON.stringify({ title: `${o.info.title} ${id}`, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cols: n <= 4 ? 2 : 3, cell: [640, 360],
+  fs.writeFileSync(listFile, JSON.stringify({ title: `${o.info.title} ${id}`, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cols: n <= 4 ? 2 : 3, cell: cellW >= 320 ? [cellW, Math.round((cellW * 9) / 16)] : [640, 360],
     cells: picks.map((f, i) => ({ id: `${id} f${f}`, a: f / o.info.fps, b: null, title: `镜头内 ${(((f - fa) / Math.max(1, fb - fa)) * 100).toFixed(0)}%`, line: lineAt(f / o.info.fps), file: files[i] })) }));
   py('qa.py', ['sheet', listFile, out]);
 }
