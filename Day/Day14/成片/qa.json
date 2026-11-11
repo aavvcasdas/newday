@@ -1,0 +1,76 @@
+{
+ "frames": {
+  "frames": 5085,
+  "wrong_size": [],
+  "identical_to_previous": [],
+  "blank_background_frames": [],
+  "frozen_runs": [],
+  "shots_without_visible_cut": [],
+  "subtitle_bar_missing": [],
+  "luma_min": 65.23,
+  "luma_max": 185.65,
+  "sequence_md5": "84a1f7afea14d5260387acc3e31f0463",
+  "problems": []
+ },
+ "timing": {
+  "measured": false,
+  "method": "规划轴：按 3.36 字/秒估算（每个分句不少于 0.8 秒，每个标点 0.15 秒，句间 0.18 秒）。没有对齐任何音频，只能出无声样片",
+  "source": {
+   "script": "台词.txt",
+   "script_sha256": "9488d9d8ca49fbe599d220f17714d607b5b560b35bd0bd37e27b29ec637c216c"
+  },
+  "notes": [
+   "卡点是估算的（cues.json measured=false）：只能当无声样片，不能当成片交付"
+  ],
+  "shots": {
+   "count": 19,
+   "shortest_seconds": 2.413,
+   "longest_seconds": 20.851
+  },
+  "problems": []
+ },
+ "sample": {
+  "file": "Day14_无声样片.mp4",
+  "bytes": 38198630,
+  "sha256": "0a89374d27c5a566f568b17bb3fffc6de5685adfa83e5ae9dfeed002598598f4",
+  "full_decode": "ok",
+  "probe": {
+   "programs": [],
+   "stream_groups": [],
+   "streams": [
+    {
+     "codec_name": "h264",
+     "profile": "100",
+     "codec_type": "video",
+     "width": 1920,
+     "height": 1080,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "color_space": "bt709",
+     "r_frame_rate": "30/1",
+     "duration": "169.500000",
+     "bit_rate": "1800489",
+     "nb_frames": "5085"
+    }
+   ],
+   "format": {
+    "duration": "169.500000",
+    "size": "38198630",
+    "bit_rate": "1802885"
+   }
+  },
+  "problems": []
+ },
+ "project": {
+  "id": "day14",
+  "kind": "day",
+  "title": "Day14",
+  "frames": 5085,
+  "duration": 169.493,
+  "shots": 19,
+  "lines": 44,
+  "source_sha256": "23ccb7df6309e90a9b2c75e63a1dfefd6d559d567afae45f8bb5c9e74ebe70ed",
+  "source_files": 17
+ },
+ "checked_at": "2026-11-11T07:47:36.121Z"
+}
