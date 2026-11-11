@@ -8,26 +8,97 @@
    4271
   ],
   "blank_background_frames": [],
+  "frozen_runs": [],
+  "shots_without_visible_cut": [],
+  "subtitle_bar_missing": [],
   "luma_min": 0,
   "luma_max": 255,
-  "sequence_md5": "686ed9d86bc4cc26932a3fa742a83243"
+  "sequence_md5": "0f4518687e4bb62265afb306e767bc8d",
+  "problems": []
+ },
+ "timing": {
+  "measured": true,
+  "method": "字幕起点吸附到原曲实测拍点（±半拍内）；拍点级对齐，不是逐音节对齐",
+  "source": {
+   "subtitles": "歌词.srt",
+   "audio": "素材/童话镇.mp4",
+   "audio_sha256": "9dc8eb301edf33c23a7dbe4f170d774d4612bc268a86a5819e7d60d9af19173c",
+   "audio_duration": 249.579,
+   "analysis_sample_rate": 22050,
+   "subtitles_sha256": "c31cbd61ba09e5201956432998aae804fdea17282f26db9e52caf44962c2ba18"
+  },
+  "notes": [],
+  "beat": {
+   "bpm": 139.953,
+   "period": 0.42871,
+   "line_start_offset_to_beat_seconds": {
+    "max_abs": 0.0016,
+    "mean_abs": 0.0007
+   },
+   "cut_frames_before_beat": {
+    "min": 1.03,
+    "max": 1.95,
+    "shots": 31
+   }
+  },
+  "summary": {
+   "lines": 31,
+   "mean_abs_delta": 0.095,
+   "max_abs_delta": 0.198,
+   "warnings": []
+  },
+  "shots": {
+   "count": 40,
+   "shortest_seconds": 3.001,
+   "longest_seconds": 4.743
+  },
+  "problems": []
  },
  "final": {
-  "file": "童话镇-remotion3d.mp4",
-  "bytes": 88539525,
-  "sha256": "e4625d063a2697b50d9ffd2d347874e8abeaf75b5a7127b188259d488c667aa1",
+  "file": "童话镇.mp4",
+  "bytes": 88535613,
+  "sha256": "c6601d9bed23d297863192d83b8982ad5e517cd5e57c653a06752134f40368ea",
   "audio_samples": 6835200,
   "audio_seconds": 142.4,
+  "expected_seconds": 142.4,
   "audio_lag_vs_source_samples": 0,
   "audio_lag_vs_source_ms": 0,
-  "audio_correlation_20_80s": 1,
-  "tail_rms_140.5_to_142.4": [
-   0.2848,
-   0.2689,
-   0.2238,
-   0.0691,
-   0.0325
+  "audio_correlation": 1,
+  "correlation_window_seconds": [
+   20,
+   80
   ],
+  "tail_rms": {
+   "-2.0s": 0.3147,
+   "-1.5s": 0.2926,
+   "-1.0s": 0.2545,
+   "-0.5s": 0.0916,
+   "-0.25s": 0.0325
+  },
+  "mix": {
+   "sample_rate": 48000,
+   "samples": 6835200,
+   "seconds": 142.4,
+   "offset_seconds": 0,
+   "source_seconds": 249.579,
+   "source_used": [
+    0,
+    142.4
+   ],
+   "source_remaining_after_end_seconds": 107.179,
+   "silence_after_source_seconds": 0,
+   "fade_out_seconds": 1.5,
+   "peak_dbfs": 0,
+   "clipped_samples": 279,
+   "full_scale_samples_from_source": 279,
+   "clipped_by_mix": 0,
+   "rms_dbfs": -9.6
+  },
+  "notes": [
+   "音源自身有 279 个采样顶到满刻度，原样保留（混音没有加增益）"
+  ],
+  "problems": [],
+  "full_decode": "ok",
   "probe": {
    "programs": [],
    "stream_groups": [],
@@ -43,7 +114,7 @@
      "color_space": "bt709",
      "r_frame_rate": "30/1",
      "duration": "142.400000",
-     "bit_rate": "4709757",
+     "bit_rate": "4709536",
      "nb_frames": "4272"
     },
     {
@@ -60,16 +131,21 @@
    ],
    "format": {
     "duration": "142.400000",
-    "size": "88539525",
-    "bit_rate": "4974130"
+    "size": "88535613",
+    "bit_rate": "4973910"
    }
   }
  },
- "timing": {
-  "source": "audio_sync.json",
-  "bpm": 139.953,
-  "beat_period": 0.42871,
-  "mean_abs_delta": 0.095,
-  "max_abs_delta": 0.198
- }
+ "project": {
+  "id": "tonghuazhen",
+  "kind": "mv",
+  "title": "童话镇",
+  "frames": 4272,
+  "duration": 142.4,
+  "shots": 40,
+  "lines": 31,
+  "source_sha256": "442105a7d18f303be7154107a989d7d62999da6b339209055972d2c23ac6eb62",
+  "source_files": 19
+ },
+ "checked_at": "2026-11-11T09:19:19.753Z"
 }
