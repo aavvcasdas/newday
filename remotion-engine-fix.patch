@@ -1,0 +1,572 @@
+diff --git a/tools/engine/character_motion.mjs b/tools/engine/character_motion.mjs
+index d485779..9531e81 100644
+--- a/tools/engine/character_motion.mjs
++++ b/tools/engine/character_motion.mjs
+@@ -682,14 +682,19 @@ export function evaluateCharacterMotion(plan, t, {
+ 
+   // 列数按图集族推断：双骨骼步态 *_2leg / *_pet 为 8 格，表演图集为 16 格。
+   // 写死 16 会让步态图集只播前一半帧，动作也播成半速。
+-  const atlasColsFor = (name) => (name && /(_2leg|_pet)$/.test(name) ? 8 : 16);
++  // 列数必须按「每一张图集」解析，而不是每个角色一个值：同一 plan 里步态 8 格 → 表演 16 格 → *_cel 单格会混用，
++  // 拿初始图集的列数去切另一张图集，会把角色横向拉宽一倍只露半身，或一格里挤进两个人。
++  const atlasColsFor = (name) => {
++    if (!name) return 16;
++    if (/(_2leg|_pet)$/.test(name)) return 8;
++    if (/_cel$/.test(name)) return 1;
++    return 16;
++  };
++  const colsOfAtlas = (name) => plan.atlasColsByName?.[name] || plan.atlasCols || atlasColsFor(name);
+   // 注意：atlas 也可能只由 locomotion 预设推导出来（plan.atlas 缺省），
+   // 这里必须把预设解析后的真实图集名也算进来，否则 8 格步态会被当成 16 列播，
+   // 抽到不存在的格子 → 角色闪空。
+-  const initialAtlasName = plan.atlas
+-    || plan.atlases?.[0]?.atlas
+-    || (plan.locomotion ? resolveLocomotionAtlas(resolvedCharId, plan.locomotion) : null);
+-  const atlasCols = plan.atlasCols || atlasColsFor(initialAtlasName);
++  // → 所以 atlasCols 改为在解析出「当前真正生效的图集」之后按图集名求（见下方 colsOfAtlas(atlas)）。
+   let activeAtlasSpec = defaultAtlasFromPlan
+     ? {
+       at: shotStart,
+@@ -789,6 +794,7 @@ export function evaluateCharacterMotion(plan, t, {
+   const computeAtlasFrame = (spec, resolvedAtlasName = null) => {
+     const atlasName = resolvedAtlasName || resolveEffectiveAtlasName(spec);
+     if (!atlasName) return 0;
++    const cols = colsOfAtlas(atlasName);
+     const isTwoLegWalk = atlasName.endsWith('_2leg') || (spec?.strideCyclePx ?? 0) > 0;
+     if (isTwoLegWalk) {
+       // 对标 ai-girl-chatgpt-pets pet.json (8帧×120ms ≈ 0.96s/双步周期)：匀速稳定屈膝节拍，绝不忽快忽慢卡帧
+@@ -797,15 +803,16 @@ export function evaluateCharacterMotion(plan, t, {
+       const speedBoost = Math.abs(trackVx) > 165 ? 0.82 : 1.0;
+       const cyc = Math.max(0.48, (spec?.cycle || 0.96) * speedBoost);
+       const prog = (((relWalk / cyc) + (spec?.phaseOffset || 0)) % 1 + 1) % 1;
+-      return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
++      return Math.min(cols - 1, Math.floor(prog * cols));
+     }
+     const rel = Math.max(0, t - (spec?.at ?? shotStart));
+     const cyc = Math.max(0.25, spec?.cycle || (atlasName.endsWith('_pet') ? 1.35 : 1.25));
+     const prog = spec?.loop === false ? Math.min(0.999, rel / cyc) : ((rel / cyc) % 1 + 1) % 1;
+-    return Math.min(atlasCols - 1, Math.floor(prog * atlasCols));
++    return Math.min(cols - 1, Math.floor(prog * cols));
+   };
+ 
+   const atlas = resolveEffectiveAtlasName(activeAtlasSpec);
++  const atlasCols = colsOfAtlas(atlas);
+   const refVx = Math.abs(trackVx) > 6 ? trackVx : lastMovingVx;
+   if (activeAtlasSpec?.flip != null) {
+     autoFlip = activeAtlasSpec.flip;
+@@ -948,6 +955,7 @@ export function evaluateCharacterMotion(plan, t, {
+     prevAtlasFrame,
+     atlasBlend,
+     atlasCols,
++    prevAtlasCols: prevAtlas ? colsOfAtlas(prevAtlas) : null,
+     pose,
+     prevPose,
+     poseBlend,
+diff --git a/tools/engine/render_episode.mjs b/tools/engine/render_episode.mjs
+index 8d05f21..0ccc3ec 100644
+--- a/tools/engine/render_episode.mjs
++++ b/tools/engine/render_episode.mjs
+@@ -287,11 +287,11 @@ function drawAtlasActor(g, a, atlasImages) {
+   const dir = a.flip ? -1 : 1;
+   const footSink = h * 0.018;
+ 
+-  const drawFrame = (sheetImg, frameIdx, alpha) => {
++  const drawFrame = (sheetImg, frameIdx, alpha, sheetCols = cols) => {
+     if (!sheetImg || alpha <= 0.005) return;
+-    const cw = sheetImg.width / cols;
++    const cw = sheetImg.width / sheetCols;
+     const ch = sheetImg.height;
+-    const idx = Math.max(0, Math.min(cols - 1, frameIdx | 0));
++    const idx = Math.max(0, Math.min(sheetCols - 1, frameIdx | 0));
+     g.save();
+     g.globalAlpha = (a.opacity ?? 1) * alpha;
+     g.translate(a.x, a.y + footSink);
+@@ -302,7 +302,7 @@ function drawAtlasActor(g, a, atlasImages) {
+   };
+ 
+   if (a.prevAtlas && a.atlasBlend < 0.999 && atlasImages.has(a.prevAtlas)) {
+-    drawFrame(atlasImages.get(a.prevAtlas), a.prevAtlasFrame ?? 0, 1 - a.atlasBlend);
++    drawFrame(atlasImages.get(a.prevAtlas), a.prevAtlasFrame ?? 0, 1 - a.atlasBlend, a.prevAtlasCols || cols);
+     drawFrame(img, a.atlasFrame ?? 0, a.atlasBlend);
+   } else {
+     drawFrame(img, a.atlasFrame ?? 0, 1);
+diff --git a/tools/remotion-engine/README.md b/tools/remotion-engine/README.md
+index 15abe34..2263283 100644
+--- a/tools/remotion-engine/README.md
++++ b/tools/remotion-engine/README.md
+@@ -47,8 +47,8 @@ NODE_PATH=$PWD/tools/engine/node_modules node tools/mv_dayu/remotion/render.mjs
+ NODE_PATH=$PWD/tools/engine/node_modules node tools/remotion-engine/render_cli.mjs \
+   --mode episode \
+   --auto-sets \
+-  --spec tools/day12制作/episode.production.spec.mjs \
+-  --alignment tools/day12制作/voice_alignment.json \
+-  --subtitle-file tools/day12制作/subtitle_timing.json \
++  --spec Day/Day12/episode.production.spec.mjs \
++  --alignment Day/Day12/voice_alignment.json \
++  --subtitle-file Day/Day12/subtitle_timing.json \
+   --dry-run
+ ```
+diff --git a/tools/remotion-engine/UniversalComposition.jsx b/tools/remotion-engine/UniversalComposition.jsx
+index 899881f..76b2555 100644
+--- a/tools/remotion-engine/UniversalComposition.jsx
++++ b/tools/remotion-engine/UniversalComposition.jsx
+@@ -1,5 +1,5 @@
+ import React, { useEffect, useState } from 'react';
+-import { AbsoluteFill, Audio, continueRender, delayRender, useCurrentFrame, useVideoConfig } from 'remotion';
++import { AbsoluteFill, Audio, cancelRender, continueRender, delayRender, useCurrentFrame, useVideoConfig } from 'remotion';
+ import { evaluateRemotionFrameState } from './frame_evaluator.mjs';
+ import { WorldCamera } from './components/WorldCamera.jsx';
+ import { StageSetView } from './components/StageSetView.jsx';
+@@ -10,6 +10,30 @@ import { LyricAndSubtitleLayer } from './components/LyricAndSubtitleLayer.jsx';
+ 
+ export { evaluateRemotionFrameState };
+ 
++// SVG <image href> 不受 Remotion 的 delayRender 管控：不预载的话
++// 「404 → 角色静默消失」和「位图未解码就截图 → 并发分片里闪空」都不会报任何错。
++// 模块级缓存让已解码位图常驻，后续每一帧的 <image> 直接命中内存缓存。
++const PRELOADED_IMAGES = new Map();
++function preloadImage(url) {
++  if (!PRELOADED_IMAGES.has(url)) {
++    PRELOADED_IMAGES.set(
++      url,
++      new Promise((resolve, reject) => {
++        const img = new Image();
++        img.onload = () => {
++          const done = () => resolve(img);
++          if (typeof img.decode === 'function') img.decode().then(done, done);
++          else done();
++        };
++        img.onerror = () => reject(new Error(`角色素材加载失败（404 或文件损坏）：${url}`));
++        img.src = url;
++      })
++    );
++  }
++  return PRELOADED_IMAGES.get(url);
++}
++const NO_URLS = [];
++
+ export function UniversalComposition(props) {
+   const frame = useCurrentFrame();
+   const { fps, width, height } = useVideoConfig();
+@@ -26,18 +50,30 @@ export function UniversalComposition(props) {
+         continueRender(fontHandle);
+       }
+     };
+-    const face = new FontFace('NewdayNoto', `url(${props.fontUrl})`);
++    const face = new FontFace('NewdayNoto', `url("${props.fontUrl}")`);
+     face
+       .load()
+       .then((loaded) => {
+         document.fonts.add(loaded);
+         finish();
+       })
+-      .catch(() => {
+-        finish();
++      .catch((err) => {
++        // 字体失败不能静默放行：无头 Chromium 里没有任何 CJK 字体，放行 = 全片豆腐块
++        cancelRender(new Error(`中文字体加载失败：${props.fontUrl}（${err?.message || err}）`));
+       });
+   }, [fontHandle, props.fontUrl]);
+ 
++  const preloadUrls = props.preloadUrls || NO_URLS;
++  const [assetHandle] = useState(() => (preloadUrls.length && typeof Image !== 'undefined' ? delayRender('preload-character-assets') : null));
++
++  useEffect(() => {
++    if (assetHandle === null) return;
++    Promise.all(preloadUrls.map(preloadImage)).then(
++      () => continueRender(assetHandle),
++      (err) => cancelRender(err)
++    );
++  }, [assetHandle]);
++
+   const state = evaluateRemotionFrameState(props, t);
+   const outputScale = width / (props.logicalWidth || 1280);
+   const deskShake = state.setState.reactive?.deskShake || 0;
+diff --git a/tools/remotion-engine/asset_pipeline.test.mjs b/tools/remotion-engine/asset_pipeline.test.mjs
+new file mode 100644
+index 0000000..4ad1fcf
+--- /dev/null
++++ b/tools/remotion-engine/asset_pipeline.test.mjs
+@@ -0,0 +1,68 @@
++// asset_pipeline.test.mjs — 回归测试：Remotion 素材链路不得「渲染成功但角色消失 / 被拉伸」
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import path from 'node:path';
++import { fileURLToPath } from 'node:url';
++import { startLocalAssetServer, buildAssetUrlMap, preflightRemotionAssets } from './render_cli.mjs';
++import { ensureWalkRigAtlases, WALK_RIG_ATLAS_NAMES, DEFAULT_WALK_CACHE_DIR } from './walk_rig_builder.mjs';
++import { evaluateCharacterMotion } from '../engine/character_motion.mjs';
++
++const REPO_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
++
++test('预烘步态/待机图集必须能经 /__walk_rigs__/ 取到（回归：22 张全部 404、角色整个消失）', async () => {
++  const walkRigFiles = await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
++  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR, { walkRigFiles });
++  try {
++    const map = buildAssetUrlMap(baseUrl, walkRigFiles);
++    for (const name of WALK_RIG_ATLAS_NAMES) {
++      const url = map[`atlas:${name}`];
++      assert.ok(url, `${name} 未登记 URL`);
++      const res = await fetch(url);
++      assert.equal(res.status, 200, `${name} → HTTP ${res.status}`);
++      const buf = Buffer.from(await res.arrayBuffer());
++      assert.equal(buf.readUInt32BE(16), 384 * 8, `${name} 应为 8 格宽 3072px`);
++      assert.equal(buf.readUInt32BE(20), 416, `${name} 应为 416px 高`);
++    }
++  } finally {
++    server.close();
++  }
++});
++
++test('图集列数按「每张图集」解析：步态 8 格 / 表演 16 格 / *_cel 单格可在同一角色内混用', () => {
++  const ctx = { line: 1, cues: [], beatGrid: null, shotStart: 0, setAnchors: { groundY: 600 }, events: [], actorIndex: 0 };
++  const REAL = { claude_walk_2leg: 8, claude_idle_pet: 8, claude_firework_action: 16, claude_place_cel: 1 };
++  const plans = [
++    { characterId: 'claude', locomotion: 'walk', x: 300, y: 600, atlases: [{ at: 1.0, atlas: 'claude_firework_action' }] },
++    { characterId: 'claude', x: 300, y: 600, atlas: 'claude_firework_action', atlases: [{ at: 1.0, atlas: 'claude_idle_pet' }] },
++    { characterId: 'claude', x: 300, y: 600, atlas: 'claude_place_cel' },
++  ];
++  for (const plan of plans) {
++    for (let t = 0; t < 2.4; t += 1 / 30) {
++      const a = evaluateCharacterMotion(plan, t, ctx);
++      assert.equal(a.atlasCols, REAL[a.atlas], `t=${t.toFixed(2)} ${a.atlas} 列数应为 ${REAL[a.atlas]}`);
++      assert.ok(a.atlasFrame >= 0 && a.atlasFrame < REAL[a.atlas], `t=${t.toFixed(2)} ${a.atlas} 帧号 ${a.atlasFrame} 越界`);
++      if (a.prevAtlas) {
++        assert.equal(a.prevAtlasCols, REAL[a.prevAtlas], `prev ${a.prevAtlas} 列数应为 ${REAL[a.prevAtlas]}`);
++        assert.ok(a.prevAtlasFrame < REAL[a.prevAtlas], `prev ${a.prevAtlas} 帧号越界`);
++      }
++    }
++  }
++});
++
++test('素材预检：图集未登记或 404 必须在开渲前报错，不允许静默回退', async () => {
++  const props = {
++    mode: 'lyric-mv', fps: 10, duration: 1, durationInFrames: 10, cues: [], events: [],
++    shots: [{ id: 'T1', start: 0, end: 1, setSpec: { id: 'river_gate' }, actors: [{ characterId: 'whale', atlas: 'whale_idle_side_pet', x: 560, y: 600 }] }],
++    assetUrlMap: {},
++  };
++  await assert.rejects(() => preflightRemotionAssets(props), /未登记/);
++  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR, { walkRigFiles: {} });
++  try {
++    props.assetUrlMap = { 'atlas:whale_idle_side_pet': `${baseUrl}/__walk_rigs__/definitely_missing.png` };
++    await assert.rejects(() => preflightRemotionAssets(props), /HTTP 404/);
++    const soft = await preflightRemotionAssets(props, { allowMissing: true });
++    assert.equal(soft.problems.length, 1);
++  } finally {
++    server.close();
++  }
++});
+diff --git a/tools/remotion-engine/components/RiggedCharacter.jsx b/tools/remotion-engine/components/RiggedCharacter.jsx
+index fba591e..5d28ec7 100644
+--- a/tools/remotion-engine/components/RiggedCharacter.jsx
++++ b/tools/remotion-engine/components/RiggedCharacter.jsx
+@@ -1,4 +1,4 @@
+-import React from 'react';
++import React, { useId } from 'react';
+ 
+ const PALETTES = {
+   whale: { hair: '#2558AA', hairHi: '#53AAE8', dress: '#1E2D52', apron: '#F8FBFF', tail: '#365284', skin: '#FFEAE0', eye: '#1F56B5', bow: '#4BAEE8' },
+@@ -133,7 +133,9 @@ function AtlasCellSprite({ clipId, url, frameIndex = 0, cols = 16, heightPx, opa
+   const cellW = heightPx * (384 / 416);
+   const footY = -heightPx * 0.968;
+   const stripW = cellW * cols;
+-  const offsetX = -cellW / 2 - frameIndex * cellW;
++  // 帧号越界时钳到末格，绝不取到条带之外的空白（否则角色整格消失）
++  const safeFrame = Math.max(0, Math.min(cols - 1, Math.floor(frameIndex) || 0));
++  const offsetX = -cellW / 2 - safeFrame * cellW;
+ 
+   return (
+     <g opacity={opacity}>
+@@ -164,6 +166,9 @@ function AtlasCellSprite({ clipId, url, frameIndex = 0, cols = 16, heightPx, opa
+  *   3. 多关节 SVG 玩偶模式 (ArticulatedPuppetSvg)
+  */
+ export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate = false }) {
++  // clipPath 的 id 是整个文档全局的。旧写法 `ac-${characterId}-${round(x)}` 在两个同名/无名角色
++  // 站到同一 x 时会撞 id，后一个角色被前一个的裁剪框裁掉。useId 每实例唯一且逐帧稳定。
++  const uid = useId().replace(/[^a-zA-Z0-9_-]/g, '');
+   if ((actor.opacity ?? 1) <= 0.01) return null;
+ 
+   const heightPx = actor.height
+@@ -185,7 +190,7 @@ export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate
+   const spriteUrl = assetUrlMap[spriteKey] || assetUrlMap[actor.pose] || assetUrlMap[actor.assetId] || null;
+   const prevSpriteUrl = prevSpriteKey ? (assetUrlMap[prevSpriteKey] || assetUrlMap[actor.prevPose] || null) : null;
+ 
+-  const clipPrefix = `ac-${actor.characterId || 'ch'}-${Math.round(actor.x)}`;
++  const clipPrefix = `ac-${uid}`;
+ 
+   return (
+     <svg
+@@ -217,7 +222,7 @@ export function RiggedCharacter({ actor, assetUrlMap = {}, t = 0, showNamePlate
+                 clipId={`${clipPrefix}-prev`}
+                 url={prevAtlasUrl}
+                 frameIndex={actor.prevAtlasFrame ?? 0}
+-                cols={actor.atlasCols || 16}
++                cols={actor.prevAtlasCols || actor.atlasCols || 16}
+                 heightPx={heightPx}
+                 opacity={1 - (actor.atlasBlend ?? 1)}
+               />
+diff --git a/tools/remotion-engine/render_cli.mjs b/tools/remotion-engine/render_cli.mjs
+index f913b95..c6511be 100644
+--- a/tools/remotion-engine/render_cli.mjs
++++ b/tools/remotion-engine/render_cli.mjs
+@@ -33,7 +33,7 @@ async function loadModuleSpec(specPath) {
+   return spec;
+ }
+ 
+-function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
++export function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR, { walkRigFiles = {}, extraFiles = {} } = {}) {
+   const mimeMap = {
+     '.png': 'image/png',
+     '.jpg': 'image/jpeg',
+@@ -51,10 +51,23 @@ function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
+   const server = http.createServer((req, res) => {
+     const cleanUrl = decodeURIComponent((req.url || '/').split('?')[0]);
+     let filePath;
+-    if (cleanUrl.startsWith('/__walk_rigs__/')) {
++    if (Object.prototype.hasOwnProperty.call(extraFiles, cleanUrl)) {
++      // 显式挂载的单文件（例如放在仓库外的 --font 字体）
++      filePath = path.resolve(extraFiles[cleanUrl]);
++      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
++        res.writeHead(404);
++        res.end('Not found');
++        return;
++      }
++    } else if (cleanUrl.startsWith('/__walk_rigs__/')) {
+       const relRig = cleanUrl.slice('/__walk_rigs__/'.length);
+-      filePath = path.resolve(walkRigDir, relRig);
+-      if (!filePath.startsWith(path.resolve(walkRigDir)) || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
++      // ensureWalkRigAtlases() 对「仓库里已有预烘成品」的图集只返回成品路径、不往缓存目录落盘。
++      // 只查缓存目录 = 全新机器上 22 张步态/待机图集全部 404（旧机器则读到 /tmp 里的过期缓存）。
++      const rigName = relRig.replace(/\.png$/i, '');
++      const mapped = Object.prototype.hasOwnProperty.call(walkRigFiles, rigName) ? walkRigFiles[rigName] : null;
++      filePath = mapped ? path.resolve(mapped) : path.resolve(walkRigDir, relRig);
++      const allowed = Boolean(mapped) || filePath.startsWith(path.resolve(walkRigDir) + path.sep);
++      if (!allowed || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+         res.writeHead(404);
+         res.end('Not found');
+         return;
+@@ -83,7 +96,7 @@ function startLocalAssetServer(rootDir, walkRigDir = DEFAULT_WALK_CACHE_DIR) {
+   });
+ }
+ 
+-function buildAssetUrlMap(baseUrl) {
++export function buildAssetUrlMap(baseUrl, walkRigFiles = null) {
+   const map = {};
+   const whaleFallbackPoses = {
+     idle: 'assets/ai-girls/lyric-v8/source/whale_neutral.png',
+@@ -131,6 +144,8 @@ function buildAssetUrlMap(baseUrl) {
+ 
+   // 注册程序化双腿交替行走与长椅坐姿 16 帧图集 (/__walk_rigs__/*.png)
+   for (const rigName of Object.keys(WALK_RIG_BUILDERS)) {
++    // 只登记真正存在（预烘或已落盘）的图集；缺的交给 preflightRemotionAssets() 明确报错，不留悬空 URL
++    if (walkRigFiles && !walkRigFiles[rigName]) continue;
+     const url = `${baseUrl}/__walk_rigs__/${encodeURIComponent(rigName)}.png`;
+     map[`atlas:${rigName}`] = url;
+     map[rigName] = url;
+@@ -139,18 +154,43 @@ function buildAssetUrlMap(baseUrl) {
+   return map;
+ }
+ 
+-function resolveFontUrl(baseUrl) {
++// 首选字体。注意：这两个路径都写在 .gitignore 里，全新克隆 / CI / 沙箱里一定不存在。
++const FONT_PRIMARY_CANDIDATES = [
++  'video-fx/assets/fonts/NotoSansSC-Bold.ttf',
++  'tools/mv_extra/cache/NotoSansSC-Bold.ttf',
++];
++// 仓库里真实入库的 OFL 中文字体：只作「至少不出豆腐块」的兜底，字形与定稿不同，使用时必须告警。
++const FONT_IN_REPO_FALLBACK = '番外MV/童话镇-paper-popup/fonts/ZCOOLKuaiLe-Regular.ttf';
++
++/** 解析中文字体文件：--font / NEWDAY_FONT > NotoSansSC-Bold（首选）> 仓库内兜底 > null */
++export function resolveFontFile(argv = []) {
++  const explicit = argOf(argv, '--font') || process.env.NEWDAY_FONT || null;
++  if (explicit) {
++    const abs = path.resolve(explicit);
++    if (!fs.existsSync(abs)) throw new Error(`--font / NEWDAY_FONT 指向的字体不存在：${abs}`);
++    return { file: abs, kind: 'explicit' };
++  }
++  for (const rel of FONT_PRIMARY_CANDIDATES) {
++    const abs = path.join(REPO_ROOT, rel);
++    if (fs.existsSync(abs)) return { file: abs, kind: 'primary' };
++  }
++  const fallback = path.join(REPO_ROOT, FONT_IN_REPO_FALLBACK);
++  if (fs.existsSync(fallback)) return { file: fallback, kind: 'fallback' };
++  return null;
++}
++
++function fontRouteOf(fontFile) {
++  return `/__font__/${path.basename(fontFile)}`;
++}
++
++function resolveFontUrl(baseUrl, fontFile = null) {
+   if (!baseUrl) return null;
+-  const candidates = [
+-    'video-fx/assets/fonts/NotoSansSC-Bold.ttf',
+-    'tools/mv_extra/cache/NotoSansSC-Bold.ttf',
+-  ];
+-  for (const rel of candidates) {
++  if (fontFile) return `${baseUrl}${encodeURI(fontRouteOf(fontFile))}`;
++  for (const rel of FONT_PRIMARY_CANDIDATES) {
+     if (fs.existsSync(path.join(REPO_ROOT, rel))) {
+       return `${baseUrl}/${encodeURI(rel)}`;
+     }
+   }
+-
+   return null;
+ }
+ 
+@@ -186,13 +226,13 @@ async function prepareHeadlessChromium() {
+   return chromium.executablePath();
+ }
+ 
+-export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '') {
++export async function buildRemotionInputPropsFromCli(argv = process.argv.slice(2), baseUrl = '', { walkRigFiles = null, fontFile = null } = {}) {
+   const mode = argOf(argv, '--mode') || 'mv';
+   const specPath = argOf(argv, '--spec');
+   if (!specPath) throw new Error('缺少 --spec <spec.mjs>');
+   const spec = await loadModuleSpec(specPath);
+-  const assetUrlMap = baseUrl ? buildAssetUrlMap(baseUrl) : {};
+-  const fontUrl = resolveFontUrl(baseUrl);
++  const assetUrlMap = baseUrl ? buildAssetUrlMap(baseUrl, walkRigFiles) : {};
++  const fontUrl = resolveFontUrl(baseUrl, fontFile);
+   const muxAudio = argOf(argv, '--mux-audio');
+ 
+   if (mode === 'episode') {
+@@ -296,6 +336,90 @@ export function auditRemotionPropsActivity(props) {
+   };
+ }
+ 
++function pngSizeOf(buf) {
++  if (!buf || buf.length < 24 || buf.readUInt32BE(0) !== 0x89504e47) return null;
++  return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20) };
++}
++
++/** 逐帧扫描全片，收集真正会被画到的图集（含声明列数）与立绘键 */
++export function collectRequiredAssets(props) {
++  const fps = props.fps || 30;
++  const total = Math.max(1, props.durationInFrames || Math.ceil((props.duration || 0) * fps));
++  const atlases = new Map();
++  const sprites = new Set();
++  for (let f = 0; f < total; f++) {
++    const st = evaluateRemotionFrameState(props, f / fps);
++    for (const a of st.actors) {
++      if ((a.opacity ?? 1) <= 0.01 || a.renderMode === 'puppet') continue;
++      if (a.atlas) {
++        atlases.set(a.atlas, a.atlasCols || 16);
++        if (a.prevAtlas) atlases.set(a.prevAtlas, a.prevAtlasCols || a.atlasCols || 16);
++      } else if (a.assetId) {
++        sprites.add(`actor:${a.assetId}`);
++      } else {
++        if (a.pose) sprites.add(`pose:${a.pose}`);
++        if (a.prevPose) sprites.add(`pose:${a.prevPose}`);
++      }
++    }
++  }
++  return { atlases, sprites };
++}
++
++/**
++ * 素材预检：走真实 HTTP 链路逐个取回全片用到的图集/立绘。
++ * 未登记、404、列数与真实像素不符 —— 一律在开渲前报错，不允许「渲染成功但角色消失/被拉伸」。
++ */
++export async function preflightRemotionAssets(props, { allowMissing = false } = {}) {
++  const { atlases, sprites } = collectRequiredAssets(props);
++  const urlMap = props.assetUrlMap || {};
++  const problems = [];
++  const preloadUrls = new Set();
++  const probe = async (url) => {
++    try {
++      const res = await fetch(url);
++      if (!res.ok) return { ok: false, why: `HTTP ${res.status}` };
++      return { ok: true, size: pngSizeOf(Buffer.from(await res.arrayBuffer())) };
++    } catch (err) {
++      return { ok: false, why: err.message };
++    }
++  };
++  for (const [name, declaredCols] of atlases) {
++    const url = urlMap[`atlas:${name}`] || urlMap[name];
++    if (!url) {
++      problems.push(`图集 ${name}：assetUrlMap 未登记（会静默回退成立绘/矢量木偶）`);
++      continue;
++    }
++    const r = await probe(url);
++    if (!r.ok) {
++      problems.push(`图集 ${name}：${r.why} ← ${url}`);
++      continue;
++    }
++    if (r.size) {
++      const realCols = Math.round((r.size.width / r.size.height) * (416 / 384));
++      if (realCols !== declaredCols) {
++        problems.push(`图集 ${name}：引擎按 ${declaredCols} 列取帧，实际 ${r.size.width}×${r.size.height} = ${realCols} 列（会被横向拉伸/切半）`);
++      }
++    }
++    preloadUrls.add(url);
++  }
++  for (const key of sprites) {
++    const url = urlMap[key];
++    if (!url) continue; // 没有位图的 pose 走矢量木偶是设计内行为
++    const r = await probe(url);
++    if (!r.ok) {
++      problems.push(`立绘 ${key}：${r.why} ← ${url}`);
++      continue;
++    }
++    preloadUrls.add(url);
++  }
++  if (problems.length) {
++    const report = `Remotion 素材预检失败（${problems.length} 项）：\n  - ${problems.join('\n  - ')}`;
++    if (!allowMissing) throw new Error(`${report}\n（确需带缺陷出片请显式加 --allow-missing-assets）`);
++    console.warn(`[Remotion][WARN] ${report}`);
++  }
++  return { preloadUrls: [...preloadUrls], problems, atlases: [...atlases.keys()], sprites: [...sprites] };
++}
++
+ export async function main(argv = process.argv.slice(2)) {
+   if (argv.includes('--bundle-check')) {
+     const { bundle } = await import('@remotion/bundler');
+@@ -340,13 +464,44 @@ export async function main(argv = process.argv.slice(2)) {
+   const browserExecutable = await prepareHeadlessChromium();
+   const chromiumOptions = { gl: 'angle', disableWebSecurity: true };
+ 
+-  await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
+-  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR);
++  // 返回值必须留着：name -> 实际文件（预烘成品优先，其次才是 /tmp 缓存）
++  const walkRigFiles = await ensureWalkRigAtlases(DEFAULT_WALK_CACHE_DIR);
++
++  const fontInfo = resolveFontFile(argv);
++  if (!fontInfo && !argv.includes('--allow-missing-font')) {
++    throw new Error([
++      '找不到中文字体，拒绝开渲（无头 Chromium 环境里通常没有任何 CJK 字体，歌词/字幕/道具文字会全部变成 □□□）。',
++      `  已查找：${FONT_PRIMARY_CANDIDATES.join('、')}（均在 .gitignore 中）、${FONT_IN_REPO_FALLBACK}`,
++      '  解决：--font <NotoSansSC-Bold.ttf> 或环境变量 NEWDAY_FONT；或把字体放到 video-fx/assets/fonts/。',
++      '  只渲染无文字底板时可加 --allow-missing-font。',
++    ].join('\n'));
++  }
++  if (fontInfo?.kind === 'fallback') {
++    console.warn(`[Remotion][WARN] 未找到 NotoSansSC-Bold.ttf，改用仓库内兜底字体 ${FONT_IN_REPO_FALLBACK}：字形与定稿不同，仅供预览，正式出片请提供 --font。`);
++  }
++  const extraFiles = fontInfo ? { [fontRouteOf(fontInfo.file)]: fontInfo.file } : {};
++
++  const { server, baseUrl } = await startLocalAssetServer(REPO_ROOT, DEFAULT_WALK_CACHE_DIR, { walkRigFiles, extraFiles });
+   try {
+-    const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl);
++    const liveProps = await buildRemotionInputPropsFromCli(argv, baseUrl, { walkRigFiles, fontFile: fontInfo?.file || null });
+     if (argv.includes('--no-subtitles')) {
+       liveProps.hideSubtitles = true;
+     }
++
++    const preflight = await preflightRemotionAssets(liveProps, { allowMissing: argv.includes('--allow-missing-assets') });
++    liveProps.preloadUrls = preflight.preloadUrls;
++    console.log(`[Remotion] 素材预检通过：图集 ${preflight.atlases.length} 张，预载 ${preflight.preloadUrls.length} 个文件，字体 ${fontInfo ? path.basename(fontInfo.file) : '（无）'}`);
++
++    if (liveProps.audioUrl) {
++      const audioOk = await fetch(liveProps.audioUrl).then((r) => { r.body?.cancel?.(); return r.ok; }, () => false);
++      if (!audioOk) {
++        const isStill = Boolean(stillFramesArg && outDirArg) || argOf(argv, '--still-frame') != null || argOf(argv, '--frame') != null;
++        if (!isStill && !argv.includes('--allow-missing-audio')) {
++          throw new Error(`音频文件取不到：${liveProps.audioUrl}\n  请把音频放到分镜声明的位置，或用 --audio/--mux-audio 指定；确需静音出片加 --allow-missing-audio。`);
++        }
++        delete liveProps.audioUrl;
++      }
++    }
+     const serveUrl = await bundle({ entryPoint: path.join(HERE, 'entry.jsx') });
+     const composition = await selectComposition({
+       serveUrl,
