@@ -5,6 +5,8 @@
 // 这样命令行那边拿到的镜头切点与浏览器里实际渲染用的是同一份，不会各算各的。
 import React from 'react';
 import { Composition, registerRoot } from 'remotion';
+import { loadAtlas } from './actors';
+import { castPreflight, type CastReport } from './engine';
 import { makeFilm, type FilmProps } from './Film';
 import type { ProjectDef } from './project';
 import { FPS, VH, VW } from './timeline';
@@ -29,23 +31,45 @@ export function filmInfo(p: ProjectDef, starts: number[], ends: number[]): FilmI
   };
 }
 
+/** 角色预检合成的 id：<作品 id>-cast。它不画任何东西，只在 calculateMetadata 里把全片的角色状态走一遍 */
+export const castCheckId = (filmId: string) => `${filmId}-cast`;
+const CastCheck: React.FC<FilmProps> = () => null;
+
 export function registerProject(p: ProjectDef) {
   const Film = makeFilm(p);
   const defaults: FilmProps = { starts: p.starts, ends: p.ends, audioSrc: null, audioOffset: 0, showLyrics: true };
   const Root: React.FC = () => (
-    <Composition
-      id={p.id}
-      component={Film}
-      width={VW}
-      height={VH}
-      fps={FPS}
-      durationInFrames={p.plan(p.starts, p.ends).frames}
-      defaultProps={defaults}
-      calculateMetadata={({ props }) => {
-        const info = filmInfo(p, props.starts, props.ends);
-        return { durationInFrames: info.frames, props: { ...props, __info: info } };
-      }}
-    />
+    <>
+      <Composition
+        id={p.id}
+        component={Film}
+        width={VW}
+        height={VH}
+        fps={FPS}
+        durationInFrames={p.plan(p.starts, p.ends).frames}
+        defaultProps={defaults}
+        calculateMetadata={({ props }) => {
+          const info = filmInfo(p, props.starts, props.ends);
+          return { durationInFrames: info.frames, props: { ...props, __info: info } };
+        }}
+      />
+      {/* 单独一个合成，是为了让预检只在 film.mjs 点名要它的时候跑一次：出片的每个标签页只解析上面那个合成，不会跟着重跑 */}
+      <Composition
+        id={castCheckId(p.id)}
+        component={CastCheck}
+        width={VW}
+        height={VH}
+        fps={FPS}
+        durationInFrames={1}
+        defaultProps={defaults}
+        calculateMetadata={async ({ props }) => {
+          let report: CastReport;
+          try { report = castPreflight(p.shots, p.plan(props.starts, props.ends), await loadAtlas()); }
+          catch (e) { report = { shots: 0, frames: 0, sprites: {}, problems: [e instanceof Error ? e.message : String(e)] }; }
+          return { props: { ...props, __cast: report } };
+        }}
+      />
+    </>
   );
   registerRoot(Root);
 }

@@ -21,6 +21,11 @@
 //
 // 通用选项：--cues <文件>  临时换一份卡点（默认用作品目录里的 cues.json）
 //           --work <目录>  中间文件目录（默认 $FILM_WORK 或 系统临时目录/newday-film/<id>）
+//           --allow-cast-problems  角色预检有问题也继续（问题清单照常打印）
+//
+// 角色预检：凡是要开浏览器的命令（info / stills / sheet / frames / full）都会先不出图地把全片每一帧的镜头逻辑走一遍，
+//   看每个角色画的是图集里的哪一格、会不会悄悄不见（点到不存在的格子、坐标算成 NaN……）。
+//   info / frames / full 遇到问题就停——不让它渲到半路才报错，更不让它「渲染成功、人没了」；看静帧时只提醒，不拦。
 //
 // 说明：
 //   · 画面：1920×1080 @ 30fps，three.js 画在 <canvas> 上，Remotion 逐帧截图。
@@ -201,6 +206,12 @@ async function openComposition() {
   const info = composition.props.__info;
   if (!info) throw new Error('合成没有返回时间轴信息（__info）');
   if (composition.durationInFrames !== info.frames) throw new Error('合成总帧数与时间轴不一致');
+  // 角色预检：另一个合成（<id>-cast）的 calculateMetadata 里把全片走一遍，结果随 props 带回来（见 engine/register.tsx）
+  const castComp = await renderer.selectComposition({ serveUrl, id: `${film.id}-cast`, inputProps: props, browserExecutable, chromiumOptions, timeoutInMilliseconds: 180000 });
+  const cast = castComp.props.__cast;
+  if (!cast || !Array.isArray(cast.problems)) throw new Error('合成没有返回角色预检结果（__cast）');
+  if (!cast.problems.length && cast.frames !== info.frames) throw new Error(`角色预检走了 ${cast.frames} 帧，时间轴是 ${info.frames} 帧：两边不是同一条时间轴`);
+  info.cast = cast;
   const fp = sourceFingerprint();
   info.source_sha256 = fp.sha256;
   info.source_files = fp.files;
@@ -209,6 +220,28 @@ async function openComposition() {
   opened = { renderer, serveUrl, composition, browserExecutable, chromiumOptions, props, info };
   return opened;
 }
+/**
+ * 角色预检的结论，每次运行只说一遍。
+ * fatal=true（info / frames / full）：有问题就停；fatal=false（看静帧、总览图）：只提醒——镜头写到一半时别的镜头有问题很正常，不该挡着看眼前这一镜。
+ */
+let castSaid = false;
+function castGate(o, fatal) {
+  if (castSaid) return;
+  castSaid = true;
+  const c = o.info.cast;
+  if (!c.problems.length) {
+    const ids = Object.keys(c.sprites);
+    console.log(`角色预检通过：${c.shots} 镜 / ${c.frames} 帧逐帧走过，${ids.length} 个角色用到 ${ids.reduce((n, id) => n + c.sprites[id].length, 0)} 格精灵；没有点到图集里不存在的格子，没有会让角色消失的坏数`);
+    return;
+  }
+  const list = c.problems.map((x) => `  - ${x.replace(/\n/g, '\n    ')}`).join('\n');
+  if (fatal && !flag('--allow-cast-problems')) {
+    console.error(`✗ 角色预检没通过（${c.problems.length} 项）。这些问题会让角色在成片里消失，或者渲到那一帧才报错：\n${list}\n  确实要带着问题继续，加 --allow-cast-problems（问题清单照常打印）。`);
+    process.exit(1);
+  }
+  console.warn(`⚠ 角色预检发现 ${c.problems.length} 项问题${fatal ? '（已用 --allow-cast-problems 放行）' : '（看静帧不拦；出片时会停在这里）'}：\n${list}`);
+}
+
 /** 不开浏览器也能用的时间轴：读上一次 openComposition 存下的 info.json */
 function savedInfo() {
   const f = path.join(WORK, 'info.json');
@@ -217,7 +250,8 @@ function savedInfo() {
 }
 
 async function info() {
-  const { info: I } = await openComposition();
+  const o = await openComposition();
+  const I = o.info;
   console.log(`${I.title}（${I.kind}）· ${I.width}×${I.height} @ ${I.fps}fps · ${I.frames} 帧 · ${I.duration.toFixed(3)}s · ${I.shots.length} 镜 / ${I.lines.length} 句`);
   for (const s of I.shots) console.log(`  ${s.id.padEnd(6)} ${String(Math.ceil(s.a * I.fps - 1e-9)).padStart(5)}帧  ${s.a.toFixed(3).padStart(8)}–${s.b.toFixed(3).padStart(8)}s  ${s.cue >= 0 ? `第${s.cue + 1}句` : '      '}  ${s.title}`);
   console.log(`源码指纹 ${I.source_sha256.slice(0, 16)}…（${I.source_files.length} 个源文件）`);
@@ -226,11 +260,13 @@ async function info() {
     if (!was) console.log('  成片/qa.json 里没有记录源码指纹：这份成片不是由当前模板逐帧自检过的那批帧生成的（或自检时跳过了逐帧检查）');
     else console.log(was === I.source_sha256 ? '  与 成片/qa.json 记录的一致：仓库里的成片就是这份源码渲的' : `  ⚠ 与 成片/qa.json 记录的（${was.slice(0, 16)}…）不一致：源码在出片之后改过，成片需要重渲`);
   }
+  castGate(o, true);
   return I;
 }
 
 async function stills(list) {
   const o = await openComposition();
+  castGate(o, false);
   const frames = (list || rest.filter((a) => /^\d+$/.test(a)).map(Number));
   if (!frames.length) die('用法：film.mjs stills <作品目录> <帧号…>');
   const dir = path.join(WORK, 'stills');
@@ -249,6 +285,7 @@ async function stills(list) {
 
 async function frames() {
   const o = await openComposition();
+  castGate(o, true); // 先查角色，别渲了半小时才发现某一镜点了不存在的格子
   fs.mkdirSync(FRAMES, { recursive: true });
   const from = Number(opt('--from', 0));
   const to = Number(opt('--to', o.info.frames - 1));

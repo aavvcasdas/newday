@@ -5,6 +5,12 @@
 //   · 脚下接触阴影
 // 同时落实对旧 Remotion 引擎的修复：缺素材直接抛错（不静默回退）、步态每格 3 个整帧、
 // 换姿势一律硬切（没有「两层半透明交叉淡化」）、所有精灵同一条脚底基线（卡片底边 = 脚底）。
+//
+// remotion-engine-fix.patch（旧引擎「角色消失 / 被错切」的那份补丁）在这里的对应做法：
+//   · 图集送没送到画面上        → loadAtlas() 先体检（atlasProblems）：PNG 与坐标表必须同一版、每一格都得有像素，否则拒绝加载
+//   · 帧数按「每个序列」而不是按「每个角色」算 → framesIn()：一个序列有几格，以图集里实际有几格为准，不在代码里另写一个数
+//   · 帧号不许落到序列之外      → cycleIndex()：任何有限输入都回绕进 0…n−1；非有限数直接报错
+//   · 开渲前把全片过一遍        → engine.ts 的 castPreflight() 用 Actor.probe() 逐帧看每个角色画哪一格、会不会悄悄不见
 import * as THREE from 'three';
 import atlasUrl from './assets/cast_atlas.png';
 import atlasJson from './assets/cast_atlas.json';
@@ -17,8 +23,29 @@ type Rect = [number, number, number, number];
 interface Anchor { cx: number; top: number; hw: number }
 export interface AtlasData { tex: THREE.Texture; w: number; h: number; rects: Record<string, Rect>; anchors: Record<string, Anchor>; url: string }
 
+export interface AtlasMeta { w: number; h: number; s: Record<string, Rect> }
 export const ATLAS_URL: string = atlasUrl;
-export const ATLAS_META = atlasJson as unknown as { w: number; h: number; s: Record<string, Rect> };
+export const ATLAS_META = atlasJson as unknown as AtlasMeta;
+
+/**
+ * 一个编号序列（walk_whale_0…7、gpt_fly_0…1）在图集里实际有几格：从 0 连着数，数到缺号为止。
+ * 帧数只认这个数——旧引擎把「一条图集有几格」按角色写死成一个值，换一条图集就按错的格数去切。
+ */
+export function framesIn(prefix: string, cells: Record<string, unknown> = ATLAS_META.s): number {
+  let n = 0;
+  while (cells[`${prefix}${n}`]) n++;
+  return n;
+}
+
+/**
+ * 循环序列的帧号：任何有限输入都落在 0…n−1（负数、小数都回绕进来，不会拼出 walk_whale_-1 这种不存在的格子名）。
+ * 非有限数（NaN / Infinity）说明传进来的时间或距离算坏了，直接报错，不悄悄挑一格播。
+ */
+export function cycleIndex(i: number, n: number, what = '帧号'): number {
+  if (!Number.isFinite(i)) throw new Error(`[cast] ${what} 算出来的帧号不是有限数（${i}）——检查传进去的时间 / 距离 / 速率`);
+  if (!(n >= 1)) throw new Error(`[cast] ${what} 用的序列在图集里一格都没有`);
+  return ((Math.floor(i) % n) + n) % n;
+}
 
 let atlasPromise: Promise<AtlasData> | null = null;
 export function loadAtlas(): Promise<AtlasData> {
@@ -30,6 +57,8 @@ export function loadAtlas(): Promise<AtlasData> {
         const c = cv.getContext('2d', { willReadFrequently: true })!;
         c.drawImage(img, 0, 0);
         const data = c.getImageData(0, 0, img.width, img.height).data;
+        const bad = atlasProblems(ATLAS_META, img.width, img.height, (x, y) => data[(y * img.width + x) * 4 + 3]);
+        if (bad.length) { reject(new Error(`角色图集没通过体检（${bad.length} 项），拒绝加载：\n  - ${bad.join('\n  - ')}`)); return; }
         const anchors: Record<string, Anchor> = {};
         for (const [key, r] of Object.entries(ATLAS_META.s)) {
           const [x0, y0, w, h] = r;
@@ -45,7 +74,7 @@ export function loadAtlas(): Promise<AtlasData> {
         tex.flipY = false; tex.generateMipmaps = false; tex.minFilter = tex.magFilter = THREE.LinearFilter; tex.needsUpdate = true;
         resolve({ tex, w: img.width, h: img.height, rects: ATLAS_META.s, anchors, url: atlasUrl });
       };
-      img.onerror = () => reject(new Error('角色图集加载失败'));
+      img.onerror = () => reject(new Error(`角色图集加载失败（取不到或文件损坏）：${atlasUrl}`));
       img.src = atlasUrl;
     });
   }
@@ -97,16 +126,58 @@ const PX = 0.0195; // 每个精灵像素对应的世界单位
 const M = 48;      // 服饰叠层在精灵四周的留白（像素）
 const scaleFor = (key: string) => (key.startsWith('whale_big') ? 0.6 : key.startsWith('gpt_boss') ? 0.58 : 1);
 
-const SETS: Record<CharId, { walk: string; n: number; front: [string, string] }> = {
-  whale: { walk: 'walk_whale_', n: 8, front: ['whale_idle', 'whale_blink'] },
-  claude: { walk: 'walk_claude_', n: 8, front: ['claude_front_0', 'claude_front_1'] },
-  kimi: { walk: 'walk_kimi_', n: 8, front: ['kimi_front_0', 'kimi_front_1'] },
-  gemini: { walk: 'walk_gemini_', n: 8, front: ['gemini_front_0', 'gemini_front_1'] },
-  qwen: { walk: 'walk_qwen_', n: 8, front: ['qwen_front_0', 'qwen_front_1'] },
-  zai: { walk: 'walk_zai_', n: 8, front: ['zai_front_0', 'zai_front_1'] },
-  doubao: { walk: 'walk_doubao_big_', n: 8, front: ['doubao_cage_0', 'doubao_cage_1'] },
-  gpt: { walk: 'gpt_fly_', n: 2, front: ['gpt_boss_idle', 'gpt_boss_blink'] },
+/** 每个角色的步态序列（前缀）与正面待机 / 眨眼两格。步态有几格不写在这里——以图集为准，见 framesIn() */
+export const CAST_SETS: Record<CharId, { walk: string; front: [string, string] }> = {
+  whale: { walk: 'walk_whale_', front: ['whale_idle', 'whale_blink'] },
+  claude: { walk: 'walk_claude_', front: ['claude_front_0', 'claude_front_1'] },
+  kimi: { walk: 'walk_kimi_', front: ['kimi_front_0', 'kimi_front_1'] },
+  gemini: { walk: 'walk_gemini_', front: ['gemini_front_0', 'gemini_front_1'] },
+  qwen: { walk: 'walk_qwen_', front: ['qwen_front_0', 'qwen_front_1'] },
+  zai: { walk: 'walk_zai_', front: ['zai_front_0', 'zai_front_1'] },
+  doubao: { walk: 'walk_doubao_big_', front: ['doubao_cage_0', 'doubao_cage_1'] },
+  gpt: { walk: 'gpt_fly_', front: ['gpt_boss_idle', 'gpt_boss_blink'] },
 };
+const SETS = CAST_SETS;
+/** 每个角色的步态格数：模块加载时照着图集数一次 */
+const WALK_N = Object.fromEntries(Object.entries(SETS).map(([id, s]) => [id, framesIn(s.walk)])) as Record<CharId, number>;
+
+/** 角色表与坐标表对不对得上（只看坐标表，不用解码图片）：编号序列必须从 0 连着编；每个角色的步态与正面两格都得在 */
+export function setProblems(cells: Record<string, unknown> = ATLAS_META.s): string[] {
+  const out: string[] = [];
+  const fam = new Map<string, number[]>();
+  for (const key of Object.keys(cells)) {
+    const m = /^(.*?)(\d+)$/.exec(key);
+    if (m) fam.set(m[1], [...(fam.get(m[1]) ?? []), Number(m[2])]);
+  }
+  for (const [prefix, idx] of fam) {
+    idx.sort((a, b) => a - b);
+    if (idx.some((v, i) => v !== i)) out.push(`序列「${prefix}*」的编号不是从 0 连着编的（现有 ${idx.join('、')}）：缺号之后的格子永远播不到`);
+  }
+  for (const [id, s] of Object.entries(SETS)) {
+    if (framesIn(s.walk, cells) < 1) out.push(`角色 ${id} 的步态序列「${s.walk}0…」在图集里一格都没有`);
+    for (const k of s.front) if (!cells[k]) out.push(`角色 ${id} 的正面精灵「${k}」不在图集里`);
+  }
+  return out;
+}
+
+/**
+ * 图集体检：PNG 与坐标表必须是同一版，每一格都得真的有像素。任何一条不满足，loadAtlas() 就拒绝加载——
+ * 出片时这会让渲染直接失败，而不是「渲染成功、角色不见了 / 切到别人身上」。
+ * alphaAt(x, y) 返回该像素的不透明度（0–255）。纯函数：浏览器里喂 getImageData，测试里喂解码后的 PNG。
+ */
+export function atlasProblems(meta: AtlasMeta, imgW: number, imgH: number, alphaAt: (x: number, y: number) => number): string[] {
+  const out: string[] = [];
+  if (imgW !== meta.w || imgH !== meta.h) out.push(`图集 PNG 是 ${imgW}×${imgH}，坐标表写的是 ${meta.w}×${meta.h}：两个文件不是同一版，按坐标表切会切到别的格子上`);
+  for (const [key, r] of Object.entries(meta.s)) {
+    const [x0, y0, w, h] = r;
+    if ((r as number[]).length !== 4 || !r.every(Number.isInteger) || w <= 0 || h <= 0) { out.push(`「${key}」的坐标不是正整数矩形：[${r.join(', ')}]`); continue; }
+    if (x0 < 0 || y0 < 0 || x0 + w > imgW || y0 + h > imgH) { out.push(`「${key}」[${r.join(', ')}] 超出图集 ${imgW}×${imgH}`); continue; }
+    let solid = false;
+    for (let y = 0; y < h && !solid; y++) for (let x = 0; x < w; x++) if (alphaAt(x0 + x, y0 + y) > 128) { solid = true; break; }
+    if (!solid) out.push(`「${key}」这一格是空的（没有任何不透明像素）：用到它的角色会整个不见`);
+  }
+  return [...out, ...setProblems(meta.s)];
+}
 
 // ---------- 服饰叠层（像素画，按精灵头顶锚点对位） ----------
 type Ctx = CanvasRenderingContext2D;
@@ -255,9 +326,9 @@ export class Actor {
 
   /** 步态：每格固定 3 个视频帧（30fps 下 100ms），帧号只取整数，杜绝 3/4 帧交替的抖动 */
   walk(T: number, rate = 1): this {
-    const s = SETS[this.id];
-    const step = s.n === 2 ? 6 : 3;
-    const f = Math.floor((Math.round(T * FPS) * rate) / step) % s.n;
+    const s = SETS[this.id], n = WALK_N[this.id];
+    const step = n === 2 ? 6 : 3;
+    const f = cycleIndex((Math.round(T * FPS) * rate) / step, n, `${this.id}.walk(${T}, ${rate})`);
     return this.set(`${s.walk}${f}`);
   }
   /**
@@ -265,8 +336,8 @@ export class Actor {
    * dist=这个镜头里累计走过的世界距离（时间的纯函数），stride=播完一轮步态走多远（默认约一个身高）
    */
   walkBy(dist: number, stride = 1.7): this {
-    const s = SETS[this.id];
-    const f = ((Math.floor((dist / stride) * s.n) % s.n) + s.n) % s.n;
+    const s = SETS[this.id], n = WALK_N[this.id];
+    const f = cycleIndex((dist / stride) * n, n, `${this.id}.walkBy(${dist}, ${stride})`);
     return this.set(`${s.walk}${f}`);
   }
   /** 正面待机 + 眨眼（确定性时间表） */
@@ -295,6 +366,22 @@ export class Actor {
   get x() { return this.holder.position.x; }
   get y() { return this.holder.position.y; }
   get z() { return this.holder.position.z; }
+
+  /**
+   * 这一帧的角色状态（全片预检用）：画的是哪一格、看不看得见、有没有会让它「悄悄不见」的坏数。
+   * three.js 遇到 NaN 的坐标 / 缩放不报错，只是不画；透明度是 NaN 时这里的 commit() 也会把角色藏起来——都得在开渲前揪出来。
+   */
+  probe(): { id: CharId; key: string; shown: boolean; bad: string | null } {
+    const p = this.holder.position;
+    const bad = (pairs: [string, number][]) => { const hit = pairs.find(([, v]) => !Number.isFinite(v)); return hit ? `${hit[0]}=${hit[1]}` : null; };
+    const a = bad([['alpha', this._alpha]]);
+    if (a) return { id: this.id, key: this.key, shown: false, bad: a };
+    if (!(this._alpha > 0.02)) return { id: this.id, key: this.key, shown: false, bad: null };
+    return {
+      id: this.id, key: this.key, shown: true,
+      bad: bad([['x', p.x], ['y', p.y], ['z', p.z], ['size', this._size], ['sq', this._sq], ['tilt', this._tilt], ['lift', this._lift], ['flash', this._flash], ['sil', this._sil]]),
+    };
+  }
 
   begin() { this._size = 1; this._sq = 0; this._tilt = 0; this._lift = 0; this._alpha = 1; this._flash = 0; this._sil = 0; this._flip = false; this._tint = null; this._shadow = true; }
 
