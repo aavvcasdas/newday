@@ -1,0 +1,75 @@
+{
+ "frames": {
+  "frames": 4272,
+  "wrong_size": [],
+  "identical_to_previous": [
+   4269,
+   4270,
+   4271
+  ],
+  "blank_background_frames": [],
+  "luma_min": 0,
+  "luma_max": 255,
+  "sequence_md5": "686ed9d86bc4cc26932a3fa742a83243"
+ },
+ "final": {
+  "file": "童话镇-remotion3d.mp4",
+  "bytes": 88539525,
+  "sha256": "e4625d063a2697b50d9ffd2d347874e8abeaf75b5a7127b188259d488c667aa1",
+  "audio_samples": 6835200,
+  "audio_seconds": 142.4,
+  "audio_lag_vs_source_samples": 0,
+  "audio_lag_vs_source_ms": 0,
+  "audio_correlation_20_80s": 1,
+  "tail_rms_140.5_to_142.4": [
+   0.2848,
+   0.2689,
+   0.2238,
+   0.0691,
+   0.0325
+  ],
+  "probe": {
+   "programs": [],
+   "stream_groups": [],
+   "streams": [
+    {
+     "codec_name": "h264",
+     "profile": "100",
+     "codec_type": "video",
+     "width": 1920,
+     "height": 1080,
+     "pix_fmt": "yuv420p",
+     "color_range": "tv",
+     "color_space": "bt709",
+     "r_frame_rate": "30/1",
+     "duration": "142.400000",
+     "bit_rate": "4709757",
+     "nb_frames": "4272"
+    },
+    {
+     "codec_name": "aac",
+     "profile": "1",
+     "codec_type": "audio",
+     "sample_rate": "48000",
+     "channels": 2,
+     "r_frame_rate": "0/0",
+     "duration": "142.400000",
+     "bit_rate": "256000",
+     "nb_frames": "6677"
+    }
+   ],
+   "format": {
+    "duration": "142.400000",
+    "size": "88539525",
+    "bit_rate": "4974130"
+   }
+  }
+ },
+ "timing": {
+  "source": "audio_sync.json",
+  "bpm": 139.953,
+  "beat_period": 0.42871,
+  "mean_abs_delta": 0.095,
+  "max_abs_delta": 0.198
+ }
+}
