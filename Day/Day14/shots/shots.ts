@@ -293,18 +293,18 @@ export const SHOTS: ShotDef[] = [
       k.add(disc(40, 0x5a3d4f));
       k.add(box(26, 9, 0.6, 0x7a2b3a, 0), 0, 0, -5.2);
       for (let i = 0; i < 13; i++) k.add(box(0.5, 9, 0.3, i % 2 ? 0x8f3545 : 0x6a2433, 0), -12 + i * 2, 0, -4.8);
-      k.add(box(12.4, 0.3, 4.4, 0x8a5a3c, 0.04), 0.9, 0, -1.7);
+      k.add(box(12.4, 0.3, 4.4, 0x8a5a3c, 0.04), 1.6, 0, -1.7);
       const ids = ['claude', 'gpt', 'qwen', 'kimi', 'gemini', 'zai', 'doubao'] as const;
       const row = ids.map((id) => k.actor(id));
       const whale = k.actor('whale');
-      const X = (i: number) => 0.9 + (i - 3) * 1.55;
+      const X = (i: number) => 1.6 + (i - 3) * 1.5; // 整排往右让一让，鲸鱼娘站在台前左侧才不会挡住最左边那位
       const spots = ids.map((_, i) => k.add(sprite('glow', 3.0, 0xfff0c0, true, 0.22), X(i), 1.3, -2.0));
-      const A = cam([0.6, 2.5, 9.2], [0.6, 1.3, -0.6], 40), B = cam([0.5, 2.3, 8.6], [0.5, 1.25, -0.6], 40);
+      const A = cam([0.6, 2.5, 9.5], [0.6, 1.3, -0.6], 40), B = cam([0.55, 2.3, 9.0], [0.55, 1.25, -0.6], 40);
       return (f) => {
         const { u, T } = f;
         row.forEach((a, i) => { a.front(T).flip(i > 3).at(X(i), 0.3, -1.6 - Math.abs(i - 3) * 0.1).lift(Math.max(0, Math.sin(T * 3.2 + i * 0.9)) * 0.12); });
         spots.forEach((s, i) => setOp(s, 0.16 + 0.08 * Math.sin(T * 2 + i)));
-        whale.front(T).at(-3.3, 0, 1.2).talk(T, f.line >= 0);
+        whale.front(T).at(-3.6, 0, 1.2).talk(T, f.line >= 0);
         return glide(A, B, u);
       };
     },
