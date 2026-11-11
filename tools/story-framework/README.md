@@ -13,10 +13,10 @@ npm run typecheck --prefix tools/story-framework
 # Day / MV 模板：纯规划示例，未配音
 node tools/story-framework/render.mjs --entry tools/story-framework/templates/day.entry.tsx --still 45 --out /tmp/day.png
 node tools/story-framework/render.mjs --entry tools/story-framework/templates/mv.entry.tsx --still 120 --out /tmp/mv.png
-# 渲染自定义项目；音源文件为本地路径，正偏移将音轨延后
+# 渲染自定义项目；音源使用仓库外经授权的本地文件，正偏移将音轨延后
 node tools/story-framework/render.mjs --entry tools/story-framework/templates/day.entry.tsx --audio /path/to/voice.wav --offset 0 --out /tmp/day.mp4
 # 渲染网页童话镇示例
-node tools/story-framework/render.mjs --audio 童话镇.mp4 --frames 400-430 --out /tmp/tonghuazhen-sample.mp4
+node tools/story-framework/render.mjs --audio /path/to/authorized-audio.wav --frames 400-430 --out /tmp/tonghuazhen-sample.mp4
 ```
 
 `--frames start-end` 两端包含；`--still` 输出单帧 PNG；`--browser` 或 `CHROME_EXECUTABLE` 指定 Chromium。Linux 默认自动解包 `@sparticuz/chromium`，采用 `swangle` 软件 WebGL。音频仅通过本地只读单文件服务交给渲染器，不复制至仓库。自行选择输出路径，避免覆盖存档或源素材。
