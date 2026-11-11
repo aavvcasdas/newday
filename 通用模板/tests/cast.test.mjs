@@ -4,6 +4,8 @@
 //   旧：22 张图集必须能经 HTTP 取到、尺寸对          → 新：图集 PNG 与坐标表是同一版，每一格都有像素（atlasProblems）
 //   旧：列数按「每张图集」解析，帧号不越界           → 新：帧数按「每个序列」在图集里实际的格数算，帧号永远落在序列内（framesIn / cycleIndex）
 //   旧：素材预检，未登记或 404 必须在开渲前报错       → 新：全片预检，点到不存在的格子 / 算出 NaN 必须在开渲前一次报全（castPreflight）
+// 最后两组是装补丁时对照成片查出来的同类问题（渲染成功，画面却不是镜头代码写的那样）：
+//   同一帧的画面取决于之前渲过哪些帧 → 多页面交替渲染时隔帧乱跳。Day14 的沙漏就是这样抖了近 5 秒，自检和抽查都没发现。
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -15,6 +17,7 @@ import './tpl-loader.mjs';
 const THREE = await import('three');
 const { Actor, ATLAS_META, CAST_SETS, atlasProblems, setProblems, framesIn, cycleIndex } = await import('../engine/actors.ts');
 const { castPreflight, frameOf } = await import('../engine/engine.ts');
+const { hourglass } = await import('../engine/props.ts');
 const { cam } = await import('../engine/core.ts');
 const { planByCues, FPS } = await import('../engine/timeline.ts');
 
@@ -152,7 +155,7 @@ test('全片预检：每一帧都走到；只统计看得见的角色实际画�
   const tl = timeline(['A', 'B']);
   const r = castPreflight(OK, tl, fakeAtlas());
   assert.deepEqual(r.problems, []);
-  assert.deepEqual([r.shots, r.frames], [2, tl.frames]);
+  assert.deepEqual([r.shots, r.frames, r.orderChecked], [2, tl.frames, tl.frames]);
   assert.deepEqual(Object.keys(r.sprites), ['gpt', 'whale']);
   assert.deepEqual(r.sprites.gpt, ['gpt_fly_0', 'gpt_fly_1']);                          // 龙娘前半段透明度为 0，那段时间的格子不算
   assert.equal(r.sprites.whale.filter((k) => k.startsWith('walk_whale_')).length, 8);
@@ -205,4 +208,66 @@ test('frameOf：预检和出片拿到的是同一份「这一帧的时间信息�
   assert.throws(() => fr.when(9), /不存在的句子/);
   const gap = frameOf(tl, st, Math.round(2.9 * FPS));                                    // 句间空档：line 回到 −1，said 不回退
   assert.deepEqual([gap.line, gap.said], [-1, 1]);
+});
+
+// —— 这一帧只取决于这一帧 ——
+const firstFrame = (tl, i) => Math.ceil(tl.shots[i].a * FPS - 1e-9);
+const lastFrame = (tl, i) => (i + 1 < tl.shots.length ? firstFrame(tl, i + 1) : tl.frames) - 1;
+
+test('全片预检：同一帧的画面取决于之前渲过哪些帧（状态只在一部分帧里写了）——角色、道具、机位都查得出来，并说清是哪几帧', () => {
+  const tl = timeline(['A', 'B', 'C', 'D']);
+  const [fB, fC, fD] = [1, 2, 3].map((i) => firstFrame(tl, i));
+  const shots = [
+    OK[0],
+    // B：道具只在前 10 帧里写了转角。顺着渲，后面的帧停在第 10 帧的角度；单独渲后面任何一帧，它是搭景时的 0
+    shot('B', (k) => {
+      const lamp = k.add(new THREE.Group(), 0, 0, 0), prop = k.add(new THREE.Group(), 1, 2, 3), w = k.actor('whale');
+      return ({ f, T }) => { w.front(T).at(0, 0, 0); lamp.position.x = Math.sin(T); if (f - fB < 10) prop.rotation.z = (f - fB + 1) * 0.1; return still; };
+    }),
+    // C：第一个角色只在前 5 帧摆了姿势（引擎每帧只复位修饰量，不复位造型）；第二个角色的位置隔一帧才写一次；
+    //    第三个角色一直藏着，身上的值再乱也不画，不该报
+    shot('C', (k) => {
+      const a = k.actor('whale'), b = k.actor('claude'), c = k.actor('kimi');
+      return ({ f }) => {
+        const i = f - fC;
+        a.at(0, 0, 0); if (i < 5) a.set('whale_wave');
+        b.set('claude_front_0'); if (i % 2 === 0) b.at(i, 0, 0);
+        if (i % 3 === 0) c.set('kimi_side_0').at(i, 0, 0);
+        c.hide();
+        return still;
+      };
+    }),
+    // D：逐帧函数里自己累加（硬规矩第 1 条不许的）——机位跟着「被调用过几次」走
+    shot('D', () => { let n = 0; return () => { n++; return cam([n * 0.01, 2, 10], [0, 1, 0]); }; }),
+  ];
+  const r = castPreflight(shots, tl, fakeAtlas());
+  const all = r.problems.join('\n');
+  assert.equal(r.problems.length, 4, all);
+  assert.equal(r.orderChecked, tl.frames);
+  assert.match(r.problems[0], new RegExp(`^镜头 B：搭景里第 2 个物体（按 k\\.add 的先后数，不算角色，这一帧位于 \\(1, 2, 3\\)）取决于之前渲过哪些帧：第 ${fB + 10}–${lastFrame(tl, 1)} 帧`));
+  assert.match(all, new RegExp(`镜头 C：角色 whale（本镜第 1 个）的造型取决于之前渲过哪些帧：第 ${fC + 5}–${lastFrame(tl, 2)} 帧`));
+  assert.match(all, new RegExp(`镜头 C：角色 claude（本镜第 2 个）的位置取决于之前渲过哪些帧：第 ${fC + 1} 帧、第 ${fC + 3} 帧、第 ${fC + 5} 帧 等 \\d+ 段`));
+  assert.match(all, new RegExp(`镜头 D：机位取决于之前渲过哪些帧：第 ${fD}–${lastFrame(tl, 3)} 帧.*共 ${lastFrame(tl, 3) - fD + 1} 帧`));
+  assert.doesNotMatch(all, /kimi|镜头 A|第 1 个物体/);                                  // 藏着的角色、每帧都写全的道具不报
+});
+
+test('沙漏：翻的时候用 flip()、翻完用 set()（Day14 的写法）——set() 让沙漏立正，不留 flip() 最后一帧的倾角', () => {
+  const h = hourglass(0.44);
+  h.flip(0.25, 0.9, 1); assert.ok(Math.abs(h.body.rotation.z - 0.25 * Math.PI) < 1e-12);
+  h.flip(0.9, 0.9, 1); assert.ok(Math.abs(h.body.rotation.z + 0.1 * Math.PI) < 1e-12);  // 快翻完：还差一点才立正
+  h.set(0.3, 1); assert.equal(h.body.rotation.z, 0);                                     // 改用 set()：必须立正
+  h.flip(0.5, 0.9, 1); h.flip(0, 0.9, 1); assert.equal(h.body.rotation.z, 0);
+  h.flip(0.5, 0.9, 1); h.flip(1, 0.9, 1); assert.equal(h.body.rotation.z, 0);
+
+  // 放进镜头里照 Day14 C12a 的写法走全片预检：翻完之后的每一帧，顺着渲和单独渲必须一样
+  const tl = timeline(['A', 'B']);
+  const r = castPreflight([OK[0], shot('B', (k) => {
+    const small = hourglass(0.44); k.add(small.g, -0.05, 0.8, 0.3);
+    return ({ u, T }) => {
+      const e = Math.min(1, Math.max(0, (u - 0.2) / 0.3));
+      if (e < 1) small.flip(e, 0.9, T); else small.set(0.1 + (u - 0.5) * 0.2, T);
+      return still;
+    };
+  })], tl, fakeAtlas());
+  assert.deepEqual(r.problems, []);
 });

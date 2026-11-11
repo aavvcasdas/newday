@@ -383,6 +383,21 @@ export class Actor {
     };
   }
 
+  /**
+   * 这一帧会被画成什么样的全部状态，写成一行「名字=值;…」（预检用它核对：同一帧不管之前渲过哪些帧，结果都得一样）。
+   * 看不见的角色只有「不显示」——反正不画，别的值是什么都无所谓。
+   * 注意 begin() 只复位缩放 / 倾斜 / 透明度这些修饰量，造型和位置不复位：哪一帧没写，就停在这个页面上一次渲到的样子。
+   */
+  stateLine(): string {
+    if (!(this._alpha > 0.02)) return '显隐=不显示';
+    const p = this.holder.position, q = this.holder.quaternion, sc = this.holder.scale, t = this._tint;
+    return [
+      '显隐=显示', `造型=${this.key}`, `位置=${p.x},${p.y},${p.z}`, `挂点朝向与缩放=${q.x},${q.y},${q.z},${q.w},${sc.x},${sc.y},${sc.z}`,
+      `大小=${this._size}`, `挤压=${this._sq}`, `倾斜=${this._tilt}`, `跳起=${this._lift}`, `透明度=${this._alpha}`, `闪白=${this._flash}`, `剪影=${this._sil}`,
+      `左右翻转=${this._flip}`, `染色=${t ? `${t.x},${t.y},${t.z}` : '无'}`, `阴影=${this._shadow}`,
+    ].join(';');
+  }
+
   begin() { this._size = 1; this._sq = 0; this._tilt = 0; this._lift = 0; this._alpha = 1; this._flash = 0; this._sil = 0; this._flip = false; this._tint = null; this._shadow = true; }
 
   commit(cam: THREE.Camera, cardTint: THREE.Vector3) {

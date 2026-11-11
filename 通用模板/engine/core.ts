@@ -4,7 +4,8 @@
 // 写镜头的三条硬规矩（引擎靠它们保证「任意跳帧 / 并发渲染都得到同一帧」）：
 //   1. update(frame) 只能读 frame 里的时间（t / u / T / bt / f），不许用 Math.random、Date.now、累积变量；
 //      要随机就用 k.rnd()（按镜头 id 播种，只在 build 里调用）或 kit.ts 的 hash(n)。
-//   2. 角色每帧的姿态都要在 update 里重新写一遍（引擎每帧先 actor.begin() 复位）。
+//   2. 角色和道具每帧的状态都要在 update 里重新写一遍。引擎每帧的 actor.begin() 只复位修饰量（缩放、倾斜、透明度…），
+//      造型、位置、道具都不复位：只在一部分帧里写的状态，会让那一帧的画面取决于之前渲过哪些帧（engine.ts 的预检会查）。
 //   3. 缺素材直接抛错（Actor.set 会抛），不许静默换成别的造型。
 import * as THREE from 'three';
 import { Actor, type AtlasData, type CharId } from './actors';

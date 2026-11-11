@@ -65,7 +65,7 @@ export function registerProject(p: ProjectDef) {
         calculateMetadata={async ({ props }) => {
           let report: CastReport;
           try { report = castPreflight(p.shots, p.plan(props.starts, props.ends), await loadAtlas()); }
-          catch (e) { report = { shots: 0, frames: 0, sprites: {}, problems: [e instanceof Error ? e.message : String(e)] }; }
+          catch (e) { report = { shots: 0, frames: 0, sprites: {}, problems: [e instanceof Error ? e.message : String(e)], orderChecked: 0 }; }
           return { props: { ...props, __cast: report } };
         }}
       />

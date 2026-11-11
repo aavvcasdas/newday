@@ -24,7 +24,8 @@
 //           --allow-cast-problems  角色预检有问题也继续（问题清单照常打印）
 //
 // 角色预检：凡是要开浏览器的命令（info / stills / sheet / frames / full）都会先不出图地把全片每一帧的镜头逻辑走一遍，
-//   看每个角色画的是图集里的哪一格、会不会悄悄不见（点到不存在的格子、坐标算成 NaN……）。
+//   看每个角色画的是图集里的哪一格、会不会悄悄不见（点到不存在的格子、坐标算成 NaN……）；
+//   再另起一套搭景倒着走一遍：同一帧两遍对不上，说明它的画面取决于之前渲过哪些帧，成片里会隔帧乱跳。
 //   info / frames / full 遇到问题就停——不让它渲到半路才报错，更不让它「渲染成功、人没了」；看静帧时只提醒，不拦。
 //
 // 说明：
@@ -231,12 +232,12 @@ function castGate(o, fatal) {
   const c = o.info.cast;
   if (!c.problems.length) {
     const ids = Object.keys(c.sprites);
-    console.log(`角色预检通过：${c.shots} 镜 / ${c.frames} 帧逐帧走过，${ids.length} 个角色用到 ${ids.reduce((n, id) => n + c.sprites[id].length, 0)} 格精灵；没有点到图集里不存在的格子，没有会让角色消失的坏数`);
+    console.log(`角色预检通过：${c.shots} 镜 / ${c.frames} 帧逐帧走过，${ids.length} 个角色用到 ${ids.reduce((n, id) => n + c.sprites[id].length, 0)} 格精灵；没有点到图集里不存在的格子，没有会让角色消失的坏数；${c.orderChecked} 帧顺着走、倒着走结果一致`);
     return;
   }
   const list = c.problems.map((x) => `  - ${x.replace(/\n/g, '\n    ')}`).join('\n');
   if (fatal && !flag('--allow-cast-problems')) {
-    console.error(`✗ 角色预检没通过（${c.problems.length} 项）。这些问题会让角色在成片里消失，或者渲到那一帧才报错：\n${list}\n  确实要带着问题继续，加 --allow-cast-problems（问题清单照常打印）。`);
+    console.error(`✗ 角色预检没通过（${c.problems.length} 项）。这些问题会让角色在成片里消失、让画面隔帧乱跳，或者渲到那一帧才报错：\n${list}\n  确实要带着问题继续，加 --allow-cast-problems（问题清单照常打印）。`);
     process.exit(1);
   }
   console.warn(`⚠ 角色预检发现 ${c.problems.length} 项问题${fatal ? '（已用 --allow-cast-problems 放行）' : '（看静帧不拦；出片时会停在这里）'}：\n${list}`);

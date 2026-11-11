@@ -36,9 +36,72 @@ export interface CastReport {
   shots: number; frames: number;
   /** 每个角色在全片里实际画到过哪些精灵格（只算看得见的那些帧） */
   sprites: Record<string, string[]>;
-  /** 会让角色在成片里消失、或让渲染中途报错的问题；空数组 = 通过 */
+  /** 会让角色在成片里消失、隔帧乱跳，或让渲染中途报错的问题；空数组 = 通过 */
   problems: string[];
+  /** 「同一帧，顺着走和倒着走结果一样」核对过多少帧（出错的镜头不核对） */
+  orderChecked: number;
 }
+
+// ── 「这一帧只取决于这一帧」 ─────────────────────────────────────────────────────────────
+// 出片时一个渲染页面只渲一部分帧（300 帧一块、多个页面交替取帧），抽查静帧更是每帧一个新页面。
+// 镜头里只要有一个状态「这几帧写了、那几帧没写」，没写的那些帧就停在这个页面上一次渲到的样子：
+// 每个页面各留各的，成片里就是隔帧来回跳，单帧抽出来看又是另一个样子——渲染全程不报错。
+// （实际出过：Day14 的沙漏翻完之后留着 flip() 最后一帧的倾角，两个页面留的角度不同，成片里抖了近 5 秒。）
+// 核对办法：全片顺着走一遍；另起一套搭景倒着再走一遍；每一帧两边的状态必须一模一样。
+
+const HB = new Float64Array(1), HW = new Uint32Array(HB.buffer);
+const mixNum = (h: number, v: number) => { HB[0] = v + 0; return Math.imul(Math.imul(h ^ HW[0], 16777619) ^ HW[1], 16777619); };
+
+function pushNums(v: unknown, out: (n: number) => void) {
+  if (typeof v === 'number') out(v);
+  else if (typeof v === 'boolean') out(v ? 1 : 0);
+  else if (Array.isArray(v)) for (const x of v) pushNums(x, out);
+  else if (v && typeof v === 'object') {
+    const o = v as { isColor?: boolean; r?: number; g?: number; b?: number } & Record<string, unknown>;
+    if (o.isColor) { out(o.r!); out(o.g!); out(o.b!); }
+    else for (const k of ['x', 'y', 'z', 'w']) if (typeof o[k] === 'number') out(o[k] as number); // 向量 / 四元数；贴图、矩阵不看
+  }
+}
+
+/** 一个物体（连同它下面看得见的所有东西）此刻的样子，压成一个数：显隐、位置、朝向、缩放、材质的颜色 / 透明度 / 数值 uniform、灯的强度与颜色 */
+function objectDigest(root: THREE.Object3D, skip: Set<THREE.Object3D>): number {
+  let h = 2166136261;
+  const out = (n: number) => { h = mixNum(h, n); };
+  const walk = (o: THREE.Object3D) => {
+    if (skip.has(o)) return;
+    out(o.visible ? 1 : 0);
+    if (!o.visible) return; // 看不见的整棵子树反正不画，里面是什么都无所谓
+    const p = o.position, q = o.quaternion, s = o.scale;
+    out(p.x); out(p.y); out(p.z); out(q.x); out(q.y); out(q.z); out(q.w); out(s.x); out(s.y); out(s.z);
+    const mat = (o as THREE.Mesh).material as THREE.Material | THREE.Material[] | undefined;
+    if (mat) for (const m of Array.isArray(mat) ? mat : [mat]) {
+      const a = m as unknown as { color?: unknown; emissive?: unknown; uniforms?: Record<string, { value: unknown }> };
+      out(m.visible ? 1 : 0); out(m.opacity); pushNums(a.color, out); pushNums(a.emissive, out);
+      if (a.uniforms) for (const k in a.uniforms) pushNums(a.uniforms[k].value, out);
+    }
+    const light = o as unknown as { isLight?: boolean; intensity?: number; color?: unknown };
+    if (light.isLight) { out(light.intensity ?? 0); pushNums(light.color, out); }
+    out(o.children.length);
+    for (const c of o.children) walk(c);
+  };
+  walk(root);
+  return h >>> 0;
+}
+
+/** 一帧里「会影响画面」的全部状态：机位、每个角色、搭景里每个顶层物体（k.add 进来的那些） */
+interface FrameState { cam: number; actors: string[]; things: number[] }
+function frameState(kit: Kit, cs: CamState): FrameState {
+  const holders = new Set<THREE.Object3D>(kit.actors.map((a) => a.holder));
+  let c = 2166136261;
+  for (const v of [...cs.p, ...cs.l, cs.fov, cs.roll]) c = mixNum(c, v);
+  return { cam: c >>> 0, actors: kit.actors.map((a) => a.stateLine()), things: kit.root.children.filter((o) => !holders.has(o)).map((o) => objectDigest(o, holders)) };
+}
+
+const spans = (frames: number[]) => {
+  const out: [number, number][] = [];
+  for (const f of [...frames].sort((a, b) => a - b)) { const last = out[out.length - 1]; if (last && f <= last[1] + 1) last[1] = f; else out.push([f, f]); }
+  return out;
+};
 
 /**
  * 全片角色预检：不出图，只把每一帧的镜头逻辑照出片时的顺序走一遍，看每个角色这一帧画哪一格、会不会悄悄不见。
@@ -47,6 +110,7 @@ export interface CastReport {
  *   · 镜头搭景 / 逐帧逻辑抛错（最常见：a.set('写错的格子名')）——出片时要渲到那一帧才炸，这里开渲前一次报全；
  *   · 看得见的角色，坐标 / 缩放 / 透明度等出现 NaN、Infinity——three.js 不报错，只是不画，成片里人就没了；
  *   · 机位出现 NaN——整帧什么都画不出来。
+ *   · 同一帧的画面取决于之前渲过哪些帧（见上面「这一帧只取决于这一帧」）——成片里隔帧乱跳，同样全程不报错。
  * 一个镜头抛错之后，这个镜头后面的帧不再检查（它多半每一帧都会抛同一个错）。
  */
 export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData): CastReport {
@@ -59,6 +123,7 @@ export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData):
   const runs = new Map<string, { first: number; n: number }>(); // 「谁的哪个数坏了」→ 首帧与帧数：同一个问题连着几十帧只报一条
   const note = (what: string, f: number) => { const r = runs.get(what); if (r) r.n++; else runs.set(what, { first: f, n: 1 }); };
   const at = (f: number) => `第 ${f} 帧（${(f / FPS).toFixed(2)}s）`;
+  const forward: (FrameState | undefined)[] = new Array(tl.frames); // 顺着走时每一帧的状态；出错的帧留空
   for (let f = 0; f < tl.frames; f++) {
     const st = tl.shots[shotIndexAt(tl, f / FPS)];
     if (dead.has(st.id)) continue;
@@ -81,15 +146,62 @@ export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData):
         if (s.bad) note(`镜头 ${st.id}：角色 ${s.id}（本镜第 ${i + 1} 个）的 ${s.bad}——渲染不会报错，只是这个角色不会被画出来`, f);
         else if (s.shown) { if (!used.has(s.id)) used.set(s.id, new Set()); used.get(s.id)!.add(s.key); }
       });
+      forward[f] = frameState(rt.kit, cs);
     } catch (e) {
       dead.add(st.id);
       problems.push(`镜头 ${st.id} ${at(f)}：${e instanceof Error ? e.message : String(e)}`);
     }
   }
   for (const [what, r] of runs) problems.push(`${what}。从${at(r.first)}起，共 ${r.n} 帧`);
+
+  // 第二遍：另起一套搭景（连跨镜头共用的大布景也另搭一份），从最后一帧倒着走到第 0 帧，逐帧和第一遍比
+  const pool2 = new Map<string, unknown>();
+  const built2 = new Map<string, { kit: Kit; update: (f: Frame) => CamState }>();
+  const drift = new Map<string, number[]>(); // 「哪个镜头的什么东西」→ 两遍对不上的帧
+  const differ = (what: string, f: number) => { const l = drift.get(what); if (l) l.push(f); else drift.set(what, [f]); };
+  const labels = new Map<string, string>();
+  let orderChecked = 0;
+  for (let f = tl.frames - 1; f >= 0; f--) {
+    const st = tl.shots[shotIndexAt(tl, f / FPS)], was = forward[f];
+    if (dead.has(st.id) || !was) continue;
+    try {
+      let rt = built2.get(st.id);
+      if (!rt) {
+        const kit = new Kit(atlas, hashStr(st.id), pool2);
+        rt = { kit, update: map[st.id].build(kit) };
+        built2.set(st.id, rt);
+      }
+      const fr = frameOf(tl, st, f);
+      timeU.value = fr.T;
+      for (const a of rt.kit.actors) a.begin();
+      const now = frameState(rt.kit, rt.update(fr));
+      orderChecked++;
+      if (now.cam !== was.cam) differ(`镜头 ${st.id}：机位`, f);
+      for (let i = 0; i < Math.max(now.actors.length, was.actors.length); i++) {
+        if (now.actors[i] === was.actors[i]) continue;
+        const a = (now.actors[i] ?? '').split(';'), b = (was.actors[i] ?? '').split(';');
+        const names = a.length === b.length ? a.filter((x, j) => x !== b[j]).map((x) => x.split('=')[0]) : ['显隐'];
+        differ(`镜头 ${st.id}：角色 ${rt.kit.actors[i]?.id ?? '?'}（本镜第 ${i + 1} 个）的${names.join('、')}`, f);
+      }
+      const things = rt.kit.root.children.filter((o) => !rt!.kit.actors.some((a) => a.holder === o));
+      for (let i = 0; i < Math.max(now.things.length, was.things.length); i++) {
+        if (now.things[i] === was.things[i]) continue;
+        const key = `${st.id}#${i}`;
+        if (!labels.has(key)) { const o = things[i]; labels.set(key, o ? `，这一帧位于 (${[o.position.x, o.position.y, o.position.z].map((v) => +v.toFixed(2)).join(', ')})` : ''); }
+        differ(`镜头 ${st.id}：搭景里第 ${i + 1} 个物体（按 k.add 的先后数，不算角色${labels.get(key)}）`, f);
+      }
+    } catch (e) {
+      dead.add(st.id);
+      problems.push(`镜头 ${st.id} ${at(f)}：顺着走没事，倒着走到这一帧时报错（${e instanceof Error ? e.message : String(e)}）——它依赖前面的帧先跑过，分块渲染时会在某一块的开头炸`);
+    }
+  }
+  const drifted = [...drift].map(([what, frames]) => ({ what, frames, sp: spans(frames) })).sort((a, b) => a.sp[0][0] - b.sp[0][0]); // 按在片子里出现的先后列
+  for (const { what, frames, sp } of drifted) {
+    problems.push(`${what}取决于之前渲过哪些帧：${sp.slice(0, 3).map(([a, b]) => (a === b ? `第 ${a} 帧` : `第 ${a}–${b} 帧`)).join('、')}${sp.length > 3 ? ` 等 ${sp.length} 段` : ''}（${(sp[0][0] / FPS).toFixed(2)}s 起，共 ${frames.length} 帧）顺着走和倒着走不一样——成片里会隔帧来回跳，单帧抽查也和成片对不上。它有状态只在一部分帧里写了，要每一帧都写全`);
+  }
   const sprites: Record<string, string[]> = {};
   for (const id of [...used.keys()].sort()) sprites[id] = [...used.get(id)!].sort();
-  return { shots: tl.shots.length, frames: tl.frames, sprites, problems };
+  return { shots: tl.shots.length, frames: tl.frames, sprites, problems, orderChecked };
 }
 
 export class FilmEngine {
