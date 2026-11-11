@@ -107,13 +107,16 @@ npm test && npm run typecheck                      # 改了引擎之后跑
 {
   "measured": true,             // true = 按 source.audio 这条音频实测过；false = 估的，只能出无声样片
   "method": "…怎么测的…",
-  "source": { "audio": "素材/童话镇.mp4", "audio_sha256": "…" },
+  "source": { "audio": "素材/童话镇.mp4", "audio_sha256": "…", "subtitles": "歌词.srt", "subtitles_sha256": "…" },   // day 记的是 script / script_sha256
   "beat": { "period": 0.42871, "first": 10.1895, "bar": 4 },   // mv：实测拍点；day 为 null
   "lines": [ { "text": "听说白雪公主在逃跑", "start": 13.619, "end": 16.6 } ]   // day 的每句还有 who / face
 }
 ```
 
-**硬规矩：`mux` / `full` 只接受 `measured=true` 且 `audio_sha256` 与当前音源一致的卡点。** 估出来的轴、按另一条音频测的轴，都混不出成片——换了音源就重新 `align`。
+**两条硬规矩（命令会直接拒绝，不是提醒）：**
+
+1. **`mux` / `full` 只接受 `measured=true` 且 `audio_sha256` 与当前音源一致的卡点。** 估出来的轴、按另一条音频测的轴，都混不出成片——换了音源就重新 `align`。
+2. **台词 / 歌词改过，就要重跑 `plan`（没有音源）或 `align`（有音源）。** 字幕的文字只存在 `cues.json` 里，渲染时不再读 `台词.txt` / `歌词.srt`；所以 `cues.json` 记着它是按哪一版文字做的（`script_sha256` / `subtitles_sha256`），对不上时除 `plan` / `align` 以外的命令都不干活——否则会悄悄渲出旧台词。
 
 ### project.tsx
 

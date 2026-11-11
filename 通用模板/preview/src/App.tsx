@@ -105,8 +105,8 @@ export function App() {
             <div className="ctrl">
               <button onClick={() => seek(Math.max(0, frame - 1))}>◀ 上一帧</button>
               <button onClick={() => seek(Math.min(tl.frames - 1, frame + 1))}>下一帧 ▶</button>
-              <button onClick={() => si > 0 && seek(cutFrame(tl.shots[si - 1].a))}>⏮ 上一镜</button>
-              <button onClick={() => si + 1 < tl.shots.length && seek(cutFrame(tl.shots[si + 1].a))}>下一镜 ⏭</button>
+              <button onClick={() => si > 0 && seek(cutFrame(tl.shots[si - 1].a))}>« 上一镜</button>
+              <button onClick={() => si + 1 < tl.shots.length && seek(cutFrame(tl.shots[si + 1].a))}>下一镜 »</button>
               <button onClick={() => setSubs((v) => !v)}>{subs ? '隐藏字幕' : '显示字幕'}</button>
               <span>第 {frame} 帧 · {fmtTime(t)}</span>
             </div>

@@ -22,7 +22,7 @@ npm run film -- info <作品目录>                  # 确认作品能加载、�
 |---|---|
 | 新一集口播 | `npm run new -- day Day/DayNN "标题"` → 第 2 节 |
 | 新一部 MV | `npm run new -- mv 番外MV/歌名 "歌名"` → 第 3 节 |
-| 改已有作品的镜头 / 台词 | 直接改作品目录里的 `shots/`、`台词.txt` / `歌词.srt`、`project.tsx`；改了台词要重跑 `plan` 或 `align` |
+| 改已有作品的镜头 / 台词 | 直接改作品目录里的 `shots/`、`台词.txt` / `歌词.srt`、`project.tsx`；改了台词 / 歌词要重跑 `plan`（没有音源）或 `align`（有音源），不重跑其他命令会拒绝干活 |
 | 配音 / 原曲到位了 | `align` → `full`（第 4 节） |
 | 引擎缺功能（新道具、新造型、新字幕样式） | 改 `通用模板/engine/`，然后 `npm test && npm run typecheck`，并对 `番外MV/童话镇` 跑一次 `sheet` |
 
