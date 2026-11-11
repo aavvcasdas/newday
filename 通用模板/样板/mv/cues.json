@@ -2,7 +2,8 @@
  "measured": false,
  "method": "规划轴：歌词 .srt 的时间原样照抄，没有对过原曲拍点，只能出无声样片",
  "source": {
-  "subtitles": "歌词.srt"
+  "subtitles": "歌词.srt",
+  "subtitles_sha256": "76e48e679a7c91fd4ffb5cce2e4225ee367b521556722eaa7f8bd023a19cb3df"
  },
  "beat": null,
  "lines": [

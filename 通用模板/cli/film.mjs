@@ -341,6 +341,21 @@ function srtText(I) {
   return I.lines.map((txt, i) => `${i + 1}\n${f(I.starts[i])} --> ${f(I.ends[i])}\n${txt}\n`).join('\n');
 }
 
+/**
+ * 字幕文字只存在 cues.json 里（渲染时不再读台词 / 歌词文件）。所以台词改了而没重跑 plan / align，
+ * 渲出来的还是旧台词，而且没有任何报错——这里把它拦下。
+ */
+function requireFreshText() {
+  const cues = JSON.parse(fs.readFileSync(CUES_FILE, 'utf8'));
+  const day = film.kind === 'day';
+  const file = path.resolve(PROJ, day ? film.script || '台词.txt' : film.subtitles || '歌词.srt');
+  const was = day ? cues.source?.script_sha256 : cues.source?.subtitles_sha256;
+  const redo = day ? '重跑 plan（没有配音）或 align（有配音）' : '重跑 align（有原曲）或 plan（没有原曲）';
+  if (!fs.existsSync(file)) die(`找不到${day ? '台词' : '歌词'}文件 ${rel(file)}（film.json 的 ${day ? 'script' : 'subtitles'}）`);
+  if (!was) die(`${rel(CUES_FILE)} 没有记录它是按哪一版${day ? '台词' : '歌词'}做的：${redo}`);
+  if (was !== sha256(file)) die(`${rel(file)} 改过了，${rel(CUES_FILE)} 还是按旧的那版做的：${redo}`);
+}
+
 /** 出成片的前提：卡点是按「现在这条音源」实测过的。估出来的轴、按另一条音频测的轴，一律不许混音出片 */
 function requireMeasured() {
   const src = needAudio();
@@ -412,7 +427,7 @@ function plan() {
       cues.push({ text: rows.slice(ti + 1).join(' '), start: sec(m[1], m[2], m[3], m[4]), end: sec(m[5], m[6], m[7], m[8]) });
     }
     if (!cues.length) die(`${rel(srt)} 里没有歌词`);
-    fs.writeFileSync(CUES_FILE, JSON.stringify({ measured: false, method: '规划轴：歌词 .srt 的时间原样照抄，没有对过原曲拍点，只能出无声样片', source: { subtitles: path.relative(PROJ, srt) }, beat: null, lines: cues }, null, 1) + '\n');
+    fs.writeFileSync(CUES_FILE, JSON.stringify({ measured: false, method: '规划轴：歌词 .srt 的时间原样照抄，没有对过原曲拍点，只能出无声样片', source: { subtitles: path.relative(PROJ, srt), subtitles_sha256: sha256(srt) }, beat: null, lines: cues }, null, 1) + '\n');
     console.log(`PLAN_OK ${rel(CUES_FILE)} · ${cues.length} 句（measured=false；原曲到位后跑 align）`);
     return;
   }
@@ -451,6 +466,9 @@ function align() {
     if (!fs.existsSync(srt)) die(`找不到歌词文件 ${rel(srt)}（film.json 的 subtitles）`);
     if (flag('--no-snap')) common.push('--no-snap');
     py('align_beats.py', ['--wav', wavOf(src, 22050, 'source'), '--srt', srt, '--srt-name', path.relative(PROJ, srt), ...common]);
+    const c = JSON.parse(fs.readFileSync(CUES_FILE, 'utf8'));
+    c.source = { ...c.source, subtitles_sha256: sha256(srt) }; // 这份卡点是按哪一版歌词做的
+    fs.writeFileSync(CUES_FILE, JSON.stringify(c, null, 1) + '\n');
   } else {
     const { file, lines } = readScript();
     const linesFile = path.join(WORK, 'script_lines.json');
@@ -548,6 +566,7 @@ try {
   if (!['plan', 'align'].includes(mode) && !fs.existsSync(CUES_FILE)) {
     die(`还没有 ${rel(CUES_FILE)}：${film.kind === 'day' ? '口播片先跑 plan（没配音时估一份规划轴）或 align（按配音实测）' : 'MV 先跑 align（按原曲实测拍点）'}`);
   }
+  if (!['plan', 'align'].includes(mode) && !opt('--cues')) requireFreshText(); // --cues 是临时换轴做对比，不查
   if (mode === 'info') await info();
   else if (mode === 'plan') plan();
   else if (mode === 'align') align();

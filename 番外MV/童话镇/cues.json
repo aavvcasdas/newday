@@ -6,7 +6,8 @@
   "audio": "素材/童话镇.mp4",
   "audio_sha256": "9dc8eb301edf33c23a7dbe4f170d774d4612bc268a86a5819e7d60d9af19173c",
   "audio_duration": 249.579,
-  "analysis_sample_rate": 22050
+  "analysis_sample_rate": 22050,
+  "subtitles_sha256": "c31cbd61ba09e5201956432998aae804fdea17282f26db9e52caf44962c2ba18"
  },
  "beat": {
   "period": 0.42871,
@@ -15,20 +16,20 @@
   "bpm": 139.953,
   "comb_score_vs_baseline": 3.78,
   "local_phase_drift_per_15s_window": [
-   0.0,
-   0.0,
-   0.0,
-   0.0,
-   0.0,
+   0,
+   0,
+   0,
+   0,
+   0,
    -0.002,
    -0.002,
-   0.0,
+   0,
    -0.002,
    0.004,
    0.002,
-   0.0,
-   0.0,
-   0.0,
+   0,
+   0,
+   0,
    0.002
   ],
   "max_abs_drift": 0.004
@@ -85,7 +86,7 @@
    "text": "小红帽在担心大灰狼",
    "start": 17.049,
    "end": 20.429,
-   "srt_start": 17.0,
+   "srt_start": 17,
    "srt_end": 20.35,
    "delta": 0.049,
    "beat_index": 16
@@ -130,7 +131,7 @@
    "text": "听说森林里有糖果屋",
    "start": 34.198,
    "end": 37.149,
-   "srt_start": 34.0,
+   "srt_start": 34,
    "srt_end": 37.25,
    "delta": 0.198,
    "beat_index": 56
