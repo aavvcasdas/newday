@@ -230,6 +230,46 @@ def sheet(a):
     print('SHEET', a.out, f'{len(cells)} 格 {W}x{H}')
 
 
+def strip(a):
+    """把已经渲好的 PNG 序列按固定间隔抽成胶片条：每格标时间码、镜头号、帧号。用来把整片从头到尾过一遍（不用再渲）。"""
+    from PIL import Image, ImageDraw, ImageFont
+    info = json.load(open(a.info, encoding='utf-8'))
+    fps, total = info['fps'], info['frames']
+    last = total - 1 if a.to < 0 else min(a.to, total - 1)
+    picks = list(range(max(0, a.start), last + 1, max(1, a.step)))
+    missing = [f for f in picks if not os.path.exists(os.path.join(a.dir, f'f{f:05d}.png'))]
+    if missing:
+        raise SystemExit(f'缺帧 {missing[0]}（共缺 {len(missing)} 格）：先跑 frames 把整片渲出来')
+    starts = [(round(s['a'] * fps), s['id']) for s in info['shots']]
+
+    def shot_of(f):
+        cur = starts[0][1]
+        for a0, sid in starts:
+            if a0 <= f:
+                cur = sid
+        return cur
+
+    font = ImageFont.truetype(a.font, 15)
+    w, h, per = a.cell, round(a.cell * info['height'] / info['width']), a.cols * a.rows
+    pages = []
+    for p0 in range(0, len(picks), per):
+        part = picks[p0:p0 + per]
+        rows = (len(part) + a.cols - 1) // a.cols
+        img = Image.new('RGB', (a.cols * w, rows * (h + 20)), (18, 16, 28))
+        d = ImageDraw.Draw(img)
+        for i, f in enumerate(part):
+            x, y = (i % a.cols) * w, (i // a.cols) * (h + 20)
+            img.paste(Image.open(os.path.join(a.dir, f'f{f:05d}.png')).convert('RGB').resize((w, h), Image.LANCZOS), (x, y))
+            t = f / fps
+            d.text((x + 4, y + h + 1), f'{int(t // 60)}:{t % 60:04.1f}  {shot_of(f)}  f{f}', font=font, fill=(240, 220, 150))
+        name = f'{a.out}_{len(pages) + 1:02d}.jpg'
+        img.save(name, quality=88)
+        pages.append(name)
+    print('STRIP', f'{len(picks)} 格 / {len(pages)} 张')
+    for n in pages:
+        print(' ', n)
+
+
 if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest='cmd', required=True)
@@ -239,5 +279,8 @@ if __name__ == '__main__':
     p = sub.add_parser('final'); p.add_argument('mp4'); p.add_argument('src_wav'); p.add_argument('out_wav'); p.add_argument('--info', required=True)
     p.add_argument('--offset', type=float, default=0.0); p.add_argument('--qa', required=True); p.add_argument('--mix-report')
     p = sub.add_parser('sheet'); p.add_argument('list'); p.add_argument('out')
+    p = sub.add_parser('strip'); p.add_argument('dir'); p.add_argument('out'); p.add_argument('--info', required=True); p.add_argument('--font', required=True)
+    p.add_argument('--step', type=int, default=30); p.add_argument('--start', type=int, default=0); p.add_argument('--to', type=int, default=-1)
+    p.add_argument('--cols', type=int, default=6); p.add_argument('--rows', type=int, default=7); p.add_argument('--cell', type=int, default=320)
     args = ap.parse_args()
-    {'frames': frames, 'timing': timing, 'final': final, 'sheet': sheet}[args.cmd](args)
+    {'frames': frames, 'timing': timing, 'final': final, 'sheet': sheet, 'strip': strip}[args.cmd](args)

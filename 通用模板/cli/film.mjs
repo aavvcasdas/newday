@@ -44,7 +44,7 @@ const FONT_DIR = path.join(ENGINE, 'assets/fonts');
 
 const argv = process.argv.slice(2);
 const mode = argv[0];
-const USAGE = '用法：node 通用模板/cli/film.mjs <info|plan|align|stills|sheet|frames|encode|mux|sample|qa|full> <作品目录> [选项]';
+const USAGE = '用法：node 通用模板/cli/film.mjs <info|plan|align|stills|sheet|strip|frames|encode|mux|sample|qa|full> <作品目录> [选项]';
 if (!mode || !argv[1] || argv[1].startsWith('--')) { console.error(USAGE); process.exit(2); }
 const PROJ = path.resolve(argv[1]);
 const rest = argv.slice(2);
@@ -486,6 +486,17 @@ function align() {
   console.log(`ALIGN_OK ${rel(CUES_FILE)}`);
 }
 
+/** 胶片条：把已经渲好的整片按固定间隔抽格，拼成几张图。出片后不用再渲，就能把全片从头到尾过一遍 */
+function strip() {
+  const I = savedInfo();
+  const every = Number(opt('--every', 1)); // 每隔几秒抽一格
+  if (!(every > 0)) die('--every 要大于 0（单位：秒）');
+  const font = fs.readdirSync(FONT_DIR).find((f) => /\.(ttf|otf)$/i.test(f));
+  py('qa.py', ['strip', FRAMES, path.join(WORK, '胶片条'), '--info', path.join(WORK, 'info.json'), '--font', path.join(FONT_DIR, font),
+    '--step', String(Math.max(1, Math.round(every * I.fps))), '--start', String(opt('--from', 0)), '--to', String(opt('--to', -1)),
+    '--cols', String(opt('--cols', 6)), '--rows', String(opt('--rows', 7)), '--cell', String(opt('--cell', 320))]);
+}
+
 function qa() {
   const I = savedInfo();
   fs.mkdirSync(OUT_DIR, { recursive: true });
@@ -579,6 +590,7 @@ try {
   else if (mode === 'encode') encode();
   else if (mode === 'mux') mux();
   else if (mode === 'qa') qa();
+  else if (mode === 'strip') strip();
   else if (mode === 'sample') sample();
   else if (mode === 'full') {
     if (audioFile) requireMeasured(); // 先查卡点，别渲了半小时才发现轴不对

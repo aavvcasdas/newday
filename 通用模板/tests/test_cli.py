@@ -141,6 +141,28 @@ class AudioMix(unittest.TestCase):
         self.assertLess(np.max(np.abs(out[:, 0] - st[:, 0] - dry[:len(out)])), 2.5 / 32768)
 
 
+class Strip(unittest.TestCase):
+    def test_strip_pages_and_missing_frame(self):
+        from PIL import Image
+        d = tempfile.mkdtemp()
+        fr = os.path.join(d, 'frames'); os.makedirs(fr)
+        for f in range(0, 10):
+            Image.new('RGB', (64, 36), (f * 20, 80, 120)).save(os.path.join(fr, f'f{f:05d}.png'))
+        info = os.path.join(d, 'info.json')
+        json.dump({'fps': 2, 'frames': 10, 'width': 64, 'height': 36, 'shots': [{'id': 'A', 'a': 0}, {'id': 'B', 'a': 2.5}]}, open(info, 'w'))
+        font = os.path.join(HERE, '..', 'engine', 'assets', 'fonts', 'ZCOOLKuaiLe-Regular.ttf')
+        out = os.path.join(d, 'strip')
+        txt = run('qa.py', 'strip', fr, out, '--info', info, '--font', font, '--step', 2, '--cols', 2, '--rows', 2, '--cell', 64).stdout
+        self.assertIn('5 格 / 2 张', txt)                        # 第 0、2、4、6、8 帧 → 每页 4 格 → 两页
+        a, b = Image.open(out + '_01.jpg'), Image.open(out + '_02.jpg')
+        self.assertEqual(a.size, (128, 2 * (36 + 20)))
+        self.assertEqual(b.size, (128, 1 * (36 + 20)))
+        os.remove(os.path.join(fr, 'f00004.png'))
+        r = run('qa.py', 'strip', fr, out, '--info', info, '--font', font, '--step', 2, ok=False)
+        self.assertNotEqual(r.returncode, 0)
+        self.assertIn('缺帧 4', r.stderr + r.stdout)
+
+
 class AlignVoice(unittest.TestCase):
     SR = 16000
     LINES = ['今天的饭碗特别大。', '本鲸决定先数一数筷子。', '一双，两双，数到第七双就乱了。', '算了，先吃饭。']

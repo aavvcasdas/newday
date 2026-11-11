@@ -56,6 +56,7 @@ npm run film -- full <目录>      # frames → encode → mux → qa → sheet
 
 - `full` 开头就会检查卡点是不是按当前音源实测的，不是就直接停。
 - 看 `成片/qa.json`：`frames.problems`、`timing.problems`、`final.problems` 都应为空；`final.audio_lag_vs_source_samples` 应为 0。
+- `npm run film -- strip <目录>`：把刚渲好的整片每秒抽一格拼成胶片条（工作目录 `胶片条_NN.jpg`），**每一张都要看**——有没有哪一秒人不见了、道具跳位、字幕不对。
 - 成片 >100 MB 推不上 GitHub：调低 `film.json` 的 `video.bitrate`。
 
 ## 5. 写镜头时最容易犯的错
@@ -80,7 +81,7 @@ npm run film -- full <目录>      # frames → encode → mux → qa → sheet
 分开写三件事：
 
 1. **机器查过的**：qa.json 的结论、帧数、时长、音画偏移、文件大小与 SHA256。
-2. **我看过的**：看了哪些静帧 / 总览图，发现并改了什么。
+2. **我看过的**：看了哪些静帧 / 总览图 / 胶片条，发现并改了什么。静帧看不出动作顺不顺，别写成「看过整片」。
 3. **没人做过的**：整片连续观看、听审。没做就写没做。
 
 然后提交、推送到当前会话分支，给出真实提交号。

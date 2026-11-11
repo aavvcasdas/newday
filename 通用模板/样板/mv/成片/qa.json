@@ -19,7 +19,8 @@
   "measured": false,
   "method": "规划轴：歌词 .srt 的时间原样照抄，没有对过原曲拍点，只能出无声样片",
   "source": {
-   "subtitles": "歌词.srt"
+   "subtitles": "歌词.srt",
+   "subtitles_sha256": "76e48e679a7c91fd4ffb5cce2e4225ee367b521556722eaa7f8bd023a19cb3df"
   },
   "notes": [
    "卡点是估算的（cues.json measured=false）：只能当无声样片，不能当成片交付"
@@ -71,8 +72,8 @@
   "duration": 21,
   "shots": 4,
   "lines": 4,
-  "source_sha256": "58b37b8c4bf28725fef727130af3eb163c04842b8831336e96dc2d6b1c09d9c4",
+  "source_sha256": "b9bc760c110ff5296922ef9bf4eae37941b479b3a1dd702657bb6fd4fa5ac5b2",
   "source_files": 17
  },
- "checked_at": "2026-11-11T06:36:26.459Z"
+ "checked_at": "2026-11-11T09:33:34.152Z"
 }
