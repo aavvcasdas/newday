@@ -1,0 +1,38 @@
+{
+  "name": "newday",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "鲸鱼娘 AI 运营 · 通用模板（three.js 3D 世界 + 2D 像素纸片人，Remotion 逐帧出片）",
+  "engines": { "node": ">=22.18" },
+  "scripts": {
+    "film": "node 通用模板/cli/film.mjs",
+    "new": "node 通用模板/cli/new.mjs",
+    "preview": "vite --config 通用模板/preview/vite.config.ts",
+    "atlas": "node 通用模板/cast/bake_atlas.mjs",
+    "atlas:check": "node 通用模板/cast/bake_atlas.mjs --check",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "node --test 通用模板/tests/"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.436",
+    "@remotion/player": "4.0.436",
+    "@remotion/renderer": "4.0.436",
+    "@sparticuz/chromium": "153.0.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "remotion": "4.0.436",
+    "three": "0.170.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "4.1.17",
+    "@types/node": "22.19.17",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "0.170.0",
+    "@vitejs/plugin-react": "5.1.1",
+    "tailwindcss": "4.1.17",
+    "typescript": "5.9.3",
+    "vite": "7.3.2"
+  }
+}

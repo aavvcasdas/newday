@@ -1,0 +1,13 @@
+{
+  "id": "tonghuazhen",
+  "kind": "mv",
+  "title": "童话镇",
+  "subtitles": "歌词.srt",
+  "audio": {
+    "file": "素材/童话镇.mp4",
+    "offset": 0,
+    "fadeOut": 1.5
+  },
+  "output": "成片/童话镇",
+  "video": { "bitrate": "4700k", "preset": "slow" }
+}
