@@ -182,8 +182,13 @@ def final(a):
         problems.append(f'成片音轨与音源的相关度只有 {corr:.4f}')
     if abs(len(om) / sr - dur) > 0.03:
         problems.append(f'音轨 {len(om) / sr:.3f}s 与画面 {dur:.3f}s 时长不一致')
-    if mix.get('clipped_samples'):
-        problems.append(f"混音有 {mix['clipped_samples']} 个采样顶到满刻度")
+    # 削波只算混音这一步新弄出来的；音源自己顶满的那些只记一笔，不算问题（旧报告没有分开记，就按总数算）
+    notes = []
+    by_mix = mix.get('clipped_by_mix', mix.get('clipped_samples', 0))
+    if by_mix:
+        problems.append(f'混音削波：有 {by_mix} 个采样是混音这一步顶到满刻度的')
+    if mix.get('full_scale_samples_from_source'):
+        notes.append(f"音源自身有 {mix['full_scale_samples_from_source']} 个采样顶到满刻度，原样保留（混音没有加增益）")
     if mix.get('warning'):
         problems.append(mix['warning'])
     size = os.path.getsize(a.mp4)
@@ -194,7 +199,7 @@ def final(a):
         'audio_samples': len(om), 'audio_seconds': round(len(om) / sr, 4), 'expected_seconds': round(dur, 4),
         'audio_lag_vs_source_samples': lag, 'audio_lag_vs_source_ms': round(lag / sr * 1000, 3),
         'audio_correlation': round(corr, 4), 'correlation_window_seconds': [round(w0, 2), round(w1, 2)],
-        'tail_rms': tail, 'mix': mix, 'problems': problems,
+        'tail_rms': tail, 'mix': mix, 'notes': notes, 'problems': problems,
     }
     save(a.qa, 'final', out)
     print('FINAL', json.dumps(out, ensure_ascii=False))

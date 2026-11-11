@@ -113,6 +113,18 @@ class AudioMix(unittest.TestCase):
         self.assertAlmostEqual(out[self.SR - 100, 0], 0.5, places=3)
         self.assertTrue(np.all(out[self.SR:] == 0))
 
+    def test_full_scale_samples_already_in_the_source_are_not_mix_clipping(self):
+        # 流行歌的母带常有顶到满刻度的采样。原样搬过来不是混音的错：只记数，不算削波
+        rng = np.random.default_rng(3)
+        src = rng.uniform(-0.5, 0.5, self.SR * 3)
+        hot = [1000, 1001, 5000, 40000, 2 * self.SR - 10]   # 最后一个落在淡出段里，会被淡出压下去
+        src[hot] = 1.0
+        out, rep, _ = self.mix(src, 2.0, '--fade-out', 0.5)
+        self.assertEqual(rep['clipped_by_mix'], 0)
+        self.assertEqual(rep['full_scale_samples_from_source'], 4 * 2, '四个位置 × 左右声道')
+        self.assertEqual(rep['clipped_samples'], 4 * 2)
+        self.assertLess(abs(out[2 * self.SR - 10, 0]), 0.05, '淡出段里的那一个已经不在满刻度')
+
     def test_chip_bgm_ducks_under_voice_and_stem_subtracts_back(self):
         spans = [(0.5, 2.5), (3.5, 5.5)]
         src = speech_like(spans, 6.5, self.SR)

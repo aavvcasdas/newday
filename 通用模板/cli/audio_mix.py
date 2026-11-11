@@ -103,6 +103,7 @@ def main():
     lo, hi = max(0, off), min(n, off + len(src))
     if hi > lo:
         dry[lo:hi] = src[lo - off:hi - off]
+    dry_src = dry.copy()  # 音源原样摆上时间轴的样子（淡出、叠伴奏之前），最后用来分辨「音源自带的满刻度」
     report = {'sample_rate': SR, 'samples': n, 'seconds': round(n / SR, 6), 'offset_seconds': a.offset,
               'source_seconds': round(len(src) / SR, 3), 'source_used': [round(max(0, -off) / SR, 3), round((hi - off) / SR, 3)]}
     cut_tail = off + len(src) - n  # 音源在片尾之后还剩多少采样
@@ -174,7 +175,13 @@ def main():
         report['normalised_gain'] = round(0.985 / peak, 5)
     out_i16 = write_wav(a.out, mix)
     report['peak_dbfs'] = db(float(np.max(np.abs(out_i16))) / 32768) if n else None
-    report['clipped_samples'] = int(np.sum(np.abs(out_i16.astype(np.int32)) >= 32767))
+    # 顶到满刻度的采样分两种：音源自己就顶满的（流行歌的母带常常如此，原样搬过来不算混音的错），
+    # 和混音这一步新弄出来的（音源那一处没顶满、输出却顶满了——这才是削波）。
+    full_out = np.abs(out_i16.astype(np.int32)) >= 32767
+    full_src = np.abs(np.round(dry_src * 32768)) >= 32767
+    report['clipped_samples'] = int(full_out.sum())
+    report['full_scale_samples_from_source'] = int((full_out & full_src).sum())
+    report['clipped_by_mix'] = int((full_out & ~full_src).sum())
     report['rms_dbfs'] = db(rms(out_i16.astype(np.float32) / 32768))
     with open(a.report, 'w', encoding='utf-8') as f:
         json.dump(report, f, ensure_ascii=False, indent=1)
