@@ -1,9 +1,11 @@
 // 命令行的「拦截」逻辑：这些检查都发生在打包和渲染之前，所以不用浏览器就能测。
 //   · 台词 / 歌词改了而卡点没重做 → 拦下（否则会悄悄渲出旧台词）
 //   · 卡点是估的、或是按另一条音频测的 → 不许出成片
+//   · film.json 声明的音源 / 配乐不在、或者解不出音轨 → 在渲染之前就停，并说清楚（旧引擎补丁里音频那一项）
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -100,5 +102,52 @@ test('没有 cues.json 时：告诉人该先跑哪条命令', () => {
     const r = s.run('info', s.dir);
     assert.notEqual(r.code, 0);
     assert.match(r.text, /先跑 plan/);
+  } finally { s.done(); }
+});
+
+test('音源声明了但文件不在：align / mux / full 在动手之前就停，写明文件该放哪、怎么先出无声样片', () => {
+  const s = sandbox('day');
+  try {
+    editJson(path.join(s.dir, 'film.json'), (f) => { f.audio = { file: '素材/配音.wav' }; });
+    for (const cmd of ['full', 'mux', 'align']) {
+      const r = s.run(cmd, s.dir);
+      assert.notEqual(r.code, 0, cmd);
+      assert.match(r.text, /film\.json 声明的音源不在：.*素材\/配音\.wav/, cmd);
+      assert.match(r.text, /full --allow-missing-audio/, cmd);
+      assert.match(r.text, /无声样片/, cmd);
+    }
+    assert.ok(!fs.existsSync(path.join(s.work, 'frames')), '应该在渲染之前就停下');
+    assert.ok(!fs.existsSync(path.join(s.dir, '成片')), '没有产出任何文件');
+    // 不需要音轨的命令不受影响：通过前面的检查，停在「还没渲过」
+    assert.match(s.run('encode', s.dir).text, PASSED);
+    // 放行开关只对 full 有意义：mux 就是混音这一步，没有音源没法混
+    const r = s.run('mux', s.dir, '--allow-missing-audio');
+    assert.notEqual(r.code, 0);
+  } finally { s.done(); }
+});
+
+test('配乐文件不在、音源解不出音轨：都在渲染之前就停，不等渲完再崩', () => {
+  const s = sandbox('day');
+  try {
+    const wav = path.join(s.dir, '素材/配音.wav');
+    fs.mkdirSync(path.dirname(wav), { recursive: true });
+    fs.writeFileSync(wav, Buffer.from('RIFF 这不是一条真的音频，ffmpeg 解不出来'));
+    editJson(path.join(s.dir, 'film.json'), (f) => { f.audio = { file: '素材/配音.wav', bgm: { file: '素材/配乐.mp3' } }; });
+    // 让卡点「看起来」是按这条音频实测的，好走到音轨这一步
+    const sha = crypto.createHash('sha256').update(fs.readFileSync(wav)).digest('hex');
+    editJson(path.join(s.dir, 'cues.json'), (c) => { c.measured = true; c.source = { ...c.source, audio_sha256: sha }; });
+
+    let r = s.run('full', s.dir);
+    assert.notEqual(r.code, 0);
+    assert.match(r.text, /film\.json 声明的配乐文件不在：.*素材\/配乐\.mp3/);
+    assert.ok(!fs.existsSync(path.join(s.work, 'frames')), '配乐不在：应该在渲染之前就停下');
+
+    editJson(path.join(s.dir, 'film.json'), (f) => { delete f.audio.bgm; });
+    r = s.run('full', s.dir);
+    assert.notEqual(r.code, 0);
+    assert.match(r.text, /音源 .*素材\/配音\.wav 解不出音轨/);
+    assert.ok(!fs.existsSync(path.join(s.work, 'frames')), '音源解不出来：应该在渲染之前就停下');
+    assert.ok(!fs.existsSync(path.join(s.work, 'source_48000.wav')) && !fs.existsSync(path.join(s.work, 'source_48000.wav.src')), '解失败之后不留半截文件，也不留缓存标记（下次不会把它当成解好的音轨）');
+    assert.ok(!fs.existsSync(path.join(s.dir, '成片')), '没有产出任何文件');
   } finally { s.done(); }
 });

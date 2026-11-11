@@ -146,8 +146,15 @@ export function fxTex(name: FxName): THREE.Texture {
       }
       c.fillStyle = '#3a1f10'; c.fillRect(-2, -13, 4, 28);
     } else if (name === 'zzz') {
-      c.font = '900 54px sans-serif'; c.lineWidth = 8; c.lineJoin = 'round'; c.strokeStyle = '#14213d'; c.fillStyle = '#bfe3ff';
-      c.strokeText('Z', 13, 52); c.fillText('Z', 13, 52);
+      // 一个粗体的 Z，按轮廓画出来（上横、斜杠、下横，十个顶点），不用字体。
+      // 原来写的是 fillText('Z') + sans-serif：每台机器把 sans-serif 解析成不同的系统字体，同一个 Z 长得不一样。
+      // 顶点是照着它在出片的机器上实际画出来的样子量的：形状对得上，边缘的抗锯齿像素不完全一样
+      // （64×64 的贴图里 280 个像素有差、最大 36 级；放进成片的帧里，Z 的边线上最大差 61 级）。
+      c.lineWidth = 8; c.lineJoin = 'round'; c.strokeStyle = '#14213d'; c.fillStyle = '#bfe3ff';
+      c.beginPath();
+      ([[16, 13], [49.1, 13], [49.1, 19.1], [28, 44.4], [49.7, 44.4], [49.7, 52], [15.4, 52], [15.4, 45.9], [36.6, 20.6], [16, 20.6]] as const)
+        .forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
+      c.closePath(); c.stroke(); c.fill();
     } else if (name === 'petal') {
       c.translate(32, 32); c.rotate(0.6); c.fillStyle = '#ffb3cf'; c.beginPath(); c.ellipse(0, 0, 22, 11, 0, 0, 7); c.fill();
       c.fillStyle = '#ff7fae'; c.beginPath(); c.ellipse(8, 0, 9, 5, 0, 0, 7); c.fill();

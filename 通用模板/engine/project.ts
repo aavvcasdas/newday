@@ -3,6 +3,7 @@
 import type { CharId } from './actors';
 import atlasJson from './assets/cast_atlas.json';
 import type { ShotDef } from './core';
+import type { TextUse } from './glyphs';
 import { planByCues, type BeatGrid, type PlanShot, type Timeline } from './timeline';
 
 /**
@@ -49,6 +50,19 @@ export const SPEAKER_NAME: Record<CharId, string> = {
 export const SPEAKER_PORTRAIT: Record<CharId, string> = {
   whale: 'p_whale_neutral', gpt: 'p_gpt_neutral', claude: 'p_claude_neutral', doubao: 'p_doubao_neutral', gemini: 'p_gemini', kimi: 'p_kimi', qwen: 'p_qwen', zai: 'p_zai',
 };
+
+/** 这部作品在画面上（字幕条、名牌、片名卡、片尾字）会出现的全部文字，带出处。镜头自己往 Canvas 上画的字不在这里，由预检另外收集 */
+export function projectTexts(p: ProjectDef): TextUse[] {
+  const uses: TextUse[] = [];
+  const unit = p.kind === 'mv' ? '句歌词' : '句';
+  p.lines.forEach((text, i) => uses.push({ where: `第 ${i + 1} ${unit}「${text}」`, text }));
+  for (const who of new Set((p.speakers ?? []).filter((w): w is CharId => w != null))) uses.push({ where: `说话人名牌「${SPEAKER_NAME[who]}」`, text: SPEAKER_NAME[who] });
+  const t = p.cards?.title, e = p.cards?.end;
+  if (t?.main) uses.push({ where: `片名卡「${t.main}」`, text: t.main });
+  if (t?.sub) uses.push({ where: `片名卡副题「${t.sub}」`, text: t.sub });
+  if (e?.text) uses.push({ where: `片尾字「${e.text}」`, text: e.text });
+  return uses;
+}
 
 const ID_OK = /^[A-Za-z0-9-]+$/;
 const CELLS = (atlasJson as unknown as { s: Record<string, unknown> }).s;

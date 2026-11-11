@@ -8,7 +8,9 @@ import { Composition, registerRoot } from 'remotion';
 import { loadAtlas } from './actors';
 import { castPreflight, type CastReport } from './engine';
 import { makeFilm, type FilmProps } from './Film';
+import { loadFontCoverage } from './fonts';
 import type { ProjectDef } from './project';
+import { textPreflight, type TextReport } from './text';
 import { FPS, VH, VW } from './timeline';
 
 export interface FilmInfo {
@@ -65,8 +67,11 @@ export function registerProject(p: ProjectDef) {
         calculateMetadata={async ({ props }) => {
           let report: CastReport;
           try { report = castPreflight(p.shots, p.plan(props.starts, props.ends), await loadAtlas()); }
-          catch (e) { report = { shots: 0, frames: 0, sprites: {}, problems: [e instanceof Error ? e.message : String(e)], orderChecked: 0 }; }
-          return { props: { ...props, __cast: report } };
+          catch (e) { report = { shots: 0, frames: 0, sprites: {}, problems: [e instanceof Error ? e.message : String(e)], orderChecked: 0, drawn: [] }; }
+          let text: TextReport;
+          try { text = textPreflight(p, report.drawn, await loadFontCoverage()); }
+          catch (e) { text = { uses: 0, glyphs: 0, fontGlyphs: 0, problems: [], fontError: e instanceof Error ? e.message : String(e) }; }
+          return { props: { ...props, __cast: report, __text: text } };
         }}
       />
     </>

@@ -40,6 +40,32 @@ export interface CastReport {
   problems: string[];
   /** 「同一帧，顺着走和倒着走结果一样」核对过多少帧（出错的镜头不核对） */
   orderChecked: number;
+  /** 预检期间各镜头往 Canvas 上画的字（道具上的字、手写字卡）和当时用的字体串，去重。给文字预检核对字形用 */
+  drawn: DrawnText[];
+}
+
+/** 镜头往 Canvas 上画的一段字 */
+export interface DrawnText { shot: string; text: string; font: string }
+
+/**
+ * 在 fn 运行期间，记下所有 Canvas 2D 的 fillText / strokeText：画了什么字、用的什么字体。
+ * 镜头里的字不都走 props.ts 的 writeLine()，有的直接 c.fillText——所以挂在 Canvas 自己身上（普通的和离屏的都挂），一个不漏。
+ * 没有 Canvas 的环境（Node 里跑测试）什么都不记。
+ */
+function watchCanvasText<T>(on: (text: string, font: string) => void, fn: () => T): T {
+  type Draw = (...a: unknown[]) => unknown;
+  const g = globalThis as unknown as Record<string, { prototype: Record<string, Draw> } | undefined>;
+  const undo: Array<() => void> = [];
+  for (const name of ['CanvasRenderingContext2D', 'OffscreenCanvasRenderingContext2D']) {
+    const proto = g[name]?.prototype;
+    if (!proto) continue;
+    for (const method of ['fillText', 'strokeText']) {
+      const original = proto[method];
+      proto[method] = function (this: { font: string }, ...a: unknown[]) { on(String(a[0]), this.font); return original.apply(this, a); };
+      undo.push(() => { proto[method] = original; });
+    }
+  }
+  try { return fn(); } finally { for (const u of undo) u(); }
 }
 
 // ── 「这一帧只取决于这一帧」 ─────────────────────────────────────────────────────────────
@@ -114,6 +140,15 @@ const spans = (frames: number[]) => {
  * 一个镜头抛错之后，这个镜头后面的帧不再检查（它多半每一帧都会抛同一个错）。
  */
 export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData): CastReport {
+  const drawn = new Map<string, DrawnText>();
+  let drawing = '';
+  return watchCanvasText(
+    (text, font) => { const key = `${drawing}\n${font}\n${text}`; if (!drawn.has(key)) drawn.set(key, { shot: drawing, text, font }); },
+    () => ({ ...walkFilm(shots, tl, atlas, (id) => { drawing = id; }), drawn: [...drawn.values()] }),
+  );
+}
+
+function walkFilm(shots: ShotDef[], tl: Timeline, atlas: AtlasData, enter: (shotId: string) => void): Omit<CastReport, 'drawn'> {
   const map = shotMap(shots);
   const pool = new Map<string, unknown>();
   const built = new Map<string, { kit: Kit; update: (f: Frame) => CamState }>();
@@ -127,6 +162,7 @@ export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData):
   for (let f = 0; f < tl.frames; f++) {
     const st = tl.shots[shotIndexAt(tl, f / FPS)];
     if (dead.has(st.id)) continue;
+    enter(st.id);
     try {
       const def = map[st.id];
       if (!def) throw new Error('时间轴引用了未注册的镜头');
@@ -164,6 +200,7 @@ export function castPreflight(shots: ShotDef[], tl: Timeline, atlas: AtlasData):
   for (let f = tl.frames - 1; f >= 0; f--) {
     const st = tl.shots[shotIndexAt(tl, f / FPS)], was = forward[f];
     if (dead.has(st.id) || !was) continue;
+    enter(st.id);
     try {
       let rt = built2.get(st.id);
       if (!rt) {

@@ -21,12 +21,18 @@
 //
 // 通用选项：--cues <文件>  临时换一份卡点（默认用作品目录里的 cues.json）
 //           --work <目录>  中间文件目录（默认 $FILM_WORK 或 系统临时目录/newday-film/<id>）
-//           --allow-cast-problems  角色预检有问题也继续（问题清单照常打印）
+//           --allow-cast-problems   角色预检有问题也继续（问题清单照常打印）
+//           --allow-missing-glyphs  文字预检有问题（字体里没有的字）也继续
+//           --allow-missing-audio   full：film.json 声明的音源不在时，改出无声样片而不是停下
 //
 // 角色预检：凡是要开浏览器的命令（info / stills / sheet / frames / full）都会先不出图地把全片每一帧的镜头逻辑走一遍，
 //   看每个角色画的是图集里的哪一格、会不会悄悄不见（点到不存在的格子、坐标算成 NaN……）；
 //   再另起一套搭景倒着走一遍：同一帧两遍对不上，说明它的画面取决于之前渲过哪些帧，成片里会隔帧乱跳。
 //   info / frames / full 遇到问题就停——不让它渲到半路才报错，更不让它「渲染成功、人没了」；看静帧时只提醒，不拦。
+// 文字预检：同一趟里把画面上会出现的每一个字（字幕、名牌、字卡、镜头画在 Canvas 上的字）和模板字体逐字核对。
+//   字体没有的字，无头渲染环境里画成豆腐块，换台机器又是另一种字形，渲染照样报成功——所以同样在开渲前拦。
+// 音源：film.json 声明了音源而文件不在，要用音轨的命令（align / mux / full）在动手之前就停；
+//   出成片前先把音轨和配乐文件解出来一遍，解不了的在渲染之前就报，不等渲完再崩。
 //
 // 说明：
 //   · 画面：1920×1080 @ 30fps，three.js 画在 <canvas> 上，Remotion 逐帧截图。
@@ -47,6 +53,7 @@ const TPL = path.resolve(HERE, '..');
 const REPO = path.resolve(TPL, '..');
 const ENGINE = path.join(TPL, 'engine');
 const FONT_DIR = path.join(ENGINE, 'assets/fonts');
+const FONT_FILE = path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'); // 与 engine/fonts.ts 里 import 的是同一个文件
 
 const argv = process.argv.slice(2);
 const mode = argv[0];
@@ -141,20 +148,35 @@ function readScript() {
   return { file, lines };
 }
 
+// —— 音源 ——
+// 对应旧引擎补丁里音频那一项（音频取不到不许在半路崩；确实要不带声音出片，必须显式放行）：
+//   · film.json 声明了音源而文件不在：要用音轨的命令（align / mux / full）在动手之前就停，写明文件该放在哪；
+//   · full --allow-missing-audio：改出无声样片（文件名带「无声样片」），不冒充成片；
+//   · 不需要音轨的命令（info / stills / sheet / frames / encode）照常，info 会提醒一句；
+//   · 出成片前先把音轨和配乐文件解出来一遍——解不了的音频在渲染之前就报，不等渲完半小时再崩。
 const audioFile = film.audio?.file ? path.resolve(PROJ, film.audio.file) : null;
+const bgmFile = film.audio?.bgm?.file ? path.resolve(PROJ, film.audio.bgm.file) : null;
+const audioMissing = Boolean(audioFile) && !fs.existsSync(audioFile);
+/** 这次按「没有音源」走：film.json 没写音源；或者写了、文件不在、并且用 --allow-missing-audio 放行了 */
+const silentRun = !audioFile || (audioMissing && flag('--allow-missing-audio'));
+const missingAudioMsg = () => `film.json 声明的音源不在：${rel(audioFile)}\n  把音频放到这个位置（或改 film.json 的 audio.file）再来。\n  确实要先不带声音出一版：full --allow-missing-audio，出的是「无声样片」，不是成片。`;
 const needAudio = () => {
   if (!audioFile) die('film.json 里没有 audio.file——没有音源就只能出无声样片（frames + encode），不能 align / mux');
-  if (!fs.existsSync(audioFile)) die(`音源不存在：${rel(audioFile)}`);
+  if (audioMissing) die(missingAudioMsg());
   return audioFile;
 };
 /** 音源 → 指定采样率的 16bit 立体声 WAV（缓存在工作目录） */
 function wavOf(src, sr, tag) {
+  const what = tag === 'bgm' ? '配乐文件' : '音源';
+  if (!fs.existsSync(src)) die(`${what}不在：${rel(src)}`);
   fs.mkdirSync(WORK, { recursive: true });
   const out = path.join(WORK, `${tag}_${sr}.wav`);
   const stamp = `${out}.src`;
   const key = `${src}|${fs.statSync(src).size}|${fs.statSync(src).mtimeMs}`;
   if (!fs.existsSync(out) || !fs.existsSync(stamp) || fs.readFileSync(stamp, 'utf8') !== key) {
-    ff(['-y', '-i', src, '-vn', '-ac', '2', '-ar', String(sr), '-c:a', 'pcm_s16le', '-f', 'wav', out]);
+    try { ff(['-y', '-i', src, '-vn', '-ac', '2', '-ar', String(sr), '-c:a', 'pcm_s16le', '-f', 'wav', out]); }
+    catch { fs.rmSync(out, { force: true }); die(`${what} ${rel(src)} 解不出音轨（ffmpeg 的报错在上面）：文件损坏、不是音频 / 视频，或者里面没有音轨`); }
+    if (!fs.existsSync(out) || fs.statSync(out).size <= 44) { fs.rmSync(out, { force: true }); die(`${what} ${rel(src)} 解出来是空的：里面没有音轨`); }
     fs.writeFileSync(stamp, key);
   }
   return out;
@@ -187,9 +209,25 @@ function inputProps() {
   return { starts: c.lines.map((l) => l.start), ends: c.lines.map((l) => l.end) };
 }
 
+/**
+ * 模板字体必须在，而且真的是字体。对应旧引擎补丁「找不到中文字体，拒绝开渲」：
+ * 无头渲染环境里没有任何中文字体，这个文件一旦缺了或坏了，字幕、名牌、道具上的字全是豆腐块。
+ * （不查的话：文件不在 → 打包器吐一屏看不懂的模块解析记录；文件是坏的 → info 一切正常，渲到第一帧才报「A network error occurred」。）
+ */
+function checkFontFile() {
+  const back = `它应该随仓库一起在，可以这样找回：git checkout -- ${JSON.stringify(rel(FONT_FILE))}`;
+  if (!fs.existsSync(FONT_FILE)) die(`模板字体不在：${rel(FONT_FILE)}\n  没有它，字幕、名牌、道具上的字在无头渲染环境里全是豆腐块，所以不开渲。\n  ${back}`);
+  const size = fs.statSync(FONT_FILE).size, head = Buffer.alloc(4), fd = fs.openSync(FONT_FILE, 'r');
+  fs.readSync(fd, head, 0, 4, 0); fs.closeSync(fd);
+  if (size < 4096 || ![0x00010000, 0x4f54544f, 0x74727565].includes(head.readUInt32BE(0))) {
+    die(`模板字体文件不是有效的字体：${rel(FONT_FILE)}（${size} 字节，开头是「${head.toString('latin1').replace(/[^\x20-\x7e]/g, '.')}」）\n  多半是下载不完整，或者拿到的是 Git LFS 指针文件。\n  ${back}`);
+  }
+}
+
 let opened = null;
 async function openComposition() {
   if (opened) return opened;
+  checkFontFile();
   const { bundle } = await import('@remotion/bundler');
   const renderer = await import('@remotion/renderer');
   const browserExecutable = await prepareBrowser();
@@ -213,6 +251,9 @@ async function openComposition() {
   if (!cast || !Array.isArray(cast.problems)) throw new Error('合成没有返回角色预检结果（__cast）');
   if (!cast.problems.length && cast.frames !== info.frames) throw new Error(`角色预检走了 ${cast.frames} 帧，时间轴是 ${info.frames} 帧：两边不是同一条时间轴`);
   info.cast = cast;
+  const text = castComp.props.__text;
+  if (!text || !Array.isArray(text.problems)) throw new Error('合成没有返回文字预检结果（__text）');
+  info.text = text;
   const fp = sourceFingerprint();
   info.source_sha256 = fp.sha256;
   info.source_files = fp.files;
@@ -222,25 +263,39 @@ async function openComposition() {
   return opened;
 }
 /**
- * 角色预检的结论，每次运行只说一遍。
+ * 预检的结论（角色 + 文字），每次运行只说一遍；两份清单都打印完，再决定停不停。
  * fatal=true（info / frames / full）：有问题就停；fatal=false（看静帧、总览图）：只提醒——镜头写到一半时别的镜头有问题很正常，不该挡着看眼前这一镜。
  */
 let castSaid = false;
 function castGate(o, fatal) {
   if (castSaid) return;
   castSaid = true;
-  const c = o.info.cast;
+  const c = o.info.cast, t = o.info.text;
+  const listOf = (problems) => problems.map((x) => `  - ${x.replace(/\n/g, '\n    ')}`).join('\n');
+  const stop = [];
   if (!c.problems.length) {
     const ids = Object.keys(c.sprites);
     console.log(`角色预检通过：${c.shots} 镜 / ${c.frames} 帧逐帧走过，${ids.length} 个角色用到 ${ids.reduce((n, id) => n + c.sprites[id].length, 0)} 格精灵；没有点到图集里不存在的格子，没有会让角色消失的坏数；${c.orderChecked} 帧顺着走、倒着走结果一致`);
-    return;
+  } else if (fatal && !flag('--allow-cast-problems')) {
+    console.error(`✗ 角色预检没通过（${c.problems.length} 项）。这些问题会让角色在成片里消失、让画面隔帧乱跳，或者渲到那一帧才报错：\n${listOf(c.problems)}\n  确实要带着问题继续，加 --allow-cast-problems（问题清单照常打印）。`);
+    stop.push('角色');
+  } else {
+    console.warn(`⚠ 角色预检发现 ${c.problems.length} 项问题${fatal ? '（已用 --allow-cast-problems 放行）' : '（看静帧不拦；出片时会停在这里）'}：\n${listOf(c.problems)}`);
   }
-  const list = c.problems.map((x) => `  - ${x.replace(/\n/g, '\n    ')}`).join('\n');
-  if (fatal && !flag('--allow-cast-problems')) {
-    console.error(`✗ 角色预检没通过（${c.problems.length} 项）。这些问题会让角色在成片里消失、让画面隔帧乱跳，或者渲到那一帧才报错：\n${list}\n  确实要带着问题继续，加 --allow-cast-problems（问题清单照常打印）。`);
+  if (t.fontError) {
+    // 字体本身坏了：谈不上逐字核对，而且合成一加载字体就会让渲染失败——哪个命令都不往下走，也没有放行开关
+    console.error(`✗ 模板字体读不出来：${t.fontError}\n  文件多半损坏了。它应该随仓库一起在，可以这样找回：git checkout -- ${JSON.stringify(rel(FONT_FILE))}`);
     process.exit(1);
   }
-  console.warn(`⚠ 角色预检发现 ${c.problems.length} 项问题${fatal ? '（已用 --allow-cast-problems 放行）' : '（看静帧不拦；出片时会停在这里）'}：\n${list}`);
+  if (!t.problems.length) {
+    console.log(`文字预检通过：字幕、名牌、字卡、道具上的字共 ${t.uses} 处、${t.glyphs} 个不同的字，模板字体里都有（字体共 ${t.fontGlyphs} 字）`);
+  } else if (fatal && !flag('--allow-missing-glyphs')) {
+    console.error(`✗ 文字预检没通过（${t.problems.length} 项）。模板字体里没有的字，无头渲染环境里会画成豆腐块（□），换一台装了别的字体的机器又是另一种字形——渲染都照常报成功：\n${listOf(t.problems)}\n  换个写法（「→」写成「到」，生僻字换常用字），或者去掉这个符号。确实要带着问题继续，加 --allow-missing-glyphs。`);
+    stop.push('文字');
+  } else {
+    console.warn(`⚠ 文字预检发现 ${t.problems.length} 项问题${fatal ? '（已用 --allow-missing-glyphs 放行）' : '（看静帧不拦；出片时会停在这里）'}：\n${listOf(t.problems)}`);
+  }
+  if (stop.length) process.exit(1);
 }
 
 /** 不开浏览器也能用的时间轴：读上一次 openComposition 存下的 info.json */
@@ -255,6 +310,9 @@ async function info() {
   const I = o.info;
   console.log(`${I.title}（${I.kind}）· ${I.width}×${I.height} @ ${I.fps}fps · ${I.frames} 帧 · ${I.duration.toFixed(3)}s · ${I.shots.length} 镜 / ${I.lines.length} 句`);
   for (const s of I.shots) console.log(`  ${s.id.padEnd(6)} ${String(Math.ceil(s.a * I.fps - 1e-9)).padStart(5)}帧  ${s.a.toFixed(3).padStart(8)}–${s.b.toFixed(3).padStart(8)}s  ${s.cue >= 0 ? `第${s.cue + 1}句` : '      '}  ${s.title}`);
+  if (!audioFile) console.log('音源：film.json 没写 audio.file——只能出无声样片');
+  else if (audioMissing) console.log(`⚠ 音源不在：${rel(audioFile)}（film.json 的 audio.file）。align / mux / full 会停在这里；先出无声样片用 full --allow-missing-audio`);
+  else console.log(`音源：${rel(audioFile)}${bgmFile ? `；配乐 ${rel(bgmFile)}${fs.existsSync(bgmFile) ? '' : '（⚠ 文件不在，mux / full 会停）'}` : ''}`);
   console.log(`源码指纹 ${I.source_sha256.slice(0, 16)}…（${I.source_files.length} 个源文件）`);
   if (fs.existsSync(QA_FILE)) {
     const was = JSON.parse(fs.readFileSync(QA_FILE, 'utf8')).project?.source_sha256;
@@ -408,6 +466,15 @@ function requireMeasured() {
   return src;
 }
 
+/** 出成片之前把音轨相关的一次查完：音源在不在、卡点是不是按它测的、音轨解不解得出来、配乐文件在不在。别渲了半小时才发现混不了音 */
+function prepareAudio() {
+  const src = requireMeasured();
+  if (bgmFile && !fs.existsSync(bgmFile)) die(`film.json 声明的配乐文件不在：${rel(bgmFile)}\n  放到这个位置；或者去掉 audio.bgm.file（改用内置的芯片风配乐），或者整个去掉 audio.bgm（不要配乐）。`);
+  wavOf(src, 48000, 'source');
+  if (bgmFile) wavOf(bgmFile, 48000, 'bgm');
+  return src;
+}
+
 /** 没有音源时的产物：无声样片（文件名里写明，免得被当成成片） */
 function sample() {
   const I = savedInfo();
@@ -420,10 +487,11 @@ function sample() {
 }
 
 function mux() {
+  needAudio(); // 混音这一步没有音源就没得做：先说这件事，再说别的
   const I = savedInfo();
   const videoFile = opt('--video', path.join(WORK, 'video.mp4'));
   if (!fs.existsSync(videoFile)) die(`没有画面流 ${videoFile}，先跑 encode`);
-  const src = requireMeasured();
+  const src = prepareAudio();
   const dur = I.frames / I.fps;
   const SR = 48000;
   const srcWav = wavOf(src, SR, 'source');
@@ -432,7 +500,7 @@ function mux() {
   const a = film.audio;
   const args = ['--src', srcWav, '--out', mixed, '--report', report, '--duration', dur.toFixed(6), '--offset', String(a.offset || 0), '--fade-out', String(a.fadeOut ?? 0)];
   if (a.bgm) {
-    if (a.bgm.file) args.push('--bgm', wavOf(path.resolve(PROJ, a.bgm.file), SR, 'bgm'));
+    if (bgmFile) args.push('--bgm', wavOf(bgmFile, SR, 'bgm'));
     else args.push('--bgm-chip', String(a.bgm.chip || 128));
     args.push('--bgm-gain-db', String(a.bgm.gainDb ?? -20), '--duck-db', String(a.bgm.duckDb ?? -8));
     if (a.bgm.stem !== false) args.push('--stem', path.join(WORK, 'bgm_stem_48000.wav'));
@@ -529,8 +597,8 @@ function strip() {
   const I = savedInfo();
   const every = Number(opt('--every', 1)); // 每隔几秒抽一格
   if (!(every > 0)) die('--every 要大于 0（单位：秒）');
-  const font = fs.readdirSync(FONT_DIR).find((f) => /\.(ttf|otf)$/i.test(f));
-  py('qa.py', ['strip', FRAMES, path.join(WORK, '胶片条'), '--info', path.join(WORK, 'info.json'), '--font', path.join(FONT_DIR, font),
+  checkFontFile(); // 格子上的帧号、镜头号用模板字体写
+  py('qa.py', ['strip', FRAMES, path.join(WORK, '胶片条'), '--info', path.join(WORK, 'info.json'), '--font', FONT_FILE,
     '--step', String(Math.max(1, Math.round(every * I.fps))), '--start', String(opt('--from', 0)), '--to', String(opt('--to', -1)),
     '--cols', String(opt('--cols', 6)), '--rows', String(opt('--rows', 7)), '--cell', String(opt('--cell', 320))]);
 }
@@ -540,7 +608,8 @@ function qa() {
   fs.mkdirSync(OUT_DIR, { recursive: true });
   const final = `${OUT_BASE}.mp4`;
   const infoFile = path.join(WORK, 'info.json');
-  const silent = !audioFile;
+  // 音源声明了但文件不在：放行过（--allow-missing-audio），或者根本没出过成片、只有样片——都按无声样片来查
+  const silent = silentRun || (audioMissing && !fs.existsSync(final));
   const PROBE = 'stream=codec_type,codec_name,profile,pix_fmt,color_space,color_range,width,height,r_frame_rate,nb_frames,duration,sample_rate,channels,bit_rate:format=duration,size,bit_rate';
   if (fs.existsSync(QA_FILE)) fs.rmSync(QA_FILE); // 每次自检都从头写，不留上一次的结论
   if (!flag('--skip-frames')) py('qa.py', ['frames', FRAMES, '--info', infoFile, '--qa', QA_FILE]);
@@ -573,6 +642,8 @@ function qa() {
   const srcFile = path.join(FRAMES, '_source.json');
   const rendered = !flag('--skip-frames') && fs.existsSync(srcFile) ? JSON.parse(fs.readFileSync(srcFile, 'utf8')) : null;
   data.project = { id: I.id, kind: I.kind, title: I.title, frames: I.frames, duration: I.duration, shots: I.shots.length, lines: I.lines.length, source_sha256: rendered?.source_sha256 ?? null, source_files: rendered?.source_files ?? null };
+  // film.json 声明的音源当时在不在：样片是「本来就没有音源」还是「音源没到位、放行出的」，事后看得出来
+  data.project.audio = audioFile ? { file: path.relative(PROJ, audioFile), present: !audioMissing } : null;
   data.checked_at = new Date().toISOString();
   fs.writeFileSync(QA_FILE, JSON.stringify(data, null, 1));
   const problems = [...(data.frames?.problems || []), ...(data.timing?.problems || []), ...(data.final?.problems || []), ...(data.sample?.problems || [])];
@@ -592,7 +663,7 @@ async function sheet() {
   const rendered = missing.length ? await stills(missing) : [];
   for (const f of mids) files.push(haveFrame(f) ? framePath(f) : rendered[missing.indexOf(f)]);
   const listFile = path.join(WORK, 'sheet.json');
-  fs.writeFileSync(listFile, JSON.stringify({ title: o.info.title, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cells: o.info.shots.map((s, i) => ({ id: s.id, a: s.a, b: s.b, title: s.title, line: s.cue >= 0 ? o.info.lines[s.cue] : '', file: files[i] })) }));
+  fs.writeFileSync(listFile, JSON.stringify({ title: o.info.title, font: FONT_FILE, cells: o.info.shots.map((s, i) => ({ id: s.id, a: s.a, b: s.b, title: s.title, line: s.cue >= 0 ? o.info.lines[s.cue] : '', file: files[i] })) }));
   fs.mkdirSync(OUT_DIR, { recursive: true });
   py('qa.py', ['sheet', listFile, `${OUT_BASE}_分镜总览.jpg`]);
 }
@@ -609,7 +680,7 @@ async function shotSheet(o, id) {
   const lineAt = (t) => { const i = o.info.starts.findIndex((a, k) => t >= a && t <= o.info.ends[k]); return i >= 0 ? `第${i + 1}句 ${o.info.lines[i]}` : ''; };
   const listFile = path.join(WORK, 'sheet_shot.json');
   const out = path.join(WORK, `镜头_${id}.jpg`);
-  fs.writeFileSync(listFile, JSON.stringify({ title: `${o.info.title} ${id}`, font: path.join(FONT_DIR, 'ZCOOLKuaiLe-Regular.ttf'), cols: n <= 4 ? 2 : 3, cell: cellW >= 320 ? [cellW, Math.round((cellW * 9) / 16)] : [640, 360],
+  fs.writeFileSync(listFile, JSON.stringify({ title: `${o.info.title} ${id}`, font: FONT_FILE, cols: n <= 4 ? 2 : 3, cell: cellW >= 320 ? [cellW, Math.round((cellW * 9) / 16)] : [640, 360],
     cells: picks.map((f, i) => ({ id: `${id} f${f}`, a: f / o.info.fps, b: null, title: `镜头内 ${(((f - fa) / Math.max(1, fb - fa)) * 100).toFixed(0)}%`, line: lineAt(f / o.info.fps), file: files[i] })) }));
   py('qa.py', ['sheet', listFile, out]);
 }
@@ -631,9 +702,11 @@ try {
   else if (mode === 'strip') strip();
   else if (mode === 'sample') sample();
   else if (mode === 'full') {
-    if (audioFile) requireMeasured(); // 先查卡点，别渲了半小时才发现轴不对
+    if (audioMissing && !flag('--allow-missing-audio')) die(missingAudioMsg());
+    if (audioMissing) console.warn(`⚠ 音源不在（${rel(audioFile)}），已用 --allow-missing-audio 放行：这次只出无声样片，不出成片`);
+    if (!silentRun) prepareAudio(); // 先查卡点、把音轨解出来，别渲了半小时才发现轴不对、音频解不了
     await frames(); encode();
-    if (audioFile) mux(); else sample();
+    if (!silentRun) mux(); else sample();
     qa(); await sheet();
   }
   else die(`未知命令 ${mode}\n${USAGE}`);

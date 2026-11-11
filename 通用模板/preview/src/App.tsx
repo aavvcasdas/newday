@@ -4,7 +4,9 @@
 import { Player, type PlayerRef } from '@remotion/player';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { makeFilm } from '@tpl/Film';
-import type { ProjectDef } from '@tpl/project';
+import { FONT_FILE, loadFontCoverage } from '@tpl/fonts';
+import { glyphProblems, missingGlyphs } from '@tpl/glyphs';
+import { projectTexts, type ProjectDef } from '@tpl/project';
 import { FPS, VH, VW, cueAt, fmtTime, shotIndexAt } from '@tpl/timeline';
 
 interface FilmJson { id: string; kind: 'mv' | 'day'; title: string; audio?: { file?: string; offset?: number } }
@@ -37,6 +39,9 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [frame, setFrame] = useState(0);
   const [subs, setSubs] = useState(true);
+  // 字幕 / 名牌 / 字卡里模板字体没有的字。预览台跑在装了系统字体的浏览器里，缺的字会被系统字体悄悄顶上，看着一切正常——
+  // 出片用的无头环境里没有别的字体，同一个字是豆腐块。所以在这里明说（镜头画在道具上的字由命令行的预检查）。
+  const [missing, setMissing] = useState<{ chars: string[]; detail: string[] } | null>(null);
   const playerRef = useRef<PlayerRef>(null);
 
   useEffect(() => {
@@ -54,6 +59,18 @@ export function App() {
     })();
     return () => { dead = true; };
   }, [entry]);
+
+  useEffect(() => {
+    let dead = false;
+    setMissing(null);
+    if (!project) return;
+    loadFontCoverage().then((font) => {
+      if (dead) return;
+      const uses = projectTexts(project);
+      setMissing({ chars: [...new Set(uses.flatMap((u) => missingGlyphs(u.text, font)))], detail: glyphProblems(uses, font, FONT_FILE) });
+    }).catch(() => { /* 字体本身读不出来时播放器会直接报错，这里不重复 */ });
+    return () => { dead = true; };
+  }, [project]);
 
   const Film = useMemo(() => (project ? makeFilm(project) : null), [project]);
   const tl = useMemo(() => (project ? project.plan(project.starts, project.ends) : null), [project]);
@@ -100,7 +117,10 @@ export function App() {
               <span className="pill">{project.kind === 'mv' ? '歌词 MV' : '口播片'}</span>
               <span className="pill">{tl.frames} 帧 · {fmtTime(tl.duration)} · {tl.shots.length} 镜 / {project.lines.length} 句</span>
               {entry?.cues?.measured ? <span className="pill ok">卡点已按音源实测</span> : <span className="pill warn">卡点是估的：只能出无声样片</span>}
-              {audio ? <span className="pill ok">有音源</span> : <span className="pill warn">没有音源</span>}
+              {audio ? <span className="pill ok">有音源</span> : entry?.film.audio?.file ? <span className="pill warn">音源文件不在：{entry.film.audio.file}（film.json 里写了，素材/ 里没有）</span> : <span className="pill warn">没有音源</span>}
+              {missing && missing.chars.length > 0 && (
+                <span className="pill warn" title={missing.detail.join('\n')}>模板字体里没有：{missing.chars.slice(0, 10).join(' ')}{missing.chars.length > 10 ? ` 等 ${missing.chars.length} 个字` : ''}——这里是系统字体顶着，出片会是豆腐块</span>
+              )}
             </div>
             <div className="ctrl">
               <button onClick={() => seek(Math.max(0, frame - 1))}>◀ 上一帧</button>

@@ -2,6 +2,7 @@
 import * as THREE from 'three';
 import { cam, glide, mixCam, type Kit, type ShotDef } from '@tpl/core';
 import type { Actor } from '@tpl/actors';
+import { FONT } from '@tpl/fonts';
 import {
   backOut, ball, box, canvasTex, clock, cloud, cone, cyl, disc, ease, easeOut, flower, glowMat, hash, lerp, mesh, paperBoat, pine, put, rock,
   seg, setOp, sprite, toon, toonMap, tree, basic, lantern,
@@ -555,7 +556,7 @@ export const SHOTS_A: ShotDef[] = [
       const rv = straightRiver(140, 7, 1, -9); k.add(box(140, 0.05, 9, 0xf3e4b8, 0), 0, 0, -9); k.add(rv.mesh);
       const boats = many(5, (i) => k.add(paperBoat(), 0, 0.1, -9 + (i % 2) * 1.6 - 0.8, 0, 0.8));
       const b = book(); k.add(b.g, 0, 0, 1, 0, 0.8); b.cover.rotation.z = 3.0; (b.glow.material as THREE.MeshBasicMaterial).opacity = 0.9;
-      const pt = canvasTex(128, 180, (c) => { c.fillStyle = '#fff6e0'; c.fillRect(0, 0, 128, 180); c.strokeStyle = '#c9a27a'; c.lineWidth = 3; c.strokeRect(6, 6, 116, 168); c.fillStyle = '#7a3a2c'; c.font = '900 22px "Kaiti SC","STKaiti","KaiTi","Noto Serif CJK SC",serif'; c.textAlign = 'center'; '很久很久以前'.split('').forEach((ch, i) => c.fillText(ch, 64, 36 + i * 25)); });
+      const pt = canvasTex(128, 180, (c) => { c.fillStyle = '#fff6e0'; c.fillRect(0, 0, 128, 180); c.strokeStyle = '#c9a27a'; c.lineWidth = 3; c.strokeRect(6, 6, 116, 168); c.fillStyle = '#7a3a2c'; c.font = `900 22px ${FONT}`; c.textAlign = 'center'; '很久很久以前'.split('').forEach((ch, i) => c.fillText(ch, 64, 36 + i * 25)); });
       const pm = new THREE.MeshBasicMaterial({ map: pt, side: THREE.DoubleSide });
       const pages = many(22, () => k.add(new THREE.Mesh(new THREE.PlaneGeometry(1.0, 1.4), pm)));
       const stars = many(12, () => k.add(sprite('star', 0.5, 0xfff2a8, true)));
