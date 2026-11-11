@@ -218,7 +218,7 @@ def sheet(a):
         d.text((x + 5, y + 1), c['id'], font=f1, fill=(255, 216, 74))
         d.text((x, y + th + 3), f"{c['a']:.2f}–{c['b']:.2f}s  {c['title']}"[:30], font=f2, fill=(255, 255, 255))
         if c['line']:
-            d.text((x, y + th + 23), ('♪ ' + c['line'])[:26], font=f2, fill=(255, 216, 74))
+            d.text((x, y + th + 23), ('「' + c['line'])[:25] + '」', font=f2, fill=(255, 216, 74))
     img.save(a.out, quality=88)
     print('SHEET', a.out, f'{len(cells)} 格 {W}x{H}')
 

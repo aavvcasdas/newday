@@ -62,7 +62,8 @@ export const SHOTS: ShotDef[] = [
     build: (k) => {
       meadow(k);
       const whale = k.actor('whale');
-      const A = cam([0, 1.7, 6.5], [0, 1.1, 0], 34), B = cam([0, 6, 15], [0, 2, 0], 40);
+      // 机位看向人物头顶上方：人落在画面下三分之一，把中间留给片尾字
+      const A = cam([0, 1.7, 6.5], [0, 2.3, 0], 34), B = cam([0, 6, 15], [0, 5.2, 0], 40);
       return ({ u, T }) => { whale.set(Math.floor(T * 2) % 2 ? 'whale_wave' : 'whale_idle').at(0, 0, 0); return glide(A, B, u); };
     },
   },
