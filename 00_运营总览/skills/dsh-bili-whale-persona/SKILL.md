@@ -238,12 +238,18 @@ python scripts/meme_lookup.py --term "电子榨菜"          # 强制查一个�
 **人设由 skill 插件提供，可随时启动/停止**：
 - 位置：设置 → 鲸鲸 · 人设（skill 插件）
 - 总开关：`启动人设` / `停止`
-- 档位：中性 off / 轻损 light / 孙吧全损 on
-- 启动时写入 `~/.bili-ai/persona.md`（B 站鲸鱼内部会话读取的通道），并通过 `systemPrompt.context()` 注入当前会话；停止时清空，完全不加载。
+- 档位：黑话常态 off / 轻损 light / 孙吧全损 on
+- 启动时把 **skill 本体**（档位角色卡 + `references/black-talk.md` + `references/boundaries.md` + `references/gate.md`）拼成 `~/.dsh/whale-persona-skill.md`，供 B 站鲸鱼内部会话读取；同时通过 `systemPrompt.context()` 注入当前会话。**不再使用原装 `~/.bili-ai/persona.md`。**
 - 状态文件：`~/.dsh/bili-whale-persona.json` = `{ enabled, sunba }`，默认 `{ enabled:false, sunba:"off" }`
 
+**评论审核（只审不发）**：
+- 位置：设置 → 鲸鲸 · 评论审核
+- 数据：`~/.dsh/whale-review-queue.json`（由 `scripts/build_review_queue.py` 生成）
+- 每条评论带一条全损黑话草稿；可编辑、通过、跳过、重置
+- **通过 ≠ 发送**：审核模式只记录决定，不发到 B 站
+
 > 注意：B 站插件是安装包，改动在 `node_modules`，重装/升级后会被覆盖。
-> 用 `scripts/patch_bili_whale_no_persona.py` 可重复应用「去掉人设卡」补丁（幂等、改前自动备份）。
+> 用 `scripts/patch_bili_whale_no_persona.py` 去掉人设卡，用 `scripts/patch_bili_whale_skill_persona.py` 把读取路径改到 skill 生成文件（都可重复执行、改前备份）。
 
 ## 来源
 

@@ -20,10 +20,11 @@ import { fileURLToPath } from 'node:url'
 const HERE = path.dirname(fileURLToPath(import.meta.url))
 const HOME = os.homedir()
 const STATE_FILE = path.join(HOME, '.dsh', 'bili-whale-persona.json')
-const PERSONA_DIR = path.join(HOME, '.bili-ai')
-const PERSONA_FILE = path.join(PERSONA_DIR, 'persona.md')
+const PERSONA_FILE = path.join(HOME, '.dsh', 'whale-persona-skill.md')
+const REVIEW_FILE = path.join(HOME, '.dsh', 'whale-review-queue.json')
 const TIERS = ['off', 'light', 'on']
 const TIER_FILE = { off: 'neutral.md', light: 'light.md', on: 'sunba.md' }
+const SKILL_ROOT = path.join(HERE, '..')
 
 function readState() {
   try {
@@ -55,8 +56,26 @@ function personaTextFor(tier) {
   try { return fs.readFileSync(file, 'utf8') } catch { return '' }
 }
 
+/**
+ * 从 skill 本体拼出「她内部会话」要读的人设：
+ * 档位角色卡 + 黑话说话法 + 伦理边界 + 发言门禁。
+ * 不读 ~/.bili-ai/persona.md（原装那条通道已弃用）。
+ */
+function skillBundleFor(tier) {
+  const parts = []
+  const tierText = personaTextFor(tier)
+  if (tierText) parts.push(`# 当前档位角色卡\n\n${tierText}`)
+  for (const rel of ['references/black-talk.md', 'references/boundaries.md', 'references/gate.md']) {
+    try {
+      const txt = fs.readFileSync(path.join(SKILL_ROOT, rel), 'utf8')
+      parts.push(`\n\n# 技能文件：${rel}\n\n${txt}`)
+    } catch {}
+  }
+  return parts.join('\n')
+}
+
 function writePersonaFile(text) {
-  fs.mkdirSync(PERSONA_DIR, { recursive: true })
+  fs.mkdirSync(path.dirname(PERSONA_FILE), { recursive: true })
   if (fs.existsSync(PERSONA_FILE)) {
     const stamp = new Date().toISOString().replace(/[:.]/g, '-')
     try { fs.copyFileSync(PERSONA_FILE, `${PERSONA_FILE}.bak-${stamp}`) } catch {}
@@ -64,6 +83,28 @@ function writePersonaFile(text) {
   const tmp = `${PERSONA_FILE}.tmp-${process.pid}`
   fs.writeFileSync(tmp, text, 'utf8')
   fs.renameSync(tmp, PERSONA_FILE)
+}
+
+function readReview() {
+  try {
+    const d = JSON.parse(fs.readFileSync(REVIEW_FILE, 'utf8'))
+    return d && typeof d === 'object' && Array.isArray(d.items) ? d : { mode: 'review-only', items: [] }
+  } catch {
+    return { mode: 'review-only', items: [] }
+  }
+}
+
+function writeReview(data) {
+  fs.mkdirSync(path.dirname(REVIEW_FILE), { recursive: true })
+  const tmp = `${REVIEW_FILE}.tmp-${process.pid}`
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 1), 'utf8')
+  fs.renameSync(tmp, REVIEW_FILE)
+}
+
+function reviewCounts(items) {
+  const c = { pending: 0, approved: 0, skipped: 0, total: items.length }
+  for (const it of items) c[it.status] = (c[it.status] || 0) + 1
+  return c
 }
 
 // ── 黑话引擎：cnmeme.wiki 公开 API（像梗才查 / 同词 10 分钟一次 / 带缓存）──
@@ -276,7 +317,7 @@ export default {
       console.warn('[bili-whale-persona] 查梗工具注册失败：' + (e?.message ?? e))
     }
 
-    route('exact', '/whale-persona-v3/api/state', async (req, res) => {
+    route('exact', '/whale-persona-v4/api/state', async (req, res) => {
       if (req.method !== 'GET') { json(res, 405, { ok: false }); return }
       const state = readState()
       json(res, 200, {
@@ -290,7 +331,7 @@ export default {
       })
     })
 
-    route('exact', '/whale-persona-v3/api/set', async (req, res) => {
+    route('exact', '/whale-persona-v4/api/set', async (req, res) => {
       if (req.method !== 'POST') { json(res, 405, { ok: false }); return }
       const body = JSON.parse((await readBody(req)) || '{}')
       const current = readState()
@@ -300,12 +341,41 @@ export default {
       writeState({ enabled, sunba })
 
       if (enabled) {
-        writePersonaFile(personaTextFor(sunba))
+        writePersonaFile(skillBundleFor(sunba))
       } else {
         writePersonaFile('')
       }
 
       json(res, 200, { ok: true, enabled, sunba, personaFile: PERSONA_FILE })
+    })
+
+    // ── 评论审核：只审不发 ──
+    route('exact', '/whale-persona-v4/api/review', async (req, res) => {
+      if (req.method === 'GET') {
+        const data = readReview()
+        json(res, 200, {
+          ok: true,
+          mode: 'review-only',
+          file: REVIEW_FILE,
+          counts: reviewCounts(data.items),
+          items: data.items,
+        })
+        return
+      }
+      if (req.method !== 'POST') { json(res, 405, { ok: false }); return }
+      const body = JSON.parse((await readBody(req)) || '{}')
+      const data = readReview()
+      const it = data.items.find(x => String(x.id) === String(body.id))
+      if (!it) { json(res, 404, { ok: false, error: '找不到这条评论' }); return }
+      const action = String(body.action || '')
+      if (typeof body.draft === 'string' && body.draft.trim()) it.draft = body.draft.trim().slice(0, 500)
+      if (action === 'approve') it.status = 'approved'
+      else if (action === 'skip') it.status = 'skipped'
+      else if (action === 'reset') it.status = 'pending'
+      else if (action !== 'update') { json(res, 400, { ok: false, error: 'action 须为 approve/skip/reset/update' }); return }
+      it.updatedAt = new Date().toISOString()
+      writeReview(data)
+      json(res, 200, { ok: true, mode: 'review-only', counts: reviewCounts(data.items), item: it })
     })
 
     if (typeof ctx.on === 'function') {

@@ -28,9 +28,11 @@ dsh-bili-whale-persona/
 ├── scripts/
 │   ├── meme_lookup.py                # cnmeme.wiki 查梗（像梗才查/10分钟/缓存）
 │   ├── check_comment.py              # 发言前自检（含黑话密度）
-│   ├── build_hot_memes.py            # 重新生成离线兜底
-│   └── patch_bili_whale_no_persona.py# 去掉 B 站插件的人设卡（幂等）
-└── plugin/                           # skill 插件：人设总开关 + 档位
+│   ├── build_review_queue.py         # 生成评论审核队列（只审不发）
+│   ├── patch_bili_whale_no_persona.py   # 去掉 B 站插件的人设卡（幂等）
+│   ├── patch_bili_whale_skill_persona.py# 让 B 站插件改读 skill 生成的人设（幂等）
+│   └── build_hot_memes.py            # 重新生成离线兜底
+└── plugin/                           # skill 插件：人设开关 + 评论审核
 ```
 
 ## 怎么用
@@ -39,8 +41,9 @@ dsh-bili-whale-persona/
 2. **查梗**：`python scripts/meme_lookup.py --text "哈基米是什么梗"`（像梗才查；同词 10 分钟一次；带缓存）。
 3. **跑自检**：`python scripts/check_comment.py --text "..." --tier off`（含黑话密度检查）。
 4. **开关人设**：`plugin/` 已安装；在「设置 → 鲸鲸 · 人设」里启动/停止、选档。
-5. **去掉 B 站插件的人设卡**：`python scripts/patch_bili_whale_no_persona.py`（重装插件后重跑）
-6. **看效果**：`references/demo.md` 有三档对照；`references/black-talk.md` 有黑话句式库。
+5. **评论审核**：在「设置 → 鲸鲸 · 评论审核」里逐条看评论和全损黑话草稿，**只审不发**；队列用 `python scripts/build_review_queue.py` 生成。
+6. **去掉 B 站插件的人设卡 / 改用 skill 人设**：`python scripts/patch_bili_whale_no_persona.py` 与 `python scripts/patch_bili_whale_skill_persona.py`（重装插件后重跑）
+7. **看效果**：`references/demo.md` 有三档对照；`references/black-talk.md` 有黑话句式库。
 
 ## 孙吧味档位
 

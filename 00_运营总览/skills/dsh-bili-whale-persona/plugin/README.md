@@ -4,14 +4,23 @@
 
 ## 它做什么
 
-- 在 DSH 设置页加一个分区：**鲸鲸 · 人设（skill 插件）**
+- 在 DSH 设置页加两个分区：**鲸鲸 · 人设（skill 插件）** 和 **鲸鲸 · 评论审核**
 - **总开关**：启动 / 停止人设
-- **档位**：中性（默认）/ 轻损 / 孙吧全损（备用）
+- **档位**：黑话常态（默认）/ 轻损 / 孙吧全损（备用）
 - 点「应用」后：
   1. 写入 `~/.dsh/bili-whale-persona.json`（`{ enabled, sunba }`）
-  2. 启动时把对应档位的人设文本写入 `~/.bili-ai/persona.md`（dsh-bili-whale 内部会话读取的通道，写前自动备份）；停止时写入空内容
-  3. 通过 `systemPrompt.context()` 把同一份人设注入当前会话（停止时返回空）
-- 默认 `enabled=false, sunba=off`。**不会**改动 dsh-bili-whale 的 node_modules（那是 `scripts/patch_bili_whale_no_persona.py` 的事）。
+  2. 启动时把 **skill 本体**（档位角色卡 + `references/black-talk.md` + `references/boundaries.md` + `references/gate.md`）拼成 `~/.dsh/whale-persona-skill.md`；停止时写入空内容
+  3. 通过 `systemPrompt.context()` 把档位角色卡注入当前会话（停止时返回空）
+- **不再使用** `~/.bili-ai/persona.md`；B 站插件侧用 `scripts/patch_bili_whale_skill_persona.py` 改读 `~/.dsh/whale-persona-skill.md`
+- 默认 `enabled=false, sunba=off`。**不会**改动 dsh-bili-whale 的 node_modules（那是 patch 脚本的事）。
+
+## 评论审核（只审不发）
+
+- 分区：**鲸鲸 · 评论审核**
+- 数据：`~/.dsh/whale-review-queue.json`
+- 每条：评论原文 + 全损黑话草稿（可编辑）+ 通过 / 跳过 / 重置
+- **通过 ≠ 发送**：审核模式只记录决定，不发 B 站
+- 生成队列：`python scripts/build_review_queue.py`（读 `data/review-raw.json` 与 `data/video-comments-raw.json`）
 
 ## 查梗工具
 

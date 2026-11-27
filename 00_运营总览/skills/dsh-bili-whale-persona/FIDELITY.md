@@ -49,18 +49,30 @@
 | ❌ 档默认封存 | ✅ 默认不加载 |
 | 敏感词自检脚本 | ✅ 实测：脏话/地域/真人梗/灌水/封存重词均 REJECT |
 | 人设卡移除 | ✅ 补丁已应用于 dsh-bili-whale（client.js / index.js 语法通过） |
-| 人设可启停 | ✅ 实测 API：enabled true/false 与 off/light/on 三档，persona.md 字节数随档位变化；停止时 0 字节 |
+| 人设可启停 | ✅ 实测 API：enabled true/false 与 off/light/on 三档，persona 文件字节数随档位变化；停止时 0 字节 |
+| skill 人设文件 | ✅ 启动 on 时生成 `~/.dsh/whale-persona-skill.md`，17004 字节（档位卡+black-talk+boundaries+gate） |
+| 评论审核 | ✅ 24 条真实评论入队；通过/跳过/重置接口实测；审核模式不发送 |
 
 ## 人设插件实测（2026-11-27）
 
-| 操作 | persona.md 字节 |
+| 操作 | persona 文件字节 |
 | --- | --- |
 | 启动 + off（黑话常态） | 2402 |
 | 启动 + light（轻损黑话） | 1990 |
 | 启动 + on（孙吧去攻击） | 2320 |
 | 停止 | 0 |
 
-> API：`/whale-persona-v2/api/state` 与 `/set`。设置页分区 `bili-whale-persona`（order 7）已注册。
+> API：`/whale-persona-v4/api/state` 与 `/set`。设置页分区 `bili-whale-persona`（order 7）、`bili-whale-review`（order 8）已注册。
+
+## 评论审核实测
+
+| 项 | 结果 |
+|---|---|
+| 数据源 | comment-digest 最近 720 小时（23 条）+ 最新视频热评（1 条） |
+| 队列 | `~/.dsh/whale-review-queue.json`，共 24 条，全部 pending |
+| 草稿 | 24 条全损黑话草稿，`check_comment --tier on` 全部 PASS |
+| 审核接口 | GET `/whale-persona-v4/api/review`；POST `{id,action:approve\|skip\|reset\|update}` |
+| 发送 | **无**：审核模式只记录状态，不调用任何 B 站写接口 |
 
 ## 黑话引擎实测（cnmeme.wiki）
 
