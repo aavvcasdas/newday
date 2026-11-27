@@ -1,4 +1,4 @@
-﻿# 鲸鲸 · B 站鲸鱼人设 skill
+# 鲸鲸 · B 站鲸鱼人设 skill
 
 > 本体：[dsh-bili-whale](https://github.com/Alterssss/dsh-bili-whale)（MIT）
 > 方法论：[nuwa-skill](https://github.com/alchaincyf/nuwa-skill)（MIT）
@@ -24,17 +24,19 @@ dsh-bili-whale-persona/
 │   └── research/             # 调研底稿（女娲口径）
 ├── data/hot_memes.json       # SSS/SS/S 热梗素材（635 条，备用）
 ├── scripts/
-│   ├── build_hot_memes.py    # 重新生成热梗素材
-│   └── check_comment.py      # 发言前自检
-└── plugin/                   # GUI 档位开关插件
+│   ├── build_hot_memes.py            # 重新生成热梗素材
+│   ├── check_comment.py              # 发言前自检
+│   └── patch_bili_whale_no_persona.py# 去掉 B 站插件的人设卡（幂等）
+└── plugin/                           # skill 插件：人设总开关 + 档位
 ```
 
 ## 怎么用
 
 1. **读 SKILL.md**：先读 `SKILL.md`（人设与规则），再按场景读 `references/`。
 2. **跑自检**：`python scripts/check_comment.py --text "..." --tier off`
-3. **装 GUI 开关**：见 `plugin/README.md`，装完在「设置 → 鲸鲸 · 人设」里切档。
-4. **看效果**：`references/demo.md` 有三档对照。
+3. **开关人设**：`plugin/` 已安装；在「设置 → 鲸鲸 · 人设」里启动/停止、选档。
+4. **去掉 B 站插件的人设卡**：`python scripts/patch_bili_whale_no_persona.py`（重装插件后重跑）
+5. **看效果**：`references/demo.md` 有三档对照；`references/sunba-tier.md` 有「中性 vs 轻损」逐项对比。
 
 ## 孙吧味档位
 

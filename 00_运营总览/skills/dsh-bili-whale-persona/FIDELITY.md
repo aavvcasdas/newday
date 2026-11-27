@@ -48,10 +48,24 @@
 | 反模式 | ✅ 九条 |
 | ❌ 档默认封存 | ✅ 默认不加载 |
 | 敏感词自检脚本 | ✅ 实测：脏话/地域/真人梗/灌水/封存重词均 REJECT |
+| 人设卡移除 | ✅ 补丁已应用于 dsh-bili-whale（client.js / index.js 语法通过） |
+| 人设可启停 | ✅ 实测 API：enabled true/false 与 off/light/on 三档，persona.md 字节数随档位变化；停止时 0 字节 |
+
+## 人设插件实测（2026-11-27）
+
+| 操作 | persona.md 字节 |
+| --- | --- |
+| 启动 + off | 2358 |
+| 启动 + light | 1484 |
+| 启动 + on | 11524 |
+| 停止 | 0 |
+
+> API：`/whale-persona-v2/api/state` 与 `/set`。设置页分区 `bili-whale-persona`（order 7）已注册。
 
 ## 未覆盖 / 已知局限
 
 - 未做真实 B 站账号的端到端发布测试（避免真实发帖）。
 - 插件功能按源码命令表核对，未逐条运行。
 - 热梗库为 2026-11 快照。
-- GUI 开关插件需安装后重启 DSH 才能在设置页看到。
+- dsh-bili-whale 的人设卡移除改的是 `node_modules`，**DSH 重启后生效**；重装/升级插件后需重跑 `scripts/patch_bili_whale_no_persona.py`。
+- `systemPrompt.context()` 注入已注册，但当前宿主没有直接观测接口，未做逐字提示词核验。

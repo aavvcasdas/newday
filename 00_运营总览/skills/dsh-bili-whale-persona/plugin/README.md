@@ -1,15 +1,17 @@
 # dsh-bili-whale-persona-toggle
 
-「设置 → 鲸鲸 · 人设」里的孙吧味档位开关。
+「设置 → 鲸鲸 · 人设」里的**人设 skill 开关**：可随时启动/停止，并选孙吧味档位。
 
 ## 它做什么
 
-- 在 DSH 设置页加一个分区：**鲸鲸 · 人设**
-- 三个档位：中性（默认）/ 轻损 / 孙吧全损（备用）
-- 点「应用档位」后：
-  1. 写入 `~/.dsh/bili-whale-persona.json`（`{"sunba": "off"|"light"|"on"}`）
-  2. 把对应人设文本写入 `~/.bili-ai/persona.md`（dsh-bili-whale 实际读取的文件，写前自动备份）
-- 默认 `off`。**不会**改动 dsh-bili-whale 的 node_modules。
+- 在 DSH 设置页加一个分区：**鲸鲸 · 人设（skill 插件）**
+- **总开关**：启动 / 停止人设
+- **档位**：中性（默认）/ 轻损 / 孙吧全损（备用）
+- 点「应用」后：
+  1. 写入 `~/.dsh/bili-whale-persona.json`（`{ enabled, sunba }`）
+  2. 启动时把对应档位的人设文本写入 `~/.bili-ai/persona.md`（dsh-bili-whale 内部会话读取的通道，写前自动备份）；停止时写入空内容
+  3. 通过 `systemPrompt.context()` 把同一份人设注入当前会话（停止时返回空）
+- 默认 `enabled=false, sunba=off`。**不会**改动 dsh-bili-whale 的 node_modules（那是 `scripts/patch_bili_whale_no_persona.py` 的事）。
 
 ## 安装
 

@@ -9,7 +9,7 @@ window.__ModuleLoader__.load({
     const React = require("react");
     const { createElement: h, useCallback, useEffect, useState } = React;
 
-    const API = new URL("whale-persona/api", document.baseURI).pathname;
+    const API = new URL("whale-persona-v2/api", document.baseURI).pathname;
 
     const CSS_TAG = "dsh-bili-whale-persona-toggle/section.css";
     const CSS = [
@@ -47,6 +47,7 @@ window.__ModuleLoader__.load({
     ];
 
     function WhalePersonaSection() {
+      const [enabled, setEnabled] = useState(false);
       const [sunba, setSunba] = useState("off");
       const [personaFile, setPersonaFile] = useState("");
       const [personaExists, setPersonaExists] = useState(false);
@@ -62,6 +63,7 @@ window.__ModuleLoader__.load({
           const j = await r.json();
           if (!r.ok || !j.ok) throw new Error(j.error || `HTTP ${r.status}`);
           setSunba(j.sunba || "off");
+          setEnabled(!!j.enabled);
           setPersonaFile(j.personaFile || "");
           setPersonaExists(!!j.personaExists);
         } catch (e) {
@@ -79,11 +81,11 @@ window.__ModuleLoader__.load({
           const r = await fetch(`${API}/set`, {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ sunba }),
+            body: JSON.stringify({ enabled, sunba }),
           });
           const j = await r.json();
           if (!r.ok || !j.ok) throw new Error(j.error || `HTTP ${r.status}`);
-          setOut(`已应用档位：${sunba}\n写入：${j.personaFile}`);
+          setOut(`${enabled ? "已启动人设" : "已停止人设"}｜档位：${sunba}\n写入：${j.personaFile}`);
           setPersonaExists(true);
           setPersonaFile(j.personaFile);
         } catch (e) {
@@ -91,12 +93,32 @@ window.__ModuleLoader__.load({
         } finally {
           setBusy(false);
         }
-      }, [sunba]);
+      }, [enabled, sunba]);
 
       return h("div", { className: "bwp" },
-        h("h3", { className: "bwp-title" }, "鲸鲸 · 人设"),
+        h("h3", { className: "bwp-title" }, "鲸鲸 · 人设（skill 插件）"),
         h("p", { className: "bwp-intro" },
-          "孙吧味是一个档位，默认关闭。关着时她是中性的鲸鲸；打开才玩损梗。改动会写入她真正读取的人设文件。"),
+          "人设来自 skill，不再写在 B 站插件里。总开关可以随时启动/停止；孙吧味是档位，默认关闭。"),
+
+        h("div", { className: "bwp-row" },
+          h("div", { className: "bwp-label" }, "人设总开关"),
+          h("div", { className: "bwp-hint" },
+            loading ? "读取中…" : enabled ? "已启动：她按当前档位说话（当前会话与她的内部会话都会带上）" : "已停止：不注入任何人设"),
+          h("div", { className: "bwp-choices" },
+            h("label", { className: `bwp-choice${enabled ? " bwp-on" : ""}` },
+              h("input", {
+                className: "bwp-dot",
+                type: "checkbox",
+                checked: enabled,
+                onChange: (e) => setEnabled(!!e.target.checked),
+              }),
+              h("span", null,
+                h("div", { className: "bwp-name" }, "启动鲸鲸人设"),
+                h("div", { className: "bwp-desc" }, "打开＝按下面档位加载 skill 人设；关闭＝完全不加载。"),
+              ),
+            ),
+          ),
+        ),
 
         h("div", { className: "bwp-row" },
           h("div", { className: "bwp-label" }, "孙吧味档位"),
@@ -125,12 +147,13 @@ window.__ModuleLoader__.load({
         h("div", { className: "bwp-row" },
           h("div", { className: "bwp-label" }, "她读取的人设文件"),
           h("div", { className: "bwp-hint" }, personaFile || "（未检测到 ~/.bili-ai/）"),
-          h("div", { className: "bwp-hint" }, personaExists ? "文件存在，应用时会先自动备份。" : "文件不存在，应用时会创建。"),
+          h("div", { className: "bwp-hint" },
+            !enabled ? "停止状态下写入空内容（她不会带人设）。" : personaExists ? "文件存在，应用时会先自动备份。" : "文件不存在，应用时会创建。"),
         ),
 
         h("div", { className: "bwp-actions" },
           h("button", { className: "bwp-btn", onClick: apply, disabled: busy || loading },
-            busy ? "应用中…" : "应用档位"),
+            busy ? "应用中…" : "应用"),
           h("button", { className: "bwp-btn bwp-btn2", onClick: load, disabled: busy }, "重新读取"),
         ),
 
