@@ -66,6 +66,122 @@ function writePersonaFile(text) {
   fs.renameSync(tmp, PERSONA_FILE)
 }
 
+// ── 黑话引擎：cnmeme.wiki 公开 API（像梗才查 / 同词 10 分钟一次 / 带缓存）──
+const MEME_API = 'https://cnmeme.wiki/api/v1/public/memes'
+const MEME_CACHE_FILE = path.join(HOME, '.dsh', 'whale-meme-cache.json')
+const MEME_TTL = 600
+const QUESTION_RE = /(是什么梗|啥梗|什么梗|梗是什么|这梗|那个梗|求科普|科普一下|出处|啥意思|什么意思|怎么理解|有人知道吗|谁懂|是什么|干啥的|哪来的)/
+
+function readMemeCache() {
+  try { const o = JSON.parse(fs.readFileSync(MEME_CACHE_FILE, 'utf8')); return o && typeof o === 'object' ? o : {} } catch { return {} }
+}
+function writeMemeCache(cache) {
+  try {
+    fs.mkdirSync(path.dirname(MEME_CACHE_FILE), { recursive: true })
+    const tmp = `${MEME_CACHE_FILE}.tmp-${process.pid}`
+    fs.writeFileSync(tmp, JSON.stringify(cache, null, 1), 'utf8')
+    fs.renameSync(tmp, MEME_CACHE_FILE)
+  } catch {}
+}
+function looksLikeMeme(text) {
+  const t = String(text || '').trim()
+  if (!t) return false
+  if (QUESTION_RE.test(t)) return true
+  return t.length <= 12 && !/[，。！？,.!?；;：:\s]/.test(t)
+}
+function extractMemeTerms(text) {
+  const t = String(text || '').trim()
+  const quoted = [...t.matchAll(/[「“"‘]([^」”"’]{1,30})[」”"’]/g)].map(m => m[1].trim()).filter(Boolean)
+  if (quoted.length) return quoted
+  let c = t
+  c = c.replace(QUESTION_RE, '')
+  c = c.replace(/[，。！？,.!?；;：:\s]+/g, ' ').trim()
+  c = c.replace(/^(这个|那个|请问|我想问|问一下|有没有人)/, '').trim()
+  const parts = c.split(/\s+/).filter(Boolean)
+  return parts.length ? [parts[0].slice(0, 30)] : []
+}
+function stripHtml(html) {
+  let s = String(html || '')
+  s = s.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '')
+  s = s.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
+  s = s.replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+  s = s.replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+  return s.replace(/\n{3,}/g, '\n\n').trim()
+}
+function splitSections(html) {
+  const out = {}
+  const re = /<h2[^>]*>([\s\S]*?)<\/h2>([\s\S]*?)(?=<h2|$)/gi
+  let m
+  while ((m = re.exec(String(html || '')))) {
+    const title = stripHtml(m[1]).trim()
+    if (title) out[title] = stripHtml(m[2]).trim()
+  }
+  return out
+}
+async function fetchMemeJson(url, retries = 2) {
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const r = await fetch(url, { headers: { 'user-agent': 'dsh-bili-whale-persona' }, signal: AbortSignal.timeout(20000) })
+      if (r.status === 404) return { __not_found__: true }
+      if ([429, 500, 502, 503, 504].includes(r.status) && i < retries) { await new Promise(x => setTimeout(x, 1500 * (i + 1))); continue }
+      if (!r.ok) throw new Error(`HTTP ${r.status}`)
+      return await r.json()
+    } catch (e) {
+      if (i >= retries) throw e
+      await new Promise(x => setTimeout(x, 1000 * (i + 1)))
+    }
+  }
+  throw new Error('retry exhausted')
+}
+async function lookupMeme({ text, term, force } = {}) {
+  let terms = []
+  let skipped = false
+  let reason = null
+  if (term) terms = [String(term).trim()]
+  else {
+    if (!looksLikeMeme(text)) return { ok: true, skipped: true, reason: '不像在问梗/说梗，未查', checked: [] }
+    terms = extractMemeTerms(text)
+    if (!terms.length) return { ok: true, skipped: true, reason: '没提取到可查的词', checked: [] }
+  }
+  const cache = readMemeCache()
+  const now = Date.now() / 1000
+  const checked = []
+  for (const t of terms) {
+    const key = t.toLowerCase()
+    const hit = cache[key]
+    if (hit && !force && now - Number(hit.at || 0) < MEME_TTL) {
+      checked.push({ term: t, found: !!hit.found, cached: true, entry: hit.entry || null })
+      continue
+    }
+    try {
+      const data = await fetchMemeJson(`${MEME_API}/${encodeURIComponent(t)}`)
+      if (data && data.__not_found__) {
+        cache[key] = { at: now, found: false, entry: null }
+        checked.push({ term: t, found: false, cached: false, entry: null })
+        continue
+      }
+      const item = data && data.item && typeof data.item === 'object' ? data.item : data
+      const sections = splitSections(item?.content_html)
+      const entry = {
+        title: item?.title || '',
+        summary: item?.summary || '',
+        usage: sections['用法'] || item?.usage || '',
+        origin: sections['来源'] || item?.origin || '',
+        tags: Array.isArray(item?.tags) ? item.tags : [],
+        aliases: Array.isArray(item?.aliases) ? item.aliases : [],
+      }
+      const found = !!entry.title
+      cache[key] = { at: now, found, entry: found ? entry : null }
+      checked.push({ term: t, found, cached: false, entry: found ? entry : null })
+    } catch (e) {
+      checked.push({ term: t, found: false, cached: false, error: String(e?.message ?? e).slice(0, 200) })
+    }
+  }
+  writeMemeCache(cache)
+  return { ok: true, skipped, reason, checked, cache_ttl: MEME_TTL }
+}
+
 function json(res, code, data) {
   res.statusCode = code
   res.setHeader('content-type', 'application/json; charset=utf-8')
@@ -132,6 +248,32 @@ export default {
       }
     } catch (e) {
       console.warn('[bili-whale-persona] systemPrompt 注入不可用：' + (e?.message ?? e))
+    }
+
+    // 查梗工具：像梗才查 / 同词 10 分钟一次 / 带缓存
+    try {
+      if (ctx.tools && typeof ctx.tools.register === 'function') {
+        ctx.effect(() => ctx.tools.register({
+          name: 'whale_meme_lookup',
+          description: '查 cnmeme.wiki 公开梗库。像梗才查、同词 10 分钟一次、带缓存。输入 text（原句）或 term（词）。写黑话评论前用它；查不到就不硬接。',
+          parameters: {
+            type: 'object',
+            properties: {
+              text: { type: 'string', description: '原句，例如「哈基米是什么梗」' },
+              term: { type: 'string', description: '直接指定要查的词，例如「电子榨菜」' },
+              force: { type: 'boolean', description: '忽略缓存强制查询' },
+            },
+            additionalProperties: false,
+          },
+          output: {
+            schema: { type: 'object', additionalProperties: true },
+            render(args, value) { return [{ type: 'text', text: JSON.stringify(value) }] },
+          },
+          async execute(args) { return await lookupMeme(args || {}) },
+        }), 'bili-whale-persona: meme lookup tool')
+      }
+    } catch (e) {
+      console.warn('[bili-whale-persona] 查梗工具注册失败：' + (e?.message ?? e))
     }
 
     route('exact', '/whale-persona-v2/api/state', async (req, res) => {

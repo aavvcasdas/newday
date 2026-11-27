@@ -55,17 +55,26 @@
 
 | 操作 | persona.md 字节 |
 | --- | --- |
-| 启动 + off | 2358 |
-| 启动 + light | 1484 |
-| 启动 + on | 11524 |
+| 启动 + off（黑话常态） | 2402 |
+| 启动 + light（轻损黑话） | 1990 |
+| 启动 + on（孙吧去攻击） | 2320 |
 | 停止 | 0 |
 
 > API：`/whale-persona-v2/api/state` 与 `/set`。设置页分区 `bili-whale-persona`（order 7）已注册。
+
+## 黑话引擎实测（cnmeme.wiki）
+
+| 用例 | 结果 |
+|---|---|
+| `--text "哈基米是什么梗"` | 命中，返回 title/summary/usage/origin/tags |
+| 普通长句 `这剪辑太拖了，前十分钟都在水` | 跳过（不像问梗） |
+| 同词第二次查询 | `cached: true`，未联网 |
+| 缓存 TTL | 600 秒，缓存文件 `~/.dsh/whale-meme-cache.json` |
 
 ## 未覆盖 / 已知局限
 
 - 未做真实 B 站账号的端到端发布测试（避免真实发帖）。
 - 插件功能按源码命令表核对，未逐条运行。
-- 热梗库为 2026-11 快照。
+- 黑话依赖 cnmeme.wiki 公开 API 的可用性；断网时回退到 `data/hot_memes.json` 离线兜底。
 - dsh-bili-whale 的人设卡移除改的是 `node_modules`，**DSH 重启后生效**；重装/升级插件后需重跑 `scripts/patch_bili_whale_no_persona.py`。
 - `systemPrompt.context()` 注入已注册，但当前宿主没有直接观测接口，未做逐字提示词核验。

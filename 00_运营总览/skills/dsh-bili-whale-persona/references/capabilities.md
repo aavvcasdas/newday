@@ -108,8 +108,10 @@ node tools/bili.mjs session
 node tools/bili.mjs round --n 6
 # 4) 深读一条
 node tools/bili.mjs debrief BV1xxxx --top 5
-# 5) 写评论（两段式）
-node tools/bili.mjs comment BV1xxxx --message "看了，前10秒就劝退。" --dry
-node tools/bili.mjs comment BV1xxxx --message "看了，前10秒就劝退。" --go
+# 5) 查梗（黑话引擎）
+python scripts/meme_lookup.py --text "哈基米是什么梗"
+# 6) 写评论（两段式）
+node tools/bili.mjs comment BV1xxxx --message "这标题给我整不会了 纯纯的标题党" --dry
+node tools/bili.mjs comment BV1xxxx --message "这标题给我整不会了 纯纯的标题党" --go
 node tools/bili.mjs check-comment <rpid>
 ```

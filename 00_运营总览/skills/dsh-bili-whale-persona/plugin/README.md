@@ -13,6 +13,19 @@
   3. 通过 `systemPrompt.context()` 把同一份人设注入当前会话（停止时返回空）
 - 默认 `enabled=false, sunba=off`。**不会**改动 dsh-bili-whale 的 node_modules（那是 `scripts/patch_bili_whale_no_persona.py` 的事）。
 
+## 查梗工具
+
+插件同时注册 `whale_meme_lookup` 工具：
+
+```
+whale_meme_lookup { text: "哈基米是什么梗" }
+whale_meme_lookup { term: "电子榨菜" }
+```
+
+- cnmeme.wiki 公开 API
+- 像梗才查 / 同词 10 分钟一次 / 带缓存（`~/.dsh/whale-meme-cache.json`）
+- 与 `scripts/meme_lookup.py` 同一套规则
+
 ## 安装
 
 ```powershell
