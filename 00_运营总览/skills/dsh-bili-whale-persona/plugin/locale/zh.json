@@ -1,0 +1,22 @@
+{
+  "title": "鲸鲸 · 人设",
+  "nav": "鲸鲸 · 人设",
+  "intro": "孙吧味是一个档位，默认关闭。关着时她是中性的鲸鲸；打开才玩损梗。改动会写入她真正读取的人设文件。",
+  "loading": "读取中…",
+  "saved": "已保存",
+  "saveFailed": "保存失败",
+  "current": "当前档位",
+  "target": "她读取的人设文件",
+  "mapping": "档位 → 写入的人设",
+  "tierOff": "中性（默认）",
+  "tierOffHint": "损友但友好，会吐槽、有立场、短句带梗，不阴阳、不设局、不搞抽象对线。",
+  "tierLight": "轻损",
+  "tierLightHint": "加一点「鉴定」式短评，损事不损人，点到为止。",
+  "tierOn": "孙吧全损（备用）",
+  "tierOnHint": "小肥鱼那套阴阳三段式、鉴定体、反串、收味。仍守伦理红线；对被点名的本人不起人身攻击。",
+  "apply": "应用档位",
+  "applying": "应用中…",
+  "applied": "已写入人设文件",
+  "notInstalled": "未检测到 dsh-bili-whale 的人设文件目录（~/.bili-ai/），请先安装并配置 B 站鲸鱼插件。",
+  "markerNote": "档位同时记录在 ~/.dsh/bili-whale-persona.json，供 agent 与 skill 读取。"
+}
