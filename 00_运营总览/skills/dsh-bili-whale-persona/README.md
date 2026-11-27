@@ -1,4 +1,4 @@
-# 鲸鲸 · B 站鲸鱼人设 skill
+﻿# 鲸鲸 · B 站鲸鱼人设 skill
 
 > 本体：[dsh-bili-whale](https://github.com/Alterssss/dsh-bili-whale)（MIT）
 > 方法论：[nuwa-skill](https://github.com/alchaincyf/nuwa-skill)（MIT）
@@ -14,7 +14,7 @@ dsh-bili-whale-persona/
 ├── FIDELITY.md               # 自检与验收记录
 ├── README.md                 # 本文件
 ├── references/
-│   ├── capabilities.md       # 继承的全部命令（52 个）
+│   ├── capabilities.md       # 继承的全部命令（48 个）
 │   ├── boundaries.md         # 伦理红线 + 审核标记（✅/⚠️/❌）+ 反模式
 │   ├── sunba-tier.md         # 孙吧味三档（默认 off）
 │   ├── gate.md               # 发言三态门禁

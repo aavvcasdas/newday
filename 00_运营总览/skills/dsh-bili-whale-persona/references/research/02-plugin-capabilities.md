@@ -1,10 +1,10 @@
-# 02 · 插件能力调研
+﻿# 02 · 插件能力调研
 
 > 来源：`dsh-bili-whale` v1.0.2 安装目录（README、`tools/bili.mjs` 命令表、`behavior/`）
 
 ## 命令总数
 
-从 `tools/bili.mjs` 的 `map` 统计：**52 个命令**（另含 activity 相关）。
+从 `tools/bili.mjs` 的 `map` 统计：**48 个命令**（另含 activity 相关）。
 
 ## 分组
 
