@@ -215,7 +215,7 @@ const PROMPT_HEADER = [
 
 export default {
   name: 'dsh-bili-whale-persona-toggle',
-  inject: ['webServer', 'connection', 'systemPrompt'],
+  inject: ['webServer', 'connection', 'systemPrompt', 'tools'],
   apply(ctx) {
     const disposers = []
 
@@ -276,7 +276,7 @@ export default {
       console.warn('[bili-whale-persona] 查梗工具注册失败：' + (e?.message ?? e))
     }
 
-    route('exact', '/whale-persona-v2/api/state', async (req, res) => {
+    route('exact', '/whale-persona-v3/api/state', async (req, res) => {
       if (req.method !== 'GET') { json(res, 405, { ok: false }); return }
       const state = readState()
       json(res, 200, {
@@ -290,7 +290,7 @@ export default {
       })
     })
 
-    route('exact', '/whale-persona-v2/api/set', async (req, res) => {
+    route('exact', '/whale-persona-v3/api/set', async (req, res) => {
       if (req.method !== 'POST') { json(res, 405, { ok: false }); return }
       const body = JSON.parse((await readBody(req)) || '{}')
       const current = readState()

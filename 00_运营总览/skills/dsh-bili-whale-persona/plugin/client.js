@@ -9,7 +9,7 @@ window.__ModuleLoader__.load({
     const React = require("react");
     const { createElement: h, useCallback, useEffect, useState } = React;
 
-    const API = new URL("whale-persona-v2/api", document.baseURI).pathname;
+    const API = new URL("whale-persona-v3/api", document.baseURI).pathname;
 
     const CSS_TAG = "dsh-bili-whale-persona-toggle/section.css";
     const CSS = [
