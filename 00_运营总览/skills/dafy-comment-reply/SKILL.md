@@ -66,6 +66,8 @@ python scripts/patch_bili_whale_video_comments.py  # 视频底下所有新评论
 ```
 
 - **生效需要重启 DSH**（改的是插件运行代码）
+- **开关**：设置 → **鲸鲸 · 自动回复**（插件 `dafy-auto-reply-toggle`），可随时开/关，状态存 `~/.dsh/whale-auto-reply.json`
+  - 关闭后只推进水位、不回复；重新打开不会补发关闭期间的历史评论
 - 视频监控列表：`~/.dsh/whale-watch-videos.json`（`[{bvid,aid,title}]`，最多取前 10 个）
 - 轮询间隔：`listen.videoCommentIntervalSec`（默认 300 秒）
 - 首次启用前把 `~/.dsh/whale-listen.json` 的 `lastSeen` 推到当前，避免历史评论重发
@@ -81,7 +83,8 @@ python scripts/patch_bili_whale_video_comments.py  # 视频底下所有新评论
 - 读评论：`node tools/bili.mjs comment-digest --hours 720 --pages 5 --json`
 - 查梗：memewiki 的 `search_meme_wiki`（或本地库查询）
 - 发送（需确认）：`node tools/bili.mjs comment <BV> --message "..." --dry|--go`；二级回复带 `--root/--parent`
-- 自动回复补丁：`python scripts/patch_bili_whale_auto_reply.py`、`python scripts/patch_bili_whale_video_comments.py`
+- 自动回复补丁：`python scripts/patch_bili_whale_auto_reply.py`、`python scripts/patch_bili_whale_video_comments.py`、`python scripts/patch_bili_whale_auto_reply_switch.py`
+- 开关：设置 → 鲸鲸 · 自动回复（`plugin/`）
 
 ## 自检清单
 
