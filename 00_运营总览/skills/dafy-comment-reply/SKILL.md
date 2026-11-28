@@ -56,6 +56,20 @@ description: 大肥鱼 B 站评论锐评回复。先读懂评论在说什么、�
 
 **反例（别这么干）**：评论说泪目，回「白皇后抖腿」——语义不挨着，尬。评论说没天赋，回「最没天赋的人 努力就是天赋」——变成说教，没人味。
 
+## 自动回复模式
+
+默认是手动：先出草稿，确认后再发。要改成**自动回复评论**：
+
+```bash
+python scripts/patch_bili_whale_auto_reply.py
+```
+
+它把 dsh-bili-whale 评论监听里「其他人 → 先写回复草稿给我审」改成「其他人 → 直接回（自动回复模式）」，并附带上面的锐评规矩。
+
+- **生效需要重启 DSH**（改的是插件运行代码）
+- 安全阀仍在：`--auto` 报备、插件写间隔 120 秒、每小时最多 12 条、线程最多 4 条/天 8 条、同一人 30 天只回一次
+- 首次启用前把 `~/.dsh/whale-listen.json` 的 `lastSeen` 推到当前，避免把历史评论再回一遍
+
 ## 输出格式（templates/reply-table.md）
 
 | # | 谁 | 原评论 | 在说什么 | 角度 | 梗 | 回复 | 处置 |
@@ -65,6 +79,7 @@ description: 大肥鱼 B 站评论锐评回复。先读懂评论在说什么、�
 - 读评论：`node tools/bili.mjs comment-digest --hours 720 --pages 5 --json`
 - 查梗：memewiki 的 `search_meme_wiki`（或本地库查询）
 - 发送（需确认）：`node tools/bili.mjs comment <BV> --message "..." --dry|--go`；二级回复带 `--root/--parent`
+- 自动回复补丁：`python scripts/patch_bili_whale_auto_reply.py`
 
 ## 自检清单
 
