@@ -61,14 +61,16 @@ description: 大肥鱼 B 站评论锐评回复。先读懂评论在说什么、�
 默认是手动：先出草稿，确认后再发。要改成**自动回复评论**：
 
 ```bash
-python scripts/patch_bili_whale_auto_reply.py
+python scripts/patch_bili_whale_auto_reply.py      # 回复/@ → 其他人也直接回
+python scripts/patch_bili_whale_video_comments.py  # 视频底下所有新评论也轮询自动回
 ```
 
-它把 dsh-bili-whale 评论监听里「其他人 → 先写回复草稿给我审」改成「其他人 → 直接回（自动回复模式）」，并附带上面的锐评规矩。
-
 - **生效需要重启 DSH**（改的是插件运行代码）
+- 视频监控列表：`~/.dsh/whale-watch-videos.json`（`[{bvid,aid,title}]`，最多取前 10 个）
+- 轮询间隔：`listen.videoCommentIntervalSec`（默认 300 秒）
+- 首次启用前把 `~/.dsh/whale-listen.json` 的 `lastSeen` 推到当前，避免历史评论重发
 - 安全阀仍在：`--auto` 报备、插件写间隔 120 秒、每小时最多 12 条、线程最多 4 条/天 8 条、同一人 30 天只回一次
-- 首次启用前把 `~/.dsh/whale-listen.json` 的 `lastSeen` 推到当前，避免把历史评论再回一遍
+- 新视频要加进 `whale-watch-videos.json` 才会被监控
 
 ## 输出格式（templates/reply-table.md）
 
@@ -79,7 +81,7 @@ python scripts/patch_bili_whale_auto_reply.py
 - 读评论：`node tools/bili.mjs comment-digest --hours 720 --pages 5 --json`
 - 查梗：memewiki 的 `search_meme_wiki`（或本地库查询）
 - 发送（需确认）：`node tools/bili.mjs comment <BV> --message "..." --dry|--go`；二级回复带 `--root/--parent`
-- 自动回复补丁：`python scripts/patch_bili_whale_auto_reply.py`
+- 自动回复补丁：`python scripts/patch_bili_whale_auto_reply.py`、`python scripts/patch_bili_whale_video_comments.py`
 
 ## 自检清单
 
